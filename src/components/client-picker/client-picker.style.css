@@ -1,0 +1,23 @@
+.client-picker::-webkit-scrollbar {
+    height: 10px;
+}
+
+/* Style the scrollbar thumb */
+.client-picker::-webkit-scrollbar-thumb {
+    background-color: #3D7C98;
+    /* Change to your desired color */
+    border-radius: 5px;
+    /* Rounded thumb */
+}
+
+/* Style the scrollbar thumb on hover */
+.client-picker::-webkit-scrollbar-thumb:hover {
+    background-color: #2B5E75;
+    /* Change to your desired hover color */
+}
+
+/* Style the scrollbar track on hover */
+.client-picker::-webkit-scrollbar-track {
+    background-color: #f0f0f0;
+    /* Change to your desired track color */
+}

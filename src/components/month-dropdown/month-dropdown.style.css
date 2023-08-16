@@ -1,0 +1,12 @@
+.month-dropdown{
+    width: 150px;
+    height: 55px;
+    padding: 8px;
+    border: none;
+    margin: 8px 4px;
+    background-color: #3D7C98;
+    border-radius: 8px;
+    float: right;
+    color: white;
+    font-size: 20px;
+}

@@ -1,0 +1,21 @@
+.sidebar{
+    width: 150px;
+    background-color: #3D7C98;
+    float: left;
+    height: 100vh;
+    overflow: hidden;
+}
+
+.sidebar-header{
+    font-size: 30px;
+    color: white;
+    border-bottom: white 1px solid;
+    cursor:default;
+    margin: 8px auto ;
+}
+
+.sidebar ul li{
+    cursor: pointer;
+    padding: 16px;
+    color: white;
+}

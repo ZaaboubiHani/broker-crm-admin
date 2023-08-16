@@ -1,24 +1,22 @@
-import React from 'react';
-import logo from './logo.svg';
+import React, {useState } from 'react';
 import './App.css';
+import DatePickerBar from './components/date-picker/date-picker.component';
+import Sidebar from './components/sidebar/sidebar.component';
+import Content from './components/content/content.component';
+
 
 function App() {
+  const [activeItem, setActiveItem] = useState('Expense');
+
+  const handleItemClick = (item: string) => {
+    setActiveItem(item);
+  };
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+       <div className="app-container">
+      <Sidebar onItemClick={handleItemClick} />
+      <Content activeItem={activeItem} />
+    </div>
     </div>
   );
 }

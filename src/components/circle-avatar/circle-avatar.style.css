@@ -1,0 +1,16 @@
+.circle-avatar{
+    font-size: 45px;
+    display: block;
+    float: left;
+    height: 120px;
+    width: 120px;
+    padding: auto;
+    justify-content: center;
+    align-items: center;
+    border-radius: 100px;
+    background-color:#3D7C98 ;
+    font-weight: 900;
+    line-height: 120px;
+    color: white;
+    margin: 16px;
+}
