@@ -1,0 +1,43 @@
+.command-delegate-container{
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    align-items: stretch;
+    background-color: #eee;
+}
+
+
+.search-bar{
+    display: flex;
+}
+
+.command-delegate-container
+.table-panel{
+    width: 100%;
+    display: flex;
+    height: calc(100% - 140px);
+}
+
+.command-delegate-container
+#command-delegatetable{
+    width: 40%;
+}
+
+.command-delegate-container
+.user-panel{
+    width: 60%;
+    background-color: white;
+    border-radius: 8px;
+    margin: 8px 0px;
+}
+
+.stats-panel{
+    display: flex;
+    justify-content: space-between;
+}
+
+.stats-panel .labels{
+    font-size: 17px;
+    color:  white;
+    margin: 8px 16px;
+}

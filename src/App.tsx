@@ -1,23 +1,30 @@
-import React, {useState } from 'react';
+import React from 'react';
 import './App.css';
-import DatePickerBar from './components/date-picker/date-picker.component';
-import Sidebar from './components/sidebar/sidebar.component';
-import Content from './components/content/content.component';
+import AppRouter from './routes/routes';
+import { BrowserRouter, } from 'react-router-dom';
+import { createTheme, ThemeProvider } from '@mui/material';
 
+const theme = createTheme({
+  components: {
+    MuiButton: {
+      styleOverrides: {
+        root: {
+          '&:hover': {
+            backgroundColor: '#35d9da',
+          },
+        },
+      },
+    },
+  },
+});
 
 function App() {
-  const [activeItem, setActiveItem] = useState('Expense');
-
-  const handleItemClick = (item: string) => {
-    setActiveItem(item);
-  };
   return (
-    <div className="App">
-       <div className="app-container">
-      <Sidebar onItemClick={handleItemClick} />
-      <Content activeItem={activeItem} />
-    </div>
-    </div>
+    <ThemeProvider theme={theme}>
+      <BrowserRouter>
+        <AppRouter />
+      </BrowserRouter>
+    </ThemeProvider>
   );
 }
 

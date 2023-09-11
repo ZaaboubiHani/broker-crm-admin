@@ -1,0 +1,66 @@
+.dialog-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.dialog-content {
+    background-color: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    /* Add grid layout styles */
+    display: grid;
+    grid-template-columns: repeat(3,1fr);
+    grid-template-rows: repeat(4,1fr);
+    grid-template-areas: 
+    "t t t"
+    "u e p"
+    "p1 p2 w"
+    "c c c";
+}
+
+
+.dialog-content button {
+    margin-top: 10px;
+    background-color: teal;
+}
+
+.dialog-content h2 {
+    grid-area: t;
+}
+
+#username{
+    grid-area: u;
+}
+
+
+#email{
+    grid-area: e;
+}
+
+
+#password{
+    grid-area: p;
+}
+
+
+#phone-01{
+    grid-area: p1;
+}
+
+#phone-02{
+    grid-area: p2;
+}
+
+
+#wilaya{
+    grid-area: w;
+}
+

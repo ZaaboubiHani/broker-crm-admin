@@ -1,0 +1,38 @@
+.report-container{
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    align-items: stretch;
+    background-color: #eee;
+}
+
+.report-container
+.table-panel{
+    width: 100%;
+    display: flex;
+    height: calc(100% - 140px);
+}
+
+.report-container
+#reporttable{
+    width: 50%;
+}
+
+.report-container
+.user-panel{
+    width: 50%;
+    background-color: white;
+    border-radius: 8px;
+    margin: 8px 0px;
+}
+
+.stats-panel{
+    display: flex;
+    justify-content: space-between;
+}
+
+.stats-panel .labels{
+    font-size: 17px;
+    color:  black;
+    margin: 8px 16px;
+}

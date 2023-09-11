@@ -1,0 +1,111 @@
+.table-container {
+    overflow: hidden;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+}
+
+.plan-table {
+    background-color: white;
+    border-radius: 8px;
+    border-spacing: 0;
+    height: 100%;
+}
+
+
+tbody,
+thead tr {
+    display: block;
+}
+
+thead {
+    height: 50px;
+}
+
+tbody {
+    overflow-y: auto;
+    overflow-x: hidden;
+    display: block;
+    overflow-y: scroll;
+    height: calc(100% - 10px);
+}
+
+tbody td,
+thead th {
+    width: 140px;
+}
+
+thead th:last-child {
+    width: 156px;
+}
+
+tbody::-webkit-scrollbar {
+    width: 10px;
+}
+
+/* Style the scrollbar thumb */
+tbody::-webkit-scrollbar-thumb {
+    background-color: #3D7C98;
+    /* Change to your desired color */
+    border-radius: 5px;
+    /* Rounded thumb */
+}
+
+/* Style the scrollbar thumb on hover */
+tbody::-webkit-scrollbar-thumb:hover {
+    background-color: #2B5E75;
+    /* Change to your desired hover color */
+}
+
+/* Style the scrollbar track on hover */
+tbody::-webkit-scrollbar-track {
+    background-color: #f0f0f0;
+    /* Change to your desired track color */
+}
+
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 60px;
+    height: 22px;
+}
+
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: gray;
+    transition: 0.4s;
+    border-radius: 34px;
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 16px;
+    width: 16px;
+    left: 4px;
+    bottom: 3.5px;
+    background-color: white;
+    transition: 0.4s;
+    border-radius: 50%;
+}
+
+input:checked+.slider {
+    background-color: #3D7C98;
+    /* Color when the toggle switch is ON */
+}
+
+input:checked+.slider:before {
+    transform: translateX(36px);
+}

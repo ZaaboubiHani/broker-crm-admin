@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 
-interface ClientContainerProps {
+interface UserContainerProps {
   name: string;
   isSelected: boolean;
   onPressed: () => void;
@@ -12,7 +12,7 @@ const kSecondary = '#0A2C3B';
 const kTernary = '#3D7C98';
 
 
-class ClientContainer extends Component<ClientContainerProps> {
+class UserContainer extends Component<UserContainerProps> {
   render() {
     
     return (
@@ -22,16 +22,18 @@ class ClientContainer extends Component<ClientContainerProps> {
           width: 'max-content',
           height: 40,
           padding: 8,
-          margin: '8px 4px 0px 0px',
-          borderRadius: 8,
-          backgroundColor: this.props.isSelected ? kTernary : 'rgba(255, 255, 255, 1)',
+          margin: '8px 4px 0',
+          border: '#ccc solid 1px',
+          borderRadius: 4,
+          backgroundColor: this.props.isSelected ? kTernary : 'white',
           display: 'flex',
           justifyContent: 'center',
           alignItems: 'center',
           color: this.props.isSelected ? 'white' : kSecondary,
-          fontWeight: this.props.isSelected ? 'bold' : 'normal',
+          fontWeight: 'bold',
           fontSize: 20,
           cursor: 'pointer',
+          transition:'all 250ms ease'
         }}
       >
         {this.props.name}
@@ -42,4 +44,4 @@ class ClientContainer extends Component<ClientContainerProps> {
   }
 }
 
-export default ClientContainer;
+export default UserContainer;

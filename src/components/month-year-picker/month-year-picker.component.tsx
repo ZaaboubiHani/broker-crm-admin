@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import DayPicker from '../day-picker/day-picker.component';
 import MonthDropdown from '../month-dropdown/month-dropdown.component';
 import YearDropdown from '../year-dropdown/year-dropdown.component';
-import ClientPicker from '../client-picker/client-picker.component';
+import UserPicker from '../user-picker/user-picker.component';
 
 
 interface MonthYearPickerProps {
@@ -36,8 +36,8 @@ const MonthYearPicker: React.FC<MonthYearPickerProps> = ({ onPick, initialDate }
 
   return (
 
-    <div style={{ height: 80, display: 'flex', alignItems: 'stretch' }}>
-      <ClientPicker onSelect={() => { }} clients={[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20]}></ClientPicker>
+    <div style={{ height: 60,  display: 'flex', alignItems: 'stretch' }}>
+      <UserPicker onSelect={() => { }} delegates={[]}></UserPicker>
       <MonthDropdown onChange={(month) => {
         handleMonthSelect(month);
       }}></MonthDropdown>

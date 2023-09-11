@@ -3,22 +3,40 @@ import React from 'react';
 import HomePage from '../../pages/home-page/home-page.component';
 import ProfilePage from '../../pages/profile-page/profile-page.component';
 import '../content/content.style.css';
-import ExpensePage from '../../pages/expense-page/expense-pae.component';
+import ExpensePage from '../../pages/expense-page/expense-page.component';
+import DelegatePage from '../../pages/delegate-page/delegate-page.component';
+import PlanPage from '../../pages/plan-page/plan-page.component';
+import ReportPage from '../../pages/report-page/report-page.component';
+import CommandCamPage from '../../pages/command-pages/command-cam-page/command-cam-page.component';
+import CommandDelegatePage from '../../pages/command-pages/command-delegate-page/command-delegate-page.component';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import Sidebar from '../sidebar/sidebar.component';
+
 
 
 interface ContentProps {
-    activeItem: string;
+
 }
 
-const Content: React.FC<ContentProps> = ({ activeItem }) => {
-    return (
-        <div className="content">
-            {activeItem === 'Home' && <HomePage></HomePage>}
-            {activeItem === 'About' && <div>About Content</div>}
-            {activeItem === 'Expense' && <ExpensePage></ExpensePage>}
-            {activeItem === 'Profile' && <ProfilePage></ProfilePage>}
+const Content: React.FC<ContentProps> = () => {
+  return (
+    <div style={{ width: '100%', height: '100vh', margin: '0px', padding: '0px' }}>
+      <div style={{ width: '100%', height: '100vh', display: 'flex', flexDirection: 'row', flexWrap: 'nowrap' }}>
+        <div style={{ width: '200px' }}>
+          <Sidebar />
         </div>
-    );
+        <div style={{ flexGrow: '1', width: '100%', overflow: 'auto', height: '100%' }}>
+          <Routes>
+            <Route path="/home" Component={HomePage} />
+            <Route path="/delegate" Component={DelegatePage} />
+            <Route path="/plan" Component={PlanPage} />
+            <Route path="/profile" Component={ProfilePage} />
+          </Routes>
+        </div>
+      </div>
+    </div>
+  );
 };
 
 export default Content;

@@ -1,18 +1,20 @@
 import React, { Component } from 'react';
-import ClientContainer from '../client-container/client-container.component';
-import '../client-picker/client-picker.style.css';
-interface ClientPickerProps {
-    onSelect: (selectedClient: number) => void;
+
+import './user-picker.style.css';
+import UserContainer from '../user-container/user-container.component';
+import UserModel from '../../models/user.model';
+interface UserPickerProps {
+    onSelect: (selectedUser: UserModel) => void;
     padding?: string | number;
-    clients: any[];
+    delegates: UserModel[];
 }
 
-class ClientPicker extends Component<ClientPickerProps> {
+class UserPicker extends Component<UserPickerProps> {
     _selectedIndex: number = 0;
     _scrollController: React.RefObject<HTMLDivElement> = React.createRef();
-   
-    indexes : number[] = [];
-    constructor(props: ClientPickerProps) {
+
+    indexes: number[] = [];
+    constructor(props: UserPickerProps) {
         super(props);
         this._scrollController = React.createRef();
     }
@@ -28,8 +30,8 @@ class ClientPicker extends Component<ClientPickerProps> {
     }
 
     render() {
-     
-      
+
+
         return (
 
             <div
@@ -37,26 +39,27 @@ class ClientPicker extends Component<ClientPickerProps> {
                     display: 'flex',
                     flexDirection: 'row',
                     overflowX: 'auto',
-                    width: '100%',
-                    padding: this.props.padding ?? '0 0 0 8px',
-                    height: 80,
+                    width:'100%',
+                    padding: this.props.padding ?? '0 0 0 0px',
+                    height: 60,
+                    
                 }}
                 ref={this._scrollController}
-                className='client-picker'
+              className='client-picker'
             >
                 {
-                    Array.from({ length: this.props.clients.length }, (_, index) => {
-                      
+                    Array.from({ length: this.props.delegates.length }, (_, index) => {
+
                         return (
-                            <ClientContainer
+                            <UserContainer
                                 key={index}
                                 isSelected={this._selectedIndex === index}
-                               name='wali serijhgld kadri'
+                                name = {this.props.delegates[index].username!}
 
-                               
+
                                 onPressed={() => {
                                     this._selectedIndex = index;
-                                    this.props.onSelect(index);
+                                    this.props.onSelect(this.props.delegates[index]);
                                     this.forceUpdate();
                                 }}
                             />
@@ -67,4 +70,4 @@ class ClientPicker extends Component<ClientPickerProps> {
     }
 }
 
-export default ClientPicker;
+export default UserPicker;
