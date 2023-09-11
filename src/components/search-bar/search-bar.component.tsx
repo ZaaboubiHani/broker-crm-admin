@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { FaSearch } from 'react-icons/fa'; 
+import { FaSearch ,} from 'react-icons/fa'; 
 import '../search-bar/search-bar.style.css';
 
 interface SearchBarProps{
@@ -14,7 +14,6 @@ const SearchBar :React.FC<SearchBarProps>= ({onClick}) =>{
     };
 
     const handleSearch = () => {
-        console.log('Searching for:', searchValue);
         onClick(searchValue);
     };
 

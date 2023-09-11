@@ -1,0 +1,28 @@
+button{
+    color: black;
+}
+
+.login-container{
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    justify-content: center;
+    align-items: center;
+    background: linear-gradient(40deg, rgba(15,208,208,1) 0%, rgba(0,128,128,1) 100%);
+}
+
+.login-border{
+    height: 50%;
+    width: 500px;
+    border-radius: 8px;
+    background-color: white;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.labeled-textbox{
+    display: flex;
+    flex-direction: column;
+}

@@ -1,0 +1,38 @@
+.home-container{
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    align-items: stretch;
+}
+
+.search-bar{
+    margin-top: 4px;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    height: 35px;
+    margin-left: 8px;
+}
+
+.table-panel{
+    width: 100%;
+    display: flex;
+    flex-grow: 1;
+}
+
+#hometable{
+    width: 60%;
+    margin-left: 8px;
+    margin-bottom: 8px;
+}
+
+.user-panel{
+    width: 40%;
+    background-color: white;
+    flex-grow: 1;
+    border-radius: 4px;
+    display: flex;
+    justify-content: stretch;
+    align-items: stretch;
+    margin: 8px;
+}

@@ -1,0 +1,34 @@
+
+
+.row-container{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 180px;
+    margin: 8px 4px;
+    padding: 8px 0px;
+    border-radius: 8px;
+    transition: all 300ms ease;
+    border: transparent solid 1px;
+}
+
+.row-container:hover{
+    border: white solid 1px;
+}
+
+.expander-toggle{
+    background-color: transparent;
+    text-align: start;
+    border: none;
+    font-size: 15px;
+    color: white;
+    font-weight: normal;
+    width: 140PX;
+    margin: 0px 10px 0px 0px;
+    padding: 0px;
+
+}
+
+.expander-content{
+    margin-left: 32px;
+}

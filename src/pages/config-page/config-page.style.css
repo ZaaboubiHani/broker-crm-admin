@@ -1,0 +1,19 @@
+.config-container {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    height: max-content;
+    background-color: #eee;
+}
+
+.header{
+    height: 160px;
+}
+
+.table-container{
+    height: 100%;
+}
+
+.table-container table{
+    margin-top: 0;
+}

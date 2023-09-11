@@ -1,0 +1,40 @@
+
+.plan-container{
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    align-items: stretch;
+    background-color: #eee;
+}
+
+.table-panel{
+    width: 100%;
+    display: flex;
+    height: calc(100% - 230px);
+}
+
+#plantable{
+    width: 60%;
+  
+}
+
+.plan-container
+.user-panel{
+    width: 40%;
+    background-color: white;
+    border-radius: 8px;
+    flex-grow: 1;
+    margin: 8px 0px;
+}
+
+.plan-container
+.stats-panel{
+    display: flex;
+    justify-content:space-evenly;
+}
+
+.plan-container
+.stats-panel
+.labels{
+    color: black;
+}

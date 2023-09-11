@@ -1,0 +1,42 @@
+.delegate-container{
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    align-items: stretch;
+    background-color: #eee;
+}
+
+
+.table-panel{
+    width: 100%;
+    display: flex;
+}
+
+#delegatetable{
+    width: 60%;
+}
+
+.delegate-container
+.user-panel{
+    width: 40%;
+    background-color: white;
+    border-radius: 8px;
+}
+
+.delegate-container
+.stats-panel{
+    height: 35px;
+    display: flex;
+    justify-content: space-between;
+    background-color: white;
+    margin: 8px;
+    padding: 4px;
+    border-radius: 8px;
+}
+
+.delegate-container
+.stats-panel .labels{
+    font-size: 15px;
+    color:  black;
+    margin: 4px 16px 0px 16px;
+}

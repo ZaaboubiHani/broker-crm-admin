@@ -6,10 +6,10 @@
     flex-grow: 1;
 }
 
-table {
-    background-color: white;
+.profile-table {
+    background-color: black;
     border-radius: 8px;
-    margin: 16px;
+    margin: 8px;
     border-spacing: 0;
     height: 100%;
 }

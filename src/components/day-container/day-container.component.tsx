@@ -24,15 +24,17 @@ class DayContainer extends Component<DayContainerProps> {
           height: 40,
           padding: 8,
           margin: '8px 4px 0',
-          borderRadius: 8,
+          borderRadius: 4,
+          border: '#ccc solid 1px',
           backgroundColor: this.props.isSelected ? kTernary : 'rgba(255, 255, 255, 1)',
           display: 'flex',
           justifyContent: 'center',
           alignItems: 'center',
           color: this.props.isSelected ? 'white' : kSecondary,
           fontWeight: this.props.isSelected ? 'bold' : 'normal',
-          fontSize: 20,
+          fontSize: 17,
           cursor: 'pointer',
+          transition:'all 250ms ease'
         }}
       >
         {this.props.num}
@@ -40,9 +42,10 @@ class DayContainer extends Component<DayContainerProps> {
       <div
         style={{
           textAlign: 'center',
-          fontSize: 15,
+          fontSize: 13,
           fontWeight: this.props.isSelected ? 'bold' : 'normal',
-          color:  'white' ,
+          color:  'black',
+          transition:'all 250ms ease'
         }}
       >
         {this.props.day.endsWith('.')

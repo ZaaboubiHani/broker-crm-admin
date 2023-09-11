@@ -3,18 +3,18 @@
     display: block;
     float: left;
     text-align: left;
-    color: white;
+    color: black;
 }
 
 .user-details h1{
     font-size: 35px;
     display: block;
-    line-height: 10px;
+    line-height: 30px;
 }
 
 .user-details h2{
     font-size: 25px;
     display: block;
-    line-height: 10px;
+    line-height: 20px;
     margin-left: 16px;
 }
