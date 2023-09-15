@@ -72,7 +72,7 @@ class ReportPage extends Component<{}, ReportPageProps> {
     handleSelectDelegate = async (delegate: UserModel) => {
         this.setState({ loadingVisitsData: true, reportData: undefined });
         var visits = await this.visitService.getAllVisitsOfDelegate(this.state.selectedDate, delegate.id!);
-       
+
         this.setState({ selectedDelegate: delegate, visits: visits, loadingVisitsData: false, });
     }
 
@@ -88,6 +88,8 @@ class ReportPage extends Component<{}, ReportPageProps> {
             var delegates = await this.userService.getDelegateUsers();
             if (delegates.length > 0) {
                 this.setState({ selectedDelegate: delegates[0] });
+                var visits = await this.visitService.getAllVisitsOfDelegate(new Date(), delegates[0].id!);
+                this.setState({ visits: visits });
             }
             this.setState({ isLoading: false, delegates: delegates, filtredDelegates: delegates, hasData: true });
         }
@@ -131,10 +133,10 @@ class ReportPage extends Component<{}, ReportPageProps> {
                         <button onClick={this.handleDelegateFilter} className="btn btn-primary" style={{ backgroundColor: '#fff', border: '#ddd solid 1px', height: '38px' }}>
                             <FontAwesomeIcon icon={faSearch} style={{ color: 'black' }} />
                         </button>
+                        <MonthYearPicker onPick={this.handleOnPickDate}></MonthYearPicker >
                     </div>
                     <div style={{ display: 'flex' }}>
                         <UserPicker delegates={this.state.filtredDelegates} onSelect={this.handleSelectDelegate}></UserPicker>
-                        <MonthYearPicker onPick={this.handleOnPickDate}></MonthYearPicker >
                     </div>
                     <div className='table-panel' key={0}>
                         <ReportTable isLoading={this.state.loadingVisitsData} id='reporttable' displayReport={this.handleDisplayReport} data={this.state.visits}></ReportTable>

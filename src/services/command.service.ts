@@ -42,9 +42,9 @@ export default class CommandService {
         return [];
     }
 
-    async honorCommand(command: CommandModel): Promise<boolean> {
+    async honorCommand(commandId: number,supplierId:number): Promise<boolean> {
         const token = localStorage.getItem('token');
-        var response = await axios.put(`${Globals.apiUrl}/honorDishonor?command=1&honor=true&supplier=1`,
+        var response = await axios.put(`${Globals.apiUrl}/honorDishonor?command=${commandId}&honor=true&supplier=${supplierId}`,
             {},
             {
                 headers: {
@@ -58,9 +58,9 @@ export default class CommandService {
         }
         return false;
     }
-    async dishonorCommand(command: CommandModel): Promise<boolean> {
+    async dishonorCommand(commandId: number): Promise<boolean> {
         const token = localStorage.getItem('token');
-        var response = await axios.put(`${Globals.apiUrl}/honorDishonor?command=${command.id}&honor=false`,
+        var response = await axios.put(`${Globals.apiUrl}/honorDishonor?command=${commandId}&honor=false`,
             {},
             {
                 headers: {

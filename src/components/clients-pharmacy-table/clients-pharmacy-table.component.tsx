@@ -26,8 +26,8 @@ const ClientsPharmacyTable: React.FC<ClientsPharmacyTableProps> = ({ data, id, i
                 <TableHead sx={{ height: '45px', marginBottom: '16px' }}>
                     <TableRow>
                         <TableCell sx={{wdith:'150px'}}>Date</TableCell>
-                        <TableCell align="left">Delegue</TableCell>
                         <TableCell align="left">Client</TableCell>
+                        <TableCell align="left">Délégué</TableCell>
                         <TableCell align="left">Wilaya</TableCell>
                         <TableCell align="center">Commune</TableCell>
                         <TableCell align="center">Rapport</TableCell>
@@ -57,8 +57,8 @@ const ClientsPharmacyTable: React.FC<ClientsPharmacyTableProps> = ({ data, id, i
                                     sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                                 >
                                     <TableCell sx={{wdith:'150px',whiteSpace:'nowrap'}}>{formatDateToYYYYMMDD(row.createdDate || new Date())}</TableCell>
-                                    <TableCell align="left">{row.user?.username}</TableCell>
                                     <TableCell align="left">{row.client?.name}</TableCell>
+                                    <TableCell align="left">{row.user?.username}</TableCell>
                                     <TableCell align="left">{row.client?.wilaya}</TableCell>
                                     <TableCell align="left">{row.client?.commune}</TableCell>
                                     <TableCell align="center">

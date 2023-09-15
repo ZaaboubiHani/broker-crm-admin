@@ -26,15 +26,16 @@ class DayContainer extends Component<DayContainerProps> {
           margin: '8px 4px 0',
           borderRadius: 4,
           border: '#ccc solid 1px',
-          backgroundColor: this.props.isSelected ? kTernary : 'rgba(255, 255, 255, 1)',
+          backgroundColor: this.props.isSelected ? 'teal' : 'rgba(255, 255, 255, 1)',
           display: 'flex',
           justifyContent: 'center',
           alignItems: 'center',
-          color: this.props.isSelected ? 'white' : kSecondary,
+          color: this.props.isSelected ? 'white' : 'teal',
           fontWeight: this.props.isSelected ? 'bold' : 'normal',
           fontSize: 17,
           cursor: 'pointer',
-          transition:'all 250ms ease'
+          transition:'all 250ms ease',
+          
         }}
       >
         {this.props.num}

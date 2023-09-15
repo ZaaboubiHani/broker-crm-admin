@@ -90,7 +90,8 @@ class HomePage extends Component<HomePageProps, HomePageState> {
             if (user != undefined) {
                 this.setState({ user: user });
             }
-            this.setState({ isLoading: false, hasData: true });
+            var visits = await this.visitService.getAllVisits(new Date());
+            this.setState({ isLoading: false, hasData: true, visits: visits, filteredVisits: visits });
         }
 
     };
@@ -141,14 +142,14 @@ class HomePage extends Component<HomePageProps, HomePageState> {
             return (
                 <div style={{ backgroundColor: '#eee', display: 'flex', flexDirection: 'column', width: '100%', height: '100%', overflow: 'auto' }}>
                     <DatePickerBar onPick={this.handleOnPickDate}></DatePickerBar>
-                    <div className='search-bar'>
+                    <div className='search-bar' style={{marginBottom:'8px'}}>
                         <TextField
                             label='Recherche par nom de délégué'
                             size="small"
-                            sx={{ width: '300px' }}
                             onChange={this.handleSearchTextChange}
+                            sx={{ width: '300px', marginRight: '8px', backgroundColor: 'white', borderRadius: '4px', height: '40px', }}
                         />
-                        <Button onClick={this.handleVisitsFilter} variant='outlined' sx={{ height: '40px' }}>
+                        <Button onClick={this.handleVisitsFilter} variant='outlined' sx={{ border: 'solid grey 1px', backgroundColor: 'white', borderRadius: '4px', height: '40px', }}>
                             <FontAwesomeIcon icon={faSearch} style={{ color: 'black' }} />
                         </Button>
                     </div>

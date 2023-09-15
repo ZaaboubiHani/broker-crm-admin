@@ -97,7 +97,7 @@ class ProfilePage extends Component<ProfilePageProps, ProfilePageState> {
         else {
             return (
                 <div className='profile' style={{ overflow: 'hidden' }}>
-                    <div className='header'>
+                    <div style={{height:'125px'}}>
                         <CircleAvatar name='KW'></CircleAvatar>
                         <UserDetails
                             name={this.state.currentUser.username ?? ''}

@@ -1,6 +1,7 @@
 export default class WilayaModel {
     id?: number;
     name?: string;
+    communes?: string[];
 
     constructor(params?: {
         id?: number,

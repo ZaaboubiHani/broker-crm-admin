@@ -20,12 +20,12 @@
 
 .command-cam-container
 #command-cam-table{
-    width: 40%;
+    width: 50%;
 }
 
 .command-cam-container
 .user-panel{
-    width: 60%;
+    width: 50%;
     background-color: white;
     border-radius: 8px;
     margin: 8px 0px;

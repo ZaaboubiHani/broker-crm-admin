@@ -31,6 +31,7 @@ interface StatisticsPageProps {
     selectedDelegate?: UserModel;
     loadingStatisticsData: boolean;
     visitTaskAreaChart: ApexOptions,
+    delegateSuccessRateAreaChart: ApexOptions,
     visitGoalAreaChart: ApexOptions,
     salesAreaChart: ApexOptions,
     chartPieOptions: ApexOptions,
@@ -74,6 +75,29 @@ class StatisticsPage extends Component<{}, StatisticsPageProps> {
                     },
                 }
             },
+            delegateSuccessRateAreaChart: {
+                chart: {
+                    type: 'area',
+                },
+                title: {
+                    text: 'Graphe des taux de réussite annuel',
+                    align: 'left',
+                    margin: 10,
+                    offsetX: 0,
+                    offsetY: 0,
+                    floating: false,
+                    style: {
+                        fontSize: '20px',
+                        fontWeight: 'bold',
+                        color: '#263238'
+                    },
+                },
+                colors: ['#CC38E0', '#2AEB80'],
+                series: [],
+                xaxis: {
+                    categories: ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'],
+                }
+            },
             salesAreaChart: {
                 chart: {
                     type: 'area',
@@ -91,7 +115,7 @@ class StatisticsPage extends Component<{}, StatisticsPageProps> {
                         color: '#263238'
                     },
                 },
-                colors: ['#FFE587', '#6571EB'],
+                colors: ['#CC38E0', '#6571EB'],
                 series: [],
                 xaxis: {
                     categories: ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'],
@@ -160,7 +184,7 @@ class StatisticsPage extends Component<{}, StatisticsPageProps> {
                         color: '#263238'
                     },
                 },
-                colors: ['#38EB5D', '#2FBCEB'],
+                colors: ['#CC38E0'],
                 series: [],
                 xaxis: {
                     categories: ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'],
@@ -183,7 +207,7 @@ class StatisticsPage extends Component<{}, StatisticsPageProps> {
                         color: '#263238'
                     },
                 },
-                colors: ['#38EB5D', '#2FBCEB'],
+                colors: ['#8CE038'],
                 series: [],
                 xaxis: {
                     categories: ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'],
@@ -219,11 +243,39 @@ class StatisticsPage extends Component<{}, StatisticsPageProps> {
         var visitStats = await this.statisticsService.getDelegateYearVisitStats(this.state.selectedDate, delegate!.id!);
         var salesStats = await this.statisticsService.getDelegateYearSaleStats(this.state.selectedDate, delegate!.id!);
         var contributionStats = await this.statisticsService.getDelegateContributionStats(this.state.selectedDate, delegate!.id!);
+        var teamVisitsData = await this.statisticsService.getTeamYearVisitStats(this.state.selectedDate);
+        var teamSalesData = await this.statisticsService.getTeamYearSaleStats(this.state.selectedDate);
+        var successRate = await this.statisticsService.getDelegateSuccessRateYear(delegate!.id!, this.state.selectedDate);
 
         this.state.chartPieOptions.series = [contributionStats.delegateSales, contributionStats.teamSales - contributionStats.delegateSales];
         this.state.chartPieOptions.labels?.splice(0, this.state.chartPieOptions.labels?.length);
         this.state.chartPieOptions.labels?.push(delegate.username!);
         this.state.chartPieOptions.labels?.push('reste d\'equipe');
+
+        this.state.delegateSuccessRateAreaChart.series = [
+            {
+                name: 'Total de bon de commandes honores',
+                data: successRate.map(e => e.honoredCommands),
+            },
+            {
+                name: 'Total visites',
+                data: successRate.map(e => e.totalVisits),
+            },
+        ];
+
+        this.state.teamSalesAreaChart.series = [
+            {
+                name: 'Total des ventes',
+                data: teamSalesData.map(e => e.totalSales),
+            },
+        ];
+
+        this.state.teamVisitsAreaChart.series = [
+            {
+                name: 'Total visites',
+                data: teamVisitsData.map(e => e.numberOfVisits),
+            },
+        ];
 
         this.state.salesAreaChart.series = [
             {
@@ -269,12 +321,40 @@ class StatisticsPage extends Component<{}, StatisticsPageProps> {
             var visitStats = await this.statisticsService.getDelegateYearVisitStats(date, this.state.selectedDelegate!.id!);
             var salesStats = await this.statisticsService.getDelegateYearSaleStats(date, this.state.selectedDelegate!.id!);
             var contributionStats = await this.statisticsService.getDelegateContributionStats(date, this.state.selectedDelegate!.id!);
+            var teamVisitsData = await this.statisticsService.getTeamYearVisitStats(date);
+            var teamSalesData = await this.statisticsService.getTeamYearSaleStats(date);
+            var successRate = await this.statisticsService.getDelegateSuccessRateYear(this.state.selectedDelegate!.id!, date);
 
             this.state.chartPieOptions.series = [contributionStats.delegateSales, contributionStats.teamSales - contributionStats.delegateSales];
             this.state.chartPieOptions.labels?.splice(0, this.state.chartPieOptions.labels?.length);
             this.state.chartPieOptions.labels?.push(this.state.selectedDelegate!.username!);
             this.state.chartPieOptions.labels?.push('reste d\'equipe');
-    
+
+            this.state.delegateSuccessRateAreaChart.series = [
+                {
+                    name: 'Total de bon de commandes honores',
+                    data: successRate.map(e => e.honoredCommands),
+                },
+                {
+                    name: 'Total visites',
+                    data: successRate.map(e => e.totalVisits),
+                },
+            ];
+
+            this.state.teamSalesAreaChart.series = [
+                {
+                    name: 'Total des ventes',
+                    data: teamSalesData.map(e => e.totalSales),
+                },
+            ];
+
+            this.state.teamVisitsAreaChart.series = [
+                {
+                    name: 'Total visites',
+                    data: teamVisitsData.map(e => e.numberOfVisits),
+                },
+            ];
+
 
             this.state.salesAreaChart.series = [
                 {
@@ -321,6 +401,78 @@ class StatisticsPage extends Component<{}, StatisticsPageProps> {
             var delegates = await this.userService.getDelegateUsers();
             if (delegates.length > 0) {
                 this.setState({ selectedDelegate: delegates[0] });
+                var visitStats = await this.statisticsService.getDelegateYearVisitStats(new Date(), delegates[0].id!);
+                var salesStats = await this.statisticsService.getDelegateYearSaleStats(new Date(), delegates[0].id!);
+                var contributionStats = await this.statisticsService.getDelegateContributionStats(new Date(), delegates[0].id!);
+                var teamVisitsData = await this.statisticsService.getTeamYearVisitStats(new Date());
+                var successRate = await this.statisticsService.getDelegateSuccessRateYear(delegates[0].id!, new Date());
+                var teamSalesData = await this.statisticsService.getTeamYearSaleStats(new Date());
+
+                this.state.chartPieOptions.series = [contributionStats.delegateSales, contributionStats.teamSales - contributionStats.delegateSales];
+                this.state.chartPieOptions.labels?.splice(0, this.state.chartPieOptions.labels?.length);
+                this.state.chartPieOptions.labels?.push(delegates[0].username!);
+                this.state.chartPieOptions.labels?.push('reste d\'equipe');
+
+                this.state.delegateSuccessRateAreaChart.series = [
+                    {
+                        name: 'Total de bon de commandes honores',
+                        data: successRate.map(e => e.honoredCommands),
+                    },
+                    {
+                        name: 'Total visites',
+                        data: successRate.map(e => e.totalVisits),
+                    },
+                ];
+
+                this.state.teamSalesAreaChart.series = [
+                    {
+                        name: 'Total des ventes',
+                        data: teamSalesData.map(e => e.totalSales),
+                    },
+                ];
+
+                this.state.teamVisitsAreaChart.series = [
+                    {
+                        name: 'Total visites',
+                        data: teamVisitsData.map(e => e.numberOfVisits),
+                    },
+                ];
+
+
+                this.state.salesAreaChart.series = [
+                    {
+                        name: 'Total chiffre d\'affaire',
+                        data: salesStats.map(e => e.totalSales),
+                    },
+                    {
+                        name: 'Objectifs chiffre d\'affaire',
+                        data: salesStats.map(e => e.salesGoal),
+                    },
+                ];
+
+                this.state.visitGoalAreaChart.series = [
+                    {
+                        name: 'Visites réalisées',
+                        data: visitStats.map(e => e.numberOfVisits),
+                    },
+                    {
+                        name: 'Objectifs de visites',
+                        data: visitStats.map(e => e.visitsGoal),
+                    },
+                ];
+
+                this.state.visitTaskAreaChart.series = [
+                    {
+                        name: 'Visites réalisées',
+                        data: visitStats.map(e => e.numberOfVisits),
+                    },
+                    {
+                        name: 'visites programmées',
+                        data: visitStats.map(e => e.numberOfTasks),
+                    },
+                ];
+                this.setState({ loadingStatisticsData: false, visitGoalAreaChart: this.state.visitGoalAreaChart, visitTaskAreaChart: this.state.visitTaskAreaChart, salesAreaChart: this.state.salesAreaChart, chartPieOptions: this.state.chartPieOptions });
+
             }
             this.setState({ isLoading: false, delegates: delegates, filtredDelegates: delegates, hasData: true });
         }
@@ -354,9 +506,9 @@ class StatisticsPage extends Component<{}, StatisticsPageProps> {
                 <div className='statistics-container'>
 
                     <div style={{
-                        width: '100%', display: 'flex', flexGrow: '1',minHeight:'100vh'
+                        width: '100%', display: 'flex', flexGrow: '1', minHeight: '100vh'
                     }} >
-                        <Box sx={{ width: '100%',height:'100%' }}>
+                        <Box sx={{ width: '100%', height: '100%' }}>
                             <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
                                 <Tabs value={this.state.index} onChange={this.handleTabChange} aria-label="basic tabs example">
                                     <Tab label="Délégué" />
@@ -373,97 +525,135 @@ class StatisticsPage extends Component<{}, StatisticsPageProps> {
                                     <button onClick={this.handleDelegateFilter} className="btn btn-primary" style={{ backgroundColor: '#fff', border: '#ddd solid 1px', height: '38px' }}>
                                         <FontAwesomeIcon icon={faSearch} style={{ color: 'black' }} />
                                     </button>
+                                    <YearPicker initialDate={this.state.selectedDate} onPick={this.handleOnPickDate}></YearPicker >
                                 </div>
                                 <div style={{ display: 'flex' }}>
                                     <UserPicker delegates={this.state.filtredDelegates} onSelect={this.handleSelectDelegate}></UserPicker>
-                                    <YearPicker onPick={this.handleOnPickDate}></YearPicker >
                                 </div>
-                                <div style={{ display: 'flex' }}>
-                                    <ReactApexChart
-                                        options={this.state.salesAreaChart}
-                                        series={this.state.salesAreaChart.series}
-                                        type="area"
-                                        height={350}
-                                        style={{
-                                            width: '50%',
-                                            border: 'solid black 1px',
-                                            borderRadius: '16px 0px 0px 0px',
-                                            padding: '16px'
-                                        }}
-                                    />
-                                    <ReactApexChart
-                                        options={this.state.chartPieOptions}
-                                        series={this.state.chartPieOptions.series}
-                                        type="pie"
-                                        height={350}
-                                        style={{
-                                            width: '50%',
-                                            border: 'solid black 1px',
-                                            borderRadius: '0px 16px 0px 0px',
-                                            padding: '16px'
-                                        }}
-                                    />
-                                </div>
-                                <div style={{ display: 'flex' }}>
-                                    <ReactApexChart
-                                        options={this.state.visitGoalAreaChart}
-                                        series={this.state.visitGoalAreaChart.series}
-                                        type="area"
-                                        height={350}
-                                        style={{
-                                            width: '50%',
-                                            border: 'solid black 1px',
-                                            borderRadius: '0px 0px 0px 16px',
-                                            padding: '16px',
-                                        }}
+                                {
+                                    this.state.loadingStatisticsData ? (
+                                        <div style={{ display: 'flex', flexGrow: '1', justifyContent: 'center', alignItems: 'center', height: '700px' }}>
+                                            <DotSpinner
+                                                size={40}
+                                                speed={0.9}
+                                                color="black"
+                                            />
+                                        </div>
+                                    ) : (
+                                        <div>
+                                            <div style={{ display: 'flex' }}>
+                                                <ReactApexChart
+                                                    options={this.state.salesAreaChart}
+                                                    series={this.state.salesAreaChart.series}
+                                                    type="area"
+                                                    height={350}
+                                                    style={{
+                                                        width: '50%',
+                                                        border: 'solid black 1px',
+                                                        borderRadius: '16px 0px 0px 0px',
+                                                        padding: '16px'
+                                                    }}
+                                                />
+                                                <ReactApexChart
+                                                    options={this.state.chartPieOptions}
+                                                    series={this.state.chartPieOptions.series}
+                                                    type="pie"
+                                                    height={350}
+                                                    style={{
+                                                        width: '50%',
+                                                        border: 'solid black 1px',
+                                                        borderRadius: '0px 16px 0px 0px',
+                                                        padding: '16px'
+                                                    }}
+                                                />
+                                            </div>
+                                            <div style={{ display: 'flex' }}>
+                                                <ReactApexChart
+                                                    options={this.state.visitGoalAreaChart}
+                                                    series={this.state.visitGoalAreaChart.series}
+                                                    type="area"
+                                                    height={350}
+                                                    style={{
+                                                        width: '50%',
+                                                        border: 'solid black 1px',
+                                                        padding: '16px',
+                                                    }}
+                                                />
+                                                <ReactApexChart
+                                                    options={this.state.visitTaskAreaChart}
+                                                    series={this.state.visitTaskAreaChart.series}
+                                                    type="area"
+                                                    height={350}
+                                                    style={{
+                                                        width: '50%',
+                                                        border: 'solid black 1px',
+                                                        borderRadius: '0px 0px 16px 0px',
+                                                        padding: '16px',
+                                                    }}
+                                                />
+                                            </div>
+                                            <div style={{ display: 'flex' }}>
+                                                <ReactApexChart
+                                                    options={this.state.delegateSuccessRateAreaChart}
+                                                    series={this.state.delegateSuccessRateAreaChart.series}
+                                                    type="area"
+                                                    height={350}
+                                                    style={{
+                                                        width: '50%',
+                                                        border: 'solid black 1px',
+                                                        borderRadius: '0px 0px 16px 16px',
+                                                        padding: '16px',
+                                                    }}
+                                                />
 
-                                    />
-                                    <ReactApexChart
-                                        options={this.state.visitTaskAreaChart}
-                                        series={this.state.visitTaskAreaChart.series}
-                                        type="area"
-                                        height={350}
-                                        style={{
-                                            width: '50%',
-                                            border: 'solid black 1px',
-                                            borderRadius: '0px 0px 16px 0px',
-                                            padding: '16px',
-                                        }}
 
-                                    />
-                                </div>
+                                            </div>
+                                        </div>
+                                    )
+
+                                }
+
                             </CustomTabPanel>
                             <CustomTabPanel value={this.state.index} index={1}>
                                 <div style={{ display: 'flex' }}>
-                                    <YearPicker onPick={this.handleOnPickDate}></YearPicker >
+                                    <YearPicker initialDate={this.state.selectedDate} onPick={this.handleOnPickDate}></YearPicker >
                                 </div>
-                                <div style={{ display: 'flex',flexGrow:'1' }}>
-                                    <ReactApexChart
-                                        options={this.state.salesAreaChart}
-                                        series={this.state.salesAreaChart.series}
-                                        type="area"
-                                        height={350}
-                                        style={{
-                                            width: '50%',
-                                            border: 'solid black 1px',
-                                            borderRadius: '16px 0px 0px 16px',
-                                            padding: '16px'
-                                        }}
-                                    />
-                                    <ReactApexChart
-                                        options={this.state.salesAreaChart}
-                                        series={this.state.salesAreaChart.series}
-                                        type="area"
-                                        height={350}
-                                        style={{
-                                            width: '50%',
-                                            border: 'solid black 1px',
-                                            borderRadius: '16px 0px 0px 16px',
-                                            padding: '16px'
-                                        }}
-                                    />
-                                   
-                                </div>
+                                {
+                                    this.state.loadingStatisticsData ? (
+                                        <div style={{ display: 'flex', flexGrow: '1', justifyContent: 'center', alignItems: 'center', height: '350px' }}>
+                                            <DotSpinner
+                                                size={40}
+                                                speed={0.9}
+                                                color="black"
+                                            />
+                                        </div>
+                                    ) : (<div style={{ display: 'flex', flexGrow: '1' }}>
+                                        <ReactApexChart
+                                            options={this.state.teamSalesAreaChart}
+                                            series={this.state.teamSalesAreaChart.series}
+                                            type="area"
+                                            height={350}
+                                            style={{
+                                                width: '50%',
+                                                border: 'solid black 1px',
+                                                borderRadius: '16px 0px 0px 16px',
+                                                padding: '16px'
+                                            }}
+                                        />
+                                        <ReactApexChart
+                                            options={this.state.teamVisitsAreaChart}
+                                            series={this.state.teamVisitsAreaChart.series}
+                                            type="area"
+                                            height={350}
+                                            style={{
+                                                width: '50%',
+                                                border: 'solid black 1px',
+                                                borderRadius: '0px 16px 16px 0px',
+                                                padding: '16px'
+                                            }}
+                                        />
+                                    </div>)
+                                }
                             </CustomTabPanel>
                         </Box>
                     </div>

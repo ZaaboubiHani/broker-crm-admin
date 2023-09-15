@@ -7,6 +7,7 @@ import LocationOnIcon from '@mui/icons-material/LocationOn';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import HourglassBottomIcon from '@mui/icons-material/HourglassBottom';
 import TaskModel from '../../models/task.model';
+import StarIcon from '@mui/icons-material/Star';
 import { DotSpinner } from '@uiball/loaders';
 interface PlanPanelProps {
     id?: string;
@@ -42,11 +43,12 @@ const PlanPanel: React.FC<PlanPanelProps> = ({ id, data, isLoading }) => {
                 flexWrap: 'wrap',
                 alignContent: 'start',
                 width: '100%',
-                overflowY: 'auto'
+                overflowY: 'auto',
+               
             }}>
                 {
                     data.map((e) => (
-                        <Card sx={{ width: '200px', margin: '16px', padding: '4px', display: 'flex', height: '120px',justifyContent:'space-between' }}>
+                        <Card sx={{ width: '200px', margin: '16px', padding: '4px', display: 'flex', height: '120px', justifyContent: 'space-between' }}>
                             <div>
                                 <CardContent sx={{ margin: 0, padding: '0px 0px 4px 8px' }}>
                                     <Typography gutterBottom sx={{ margin: 0, fontSize: '15px' }} component="div">
@@ -56,17 +58,20 @@ const PlanPanel: React.FC<PlanPanelProps> = ({ id, data, isLoading }) => {
                                         spécialité: {e.client?.speciality}
                                     </Typography>
                                 </CardContent>
-                                <Typography sx={{ margin: "0px", fontSize: '12px' }} variant="body2" color="text.secondary">
+                                <Typography sx={{ margin: "0px", fontSize: '12px', whiteSpace: 'nowrap' }} variant="body2" color="text.secondary">
                                     <LocationOnIcon sx={{ width: '20px' }} /> wilaya : {e.client?.wilaya}
                                 </Typography>
-                                <Typography sx={{ margin: "0px ", fontSize: '12px' }} variant="body2" color="text.secondary">
+                                <Typography sx={{ margin: "0px ", fontSize: '12px', whiteSpace: 'nowrap' }} variant="body2" color="text.secondary">
                                     <LocationOnIcon sx={{ width: '20px' }} /> commune : {e.client?.commune}
+                                </Typography>
+                                <Typography sx={{ margin: "0px ", fontSize: '12px' }} variant="body2" color="text.secondary">
+                                    <StarIcon sx={{ width: '20px' }} /> potentiel : {e.client?.potential === 0 ? 'C' : e.client?.potential === 1 ? 'B' : 'A'}
                                 </Typography>
                             </div>
                             {
-                                e.isDone ? (  <CheckCircleIcon style={{ display: 'block', position: 'relative', color: 'lime', right: 0, top: 0 }} />) : (  <HourglassBottomIcon style={{ display: 'block', position: 'relative', color: 'orange', right: 0, top: 0 }} />)
+                                e.isDone ? (<CheckCircleIcon style={{ display: 'block', position: 'relative', color: 'lime', right: 0, top: 0 }} />) : (<HourglassBottomIcon style={{ display: 'block', position: 'relative', color: 'orange', right: 0, top: 0 }} />)
                             }
-                          
+
                         </Card>
                     ))
                 }

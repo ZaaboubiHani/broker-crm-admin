@@ -56,10 +56,6 @@ class CommandDelegatePage extends Component<{}, CommandDelegatePageProps> {
     userService = new UserService();
     commandService = new CommandService();
 
-
-
-
-
     handleCloseDialog = (event?: React.SyntheticEvent | Event, reason?: string) => {
         if (reason === 'clickaway') {
             return;
@@ -101,6 +97,8 @@ class CommandDelegatePage extends Component<{}, CommandDelegatePageProps> {
             var delegates = await this.userService.getDelegateUsers();
             if (delegates.length > 0) {
                 this.setState({ selectedDelegate: delegates[0] });
+                var commands = await this.commandService.getAllCommandsOfDelegate(new Date(), delegates[0].id!);
+                this.setState({ commands: commands });
             }
             this.setState({ isLoading: false, delegates: delegates, filtredDelegates: delegates, hasData: true });
         }
@@ -112,17 +110,16 @@ class CommandDelegatePage extends Component<{}, CommandDelegatePageProps> {
 
     handleHonorCommand = async (command: CommandModel) => {
         if (command.isHonored && command.finalSupplier !== undefined) {
-            await this.commandService.honorCommand(command);
-            this.setState({ showDialog: true,dialogMessage:'Bon de commande honoré' });
+            await this.commandService.honorCommand(command!.id!, command!.finalSupplier!.id!);
+            this.setState({ showDialog: true, dialogMessage: 'Bon de commande honoré' });
         }
         else if (command.isHonored && command.finalSupplier === undefined) {
-             this.setState({ showDialog: true,dialogMessage:'Vous ne pouvez pas honorer sans un fournisseur' });
+            this.setState({ showDialog: true, dialogMessage: 'Vous ne pouvez pas honorer sans un fournisseur' });
         }
         else if (!command.isHonored) {
-            await this.commandService.dishonorCommand(command);
-             this.setState({ showDialog: true,dialogMessage:'Bon de commande dishonoré' });
+            await this.commandService.dishonorCommand(command!.id!);
+            this.setState({ showDialog: true, dialogMessage: 'Bon de commande dishonoré' });
         }
-        
     }
 
     render() {
@@ -157,10 +154,10 @@ class CommandDelegatePage extends Component<{}, CommandDelegatePageProps> {
                         <button onClick={this.handleDelegateFilter} className="btn btn-primary" style={{ backgroundColor: '#fff', border: '#ddd solid 1px', height: '38px' }}>
                             <FontAwesomeIcon icon={faSearch} style={{ color: 'black' }} />
                         </button>
-                    </div>
-                    <div style={{ display: 'flex' }}>
-                        <UserPicker delegates={this.state.filtredDelegates} onSelect={this.handleSelectDelegate}></UserPicker>
                         <MonthYearPicker onPick={this.handleOnPickDate}></MonthYearPicker >
+                    </div>
+                    <div style={{ display: 'flex', height: '48px' }}>
+                        <UserPicker delegates={this.state.filtredDelegates} onSelect={this.handleSelectDelegate}></UserPicker>
                     </div>
                     <div className='table-panel' key={0}>
                         <CommandDelegateTable id='command-delegate-table'
@@ -196,8 +193,7 @@ class CommandDelegatePage extends Component<{}, CommandDelegatePageProps> {
                             }
                         </div>
                     </div>
-                    <Snackbar  anchorOrigin={{ vertical: 'bottom',horizontal: 'center' }} open={this.state.showDialog} autoHideDuration={3000} onClose={this.handleCloseDialog} message='Bon de commande honore'/>
-                      
+                    <Snackbar anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }} open={this.state.showDialog} autoHideDuration={3000} onClose={this.handleCloseDialog} message={this.state.dialogMessage} />
                 </div>
             );
         }
@@ -205,3 +201,5 @@ class CommandDelegatePage extends Component<{}, CommandDelegatePageProps> {
 }
 
 export default CommandDelegatePage;
+
+

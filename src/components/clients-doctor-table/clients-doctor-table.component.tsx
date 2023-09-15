@@ -25,9 +25,9 @@ const ClientsDoctorTable: React.FC<ClientsDoctorTableProps> = ({ data, id, isLoa
                 <TableHead sx={{ height: '45px', marginBottom: '16px' }}>
                     <TableRow>
                         <TableCell sx={{wdith:'150px'}}>Date</TableCell>
-                        <TableCell align="center">Delegue</TableCell>
-                        <TableCell align="right">Client</TableCell>
-                        <TableCell align="right">Specialite</TableCell>
+                        <TableCell align="center">Client</TableCell>
+                        <TableCell align="right">Délégué</TableCell>
+                        <TableCell align="right">Spécialité</TableCell>
                         <TableCell align="right">Wilaya</TableCell>
                         <TableCell align="right">Commune</TableCell>
                         <TableCell align="center">Rapport</TableCell>
@@ -56,8 +56,8 @@ const ClientsDoctorTable: React.FC<ClientsDoctorTableProps> = ({ data, id, isLoa
                                     sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                                 >
                                     <TableCell sx={{wdith:'150px',whiteSpace:'nowrap'}}>{formatDateToYYYYMMDD(row.createdDate || new Date())}</TableCell>
-                                    <TableCell align="left">{row.user?.username}</TableCell>
                                     <TableCell align="left">{row.client?.name}</TableCell>
+                                    <TableCell align="left">{row.user?.username}</TableCell>
                                     <TableCell align="left">{row.client?.speciality}</TableCell>
                                     <TableCell align="left">{row.client?.wilaya}</TableCell>
                                     <TableCell align="left">{row.client?.commune}</TableCell>

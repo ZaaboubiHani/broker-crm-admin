@@ -33,7 +33,7 @@ const YearPicker: React.FC<YearPickerProps> = ({ onPick, initialDate }) => {
     <div style={{ height: 60,  display: 'flex', alignItems: 'stretch' }}>
       <UserPicker onSelect={() => { }} delegates={[]}></UserPicker>
      
-      <YearDropdown onChange={(year) => {
+      <YearDropdown initalYear={date.getFullYear()} onChange={(year) => {
         handleYearSelect(year);
       }}></YearDropdown>
 

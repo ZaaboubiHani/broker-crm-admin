@@ -27,7 +27,7 @@ interface ClientsDoctorPageProps {
     filteredVisits: VisitModel[];
     selectedVisit?: VisitModel;
     reportData?: ReportModel;
-   
+
 }
 
 const kPrincipal = '#35d9da';
@@ -55,19 +55,19 @@ class ClientsDoctorPage extends Component<{}, ClientsDoctorPageProps> {
     commandService = new CommandService();
 
     handleDisplayReport = async (visit: VisitModel) => {
-        this.setState({ loadingReportData: true, reportData: undefined,});
+        this.setState({ loadingReportData: true, reportData: undefined, });
         var report = await this.reportService.getReportOfVisit(visit.id!);
-        this.setState({ loadingReportData: false, reportData: report, selectedVisit: visit,  });
+        this.setState({ loadingReportData: false, reportData: report, selectedVisit: visit, });
 
     };
 
-   
+
 
     loadClientsDoctorPageData = async () => {
         this.setState({ isLoading: true });
         if (!this.state.isLoading) {
-
-            this.setState({ isLoading: false, hasData: true });
+            var visits = await this.visitService.getAllVisitsMonth(new Date());
+            this.setState({ isLoading: false, hasData: true,visits:visits });
         }
 
     };
@@ -80,13 +80,13 @@ class ClientsDoctorPage extends Component<{}, ClientsDoctorPageProps> {
     }
 
     handleVisitsFilter = () => {
-        this.setState({ reportData: undefined,});
+        this.setState({ reportData: undefined, });
         if (this.state.searchText.length === 0) {
             var filteredVisits = [...this.state.visits];
             this.setState({ filteredVisits: filteredVisits });
         }
         else {
-            var filteredVisits = this.state.visits.filter(visit => visit?.user?.username!.toLowerCase().includes(this.state.searchText.toLowerCase()));
+            var filteredVisits = this.state.visits.filter(visit => visit?.client?.name!.toLowerCase().includes(this.state.searchText.toLowerCase()));
             this.setState({ filteredVisits: filteredVisits });
         }
     }
@@ -117,19 +117,19 @@ class ClientsDoctorPage extends Component<{}, ClientsDoctorPageProps> {
         }
         else {
             return (
-                <div className='clients-doctor-container' style={{display:'flex',flexDirection:'column',height:'100%',alignItems:'stretch',backgroundColor:'#eee'}}>
-                    <div style={{ display: 'flex' }}>
-                        <Form style={{margin:'8px 0px 0px 8px'}}>
+                <div className='clients-doctor-container' style={{ display: 'flex', flexDirection: 'column', height: '100%', alignItems: 'stretch', backgroundColor: '#eee' }}>
+                    <div  style={{display:'flex',height:'40px',marginLeft:'8px',marginTop:'8px'}}>
+                        <Form>
                             <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
                                 <Form.Control type="search" placeholder="Recherche" onChange={this.handleSearchTextChange} />
                             </Form.Group>
                         </Form>
-                        <button onClick={this.handleVisitsFilter} className="btn btn-primary" style={{ backgroundColor: '#fff', border: '#ddd solid 1px', height: '38px',margin:'8px 0px 0px 8px' }}>
+                        <button onClick={this.handleVisitsFilter} className="btn btn-primary" style={{ backgroundColor: '#fff', border: '#ddd solid 1px', height: '38px', margin: '0px 0px 0px 8px' }}>
                             <FontAwesomeIcon icon={faSearch} style={{ color: 'black' }} />
                         </button>
                         <MonthYearPicker onPick={this.handleOnPickDate}></MonthYearPicker >
                     </div>
-                    <div style={{width:'100%',display:'flex',flexGrow:'1'}}>
+                    <div style={{ width: '100%', display: 'flex', flexGrow: '1' }}>
                         <ClientsDoctorTable id='clients-doctor-table' data={this.state.filteredVisits} isLoading={this.state.loadingVisitsData} displayReport={this.handleDisplayReport}></ClientsDoctorTable>
                         <div className='user-panel'>
                             {
@@ -152,10 +152,10 @@ class ClientsDoctorPage extends Component<{}, ClientsDoctorPageProps> {
                                     </div>
                                     )
                                     :
-                                   (
+                                    (
 
                                         <ReportPanel report={this.state.reportData} clientType={this.state.selectedVisit?.client?.type}></ReportPanel>
-                                    ) 
+                                    )
                             }
                         </div>
                     </div>

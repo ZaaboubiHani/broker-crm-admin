@@ -72,8 +72,8 @@ class ClientsPharmacyPage extends Component<{}, ClientsPharmacyPageProps> {
     loadClientsPharmacyPageData = async () => {
         this.setState({ isLoading: true });
         if (!this.state.isLoading) {
-
-            this.setState({ isLoading: false, hasData: true });
+            var visits = await this.visitService.getAllVisitsMonth(new Date());
+            this.setState({ isLoading: false, hasData: true, visits: visits });
         }
 
     };
@@ -92,7 +92,7 @@ class ClientsPharmacyPage extends Component<{}, ClientsPharmacyPageProps> {
             this.setState({ filteredVisits: filteredVisits });
         }
         else {
-            var filteredVisits = this.state.visits.filter(visit => visit?.user?.username!.toLowerCase().includes(this.state.searchText.toLowerCase()));
+            var filteredVisits = this.state.visits.filter(visit => visit?.client?.name!.toLowerCase().includes(this.state.searchText.toLowerCase()));
             this.setState({ filteredVisits: filteredVisits });
         }
     }
@@ -123,19 +123,19 @@ class ClientsPharmacyPage extends Component<{}, ClientsPharmacyPageProps> {
         }
         else {
             return (
-                <div className='clients-pharmacy-container' style={{display:'flex',flexDirection:'column',height:'100%',alignItems:'stretch',backgroundColor:'#eee'}}>
-                    <div style={{ display: 'flex' }}>
-                        <Form style={{margin:'8px 0px 0px 8px'}}>
+                <div className='clients-pharmacy-container' style={{ display: 'flex', flexDirection: 'column', height: '100%', alignItems: 'stretch', backgroundColor: '#eee' }}>
+                    <div style={{display:'flex',height:'40px',marginLeft:'8px',marginTop:'8px'}}>
+                        <Form>
                             <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
                                 <Form.Control type="search" placeholder="Recherche" onChange={this.handleSearchTextChange} />
                             </Form.Group>
                         </Form>
-                        <button onClick={this.handleVisitsFilter} className="btn btn-primary" style={{ backgroundColor: '#fff', border: '#ddd solid 1px', height: '38px',margin:'8px 0px 0px 8px' }}>
+                        <button onClick={this.handleVisitsFilter} className="btn btn-primary" style={{ backgroundColor: '#fff', border: '#ddd solid 1px', height: '38px', margin: '0px 0px 0px 8px' }}>
                             <FontAwesomeIcon icon={faSearch} style={{ color: 'black' }} />
                         </button>
                         <MonthYearPicker onPick={this.handleOnPickDate}></MonthYearPicker >
                     </div>
-                    <div style={{width:'100%',display:'flex',flexGrow:'1'}}>
+                    <div style={{ width: '100%', display: 'flex', flexGrow: '1' }}>
                         <ClientsPharmacyTable id='clients-pharmacy-table' data={this.state.filteredVisits} isLoading={this.state.loadingVisitsData} displayCommand={this.handleDisplayCommand} displayReport={this.handleDisplayReport}></ClientsPharmacyTable>
                         <div className='user-panel'>
                             {

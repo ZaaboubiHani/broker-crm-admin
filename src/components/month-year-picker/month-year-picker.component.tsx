@@ -36,12 +36,11 @@ const MonthYearPicker: React.FC<MonthYearPickerProps> = ({ onPick, initialDate }
 
   return (
 
-    <div style={{ height: 60,  display: 'flex', alignItems: 'stretch' }}>
-      <UserPicker onSelect={() => { }} delegates={[]}></UserPicker>
+    <div style={{ height: 40,  display: 'flex', alignItems: 'stretch'}}>
       <MonthDropdown onChange={(month) => {
         handleMonthSelect(month);
       }}></MonthDropdown>
-      <YearDropdown onChange={(year) => {
+      <YearDropdown initalYear={date.getFullYear()} onChange={(year) => {
         handleYearSelect(year);
       }}></YearDropdown>
 

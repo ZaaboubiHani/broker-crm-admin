@@ -4,9 +4,10 @@ import Form from 'react-bootstrap/Form';
 
 interface MonthDropdownProps {
   onChange: (selectedMonth: number) => void;
+  style?: React.CSSProperties;
 }
 
-const MonthDropdown: React.FC<MonthDropdownProps> = ({ onChange }) => {
+const MonthDropdown: React.FC<MonthDropdownProps> = ({ onChange, style }) => {
   const months: string[] = [
     'Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin',
     'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'
@@ -21,22 +22,20 @@ const MonthDropdown: React.FC<MonthDropdownProps> = ({ onChange }) => {
   };
 
   return (
-    <Form.Select
-      value={selectedMonth}
-      onChange={handleMonthChange}
-      aria-label="Default select example" size="sm"
-      style={{ height: '40px', width: '150px', margin: '8px 4px' }}>
-      {months.map((month, index) => (
-        <option key={index} value={index + 1}>{month}</option>
-      ))}
+    <div style={style}>
 
-    </Form.Select>
-    // <select value={selectedMonth} onChange={handleMonthChange} >
+      <Form.Select
+        value={selectedMonth}
+        onChange={handleMonthChange}
+        aria-label="Default select example" size="sm"
+        style={{ height: '40px', width: '150px', margin: '0px 4px' }}>
+        {months.map((month, index) => (
+          <option key={index} value={index + 1}>{month}</option>
+        ))}
 
-    //   {months.map((month, index) => (
-    //     <option key={index} value={index + 1}>{month}</option>
-    //   ))}
-    // </select>
+      </Form.Select>
+
+    </div>
   );
 };
 

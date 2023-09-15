@@ -24,8 +24,15 @@ const ReportPanel: React.FC<ReportPanelProps> = ({ report, clientType }) => {
                     report.products?.map((product) => (
                         <div style={{ display: 'flex', justifyContent: 'space-around', }}>
                             <h6 style={{ fontSize: 15, fontWeight: '400' }}>{product.name}</h6>
-                            <h6 style={{ fontSize: 15, fontWeight: '400' }}>{product.quantity}</h6>
-                            <h6 style={{ fontSize: 15, fontWeight: '400' }}>{product.rotations}/mois</h6>
+                            {
+                                clientType !== ClientType.doctor ? (
+                                    <div>
+                                        <h6 style={{ fontSize: 15, fontWeight: '400' }}>quantité:{product.quantity}</h6>
+                                        <h6 style={{ fontSize: 15, fontWeight: '400' }}>{product.rotations}/mois</h6>
+                                    </div>
+                                ) : null
+                            }
+
                         </div>
                     ))
                 }
@@ -39,7 +46,7 @@ const ReportPanel: React.FC<ReportPanelProps> = ({ report, clientType }) => {
                                     report.coproducts?.map((coproduct) => (
                                         <div style={{ display: 'flex', justifyContent: 'space-around' }}>
                                             <h6 style={{ fontSize: 15, fontWeight: '400' }}>{coproduct.name}</h6>
-                                            <h6 style={{ fontSize: 15, fontWeight: '400' }}>{coproduct.quantity}</h6>
+                                            <h6 style={{ fontSize: 15, fontWeight: '400' }}>quantité:{coproduct.quantity}</h6>
                                             <h6 style={{ fontSize: 15, fontWeight: '400' }}>{coproduct.rotations}/mois</h6>
                                         </div>
                                     ))

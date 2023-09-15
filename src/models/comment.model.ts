@@ -9,8 +9,8 @@ export default class CommentModel {
 
     static fromJson(json: any): CommentModel {
         return new CommentModel({
-            id: json.id,
-            comment: json.attributes.comment,
+            id: json?.id,
+            comment: json?.attributes?.comment,
         });
     }
 }

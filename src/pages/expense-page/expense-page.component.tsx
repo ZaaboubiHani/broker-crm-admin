@@ -94,6 +94,9 @@ class ExpensePage extends Component<{}, ExpensePageProps> {
             var delegates = await this.userService.getDelegateUsers();
             if (delegates.length > 0) {
                 this.setState({ selectedDelegate: delegates[0] });
+                var expenses = await this.expenseService.getAllExpensesOfUserByDateMoth(new Date(), delegates[0].id!);
+                var expensesUser = await this.expenseService.getExpensesUserByDateMoth(new Date(), delegates[0].id!);
+                this.setState({ expenses: expenses, expensesUser: expensesUser });
             }
             this.setState({ isLoading: false, delegates: delegates, filtredDelegates: delegates, hasData: true });
         }
@@ -130,10 +133,10 @@ class ExpensePage extends Component<{}, ExpensePageProps> {
                         <button onClick={this.handleDelegateFilter} className="btn btn-primary" style={{ backgroundColor: '#fff', border: '#ddd solid 1px', height: '38px' }}>
                             <FontAwesomeIcon icon={faSearch} style={{ color: 'black' }} />
                         </button>
-                    </div>
-                    <div style={{ display: 'flex' }}>
-                        <UserPicker delegates={this.state.filtredDelegates} onSelect={this.handleSelectDelegate}></UserPicker>
                         <MonthYearPicker onPick={this.handleOnPickDate}></MonthYearPicker >
+                    </div>
+                    <div style={{ display: 'flex',height:'48px' }}>
+                        <UserPicker delegates={this.state.filtredDelegates} onSelect={this.handleSelectDelegate}></UserPicker>
                     </div>
                     <div style={{ width: '100%', display: 'flex', flexGrow: '1' }} >
                         <ExpenseTable data={this.state.expenses} isLoading={this.state.loadingExpensesData}></ExpenseTable>
@@ -147,7 +150,6 @@ class ExpensePage extends Component<{}, ExpensePageProps> {
                         <MuiButton variant="outlined" disableElevation sx={{ marginRight: '16px', marginBottom: '16px' }}>
                             Consulter piece jointes
                         </MuiButton>
-
                         <MuiButton variant="contained" disableElevation sx={{ marginBottom: '16px' }} onClick={this.handleValidateExpensesUser}>
                             Valider la note de frais
                         </MuiButton>

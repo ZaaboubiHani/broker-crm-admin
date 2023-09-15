@@ -1,3 +1,5 @@
+import FileModel from "./file.model";
+
 export default class ExpenseModel {
     id?: number;
     reference?: string;
@@ -13,8 +15,9 @@ export default class ExpenseModel {
     otherExpenses?: number;
     totalExpense?: number;
     createdDate?: Date;
+    proofs?: FileModel[];
 
-    constructor(data?:ExpenseModel) {
+    constructor(data?: ExpenseModel) {
         this.id = data?.id;
         this.reference = data?.reference;
         this.startLocation = data?.startLocation;
@@ -32,6 +35,10 @@ export default class ExpenseModel {
     }
 
     static fromJson(json: any): ExpenseModel {
+        var proofs: FileModel[] = [];
+        if (json?.attributes?.proofs?.data) {
+            proofs = json?.attributes?.proofs?.data.map((invoice: any) => FileModel.fromJson(invoice));
+        }
         return new ExpenseModel({
             id: json.id,
             reference: json.attributes.reference,
@@ -49,5 +56,5 @@ export default class ExpenseModel {
             createdDate: json?.attributes?.createdDate ? new Date(json.attributes.createdDate) : undefined,
         });
     }
-    
+
 }

@@ -10,25 +10,39 @@ import Button from 'react-bootstrap/Button';
 import { FontAwesomeIcon, } from '@fortawesome/react-fontawesome';
 import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
 import { DotSpinner } from '@uiball/loaders';
+import Snackbar from '@mui/material/Snackbar';
 
 const LoginPage: React.FC = () => {
+
   const [identifier, setIdentifier] = useState<string>('');
   const [password, setPassword] = useState<string>('');
   const [isLogging, setIsLogging] = useState<boolean>(false);
   const [showPassword, setShowPassword] = useState<boolean>(false);
+  const [showSnackbar, setShowSnackbar] = useState<boolean>(false);
+  const [snackbarMessage, setSnackbarMessage] = useState<string>('');
+
   const navigate = useNavigate();
+
   var authService = new AuthService();
-  var userService = new UserService();
 
   const handleLogin = async () => {
     setIsLogging(true);
-    var id = await authService.login(identifier, password);
-    if (id != 0) {
-      var user = await userService.getUser(id);
-      localStorage.setItem('token', user.token!);
+    var loginSuccess = await authService.login(identifier, password);
+
+    if (loginSuccess) {
       setIsLogging(false);
       navigate('/content');
     }
+    else {
+      setIsLogging(false);
+      setSnackbarMessage('Échec de la connexion');
+      setShowSnackbar(true);
+    }
+  };
+
+  const handleClose = (event: React.SyntheticEvent | Event, reason?: string) => {
+   
+    setShowSnackbar(false);
   };
 
   return (
@@ -67,22 +81,23 @@ const LoginPage: React.FC = () => {
         <Button variant="primary" onClick={handleLogin} style={{ backgroundColor: 'teal' }}>Connecter</Button>
       </div>
       <div style={{
-          width: '80px',
-          overflow:'hidden',
-          height: isLogging ? '100px' : '0px' ,
-          display: 'flex',
-          flexDirection:'column',
-          justifyContent: 'center',
-          alignItems: 'center',
-          transition: 'all 300ms ease'
-        }}>
-          <DotSpinner
-            size={40}
-            speed={0.9}
-            color="black"
-          /> 
+        width: '80px',
+        overflow: 'hidden',
+        height: isLogging ? '100px' : '0px',
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'center',
+        alignItems: 'center',
+        transition: 'all 300ms ease'
+      }}>
+        <DotSpinner
+          size={40}
+          speed={0.9}
+          color="black"
+        />
         <p>connecter...</p>
-          </div>
+      </div>
+      <Snackbar anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }} open={showSnackbar} onClose={handleClose} autoHideDuration={6000} message={snackbarMessage} />
     </div>
   );
 }

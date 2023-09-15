@@ -7,14 +7,12 @@
 }
 
 .user-details h1{
-    font-size: 35px;
     display: block;
     line-height: 30px;
 }
 
 .user-details h2{
-    font-size: 25px;
     display: block;
-    line-height: 20px;
+    line-height: 10px;
     margin-left: 16px;
 }

@@ -188,7 +188,7 @@ export default class StatisticsService {
                     'Authorization': `Bearer ${token}`
                 }
             });
-            console
+
         if (response.status == 200) {
             var stats: { month: string, numberOfTasks: number, numberOfVisits: number, visitsGoal: number }[] = [];
             response.data.result.forEach((element: any) => { stats.push({ month: element.month, numberOfTasks: element.numberOfTasks, numberOfVisits: element.numberOfVisits, visitsGoal: element.visitsGoal }) });
@@ -198,7 +198,7 @@ export default class StatisticsService {
         return [];
     }
 
-    async getDelegateYearSaleStats(date: Date, userId: number,): Promise<{ month: string, totalSales: number, salesGoal: number}[]> {
+    async getDelegateYearSaleStats(date: Date, userId: number,): Promise<{ month: string, totalSales: number, salesGoal: number }[]> {
 
         const token = localStorage.getItem('token');
 
@@ -209,9 +209,8 @@ export default class StatisticsService {
                     'Authorization': `Bearer ${token}`
                 }
             });
-            console
         if (response.status == 200) {
-            var stats: {month: string, totalSales: number, salesGoal: number}[] = [];
+            var stats: { month: string, totalSales: number, salesGoal: number }[] = [];
             response.data.result.forEach((element: any) => { stats.push({ month: element.month, totalSales: element.totalSales, salesGoal: element.salesGoal }) });
             return stats;
         }
@@ -219,7 +218,7 @@ export default class StatisticsService {
         return [];
     }
 
-    async getDelegateContributionStats(date: Date, userId: number,): Promise<{teamSales: number, delegateSales: number}> {
+    async getDelegateContributionStats(date: Date, userId: number,): Promise<{ teamSales: number, delegateSales: number }> {
 
         const token = localStorage.getItem('token');
 
@@ -230,31 +229,91 @@ export default class StatisticsService {
                     'Authorization': `Bearer ${token}`
                 }
             });
-            
+
         if (response.status == 200) {
             return response.data;
         }
 
-        return {teamSales:0,delegateSales:0};
+        return { teamSales: 0, delegateSales: 0 };
+    }
+    async getTeamYearVisitStats(date: Date): Promise<{ month: string, numberOfTasks: number, numberOfVisits: number, visitsGoal: number }[]> {
+
+        const token = localStorage.getItem('token');
+
+
+        var response = await axios.get(`${Globals.apiUrl}/teamYearVisitStats?supervisor=2&year=${formatDateToYYYY(date)}`,
+            {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+
+        if (response.status == 200) {
+            var stats: { month: string, numberOfTasks: number, numberOfVisits: number, visitsGoal: number }[] = [];
+            response.data.result.forEach((element: any) => { stats.push({ month: element.month, numberOfTasks: element.numberOfTasks, numberOfVisits: element.numberOfVisits, visitsGoal: element.visitsGoal }) });
+            return stats;
+        }
+
+        return [];
     }
 
-    async getTeamYearVisitStats(date: Date, userId: number,): Promise<{teamSales: number, delegateSales: number}> {
+    async getTeamYearSaleStats(date: Date): Promise<{ month: string, totalSales: number }[]> {
 
         const token = localStorage.getItem('token');
 
-
-        var response = await axios.get(`${Globals.apiUrl}/contributionDelegateTeam?supervisor=2&user=${userId}&year=${formatDateToYYYY(date)}`,
+        var response = await axios.get(`${Globals.apiUrl}/teamYearSaleStats?supervisor=2&year=${formatDateToYYYY(date)}`,
             {
                 headers: {
                     'Authorization': `Bearer ${token}`
                 }
             });
-            
+
         if (response.status == 200) {
-            return response.data;
+            var stats: { month: string, totalSales: number }[] = [];
+            response.data.output.forEach((element: any) => { stats.push({ month: element.month, totalSales: element.totalSales }) });
+            return stats;
         }
 
-        return {teamSales:0,delegateSales:0};
+        return [];
+    }
+
+    async getDelegateSuccessRateMonth(date: Date, userId: number,): Promise<number> {
+
+        const token = localStorage.getItem('token');
+
+        var response = await axios.get(`${Globals.apiUrl}/delegateSuccessRate?user=${userId}&year=${formatDateToYYYY(date)}&month=${formatDateToMM(date)}`,
+            {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+
+        if (response.status == 200) {
+
+            return response.data.delegateSuccessRate || 0;
+        }
+
+        return 0;
+    }
+
+    async getDelegateSuccessRateYear(userId: number, date: Date): Promise<{ honoredCommands: number, totalVisits: number }[]> {
+
+        const token = localStorage.getItem('token');
+
+        var response = await axios.get(`${Globals.apiUrl}/delegateYearSuccessRate?user=${userId}&year=${formatDateToYYYY(date)}`,
+            {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+
+        if (response.status == 200) {
+            var result: { honoredCommands: number, totalVisits: number }[] = [];
+            response.data.output.forEach((e: any) => result.push({ honoredCommands: e.honoredCommands, totalVisits: e.totalVisits }));
+            return result;
+        }
+
+        return [];
     }
 
 

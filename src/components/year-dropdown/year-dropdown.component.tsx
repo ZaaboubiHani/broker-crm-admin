@@ -4,14 +4,15 @@ import Form from 'react-bootstrap/Form';
 
 interface YearDropdownProps {
   onChange: (selectedYear: number) => void;
+  style?: React.CSSProperties | undefined;
+  initalYear: number;
 }
 
-const YearDropdown: React.FC<YearDropdownProps> = ({ onChange }) => {
-  const currentYear = new Date().getFullYear();
-  const [selectedYear, setSelectedYear] = useState(currentYear);
+const YearDropdown: React.FC<YearDropdownProps> = ({ onChange, initalYear, style }) => {
+  const [selectedYear, setSelectedYear] = useState(initalYear);
 
   const yearOptions: JSX.Element[] = [];
-  for (let year = currentYear + 10; year >= currentYear - 100; year--) {
+  for (let year = initalYear + 10; year >= initalYear - 100; year--) {
     yearOptions.push(<option key={year} value={year.toString()}>{year}</option>);
   }
 
@@ -22,17 +23,14 @@ const YearDropdown: React.FC<YearDropdownProps> = ({ onChange }) => {
   };
 
   return (
-    <Form.Select value={selectedYear} onChange={handleYearChange}
+    <div style={style}>
+      <Form.Select value={selectedYear} onChange={handleYearChange}
+        aria-label="Default select example" size="sm"
+        style={{ height: '40px', width: '150px', margin: '0px 4px' }}>
+        {yearOptions}
 
-
-      aria-label="Default select example" size="sm"
-      style={{ height: '40px', width: '150px', margin: '8px 4px' }}>
-      {yearOptions}
-
-    </Form.Select>
-    // <select  className='year-dropdown'>
-    //   {yearOptions}
-    // </select>
+      </Form.Select>
+    </div>
   );
 };
 

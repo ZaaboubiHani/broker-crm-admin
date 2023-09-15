@@ -4,7 +4,7 @@
 
 /* Style the scrollbar thumb */
 .day-picker::-webkit-scrollbar-thumb {
-    background-color: #3D7C98;
+    background-color: teal;
     /* Change to your desired color */
     border-radius: 5px;
     /* Rounded thumb */
@@ -12,7 +12,7 @@
 
 /* Style the scrollbar thumb on hover */
 .day-picker::-webkit-scrollbar-thumb:hover {
-    background-color: #2B5E75;
+    background-color: rgb(0, 182, 182);
     /* Change to your desired hover color */
 }
 

@@ -29,8 +29,13 @@
 
 .plan-container
 .stats-panel{
-    display: flex;
-    justify-content:space-evenly;
+    height: 150px;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    line-height: 0px;
+    background-color: white;
+    padding: 4px;
+    border-radius: 8px;
 }
 
 .plan-container
