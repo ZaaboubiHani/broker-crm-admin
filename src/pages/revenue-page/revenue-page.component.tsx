@@ -12,6 +12,7 @@ import MonthYearPicker from '../../components/month-year-picker/month-year-picke
 import RevenueTable from '../../components/revenue-table/revenue-table.component';
 import StatisticsService from '../../services/statics.service';
 import RevenuePanel from '../../components/revenue-panel/revenue-panel.component';
+import CircularProgressLabel from '../../components/circular-progress-label/circular-progress-label.component';
 
 interface RevenuePageProps {
     selectedDate: Date;
@@ -26,10 +27,11 @@ interface RevenuePageProps {
     totalTeamRevenueHonored: number;
     totalTeamRevenueNotHonored: number;
     delegateWilayasRevenue: { wilaya: string, total: number, percentage: number }[];
-    delegateProductsRevenue:{ product: string, quantity: number, total: number, percentage: number }[];
+    delegateProductsRevenue: { product: string, quantity: number, total: number, percentage: number }[];
     totalDelegateRevenue: number;
     totalDelegateRevenueHonored: number;
     totalDelegateRevenueNotHonored: number;
+    showDetails: boolean;
 }
 
 const kPrincipal = '#35d9da';
@@ -54,9 +56,9 @@ class RevenuePage extends Component<{}, RevenuePageProps> {
             totalDelegateRevenue: 0,
             totalDelegateRevenueHonored: 0,
             totalDelegateRevenueNotHonored: 0,
-            delegateProductsRevenue:[],
-            delegateWilayasRevenue:[],
-
+            delegateProductsRevenue: [],
+            delegateWilayasRevenue: [],
+            showDetails: false,
         }
     }
 
@@ -66,25 +68,39 @@ class RevenuePage extends Component<{}, RevenuePageProps> {
 
     handleDisplayDetails = async (userId: number) => {
         this.setState({ loadingRevenueData: true });
-        var delegateWilayasRevenue = await this.statisticsService.getUserWilayasRevenue(this.state.selectedDate,userId);
-        var delegateProductsRevenue = await this.statisticsService.getUserProductsRevenue(this.state.selectedDate,userId);
-        var totalDelegateRevenue = await this.statisticsService.getTotalUserRevenue(this.state.selectedDate,userId);
-        var totalDelegateRevenueHonored = await this.statisticsService.getTotalUserRevenue(this.state.selectedDate,userId, true);
-        var totalDelegateRevenueNotHonored = await this.statisticsService.getTotalUserRevenue(this.state.selectedDate,userId, false);
-        this.setState({ loadingRevenueData: false,totalDelegateRevenue:totalDelegateRevenue,totalDelegateRevenueHonored:totalDelegateRevenueHonored,totalDelegateRevenueNotHonored:totalDelegateRevenueNotHonored,
-            delegateWilayasRevenue:delegateWilayasRevenue,delegateProductsRevenue:delegateProductsRevenue
-          });
+        var delegateWilayasRevenue = await this.statisticsService.getUserWilayasRevenue(this.state.selectedDate, userId);
+        var delegateProductsRevenue = await this.statisticsService.getUserProductsRevenue(this.state.selectedDate, userId);
+        var totalDelegateRevenue = await this.statisticsService.getTotalUserRevenue(this.state.selectedDate, userId);
+        var totalDelegateRevenueHonored = await this.statisticsService.getTotalUserRevenue(this.state.selectedDate, userId, true);
+        var totalDelegateRevenueNotHonored = await this.statisticsService.getTotalUserRevenue(this.state.selectedDate, userId, false);
+        this.setState({
+            loadingRevenueData: false, totalDelegateRevenue: totalDelegateRevenue, totalDelegateRevenueHonored: totalDelegateRevenueHonored, totalDelegateRevenueNotHonored: totalDelegateRevenueNotHonored,
+            delegateWilayasRevenue: delegateWilayasRevenue, delegateProductsRevenue: delegateProductsRevenue,
+            showDetails: true,
+        });
     };
 
     loadRevenuePageData = async () => {
         this.setState({ isLoading: true });
         if (!this.state.isLoading) {
-            this.setState({ isLoading: false, hasData: true });
+            var revenues = await this.revenueService.getAllRevenuesMonth(new Date());
+            var totalTeamRevenue = await this.statisticsService.getTotalTeamRevenue(new Date());
+            var totalTeamRevenueHonored = await this.statisticsService.getTotalTeamRevenue(new Date(), true);
+            var totalTeamRevenueNotHonored = await this.statisticsService.getTotalTeamRevenue(new Date(), false);
+            this.setState({
+                revenues: revenues,
+                filteredRevenues: revenues,
+                totalTeamRevenue: totalTeamRevenue,
+                totalTeamRevenueHonored: totalTeamRevenueHonored,
+                totalTeamRevenueNotHonored: totalTeamRevenueNotHonored,
+                isLoading: false,
+                hasData: true,
+            });
         }
     };
 
     handleOnPickDate = async (date: Date) => {
-        this.setState({ loadingRevenuesData: true });
+        this.setState({ loadingRevenuesData: true, showDetails: false });
         var revenues = await this.revenueService.getAllRevenuesMonth(date);
         var totalTeamRevenue = await this.statisticsService.getTotalTeamRevenue(date);
         var totalTeamRevenueHonored = await this.statisticsService.getTotalTeamRevenue(date, true);
@@ -93,6 +109,7 @@ class RevenuePage extends Component<{}, RevenuePageProps> {
     }
 
     handleRevenuesFilter = () => {
+        this.setState({ showDetails: false });
         if (this.state.searchText.length === 0) {
             var filteredRevenues = [...this.state.revenues];
             this.setState({ filteredRevenues: filteredRevenues });
@@ -130,21 +147,36 @@ class RevenuePage extends Component<{}, RevenuePageProps> {
         else {
             return (
                 <div className='revenue-container' style={{ display: 'flex', flexDirection: 'column', height: '100%', alignItems: 'stretch', backgroundColor: '#eee' }}>
-                    <div style={{ display: 'flex' }}>
-                        <Form style={{ margin: '8px 0px 0px 8px' }}>
+                    <div style={{ display: 'flex', height: '40px', margin: '8px 0px 8px 8px' }}>
+                        <Form >
                             <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
                                 <Form.Control type="search" placeholder="Recherche" onChange={this.handleSearchTextChange} />
                             </Form.Group>
                         </Form>
-                        <button onClick={this.handleRevenuesFilter} className="btn btn-primary" style={{ backgroundColor: '#fff', border: '#ddd solid 1px', height: '38px', margin: '8px 0px 0px 8px' }}>
+                        <button onClick={this.handleRevenuesFilter} className="btn btn-primary" style={{ backgroundColor: '#fff', border: '#ddd solid 1px', height: '38px', margin: '0px 0px 0px 8px' }}>
                             <FontAwesomeIcon icon={faSearch} style={{ color: 'black' }} />
                         </button>
                         <MonthYearPicker onPick={this.handleOnPickDate}></MonthYearPicker >
                     </div>
-                    <div className='stats-panel' style={{ margin: '0px' }}>
-                        <h2 className='labels'>Total chiffre d'affaire d'equipe: {this.state.totalTeamRevenue.toLocaleString('fr-DZ', { style: 'currency', currency: 'DZD' })}</h2>
-                        <h2 className='labels'>Total honore: {this.state.totalTeamRevenueHonored.toLocaleString('fr-DZ', { style: 'currency', currency: 'DZD' })}</h2>
-                        <h2 className='labels'>Total non honore: {this.state.totalTeamRevenueNotHonored.toLocaleString('fr-DZ', { style: 'currency', currency: 'DZD' })}</h2>
+                    <div style={{ margin: '0px 8px', display: 'flex', justifyContent: 'space-between', padding: '4px', backgroundColor: 'white', borderRadius: '8px' }}>
+                        <CircularProgressLabel
+                            colorStroke='#FC761E'
+                            direction='row'
+                            secondTitle="Total chiffre d'affaire d'equipe:"
+                            firstTitle={this.state.totalTeamRevenue?.toLocaleString('fr-DZ', { style: 'currency', currency: 'DZD' })}
+                            value={100} />
+                        <CircularProgressLabel
+                            colorStroke='#CC38E0'
+                            direction='row'
+                            secondTitle='Total honore:'
+                            firstTitle={this.state.totalTeamRevenueHonored?.toLocaleString('fr-DZ', { style: 'currency', currency: 'DZD' })}
+                            value={this.state.totalTeamRevenueHonored / this.state.totalTeamRevenue * 100} />
+                        <CircularProgressLabel
+                            colorStroke='#38EB5D'
+                            direction='row'
+                            secondTitle="Total non honore:"
+                            firstTitle={this.state.totalTeamRevenueNotHonored?.toLocaleString('fr-DZ', { style: 'currency', currency: 'DZD' })}
+                            value={this.state.totalTeamRevenueNotHonored / this.state.totalTeamRevenue * 100} />
                     </div>
                     <div style={{ width: '100%', display: 'flex', flexGrow: '1' }}>
                         <RevenueTable id='revenue-table' data={this.state.filteredRevenues} isLoading={this.state.loadingRevenuesData} displayDetails={this.handleDisplayDetails}></RevenueTable>
@@ -170,8 +202,7 @@ class RevenuePage extends Component<{}, RevenuePageProps> {
                                     )
                                     :
                                     (
-                                        
-                                        <RevenuePanel total={this.state.totalDelegateRevenue} totalHonored={this.state.totalDelegateRevenueHonored} totalNotHonored={this.state.totalDelegateRevenueNotHonored} wilayasRevenue={this.state.delegateWilayasRevenue} productsRevenue={this.state.delegateProductsRevenue}></RevenuePanel>
+                                        <RevenuePanel showData={this.state.showDetails} total={this.state.totalDelegateRevenue} totalHonored={this.state.totalDelegateRevenueHonored} totalNotHonored={this.state.totalDelegateRevenueNotHonored} wilayasRevenue={this.state.delegateWilayasRevenue} productsRevenue={this.state.delegateProductsRevenue}></RevenuePanel>
                                     )
                             }
                         </div>

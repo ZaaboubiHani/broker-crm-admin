@@ -3,12 +3,13 @@ import Globals from "../api/globals";
 import { formatDateToMM, formatDateToYYYY, formatDateToYYYYMM, formatDateToYYYYMMDD } from "../functions/date-format";
 import ExpenseModel from "../models/expense.model";
 import ExpenseUserModel from "../models/expense-user.model";
+import ExpenseConfigModel from "../models/expense-config.model";
 
 export default class ExpenseService {
 
     async getAllExpensesOfUserByDateMoth(date: Date, userId: number): Promise<ExpenseModel[]> {
         const token = localStorage.getItem('token');
-        var response = await axios.get(`${Globals.apiUrl}/expenses-days?filters[userExpense][user][id][$eq]=${userId}&filters[createdDate][$containsi]=${formatDateToYYYYMM(date)}&filters[userExpense][userValidation][$eq]=true`,
+        var response = await axios.get(`${Globals.apiUrl}/expenses-days?filters[userExpense][user][id][$eq]=${userId}&filters[createdDate][$containsi]=${formatDateToYYYYMM(date)}&filters[userExpense][userValidation][$eq]=true&populate=proofs`,
             {
                 headers: {
                     'Authorization': `Bearer ${token}`
@@ -58,5 +59,65 @@ export default class ExpenseService {
             return true;
         }
         return false;
+    }
+
+    async getExpensesConfig(): Promise<ExpenseConfigModel | undefined> {
+        const token = localStorage.getItem('token');
+        var response = await axios.get(`${Globals.apiUrl}/expenses-configs`,
+            {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+
+        if (response.status == 200 && response.data.data.length > 0) {
+
+            return ExpenseConfigModel.fromJson(response.data.data[0]);
+        }
+        return undefined;
+    }
+
+    async createExpensesConfig(): Promise<ExpenseConfigModel | undefined> {
+        const token = localStorage.getItem('token');
+        var response = await axios.post(`${Globals.apiUrl}/expenses-configs`,
+            {
+                data: {
+                    reference: null,
+                    kmPrice: 0,
+                    nightPrice: 0
+                }
+            },
+            {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+
+        if (response.status == 200) {
+
+            return ExpenseConfigModel.fromJson(response.data.data);
+        }
+        return undefined;
+    }
+
+    async updateExpensesConfig(expensesConfig: ExpenseConfigModel): Promise<ExpenseConfigModel | undefined> {
+        const token = localStorage.getItem('token');
+        var response = await axios.put(`${Globals.apiUrl}/expenses-configs/${expensesConfig.id}`,
+            {
+                data: {
+                    kmPrice: expensesConfig.kmPrice,
+                    nightPrice: expensesConfig.nightPrice
+                }
+            },
+            {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+
+        if (response.status == 200) {
+            return ExpenseConfigModel.fromJson(response.data.data);
+        }
+        return undefined;
     }
 }

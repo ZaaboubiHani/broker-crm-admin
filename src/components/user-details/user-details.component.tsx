@@ -17,11 +17,11 @@ const UserDetails: React.FC<UserDetailsProps> = ({ name, company, supervisor, ph
     return (
         <div className="user-details">
 
-            <h1>{name}</h1>
-            <h2>Société : {company}</h2>
-            {supervisor ? (<h2>Superviseur : {supervisor}</h2>) : undefined}
-            <h2>mobile : {phone}</h2>
-            <h2>E-mail : {email}</h2>
+            <h1 style={{fontSize:'20px'}}>{name}</h1>
+            <h2 style={{fontSize:'17px'}}>Société : {company}</h2>
+            {supervisor ? (<h2 style={{fontSize:'17px'}}>Superviseur : {supervisor}</h2>) : undefined}
+            <h2 style={{fontSize:'17px'}}>mobile : {phone}</h2>
+            <h2 style={{fontSize:'17px'}}>E-mail : {email}</h2>
         </div>
     );
 };

@@ -2,14 +2,14 @@
     font-size: 45px;
     display: block;
     float: left;
-    height: 120px;
-    width: 120px;
+    height: 100px;
+    width: 100px;
     justify-content: center;
     align-items: center;
     border-radius: 100px;
     background-color:#3D7C98 ;
     font-weight: 900;
-    line-height: 120px;
+    line-height: 100px;
     text-align: center;
     color: white;
     margin: 16px;

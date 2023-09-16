@@ -14,12 +14,11 @@ import DelegatePage from '../pages/delegate-page/delegate-page.component';
 import CommandCamPage from '../pages/command-pages/command-cam-page/command-cam-page.component';
 import CommandDelegatePage from '../pages/command-pages/command-delegate-page/command-delegate-page.component';
 import ExpensePage from '../pages/expense-page/expense-page.component';
-import ClientsPharmacyPage from '../pages/clients-pages/clients-pharmacy-page/clients-pharmacy-page.component';
-import ClientsDoctorPage from '../pages/clients-pages/clients-doctor-page/clients-doctor-page.component';
-import ClientsWholesalerPage from '../pages/clients-pages/clients-wholesaler-page/clients-wholesaler-page.component';
+import ClientsPharmacyPage from '../pages/clients-page/clients-page.component';
 import RevenuePage from '../pages/revenue-page/revenue-page.component';
 import StatisticsPage from '../pages/statistics-page/statistics-page.component';
 import ConfigPage from '../pages/config-page/config-page.component';
+import ClientsPage from '../pages/clients-page/clients-page.component';
 
 const AppRouter: React.FC = () => {
 
@@ -49,9 +48,7 @@ const AppRouter: React.FC = () => {
                   <Route path="/command/cam" Component={CommandCamPage} />
                   <Route path="/command/delegates" Component={CommandDelegatePage} />
                   <Route path="/expense" Component={ExpensePage} />
-                  <Route path="/clients/pharmacy" Component={ClientsPharmacyPage} />
-                  <Route path="/clients/doctor" Component={ClientsDoctorPage} />
-                  <Route path="/clients/wholesaler" Component={ClientsWholesalerPage} />
+                  <Route path="/clients" Component={ClientsPage} />
                   <Route path="/revenue" Component={RevenuePage} />
                   <Route path="/statistics" Component={StatisticsPage} />
                   <Route path="/config" Component={ConfigPage} />

@@ -48,8 +48,8 @@ const DatePicker: React.FC<DatePickerProps> = ({ onPick, initialDate }) => {
       }} initialDate={date}></DayPicker>
       <MonthDropdown onChange={(month) => {
         handleMonthSelect(month);
-      }}></MonthDropdown>
-      <YearDropdown onChange={(year) => {
+      }} style={{margin:'8px 0px'}}></MonthDropdown>
+      <YearDropdown style={{margin:'8px 0px'}} initalYear={date.getFullYear()} onChange={(year) => {
         handleYearSelect(year);
       }}></YearDropdown>
 

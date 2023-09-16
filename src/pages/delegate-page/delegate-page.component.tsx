@@ -21,6 +21,7 @@ import CommandModel from '../../models/command.model';
 import ReportPanel from '../../components/report-panel/report-panel.component';
 import CommandPanel from '../../components/comand-panel/command-panel.component';
 import StatisticsService from '../../services/statics.service';
+import CircularProgressLabel from '../../components/circular-progress-label/circular-progress-label.component';
 
 
 
@@ -45,6 +46,7 @@ interface DelegatePageState {
     moyenneVisitesParJour: number;
     objectifChiffreDaffaire: number;
     objectifVisites: number;
+    successRate: number;
 }
 
 class DelegatePage extends Component<{}, DelegatePageState> {
@@ -67,6 +69,7 @@ class DelegatePage extends Component<{}, DelegatePageState> {
             moyenneVisitesParJour: 0,
             objectifChiffreDaffaire: 0,
             objectifVisites: 0,
+            successRate: 0,
         }
     }
 
@@ -99,7 +102,18 @@ class DelegatePage extends Component<{}, DelegatePageState> {
         var moyenneVisitesParJour = await this.statisticsService.getMoyenneVisitesParJour(date, this.state.selectedDelegate!.id!);
         var objectifChiffreDaffaire = await this.statisticsService.getObjectifChiffreDaffaire(date, this.state.selectedDelegate!.id!);
         var objectifVisites = await this.statisticsService.getObjectifVisites(date, this.state.selectedDelegate!.id!);
-        this.setState({ selectedDate: date, visits: visits, loadingVisitsData: false, planDeTournee: planDeTournee, couverturePortfeuille: couverturePortfeuille, moyenneVisitesParJour: moyenneVisitesParJour, objectifChiffreDaffaire: objectifChiffreDaffaire, objectifVisites: objectifVisites });
+        var successRate = await this.statisticsService.getDelegateSuccessRateMonth(date, this.state.selectedDelegate!.id!);
+        this.setState({
+            selectedDate: date,
+            visits: visits,
+            planDeTournee: planDeTournee,
+            couverturePortfeuille: couverturePortfeuille,
+            moyenneVisitesParJour: moyenneVisitesParJour,
+            objectifChiffreDaffaire: objectifChiffreDaffaire,
+            objectifVisites: objectifVisites,
+            successRate: successRate,
+            loadingVisitsData: false,
+        });
     }
 
     handleSelectDelegate = async (delegate: UserModel) => {
@@ -110,7 +124,19 @@ class DelegatePage extends Component<{}, DelegatePageState> {
         var moyenneVisitesParJour = await this.statisticsService.getMoyenneVisitesParJour(this.state.selectedDate, delegate.id!);
         var objectifChiffreDaffaire = await this.statisticsService.getObjectifChiffreDaffaire(this.state.selectedDate, delegate.id!);
         var objectifVisites = await this.statisticsService.getObjectifVisites(this.state.selectedDate, delegate.id!);
-        this.setState({ selectedDelegate: delegate, visits: visits, loadingVisitsData: false, planDeTournee: planDeTournee, couverturePortfeuille: couverturePortfeuille, moyenneVisitesParJour: moyenneVisitesParJour, objectifChiffreDaffaire: objectifChiffreDaffaire, objectifVisites: objectifVisites });
+        var successRate = await this.statisticsService.getDelegateSuccessRateMonth(this.state.selectedDate, delegate.id!);
+
+        this.setState({
+            selectedDelegate: delegate,
+            visits: visits,
+            loadingVisitsData: false,
+            planDeTournee: planDeTournee,
+            couverturePortfeuille: couverturePortfeuille,
+            moyenneVisitesParJour: moyenneVisitesParJour,
+            objectifChiffreDaffaire: objectifChiffreDaffaire,
+            objectifVisites: objectifVisites,
+            successRate: successRate,
+        });
     }
 
     handleDelegateFilter = () => {
@@ -127,7 +153,6 @@ class DelegatePage extends Component<{}, DelegatePageState> {
     loadDelegatePageData = async () => {
         this.setState({ isLoading: true });
         if (!this.state.isLoading) {
-
             var delegates = await this.userService.getDelegateUsers();
             if (delegates.length > 0) {
                 this.setState({ selectedDelegate: delegates[0] });
@@ -137,7 +162,17 @@ class DelegatePage extends Component<{}, DelegatePageState> {
                 var moyenneVisitesParJour = await this.statisticsService.getMoyenneVisitesParJour(this.state.selectedDate, delegates[0].id!);
                 var objectifChiffreDaffaire = await this.statisticsService.getObjectifChiffreDaffaire(this.state.selectedDate, delegates[0].id!);
                 var objectifVisites = await this.statisticsService.getObjectifVisites(this.state.selectedDate, delegates[0].id!);
-                this.setState({ visits: visits, loadingVisitsData: false, planDeTournee: planDeTournee, couverturePortfeuille: couverturePortfeuille, moyenneVisitesParJour: moyenneVisitesParJour, objectifChiffreDaffaire: objectifChiffreDaffaire, objectifVisites: objectifVisites });
+                var successRate = await this.statisticsService.getDelegateSuccessRateMonth(this.state.selectedDate, delegates[0].id!);
+                this.setState({
+                    visits: visits,
+                    loadingVisitsData: false,
+                    planDeTournee: planDeTournee,
+                    couverturePortfeuille: couverturePortfeuille,
+                    moyenneVisitesParJour: moyenneVisitesParJour,
+                    objectifChiffreDaffaire: objectifChiffreDaffaire,
+                    objectifVisites: objectifVisites,
+                    successRate: successRate
+                });
             }
             this.setState({ isLoading: false, delegates: delegates, filtredDelegates: delegates, hasData: true });
         }
@@ -168,8 +203,8 @@ class DelegatePage extends Component<{}, DelegatePageState> {
         }
         else {
             return (
-                <div className='delegate-container'>
-                    <div className='search-bar'>
+                <div className='delegate-container' style={{ height: '100vh' }}>
+                    <div style={{ display: 'flex', height: '40px', marginLeft: '8px', marginTop: '8px' }}>
                         <Form>
                             <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
                                 <Form.Control type="search" placeholder="Recherche" onChange={this.handleSearchTextChange} />
@@ -178,19 +213,21 @@ class DelegatePage extends Component<{}, DelegatePageState> {
                         <button onClick={this.handleDelegateFilter} className="btn btn-primary" style={{ backgroundColor: '#fff', border: '#ddd solid 1px', height: '38px' }}>
                             <FontAwesomeIcon icon={faSearch} style={{ color: 'black' }} />
                         </button>
+                        <MonthYearPicker onPick={this.handleOnPickDate}></MonthYearPicker >
                     </div>
                     <div style={{ display: 'flex' }}>
                         <UserPicker delegates={this.state.filtredDelegates} onSelect={this.handleSelectDelegate}></UserPicker>
-                        <MonthYearPicker onPick={this.handleOnPickDate}></MonthYearPicker >
                     </div>
-                    <div className='stats-panel' style={{ margin: '0px' }}>
-                        <h2 className='labels'>KPI: Realisation plan de tournee: {this.state.planDeTournee.toFixed(3)}%</h2>
-                        <h2 className='labels'>Couverture portefeuille client: {this.state.couverturePortfeuille.toFixed(3)}%</h2>
-                        <h2 className='labels'>Objectif chiffre d'affaire: {this.state.objectifChiffreDaffaire}%</h2>
-                        <h2 className='labels'>Objectif visites: {this.state.objectifVisites.toFixed(3)}%</h2>
-                        <h2 className='labels'>Moyen visite/jour: {this.state.moyenneVisitesParJour.toFixed(3)}</h2>
+                    <div className='stats-panel' style={{ margin: '0px 8px', paddingLeft: '16px', backgroundColor: 'white' }}>
+                        <CircularProgressLabel colorStroke='#FC761E' direction='row' secondTitle='KPI: Realisation plan de tournee' value={this.state.planDeTournee} />
+                        <CircularProgressLabel colorStroke='#CC38E0' direction='row' secondTitle='Couverture portefeuille client' value={this.state.couverturePortfeuille} />
+                        <CircularProgressLabel colorStroke='#38EB5D' direction='row' secondTitle="Objectif chiffre d'affaire" value={this.state.objectifChiffreDaffaire} />
+                        <CircularProgressLabel colorStroke='#2FBCEB' direction='row' secondTitle='Objectif visites' value={this.state.objectifVisites} />
+                        <CircularProgressLabel colorStroke='#FC4630' direction='row' secondTitle='Moyen visite/jour' value={this.state.moyenneVisitesParJour} />
+                        <CircularProgressLabel colorStroke='#3A25E6' direction='row' secondTitle='Taux de réussite' value={this.state.successRate} />
                     </div>
-                    <div className='table-panel' key={0}>
+                    <div style={{ display: 'flex', flexDirection: 'row', flexGrow:'1',height: 'calc(100% - 500px)' }}>
+                       
                         <DelegateTable id='delegatetable' isLoading={this.state.loadingVisitsData} data={this.state.visits} onDisplayCommand={this.handleDisplayCommand} onDisplayReport={this.handleDisplayReport}></DelegateTable>
                         <div className='user-panel'>
                             {

@@ -22,8 +22,8 @@ interface DelegateTableProps {
 
 const DelegateTable: React.FC<DelegateTableProps> = ({ data, id, onDisplayCommand, onDisplayReport, isLoading }) => {
     return (
-        <TableContainer id={id} sx={{ flexGrow: '1', display: 'flex', flexDirection: 'column', borderRadius: '8px', margin: '8px', overflow: 'hidden' }} component={Paper}>
-            <Table sx={{ flexGrow: '1', display: 'flex', flexDirection: 'column', overflow: 'hidden', margin: '0px', width: "100%" }} size="small" aria-label="a dense table">
+        <TableContainer id={id} sx={{  display: 'flex', flexDirection: 'column', borderRadius: '8px', margin: '8px', overflow: 'hidden',}} component={Paper}>
+            <Table sx={{ display: 'flex', flexDirection: 'column', overflow: 'hidden', margin: '0px', width: "100%" }} size="small" aria-label="a dense table">
                 <TableHead sx={{ height: '45px', marginBottom: '16px' }}>
                     <TableRow>
                         <TableCell style={{ width: '165px' }}>Date</TableCell>
@@ -35,7 +35,7 @@ const DelegateTable: React.FC<DelegateTableProps> = ({ data, id, onDisplayComman
                         <TableCell align="center">Bon de commande</TableCell>
                     </TableRow>
                 </TableHead>
-                <TableBody sx={{ flexGrow: '1', overflowY: 'auto', overflowX: 'hidden', }}>
+                <TableBody sx={{ overflowY: 'auto', overflowX: 'hidden', }}>
                     {
                         isLoading ? (<div style={{
                             width: '100%',

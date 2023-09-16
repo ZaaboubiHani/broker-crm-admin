@@ -25,7 +25,7 @@ const CommandCamTable: React.FC<CommandCamTableProps> = ({ data, id, isLoading, 
             <Table sx={{ flexGrow: '1', display: 'flex', flexDirection: 'column', overflow: 'hidden', margin: '0px', width: "100%" }} size="small" aria-label="a dense table">
                 <TableHead sx={{ height: '45px', marginBottom: '16px' }}>
                     <TableRow>
-                        <TableCell >Date</TableCell>
+                        <TableCell sx={{ width: '150px' }} >Date</TableCell>
                         <TableCell align="left">Client</TableCell>
                         <TableCell align="left">Wilaya</TableCell>
                         <TableCell align="center">Commune</TableCell>
@@ -55,7 +55,7 @@ const CommandCamTable: React.FC<CommandCamTableProps> = ({ data, id, isLoading, 
                                     key={row.id!}
                                     sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                                 >
-                                    <TableCell>{formatDateToYYYYMMDD(row.visit?.createdDate || new Date())}</TableCell>
+                                    <TableCell sx={{ width: '150px',whiteSpace:'nowrap' }}>{formatDateToYYYYMMDD(row.visit?.createdDate || new Date())}</TableCell>
                                     <TableCell align="left">{row.visit?.client?.name}</TableCell>
                                     <TableCell align="left">{row.visit?.client?.wilaya}</TableCell>
                                     <TableCell align="left">{row.visit?.client?.commune}</TableCell>

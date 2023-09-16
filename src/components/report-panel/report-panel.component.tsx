@@ -22,10 +22,17 @@ const ReportPanel: React.FC<ReportPanelProps> = ({ report, clientType }) => {
                 <h4 style={{ fontSize: 17 }}><InventoryIcon style={{ fontSize: 17 }} /> Produits:</h4>
                 {
                     report.products?.map((product) => (
-                        <div style={{ display: 'flex', justifyContent: 'space-around', }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', }}>
                             <h6 style={{ fontSize: 15, fontWeight: '400' }}>{product.name}</h6>
-                            <h6 style={{ fontSize: 15, fontWeight: '400' }}>{product.quantity}</h6>
-                            <h6 style={{ fontSize: 15, fontWeight: '400' }}>{product.rotations}/mois</h6>
+                            {
+                                clientType !== ClientType.doctor ? (
+                                    <div>
+                                        <h6 style={{ fontSize: 15, fontWeight: '400' }}>quantité:{product.quantity}</h6>
+                                        <h6 style={{ fontSize: 15, fontWeight: '400' }}>{product.rotations}/mois</h6>
+                                    </div>
+                                ) : null
+                            }
+
                         </div>
                     ))
                 }
@@ -37,9 +44,9 @@ const ReportPanel: React.FC<ReportPanelProps> = ({ report, clientType }) => {
                                 <h4 style={{ fontSize: 17 }}><InventoryIcon style={{ fontSize: 17 }} /> Produits concurrents:</h4>
                                 {
                                     report.coproducts?.map((coproduct) => (
-                                        <div style={{ display: 'flex', justifyContent: 'space-around' }}>
+                                        <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                                             <h6 style={{ fontSize: 15, fontWeight: '400' }}>{coproduct.name}</h6>
-                                            <h6 style={{ fontSize: 15, fontWeight: '400' }}>{coproduct.quantity}</h6>
+                                            <h6 style={{ fontSize: 15, fontWeight: '400' }}>quantité: {coproduct.quantity}</h6>
                                             <h6 style={{ fontSize: 15, fontWeight: '400' }}>{coproduct.rotations}/mois</h6>
                                         </div>
                                     ))
@@ -55,7 +62,7 @@ const ReportPanel: React.FC<ReportPanelProps> = ({ report, clientType }) => {
                                 <h4 style={{ fontSize: 17 }}><HailIcon style={{ fontSize: 17 }} /> Fournisseurs:</h4>
                                 {
                                     report.suppliers?.map((supplier) => (
-                                        <div style={{ display: 'flex', justifyContent: 'space-around' }}>
+                                        <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                                             <h6 style={{ fontSize: 15, fontWeight: '400' }}>{supplier.name}</h6>
                                             <h6 style={{ fontSize: 15, fontWeight: '400' }}>{supplier.wilaya}</h6>
                                             <h6 style={{ fontSize: 15, fontWeight: '400' }}>{supplier.commun}</h6>

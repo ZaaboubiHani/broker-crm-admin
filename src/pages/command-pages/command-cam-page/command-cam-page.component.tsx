@@ -83,6 +83,8 @@ class CommandCamPage extends Component<{}, CommandCamPageProps> {
             var delegates = await this.userService.getDelegateUsers();
             if (delegates.length > 0) {
                 this.setState({ selectedDelegate: delegates[0] });
+                var commands = await this.commandService.getAllCommandsOfDelegate(new Date(), delegates[0].id!);
+                this.setState({ commands: commands });
             }
             this.setState({ isLoading: false, delegates: delegates, filtredDelegates: delegates, hasData: true });
         }
@@ -124,10 +126,10 @@ class CommandCamPage extends Component<{}, CommandCamPageProps> {
                         <button onClick={this.handleDelegateFilter} className="btn btn-primary" style={{ backgroundColor: '#fff', border: '#ddd solid 1px', height: '38px' }}>
                             <FontAwesomeIcon icon={faSearch} style={{ color: 'black' }} />
                         </button>
-                    </div>
-                    <div style={{ display: 'flex' }}>
-                        <UserPicker delegates={this.state.filtredDelegates} onSelect={this.handleSelectDelegate}></UserPicker>
                         <MonthYearPicker onPick={this.handleOnPickDate}></MonthYearPicker >
+                    </div>
+                    <div style={{ display: 'flex',height:'48px' }}>
+                        <UserPicker delegates={this.state.filtredDelegates} onSelect={this.handleSelectDelegate}></UserPicker>
                     </div>
                     <div className='table-panel' key={0}>
                         <CommandCamTable id='command-cam-table' data={this.state.commands} isLoading={this.state.loadingCommandsData} displayCommand={this.handleDisplayCommand}></CommandCamTable>

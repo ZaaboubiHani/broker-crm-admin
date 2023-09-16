@@ -13,6 +13,7 @@ export default class ClientModel{
     wilaya?: string;
     commune?: string;
     speciality?: string;
+    potential?: number;
     type?: ClientType;
 
 
@@ -26,6 +27,7 @@ export default class ClientModel{
         wilaya?: string,
         commune?: string,
         speciality?: string;
+        potential?: number;
         type?: ClientType
     }
     ) {
@@ -37,6 +39,7 @@ export default class ClientModel{
         this.wilaya = params.wilaya;
         this.commune = params.commune;
         this.speciality = params.speciality;
+        this.potential = params.potential;
         this.type = params.type;
     }
 
@@ -49,6 +52,7 @@ export default class ClientModel{
             wilaya: json?.attributes?.wilaya,
             commune: json?.attributes?.commun,
             speciality: json?.attributes?.relatedSpeciality?.data?.attributes?.name,
+            potential: json?.attributes?.potential,
             type: json?.attributes?.relatedSpeciality?.data?.id === 1 ? ClientType.pharmacy : json?.attributes?.relatedSpeciality?.data?.id === 2 ? ClientType.wholesaler : ClientType.doctor,
         });
     }

@@ -1,4 +1,4 @@
-.clients-doctor-container{
+.clients-pharmacy-container{
     display: flex;
     flex-direction: column;
     height: 100%;
@@ -11,25 +11,19 @@
     display: flex;
 }
 
-.clients-doctor-container
+.clients-pharmacy-container
 .table-panel{
     width: 100%;
     display: flex;
     height: calc(100% - 140px);
 }
 
-.clients-doctor-container
-#clients-doctor-table{
+.clients-pharmacy-container
+#clients-pharmacy-table{
     width: 60%;
+    margin-right: 16px;
 }
 
-.clients-doctor-container
-.user-panel{
-    width: 40%;
-    background-color: white;
-    border-radius: 8px;
-    margin: 8px 0px;
-}
 
 .stats-panel{
     display: flex;

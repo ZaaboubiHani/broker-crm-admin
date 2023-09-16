@@ -56,13 +56,13 @@ export default class ReportModel {
                 return product;
             });
         }
-        console.log(json?.attributes?.suppliers?.data);
+
         if (json?.attributes?.suppliers?.data) {
             report.suppliers = json.attributes.suppliers.data.map((supplierData: any) => SupplierModel.fromJson(supplierData.attributes.supplier.data));
         }
         
         if (json?.attributes?.comments?.data) {
-            report.comments = json.attributes.comments.data.map((commentData: any) => CommentModel.fromJson(commentData.attributes.comment.data));
+            report.comments = json.attributes.comments.data.map((commentData: any) => CommentModel.fromJson(commentData?.attributes?.comment?.data));
         }
         
         return report;

@@ -19,6 +19,7 @@ import VisitTaskService from '../../services/visit-task.service';
 import TaskService from '../../services/task.service';
 import VisitService from '../../services/visit.service';
 import TaskModel from '../../models/task.model';
+import CircularProgressLabel from '../../components/circular-progress-label/circular-progress-label.component';
 
 interface PlanPageProps {
     selectedDate: Date;
@@ -33,7 +34,11 @@ interface PlanPageProps {
     visitTaskDetails: TaskModel[];
     selectedVisitTaskDate?: Date;
     planDeTournee: number;
+    couverturePortfeuille: number;
     moyenneVisitesParJour: number;
+    objectifChiffreDaffaire: number;
+    objectifVisites: number;
+    successRate: number;
 }
 
 const kPrincipal = '#35d9da';
@@ -54,7 +59,11 @@ class PlanPage extends Component<{}, PlanPageProps> {
             visitTasks: [],
             visitTaskDetails: [],
             planDeTournee: 0,
+            couverturePortfeuille: 0,
             moyenneVisitesParJour: 0,
+            objectifChiffreDaffaire: 0,
+            objectifVisites: 0,
+            successRate: 0,
         }
     }
 
@@ -84,8 +93,21 @@ class PlanPage extends Component<{}, PlanPageProps> {
         var visitTasks = await this.visitTaskService.getAllVisitsTasks(this.state.selectedDate, delegate.id!);
         this.setState({ selectedDelegate: delegate, visitTasks: visitTasks, loadingVisitTasksData: false });
         var planDeTournee = await this.statisticsService.getPlanDeTournee(this.state.selectedDate, delegate.id!);
+        var couverturePortfeuille = await this.statisticsService.getCouverturePortfeuille(this.state.selectedDate, delegate.id!);
         var moyenneVisitesParJour = await this.statisticsService.getMoyenneVisitesParJour(this.state.selectedDate, delegate.id!);
-        this.setState({ selectedDelegate: delegate, planDeTournee: planDeTournee, moyenneVisitesParJour: moyenneVisitesParJour });
+        var objectifChiffreDaffaire = await this.statisticsService.getObjectifChiffreDaffaire(this.state.selectedDate, delegate.id!);
+        var objectifVisites = await this.statisticsService.getObjectifVisites(this.state.selectedDate, delegate.id!);
+        var successRate = await this.statisticsService.getDelegateSuccessRateMonth(this.state.selectedDate, delegate.id!);
+
+        this.setState({
+            selectedDelegate: delegate,
+            planDeTournee: planDeTournee,
+            couverturePortfeuille: couverturePortfeuille,
+            moyenneVisitesParJour: moyenneVisitesParJour,
+            objectifChiffreDaffaire: objectifChiffreDaffaire,
+            objectifVisites: objectifVisites,
+            successRate: successRate,
+        });
     }
 
     handleOnPickDate = async (date: Date) => {
@@ -93,14 +115,42 @@ class PlanPage extends Component<{}, PlanPageProps> {
         var visitTasks = await this.visitTaskService.getAllVisitsTasks(date, this.state.selectedDelegate!.id!);
         this.setState({ selectedDate: date, visitTasks: visitTasks, loadingVisitTasksData: false, });
         var planDeTournee = await this.statisticsService.getPlanDeTournee(date, this.state.selectedDelegate!.id!);
+        var couverturePortfeuille = await this.statisticsService.getCouverturePortfeuille(date, this.state.selectedDelegate!.id!);
         var moyenneVisitesParJour = await this.statisticsService.getMoyenneVisitesParJour(date, this.state.selectedDelegate!.id!);
-        this.setState({ selectedDate: date, planDeTournee: planDeTournee, moyenneVisitesParJour: moyenneVisitesParJour });
+        var objectifChiffreDaffaire = await this.statisticsService.getObjectifChiffreDaffaire(date, this.state.selectedDelegate!.id!);
+        var objectifVisites = await this.statisticsService.getObjectifVisites(date, this.state.selectedDelegate!.id!);
+        var successRate = await this.statisticsService.getDelegateSuccessRateMonth(date, this.state.selectedDelegate!.id!);
+        this.setState({
+            selectedDate: date,
+            planDeTournee: planDeTournee,
+            couverturePortfeuille: couverturePortfeuille,
+            moyenneVisitesParJour: moyenneVisitesParJour,
+            objectifChiffreDaffaire: objectifChiffreDaffaire,
+            objectifVisites: objectifVisites,
+            successRate: successRate,
+        });
     }
 
     loadPlanPageData = async () => {
         var delegates = await this.userService.getDelegateUsers();
         if (delegates.length > 0) {
             this.setState({ selectedDelegate: delegates[0] });
+            var planDeTournee = await this.statisticsService.getPlanDeTournee(this.state.selectedDate, delegates[0].id!);
+            var couverturePortfeuille = await this.statisticsService.getCouverturePortfeuille(this.state.selectedDate, delegates[0].id!);
+            var moyenneVisitesParJour = await this.statisticsService.getMoyenneVisitesParJour(this.state.selectedDate, delegates[0].id!);
+            var objectifChiffreDaffaire = await this.statisticsService.getObjectifChiffreDaffaire(this.state.selectedDate, delegates[0].id!);
+            var objectifVisites = await this.statisticsService.getObjectifVisites(this.state.selectedDate, delegates[0].id!);
+            var successRate = await this.statisticsService.getDelegateSuccessRateMonth(this.state.selectedDate, delegates[0].id!);
+            var visitTasks = await this.visitTaskService.getAllVisitsTasks(new Date(), delegates[0].id!);
+            this.setState({
+                visitTasks: visitTasks,
+                planDeTournee: planDeTournee,
+                couverturePortfeuille: couverturePortfeuille,
+                moyenneVisitesParJour: moyenneVisitesParJour,
+                objectifChiffreDaffaire: objectifChiffreDaffaire,
+                objectifVisites: objectifVisites,
+                successRate: successRate,
+            });
         }
         this.setState({ isLoading: false, delegates: delegates, filtredDelegates: delegates });
     };
@@ -148,16 +198,20 @@ class PlanPage extends Component<{}, PlanPageProps> {
                         <button onClick={this.handleDelegateFilter} className="btn btn-primary" style={{ backgroundColor: '#fff', border: '#ddd solid 1px', height: '38px' }}>
                             <FontAwesomeIcon icon={faSearch} style={{ color: 'black' }} />
                         </button>
-                    </div>
-                    <div style={{ display: 'flex' }}>
-                        <UserPicker delegates={this.state.filtredDelegates} onSelect={this.handleSelectDelegate}></UserPicker>
                         <MonthYearPicker onPick={this.handleOnPickDate}></MonthYearPicker >
                     </div>
-                    <div className='stats-panel'>
-                        <h2 className='labels'>KPI: Realisation plan de tournee: {this.state.planDeTournee.toFixed(2)}%</h2>
-                        <h2 className='labels'>Moyen visite/jour: {this.state.moyenneVisitesParJour.toFixed(2)}</h2>
+                    <div style={{ display: 'flex', }}>
+                        <UserPicker delegates={this.state.filtredDelegates} onSelect={this.handleSelectDelegate}></UserPicker>
                     </div>
-                    <div className='table-panel'>
+                    <div className='stats-panel' style={{ margin: '0px 8px', paddingLeft: '16px', backgroundColor: 'white' }}>
+                        <CircularProgressLabel colorStroke='#FC761E' direction='row' secondTitle='KPI: Realisation plan de tournee' value={this.state.planDeTournee} />
+                        <CircularProgressLabel colorStroke='#CC38E0' direction='row' secondTitle='Couverture portefeuille client' value={this.state.couverturePortfeuille} />
+                        <CircularProgressLabel colorStroke='#38EB5D' direction='row' secondTitle="Objectif chiffre d'affaire" value={this.state.objectifChiffreDaffaire} />
+                        <CircularProgressLabel colorStroke='#2FBCEB' direction='row' secondTitle='Objectif visites' value={this.state.objectifVisites} />
+                        <CircularProgressLabel colorStroke='#FC4630' direction='row' secondTitle='Moyen visite/jour' value={this.state.moyenneVisitesParJour} />
+                        <CircularProgressLabel colorStroke='#3A25E6' direction='row' secondTitle='Taux de réussite' value={this.state.successRate} />
+                    </div>
+                    <div  style={{ width: '100%', display: 'flex', flexGrow: '1',height: 'calc(100% - 500px)'  }}>
                         <PlanTable onDisplayDetails={this.handleSelectVisitTaskDate} isLoading={this.state.loadingVisitTasksData} id='plantable' data={this.state.visitTasks}></PlanTable>
                         <div className='user-panel'>
                             <PlanPanel isLoading={this.state.loadingVisitTaskDetails} data={this.state.visitTaskDetails}></PlanPanel>
