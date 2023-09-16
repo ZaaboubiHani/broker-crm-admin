@@ -38,7 +38,7 @@ const Sidebar: React.FC<SidebarProps> = () => {
   return (
 
     <Nav className="flex-column side-menu" >
-      <div style={{overflowY:'auto',overflowX:'hidden',height:'100vh',width:'200px'}}>
+      <div style={{ overflowY: 'auto', overflowX: 'hidden', height: '100vh', width: '200px' }}>
         <img src="/broker_title.png" height='60px' style={{ margin: '0px 8px' }} alt="" />
         <Nav.Link className={location.pathname === '/home' ? 'active' : ''} href="/home">
           Acceuil
@@ -63,17 +63,9 @@ const Sidebar: React.FC<SidebarProps> = () => {
         <Nav.Link className={location.pathname === '/expense' ? 'active' : ''} href="/expense">
           Notes des frais
         </Nav.Link>
-        <Expander toggle={handleClientToggle} isOpen={clientOpened} title="Clients">
-          <Nav.Link className={location.pathname === '/clients/delegates' ? 'active' : ''} href="/clients/pharmacy">
-            Pharmacies
-          </Nav.Link>
-          <Nav.Link className={location.pathname === '/clients/cam' ? 'active' : ''} href="/clients/doctor">
-            Médcins
-          </Nav.Link>
-          <Nav.Link className={location.pathname === '/clients/cam' ? 'active' : ''} href="/clients/wholesaler">
-            Grossiste/super gros
-          </Nav.Link>
-        </Expander>
+        <Nav.Link className={location.pathname === '/clients' ? 'active' : ''} href="/clients">
+          Clients
+        </Nav.Link>
         <Nav.Link className={location.pathname === '/revenue' ? 'active' : ''} href="/revenue">
           Chiffre d'affaire
         </Nav.Link>

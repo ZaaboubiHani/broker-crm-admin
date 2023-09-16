@@ -106,13 +106,13 @@ class DelegatePage extends Component<{}, DelegatePageState> {
         this.setState({
             selectedDate: date,
             visits: visits,
-            loadingVisitsData: false,
             planDeTournee: planDeTournee,
             couverturePortfeuille: couverturePortfeuille,
             moyenneVisitesParJour: moyenneVisitesParJour,
             objectifChiffreDaffaire: objectifChiffreDaffaire,
             objectifVisites: objectifVisites,
             successRate: successRate,
+            loadingVisitsData: false,
         });
     }
 
@@ -153,7 +153,6 @@ class DelegatePage extends Component<{}, DelegatePageState> {
     loadDelegatePageData = async () => {
         this.setState({ isLoading: true });
         if (!this.state.isLoading) {
-
             var delegates = await this.userService.getDelegateUsers();
             if (delegates.length > 0) {
                 this.setState({ selectedDelegate: delegates[0] });
@@ -164,7 +163,6 @@ class DelegatePage extends Component<{}, DelegatePageState> {
                 var objectifChiffreDaffaire = await this.statisticsService.getObjectifChiffreDaffaire(this.state.selectedDate, delegates[0].id!);
                 var objectifVisites = await this.statisticsService.getObjectifVisites(this.state.selectedDate, delegates[0].id!);
                 var successRate = await this.statisticsService.getDelegateSuccessRateMonth(this.state.selectedDate, delegates[0].id!);
-
                 this.setState({
                     visits: visits,
                     loadingVisitsData: false,

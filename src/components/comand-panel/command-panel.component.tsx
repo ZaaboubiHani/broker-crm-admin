@@ -23,18 +23,18 @@ const CommandPanel: React.FC<CommandPanelProps> = ({ command }) => {
     if (command) {
         return (
             <div style={{ margin: '8px', flexGrow: '1' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-around' }}>
-                    <h4 style={{ fontSize: 17 }}> Statut : {command.isHonored ? 'honoré' : 'non honoré'}</h4>
-                    <h4 style={{ fontSize: 17 }}> Total: {command.totalRemised?.toLocaleString('fr-DZ', { style: 'currency', currency: 'DZD' })}</h4>
+                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                    <h4 style={{ fontSize: 17 ,fontWeight: '400'}}> Statut : {command.isHonored ? 'honoré' : 'non honoré'}</h4>
+                    <h4 style={{ fontSize: 17 ,fontWeight: '400'}}> Total: {command.totalRemised?.toLocaleString('fr-DZ', { style: 'currency', currency: 'DZD' })}</h4>
                     <Button onClick={generatePdf} variant="outlined"> <PictureAsPdfIcon />Télécharger PDF</Button>
                 </div>
                 <Divider component="div" style={{ margin: '8px 0px' }} />
                 <h4 style={{ fontSize: 17 }}> <InventoryIcon style={{ fontSize: 17 }} /> Produits:</h4>
                 {
                     command.products?.map((product) => (
-                        <div style={{ display: 'flex', justifyContent: 'space-around' }}>
-                            <h6>{product.name}</h6>
-                            <h6>quantité:{product.quantity}</h6>
+                        <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                            <h6 style={{ fontSize: 15, fontWeight: '400' }}>{product.name}</h6>
+                            <h6 style={{ fontSize: 15, fontWeight: '400' }}>quantité: {product.quantity}</h6>
                         </div>
                     ))
                 }
@@ -45,10 +45,10 @@ const CommandPanel: React.FC<CommandPanelProps> = ({ command }) => {
                             <h4 style={{ fontSize: 17 }}><HailIcon style={{ fontSize: 17 }} />Fournisseurs:</h4>
                             {
                                 command.suppliers?.map((supplier) => (
-                                    <div style={{ display: 'flex', justifyContent: 'space-around' }}>
-                                        <h6>{supplier.name}</h6>
-                                        <h6>{supplier.wilaya}</h6>
-                                        <h6>{supplier.commun}</h6>
+                                    <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                                        <h6 style={{ fontSize: 15, fontWeight: '400' }}>{supplier.name}</h6>
+                                        <h6 style={{ fontSize: 15, fontWeight: '400' }}>{supplier.wilaya}</h6>
+                                        <h6 style={{ fontSize: 15, fontWeight: '400' }}>{supplier.commun}</h6>
                                     </div>
                                 ))
                             }

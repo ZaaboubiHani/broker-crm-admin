@@ -217,6 +217,7 @@ export default class StatisticsService {
 
         return [];
     }
+    
 
     async getDelegateContributionStats(date: Date, userId: number,): Promise<{ teamSales: number, delegateSales: number }> {
 

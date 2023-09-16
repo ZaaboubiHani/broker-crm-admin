@@ -1,8 +1,5 @@
 import React, { Component } from 'react';
 import '../statistics-page/statistics-page.style.css';
-import MonthYearPicker from '../../components/month-year-picker/month-year-picker.component';
-import SearchBar from '../../components/search-bar/search-bar.component';
-import Button from 'react-bootstrap/Button';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Form from 'react-bootstrap/esm/Form';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -19,6 +16,7 @@ import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
 import StatisticsService from '../../services/statics.service';
 import YearPicker from '../../components/year-picker/year-picker.component';
+import CustomTabPanel from '../../components/custom-tab-panel/costum-tab-panel.component';
 
 
 interface StatisticsPageProps {
@@ -504,7 +502,6 @@ class StatisticsPage extends Component<{}, StatisticsPageProps> {
         else {
             return (
                 <div className='statistics-container'>
-
                     <div style={{
                         width: '100%', display: 'flex', flexGrow: '1', minHeight: '100vh'
                     }} >
@@ -515,8 +512,8 @@ class StatisticsPage extends Component<{}, StatisticsPageProps> {
                                     <Tab label="Équipe" />
                                 </Tabs>
                             </Box>
-                            <CustomTabPanel value={this.state.index} index={0}>
-                                <div className='search-bar'>
+                            <CustomTabPanel value={this.state.index} index={0} >
+                                <div style={{ display: 'flex', height: '40px' }}>
                                     <Form>
                                         <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
                                             <Form.Control type="search" placeholder="Recherche" onChange={this.handleSearchTextChange} />
@@ -605,14 +602,11 @@ class StatisticsPage extends Component<{}, StatisticsPageProps> {
                                                         padding: '16px',
                                                     }}
                                                 />
-
-
                                             </div>
                                         </div>
                                     )
 
                                 }
-
                             </CustomTabPanel>
                             <CustomTabPanel value={this.state.index} index={1}>
                                 <div style={{ display: 'flex' }}>
@@ -661,32 +655,6 @@ class StatisticsPage extends Component<{}, StatisticsPageProps> {
             );
         }
     }
-}
-
-
-interface TabPanelProps {
-    children?: React.ReactNode;
-    index: number;
-    value: number;
-}
-
-function CustomTabPanel(props: TabPanelProps) {
-    const { children, value, index, ...other } = props;
-
-    return (
-        <div
-            role="tabpanel"
-            hidden={value !== index}
-            id={`simple-tabpanel-${index}`}
-            aria-labelledby={`simple-tab-${index}`}
-            {...other}>
-            {value === index && (
-                <Box sx={{ p: 3 }}>
-                    <Typography>{children}</Typography>
-                </Box>
-            )}
-        </div>
-    );
 }
 
 
