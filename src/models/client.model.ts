@@ -14,22 +14,12 @@ export default class ClientModel{
     commune?: string;
     speciality?: string;
     potential?: number;
+    totalSellers?: number;
+    totalPostChifa?: number;
     type?: ClientType;
 
 
-    constructor(params: {
-        id?: number,
-        name?: string,
-        email?: string,
-        password?: string,
-        token?: string,
-        phoneOne?: string,
-        wilaya?: string,
-        commune?: string,
-        speciality?: string;
-        potential?: number;
-        type?: ClientType
-    }
+    constructor(params: ClientModel
     ) {
         this.id = params.id;
         this.name = params.name;
@@ -40,6 +30,8 @@ export default class ClientModel{
         this.commune = params.commune;
         this.speciality = params.speciality;
         this.potential = params.potential;
+        this.totalPostChifa = params.totalPostChifa;
+        this.totalSellers = params.totalSellers;
         this.type = params.type;
     }
 
@@ -53,6 +45,8 @@ export default class ClientModel{
             commune: json?.attributes?.commun,
             speciality: json?.attributes?.relatedSpeciality?.data?.attributes?.name,
             potential: json?.attributes?.potential,
+            totalSellers: json?.attributes?.totalSellers,
+            totalPostChifa: json?.attributes?.totalPostChifa,
             type: json?.attributes?.relatedSpeciality?.data?.id === 1 ? ClientType.pharmacy : json?.attributes?.relatedSpeciality?.data?.id === 2 ? ClientType.wholesaler : ClientType.doctor,
         });
     }

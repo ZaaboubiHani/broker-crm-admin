@@ -11,6 +11,7 @@ import { FontAwesomeIcon, } from '@fortawesome/react-fontawesome';
 import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
 import { DotSpinner } from '@uiball/loaders';
 import Snackbar from '@mui/material/Snackbar';
+import { UserType } from '../../models/user.model';
 
 const LoginPage: React.FC = () => {
 
@@ -24,14 +25,23 @@ const LoginPage: React.FC = () => {
   const navigate = useNavigate();
 
   var authService = new AuthService();
+  var userService = new UserService();
 
   const handleLogin = async () => {
     setIsLogging(true);
     var loginSuccess = await authService.login(identifier, password);
 
     if (loginSuccess) {
+      var user = await userService.getMe();
+      if (user.type === UserType.admin || user.type === UserType.supervisor) {
+        navigate('/content');
+      }
+      else {
+        localStorage.clear();
+        setSnackbarMessage("vous n'êtes pas autorisé");
+        setShowSnackbar(true);
+      }
       setIsLogging(false);
-      navigate('/content');
     }
     else {
       setIsLogging(false);
@@ -41,7 +51,7 @@ const LoginPage: React.FC = () => {
   };
 
   const handleClose = (event: React.SyntheticEvent | Event, reason?: string) => {
-   
+
     setShowSnackbar(false);
   };
 

@@ -47,7 +47,7 @@ class ProfilePage extends Component<ProfilePageProps, ProfilePageState> {
         for (var i = 0; i < this.state.users.length; i++) {
             await this.userService.updateUser(this.state.users[i]);
         }
-        var users = await this.userService.getAllUsers();
+        var users = await this.userService.getUsersByType(this.state.currentUser.id!);
         this.setState({ users: users, loadingUsers: false });
     }
 
@@ -55,7 +55,7 @@ class ProfilePage extends Component<ProfilePageProps, ProfilePageState> {
         this.setState({ addClientDialogIsOpen: false, loadingUsers: true });
         await this.userService.addUser(user);
 
-        var users = await this.userService.getAllUsers();
+        var users = await this.userService.getUsersByType(this.state.currentUser.id!);
         this.setState({ users: users, loadingUsers: false });
     }
 
@@ -70,7 +70,7 @@ class ProfilePage extends Component<ProfilePageProps, ProfilePageState> {
     loadProfilePageData = async () => {
         this.setState({ addClientDialogIsOpen: false, isLoading: false });
         var me = await this.userService.getMe();
-        var users = await this.userService.getAllUsers();
+        var users = await this.userService.getUsersByType(me.id!);
         this.setState({ users: users, loadingUsers: false });
         this.setState({ isLoading: false, currentUser: me });
     }
@@ -97,7 +97,7 @@ class ProfilePage extends Component<ProfilePageProps, ProfilePageState> {
         else {
             return (
                 <div className='profile' style={{ overflow: 'hidden' }}>
-                    <div style={{height:'125px'}}>
+                    <div style={{ height: '125px' }}>
                         <CircleAvatar name='KW'></CircleAvatar>
                         <UserDetails
                             name={this.state.currentUser.username ?? ''}
@@ -110,7 +110,7 @@ class ProfilePage extends Component<ProfilePageProps, ProfilePageState> {
                     <div className='title'>
                         <h3>Information d'équipe :</h3>
                         <div style={{ display: 'flex', alignItems: 'end' }}>
-                            <h4 onClick={this.handleOpenAddClientDialog}>Ajouter un délégué</h4>
+                            <h4 onClick={this.handleOpenAddClientDialog}>{this.state.currentUser.type === UserType.admin ? 'Ajouter spervisor/kam' : 'Ajouter un délégué'}</h4>
                             <Button onClick={this.handleSaveChanges} startIcon={<SaveIcon />} sx={{ marginLeft: '16px' }} variant="outlined">Enregistrer les modifications</Button>
                         </div>
                     </div>
@@ -123,7 +123,7 @@ class ProfilePage extends Component<ProfilePageProps, ProfilePageState> {
                             /> :
                                 <ProfileTable isLoading={false} data={this.state.users} />}
                     </div>
-                    <AddClientDialog onAdd={this.handleAddUser} isOpen={this.state.addClientDialogIsOpen} onClose={this.handleCloseAddClientDialog}></AddClientDialog>
+                    <AddClientDialog onAdd={this.handleAddUser} isOpen={this.state.addClientDialogIsOpen} onClose={this.handleCloseAddClientDialog} creatorType={this.state.currentUser.type!}></AddClientDialog>
                 </div>
             );
         }

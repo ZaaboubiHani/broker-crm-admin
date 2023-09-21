@@ -16,6 +16,7 @@ export default class AuthService {
                 });
             if (response.status == 200) {
                 localStorage.setItem('token', response.data['jwt']);
+                localStorage.setItem('id', response.data.user.id);
                 return true;
             }
             return false;
