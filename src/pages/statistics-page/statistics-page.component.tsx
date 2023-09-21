@@ -33,8 +33,12 @@ interface StatisticsPageProps {
     visitGoalAreaChart: ApexOptions,
     salesAreaChart: ApexOptions,
     chartPieOptions: ApexOptions,
+    teamContributionPieOptions: ApexOptions,
+    delegatesContributionChartPie: ApexOptions,
     teamSalesAreaChart: ApexOptions,
-    teamVisitsAreaChart: ApexOptions,
+    teamSuccessRateAreaChart: ApexOptions,
+    teamVisitGoalAreaChart: ApexOptions,
+    teamVisitTaskAreaChart: ApexOptions,
     index: number;
 }
 
@@ -73,12 +77,82 @@ class StatisticsPage extends Component<{}, StatisticsPageProps> {
                     },
                 }
             },
+            teamContributionPieOptions: {
+                chart: {
+                    type: 'pie',
+                },
+                fill: {
+                    type: 'gradient',
+                },
+                series: [],
+                labels: [],
+                colors: ['#2AEB80', '#FF5747'],
+                title: {
+                    text: 'Diagramme de contribution au chiffre d\'affaire annuel d\'equipe',
+                    align: 'left',
+                    margin: 10,
+                    offsetX: 0,
+                    offsetY: 0,
+                    floating: false,
+                    style: {
+                        fontSize: '20px',
+                        fontWeight: 'bold',
+                        color: '#263238'
+                    },
+                }
+            },
+            delegatesContributionChartPie: {
+                chart: {
+                    type: 'pie',
+                },
+                fill: {
+                    type: 'gradient',
+                },
+                series: [],
+                labels: [],
+                title: {
+                    text: 'Diagramme de contribution au chiffre d\'affaire annuel',
+                    align: 'left',
+                    margin: 10,
+                    offsetX: 0,
+                    offsetY: 0,
+                    floating: false,
+                    style: {
+                        fontSize: '20px',
+                        fontWeight: 'bold',
+                        color: '#263238'
+                    },
+                }
+            },
             delegateSuccessRateAreaChart: {
                 chart: {
                     type: 'area',
                 },
                 title: {
                     text: 'Graphe des taux de réussite annuel',
+                    align: 'left',
+                    margin: 10,
+                    offsetX: 0,
+                    offsetY: 0,
+                    floating: false,
+                    style: {
+                        fontSize: '20px',
+                        fontWeight: 'bold',
+                        color: '#263238'
+                    },
+                },
+                colors: ['#CC38E0', '#2AEB80'],
+                series: [],
+                xaxis: {
+                    categories: ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'],
+                }
+            },
+            teamSuccessRateAreaChart: {
+                chart: {
+                    type: 'area',
+                },
+                title: {
+                    text: 'Graphe des taux de réussite annuel de l\'équipe',
                     align: 'left',
                     margin: 10,
                     offsetX: 0,
@@ -182,18 +256,18 @@ class StatisticsPage extends Component<{}, StatisticsPageProps> {
                         color: '#263238'
                     },
                 },
-                colors: ['#CC38E0'],
+                colors: ['#CC38E0', '#6571EB'],
                 series: [],
                 xaxis: {
                     categories: ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'],
                 }
             },
-            teamVisitsAreaChart: {
+            teamVisitGoalAreaChart: {
                 chart: {
                     type: 'area',
                 },
                 title: {
-                    text: 'Graphe de visites annuel de l\'équipe',
+                    text: 'Graphe des objectifs de visites annuel de l\'équipe',
                     align: 'left',
                     margin: 10,
                     offsetX: 0,
@@ -205,7 +279,30 @@ class StatisticsPage extends Component<{}, StatisticsPageProps> {
                         color: '#263238'
                     },
                 },
-                colors: ['#8CE038'],
+                colors: ['#38EB5D', '#2FBCEB'],
+                series: [],
+                xaxis: {
+                    categories: ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'],
+                }
+            },
+            teamVisitTaskAreaChart: {
+                chart: {
+                    type: 'area',
+                },
+                title: {
+                    text: 'Graphe du plan de tournee annuel de l\'équipe',
+                    align: 'left',
+                    margin: 10,
+                    offsetX: 0,
+                    offsetY: 0,
+                    floating: false,
+                    style: {
+                        fontSize: '20px',
+                        fontWeight: 'bold',
+                        color: '#263238'
+                    },
+                },
+                colors: ['#38EB5D', '#EA572C'],
                 series: [],
                 xaxis: {
                     categories: ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'],
@@ -244,11 +341,27 @@ class StatisticsPage extends Component<{}, StatisticsPageProps> {
         var teamVisitsData = await this.statisticsService.getTeamYearVisitStats(this.state.selectedDate);
         var teamSalesData = await this.statisticsService.getTeamYearSaleStats(this.state.selectedDate);
         var successRate = await this.statisticsService.getDelegateSuccessRateYear(delegate!.id!, this.state.selectedDate);
+        //todo: get supervisor id
+        var teamSuccessRate = await this.statisticsService.getTeamSuccessRateYear(2, this.state.selectedDate);
+        var delegatesContributions = await this.statisticsService.getDelegatesContributionsOfSupervisor(2, this.state.selectedDate,);
+        var teamContribution = await this.statisticsService.getTeamContributionsOfSupervisor(2, this.state.selectedDate,);
 
         this.state.chartPieOptions.series = [contributionStats.delegateSales, contributionStats.teamSales - contributionStats.delegateSales];
         this.state.chartPieOptions.labels?.splice(0, this.state.chartPieOptions.labels?.length);
         this.state.chartPieOptions.labels?.push(delegate.username!);
         this.state.chartPieOptions.labels?.push('reste d\'equipe');
+
+        this.state.teamContributionPieOptions.series = [teamContribution.teamSales, teamContribution.teamSales - teamContribution.companySales];
+        this.state.teamContributionPieOptions.labels?.splice(0, this.state.teamContributionPieOptions.labels?.length);
+        this.state.teamContributionPieOptions.labels?.push('equipe');
+        this.state.teamContributionPieOptions.labels?.push('entreprise');
+
+        this.state.delegatesContributionChartPie.series = [...delegatesContributions.map(e => e.ChiffreDaffaire)];
+        this.state.delegatesContributionChartPie.labels?.splice(0, this.state.delegatesContributionChartPie.labels?.length);
+        delegatesContributions.forEach(e => {
+            this.state.delegatesContributionChartPie.labels?.push(e.delegateName);
+        });
+
 
         this.state.delegateSuccessRateAreaChart.series = [
             {
@@ -261,17 +374,47 @@ class StatisticsPage extends Component<{}, StatisticsPageProps> {
             },
         ];
 
+        this.state.teamSuccessRateAreaChart.series = [
+            {
+                name: 'Total de bon de commandes honores',
+                data: teamSuccessRate.map(e => e.honoredCommands),
+            },
+            {
+                name: 'Total visites',
+                data: teamSuccessRate.map(e => e.totalVisits),
+            },
+        ];
+
         this.state.teamSalesAreaChart.series = [
             {
                 name: 'Total des ventes',
                 data: teamSalesData.map(e => e.totalSales),
             },
+            {
+                name: 'Objectifs chiffre d\'affaire',
+                data: teamSalesData.map(e => e.salesGoal),
+            },
         ];
 
-        this.state.teamVisitsAreaChart.series = [
+        this.state.teamVisitGoalAreaChart.series = [
             {
                 name: 'Total visites',
                 data: teamVisitsData.map(e => e.numberOfVisits),
+            },
+            {
+                name: 'Objectifs de visites',
+                data: teamVisitsData.map(e => e.visitsGoal),
+            },
+        ];
+
+        this.state.teamVisitTaskAreaChart.series = [
+            {
+                name: 'Total visites',
+                data: teamVisitsData.map(e => e.numberOfVisits),
+            },
+            {
+                name: 'Objectifs de visites',
+                data: teamVisitsData.map(e => e.numberOfTasks),
             },
         ];
 
@@ -308,7 +451,15 @@ class StatisticsPage extends Component<{}, StatisticsPageProps> {
             },
         ];
 
-        this.setState({ selectedDelegate: delegate, loadingStatisticsData: false, visitGoalAreaChart: this.state.visitGoalAreaChart, visitTaskAreaChart: this.state.visitTaskAreaChart, salesAreaChart: this.state.salesAreaChart, chartPieOptions: this.state.chartPieOptions });
+        this.setState({
+            selectedDelegate: delegate,
+            loadingStatisticsData: false,
+            visitGoalAreaChart: this.state.visitGoalAreaChart,
+            visitTaskAreaChart: this.state.visitTaskAreaChart,
+            salesAreaChart: this.state.salesAreaChart,
+            chartPieOptions: this.state.chartPieOptions,
+            teamContributionPieOptions: this.state.teamContributionPieOptions,
+        });
     }
 
     handleOnPickDate = async (date: Date) => {
@@ -323,10 +474,25 @@ class StatisticsPage extends Component<{}, StatisticsPageProps> {
             var teamSalesData = await this.statisticsService.getTeamYearSaleStats(date);
             var successRate = await this.statisticsService.getDelegateSuccessRateYear(this.state.selectedDelegate!.id!, date);
 
+            var teamSuccessRate = await this.statisticsService.getTeamSuccessRateYear(2, date);
+            var delegatesContributions = await this.statisticsService.getDelegatesContributionsOfSupervisor(2, date,);
+            var teamContribution = await this.statisticsService.getTeamContributionsOfSupervisor(2, date,);
+
             this.state.chartPieOptions.series = [contributionStats.delegateSales, contributionStats.teamSales - contributionStats.delegateSales];
             this.state.chartPieOptions.labels?.splice(0, this.state.chartPieOptions.labels?.length);
             this.state.chartPieOptions.labels?.push(this.state.selectedDelegate!.username!);
             this.state.chartPieOptions.labels?.push('reste d\'equipe');
+
+            this.state.teamContributionPieOptions.series = [teamContribution.teamSales, teamContribution.teamSales - teamContribution.companySales];
+            this.state.teamContributionPieOptions.labels?.splice(0, this.state.teamContributionPieOptions.labels?.length);
+            this.state.teamContributionPieOptions.labels?.push('equipe');
+            this.state.teamContributionPieOptions.labels?.push('entreprise');
+
+            this.state.delegatesContributionChartPie.series = [...delegatesContributions.map(e => e.ChiffreDaffaire)];
+            this.state.delegatesContributionChartPie.labels?.splice(0, this.state.chartPieOptions.labels?.length);
+            delegatesContributions.forEach(e => {
+                this.state.delegatesContributionChartPie.labels?.push(e.delegateName);
+            });
 
             this.state.delegateSuccessRateAreaChart.series = [
                 {
@@ -339,20 +505,48 @@ class StatisticsPage extends Component<{}, StatisticsPageProps> {
                 },
             ];
 
+            this.state.teamSuccessRateAreaChart.series = [
+                {
+                    name: 'Total de bon de commandes honores',
+                    data: teamSuccessRate.map(e => e.honoredCommands),
+                },
+                {
+                    name: 'Total visites',
+                    data: teamSuccessRate.map(e => e.totalVisits),
+                },
+            ];
+
             this.state.teamSalesAreaChart.series = [
                 {
                     name: 'Total des ventes',
                     data: teamSalesData.map(e => e.totalSales),
                 },
+                {
+                    name: 'Objectifs chiffre d\'affaire',
+                    data: teamSalesData.map(e => e.salesGoal),
+                },
             ];
 
-            this.state.teamVisitsAreaChart.series = [
+            this.state.teamVisitGoalAreaChart.series = [
                 {
                     name: 'Total visites',
                     data: teamVisitsData.map(e => e.numberOfVisits),
                 },
+                {
+                    name: 'Objectifs de visites',
+                    data: teamVisitsData.map(e => e.visitsGoal),
+                },
             ];
-
+            this.state.teamVisitTaskAreaChart.series = [
+                {
+                    name: 'Total visites',
+                    data: teamVisitsData.map(e => e.numberOfVisits),
+                },
+                {
+                    name: 'Objectifs de visites',
+                    data: teamVisitsData.map(e => e.numberOfTasks),
+                },
+            ];
 
             this.state.salesAreaChart.series = [
                 {
@@ -388,7 +582,15 @@ class StatisticsPage extends Component<{}, StatisticsPageProps> {
             ];
         }
 
-        this.setState({ selectedDate: date, loadingStatisticsData: false, visitGoalAreaChart: this.state.visitGoalAreaChart, visitTaskAreaChart: this.state.visitTaskAreaChart, salesAreaChart: this.state.salesAreaChart, chartPieOptions: this.state.chartPieOptions });
+        this.setState({
+            selectedDate: date,
+            loadingStatisticsData: false,
+            visitGoalAreaChart: this.state.visitGoalAreaChart,
+            visitTaskAreaChart: this.state.visitTaskAreaChart,
+            salesAreaChart: this.state.salesAreaChart,
+            chartPieOptions: this.state.chartPieOptions,
+            teamContributionPieOptions: this.state.teamContributionPieOptions,
+        });
     }
 
     loadStatisticsPageData = async () => {
@@ -406,10 +608,25 @@ class StatisticsPage extends Component<{}, StatisticsPageProps> {
                 var successRate = await this.statisticsService.getDelegateSuccessRateYear(delegates[0].id!, new Date());
                 var teamSalesData = await this.statisticsService.getTeamYearSaleStats(new Date());
 
+                var teamSuccessRate = await this.statisticsService.getTeamSuccessRateYear(2, new Date());
+                var delegatesContributions = await this.statisticsService.getDelegatesContributionsOfSupervisor(2, new Date());
+                var teamContribution = await this.statisticsService.getTeamContributionsOfSupervisor(2, new Date());
+
                 this.state.chartPieOptions.series = [contributionStats.delegateSales, contributionStats.teamSales - contributionStats.delegateSales];
                 this.state.chartPieOptions.labels?.splice(0, this.state.chartPieOptions.labels?.length);
                 this.state.chartPieOptions.labels?.push(delegates[0].username!);
                 this.state.chartPieOptions.labels?.push('reste d\'equipe');
+
+                this.state.teamContributionPieOptions.series = [teamContribution.teamSales, teamContribution.teamSales - teamContribution.companySales];
+                this.state.teamContributionPieOptions.labels?.splice(0, this.state.teamContributionPieOptions.labels?.length);
+                this.state.teamContributionPieOptions.labels?.push('equipe');
+                this.state.teamContributionPieOptions.labels?.push('entreprise');
+
+                this.state.delegatesContributionChartPie.series = [...delegatesContributions.map(e => e.ChiffreDaffaire)];
+                this.state.delegatesContributionChartPie.labels?.splice(0, this.state.chartPieOptions.labels?.length);
+                delegatesContributions.forEach(e => {
+                    this.state.delegatesContributionChartPie.labels?.push(e.delegateName);
+                });
 
                 this.state.delegateSuccessRateAreaChart.series = [
                     {
@@ -422,20 +639,48 @@ class StatisticsPage extends Component<{}, StatisticsPageProps> {
                     },
                 ];
 
+                this.state.teamSuccessRateAreaChart.series = [
+                    {
+                        name: 'Total de bon de commandes honores',
+                        data: teamSuccessRate.map(e => e.honoredCommands),
+                    },
+                    {
+                        name: 'Total visites',
+                        data: teamSuccessRate.map(e => e.totalVisits),
+                    },
+                ];
+
                 this.state.teamSalesAreaChart.series = [
                     {
                         name: 'Total des ventes',
                         data: teamSalesData.map(e => e.totalSales),
                     },
+                    {
+                        name: 'Objectifs chiffre d\'affaire',
+                        data: teamSalesData.map(e => e.salesGoal),
+                    },
                 ];
 
-                this.state.teamVisitsAreaChart.series = [
+                this.state.teamVisitGoalAreaChart.series = [
                     {
                         name: 'Total visites',
                         data: teamVisitsData.map(e => e.numberOfVisits),
                     },
+                    {
+                        name: 'Objectifs de visites',
+                        data: teamVisitsData.map(e => e.visitsGoal),
+                    },
                 ];
-
+                this.state.teamVisitTaskAreaChart.series = [
+                    {
+                        name: 'Total visites',
+                        data: teamVisitsData.map(e => e.numberOfVisits),
+                    },
+                    {
+                        name: 'Objectifs de visites',
+                        data: teamVisitsData.map(e => e.numberOfTasks),
+                    },
+                ];
 
                 this.state.salesAreaChart.series = [
                     {
@@ -602,6 +847,7 @@ class StatisticsPage extends Component<{}, StatisticsPageProps> {
                                                         padding: '16px',
                                                     }}
                                                 />
+
                                             </div>
                                         </div>
                                     )
@@ -621,32 +867,92 @@ class StatisticsPage extends Component<{}, StatisticsPageProps> {
                                                 color="black"
                                             />
                                         </div>
-                                    ) : (<div style={{ display: 'flex', flexGrow: '1' }}>
-                                        <ReactApexChart
-                                            options={this.state.teamSalesAreaChart}
-                                            series={this.state.teamSalesAreaChart.series}
-                                            type="area"
-                                            height={350}
-                                            style={{
-                                                width: '50%',
-                                                border: 'solid black 1px',
-                                                borderRadius: '16px 0px 0px 16px',
-                                                padding: '16px'
-                                            }}
-                                        />
-                                        <ReactApexChart
-                                            options={this.state.teamVisitsAreaChart}
-                                            series={this.state.teamVisitsAreaChart.series}
-                                            type="area"
-                                            height={350}
-                                            style={{
-                                                width: '50%',
-                                                border: 'solid black 1px',
-                                                borderRadius: '0px 16px 16px 0px',
-                                                padding: '16px'
-                                            }}
-                                        />
-                                    </div>)
+                                    ) : (
+                                        <div>
+
+
+                                            <div style={{ display: 'flex', flexGrow: '1' }}>
+                                                <ReactApexChart
+                                                    options={this.state.teamSalesAreaChart}
+                                                    series={this.state.teamSalesAreaChart.series}
+                                                    type="area"
+                                                    height={350}
+                                                    style={{
+                                                        width: '50%',
+                                                        border: 'solid black 1px',
+                                                        borderRadius: '16px 0px 0px 0px',
+                                                        padding: '16px'
+                                                    }}
+                                                />
+                                                <ReactApexChart
+                                                    options={this.state.teamVisitGoalAreaChart}
+                                                    series={this.state.teamVisitGoalAreaChart.series}
+                                                    type="area"
+                                                    height={350}
+                                                    style={{
+                                                        width: '50%',
+                                                        border: 'solid black 1px',
+                                                        borderRadius: '0px 16px 0px 0px',
+                                                        padding: '16px'
+                                                    }}
+                                                />
+                                            </div>
+                                            <div style={{ display: 'flex', flexGrow: '1' }}>
+                                                <ReactApexChart
+                                                    options={this.state.teamVisitTaskAreaChart}
+                                                    series={this.state.teamVisitTaskAreaChart.series}
+                                                    type="area"
+                                                    height={350}
+                                                    style={{
+                                                        width: '50%',
+                                                        border: 'solid black 1px',
+                                                        borderRadius: '0px',
+                                                        padding: '16px'
+                                                    }}
+                                                />
+                                                <ReactApexChart
+                                                    options={this.state.delegatesContributionChartPie}
+                                                    series={this.state.delegatesContributionChartPie.series}
+                                                    type="pie"
+                                                    height={350}
+                                                    style={{
+                                                        width: '50%',
+                                                        border: 'solid black 1px',
+                                                        borderRadius: '0px',
+                                                        padding: '16px'
+                                                    }}
+                                                />
+
+                                            </div>
+                                            <div style={{ display: 'flex' }}>
+                                                <ReactApexChart
+                                                    options={this.state.teamSuccessRateAreaChart}
+                                                    series={this.state.teamSuccessRateAreaChart.series}
+                                                    type="area"
+                                                    height={350}
+                                                    style={{
+                                                        width: '50%',
+                                                        border: 'solid black 1px',
+                                                        borderRadius: '0px 0px 0px 16px',
+                                                        padding: '16px',
+                                                    }}
+                                                />
+                                                <ReactApexChart
+                                                    options={this.state.teamContributionPieOptions}
+                                                    series={this.state.teamContributionPieOptions.series}
+                                                    type="pie"
+                                                    height={350}
+                                                    style={{
+                                                        width: '50%',
+                                                        border: 'solid black 1px',
+                                                        borderRadius: '0px 0px 16px 0px',
+                                                        padding: '16px',
+                                                    }}
+                                                />
+
+                                            </div>
+                                        </div>
+                                    )
                                 }
                             </CustomTabPanel>
                         </Box>

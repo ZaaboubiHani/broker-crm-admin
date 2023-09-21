@@ -16,12 +16,14 @@ import ExpenseService from '../../services/expense.service';
 import { DotSpinner } from '@uiball/loaders';
 import ExpenseUserModel from '../../models/expense-user.model';
 import { Button as MuiButton } from '@mui/material';
+import ProofsDialog from '../../components/proofs-dialog/proofs-dialog.component';
 
 
 
 interface ExpensePageProps {
     selectedDate: Date;
     isLoading: boolean;
+    proofsDialogIsOpen: boolean;
     hasData: boolean;
     searchText: string;
     delegates: UserModel[];
@@ -44,6 +46,7 @@ class ExpensePage extends Component<{}, ExpensePageProps> {
             delegates: [],
             filtredDelegates: [],
             loadingExpensesData: false,
+            proofsDialogIsOpen: false,
             expenses: [],
             expensesUser: new ExpenseUserModel({}),
         }
@@ -102,6 +105,11 @@ class ExpensePage extends Component<{}, ExpensePageProps> {
         }
     }
 
+    handleCloseProofsDialog = () => {
+        this.setState({ proofsDialogIsOpen: false });
+    }
+
+
     render() {
         if (!this.state.hasData) {
             this.loadExpensePageData();
@@ -135,7 +143,7 @@ class ExpensePage extends Component<{}, ExpensePageProps> {
                         </button>
                         <MonthYearPicker onPick={this.handleOnPickDate}></MonthYearPicker >
                     </div>
-                    <div style={{ display: 'flex',height:'48px' }}>
+                    <div style={{ display: 'flex', height: '48px' }}>
                         <UserPicker delegates={this.state.filtredDelegates} onSelect={this.handleSelectDelegate}></UserPicker>
                     </div>
                     <div style={{ width: '100%', display: 'flex', flexGrow: '1' }} >
@@ -147,13 +155,20 @@ class ExpensePage extends Component<{}, ExpensePageProps> {
                         </h6>
                     </div>
                     <div style={{ display: 'flex', justifyContent: 'end' }}>
-                        <MuiButton variant="outlined" disableElevation sx={{ marginRight: '16px', marginBottom: '16px' }}>
+                        <MuiButton variant="outlined" disableElevation sx={{ marginRight: '16px', marginBottom: '16px' }} onClick={() => {
+                            this.setState({ proofsDialogIsOpen: true });
+                        }}>
                             Consulter piece jointes
                         </MuiButton>
                         <MuiButton variant="contained" disableElevation sx={{ marginBottom: '16px' }} onClick={this.handleValidateExpensesUser}>
                             Valider la note de frais
                         </MuiButton>
                     </div>
+                    <ProofsDialog data={this.state.expenses.map<{ date: Date, urls: string[] }>((ex) => {
+                        var link: { date: Date, urls: string[] } = { date: ex.createdDate!, urls: ex.proofs!.map(p => p.url ?? '') };
+                        return link;
+                    })} isOpen={this.state.proofsDialogIsOpen} onClose={this.handleCloseProofsDialog} ></ProofsDialog>
+
                 </div>
             );
         }

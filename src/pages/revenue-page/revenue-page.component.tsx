@@ -34,10 +34,6 @@ interface RevenuePageProps {
     showDetails: boolean;
 }
 
-const kPrincipal = '#35d9da';
-const kSecondary = '#0A2C3B';
-const kTernary = '#3D7C98';
-
 class RevenuePage extends Component<{}, RevenuePageProps> {
     constructor({ }) {
         super({});
@@ -170,13 +166,13 @@ class RevenuePage extends Component<{}, RevenuePageProps> {
                             direction='row'
                             secondTitle='Total honore:'
                             firstTitle={this.state.totalTeamRevenueHonored?.toLocaleString('fr-DZ', { style: 'currency', currency: 'DZD' })}
-                            value={this.state.totalTeamRevenueHonored / this.state.totalTeamRevenue * 100} />
+                            value={this.state.totalTeamRevenue !== 0 ? this.state.totalTeamRevenueHonored / this.state.totalTeamRevenue * 100 : 0} />
                         <CircularProgressLabel
                             colorStroke='#38EB5D'
                             direction='row'
                             secondTitle="Total non honore:"
                             firstTitle={this.state.totalTeamRevenueNotHonored?.toLocaleString('fr-DZ', { style: 'currency', currency: 'DZD' })}
-                            value={this.state.totalTeamRevenueNotHonored / this.state.totalTeamRevenue * 100} />
+                            value={ this.state.totalTeamRevenue !== 0 ?  this.state.totalTeamRevenueNotHonored / this.state.totalTeamRevenue * 100 : 0} />
                     </div>
                     <div style={{ width: '100%', display: 'flex', flexGrow: '1' }}>
                         <RevenueTable id='revenue-table' data={this.state.filteredRevenues} isLoading={this.state.loadingRevenuesData} displayDetails={this.handleDisplayDetails}></RevenueTable>
@@ -202,7 +198,14 @@ class RevenuePage extends Component<{}, RevenuePageProps> {
                                     )
                                     :
                                     (
-                                        <RevenuePanel showData={this.state.showDetails} total={this.state.totalDelegateRevenue} totalHonored={this.state.totalDelegateRevenueHonored} totalNotHonored={this.state.totalDelegateRevenueNotHonored} wilayasRevenue={this.state.delegateWilayasRevenue} productsRevenue={this.state.delegateProductsRevenue}></RevenuePanel>
+                                        <RevenuePanel
+                                            showData={this.state.showDetails}
+                                            total={this.state.totalDelegateRevenue}
+                                            totalHonored={this.state.totalDelegateRevenueHonored}
+                                            totalNotHonored={this.state.totalDelegateRevenueNotHonored}
+                                            wilayasRevenue={this.state.delegateWilayasRevenue}
+                                            productsRevenue={this.state.delegateProductsRevenue}
+                                        ></RevenuePanel>
                                     )
                             }
                         </div>

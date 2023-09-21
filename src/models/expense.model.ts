@@ -32,6 +32,7 @@ export default class ExpenseModel {
         this.otherExpenses = data?.otherExpenses;
         this.totalExpense = data?.totalExpense;
         this.createdDate = data?.createdDate;
+        this.proofs = data?.proofs;
     }
 
     static fromJson(json: any): ExpenseModel {
@@ -53,6 +54,7 @@ export default class ExpenseModel {
             indemnityNights: json.attributes.indemnityNights,
             otherExpenses: json.attributes.otherExpenses,
             totalExpense: json.attributes.totalExpense,
+            proofs: proofs,
             createdDate: json?.attributes?.createdDate ? new Date(json.attributes.createdDate) : undefined,
         });
     }

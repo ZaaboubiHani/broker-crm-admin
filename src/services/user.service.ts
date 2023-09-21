@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios, { AxiosResponse } from "axios";
 import UserModel, { UserType } from "../models/user.model";
 import Globals from "../api/globals";
 
@@ -8,20 +8,22 @@ export default class UserService {
 
     async addUser(user: UserModel): Promise<boolean> {
         const token = localStorage.getItem('token');
-
+        var activityResponse: AxiosResponse;
         var currentUser = await this.getMe();
-
-        var activityResponse = await axios.post(`${Globals.apiUrl}/activities`,
-            {
-                data: {
-                    delegate: user.id,
-                    wilayas: user.wilayas?.map<number>(w => w.id!)
+        if (user.type !== UserType.supervisor) {
+            activityResponse = await axios.post(`${Globals.apiUrl}/activities`,
+                {
+                    data: {
+                        delegate: user.id,
+                        wilayas: user.wilayas?.map<number>(w => w.id!)
+                    }
+                }, {
+                headers: {
+                    'Authorization': `Bearer ${token}`
                 }
-            }, {
-            headers: {
-                'Authorization': `Bearer ${token}`
-            }
-        });
+            });
+        }
+
 
         var response = await axios.post(`${Globals.apiUrl}/users`,
             {
@@ -33,9 +35,8 @@ export default class UserService {
                 creatorId: currentUser.id,
                 confirmed: true,
                 role: 1,
-                relatedType: user.type === UserType.delegate ? 3 : 2,
-                wilayaActivity: activityResponse.data.data.id
-
+                relatedType: user.type === UserType.delegate ? 3 : user.type === UserType.supervisor ? 2 : 4,
+                wilayaActivity: user.type !== UserType.supervisor ? activityResponse!.data.data.id : null
             }, {
             headers: {
                 'Authorization': `Bearer ${token}`
@@ -112,6 +113,28 @@ export default class UserService {
         const token = localStorage.getItem('token');
         //filters[relatedType][id][\$eq]=3&
         var response = await axios.get(`${Globals.apiUrl}/users?populate=wilayaActivity.wilayas&populate=relatedType&populate=company`,
+            {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+        if (response.status == 200) {
+            var users: UserModel[] = [];
+            for (let index = 0; index < response.data.length; index++) {
+                var user = UserModel.fromJson(response.data[index]);
+
+                users.push(user);
+            }
+            return users;
+        }
+        return [];
+    }
+
+    async getUsersByType(creatorId: number): Promise<UserModel[]> {
+        const token = localStorage.getItem('token');
+
+
+        var response = await axios.get(`${Globals.apiUrl}/users?populate=wilayaActivity.wilayas&populate=relatedType&populate=company&filters[creatorId][\$eq]=${creatorId}`,
             {
                 headers: {
                     'Authorization': `Bearer ${token}`

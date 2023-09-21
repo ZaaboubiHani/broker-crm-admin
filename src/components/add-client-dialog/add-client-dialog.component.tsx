@@ -22,81 +22,31 @@ interface AddClientDialogProps {
     isOpen: boolean,
     onClose: (value: string) => void;
     onAdd: (user: UserModel) => void,
+    creatorType: UserType,
 }
 
 
 const AddClientDialog: React.FC<AddClientDialogProps> = (props: AddClientDialogProps) => {
+    const { onClose, isOpen, onAdd, creatorType } = props;
+    const [stateTrigger, setStateTrigger] = React.useState<boolean>(false);
+
     const [userWilayas, setUserWilayas] = React.useState<string[]>([]);
 
-
-    // const wilayas: {id:number,name:string}[] = [
-    //     "Adrar",
-    //     "Chlef",
-    //     "Laghouat",
-    //     "Oum El Bouaghi",
-    //     "Batna",
-    //     "Béjaïa",
-    //     "Biskra",
-    //     "Béchar",
-    //     "Blida",
-    //     "Bouira",
-    //     "Tamanrasset",
-    //     "Tébessa",
-    //     "Tlemcen",
-    //     "Tiaret",
-    //     "Tizi Ouzou",
-    //     "Alger",
-    //     "Djelfa",
-    //     "Jijel",
-    //     "Sétif",
-    //     "Saïda",
-    //     "Skikda",
-    //     "Sidi Bel Abbès",
-    //     "Annaba",
-    //     "Guelma",
-    //     "Constantine",
-    //     "Médéa",
-    //     "Mostaganem",
-    //     "M'Sila",
-    //     "Mascara",
-    //     "Ouargla",
-    //     "Oran",
-    //     "El Bayadh",
-    //     "Illizi",
-    //     "Bordj Bou Arréridj",
-    //     "Boumerdès",
-    //     "El Tarf",
-    //     "Tindouf",
-    //     "Tissemsilt",
-    //     "El Oued",
-    //     "Khenchela",
-    //     "Souk Ahras",
-    //     "Tipaza",
-    //     "Mila",
-    //     "Aïn Defla",
-    //     "Naama",
-    //     "Aïn Témouchent",
-    //     "Ghardaïa",
-    //     "Relizane"
-    // ];
     const wilayas: WilayaModel[] = [
         { id: 3, name: "Adrar" },
         { id: 2, name: "Alger" },
         { id: 1, name: "Batna" },
     ];
 
-
-
-    const [user, setUser] = useState<UserModel>(new UserModel({ type: UserType.delegate }));
-
-    const { onClose, isOpen, onAdd } = props;
-
+    const [user, setUser] = useState<UserModel>(new UserModel({ type: creatorType === UserType.admin ? UserType.supervisor : UserType.delegate }));
 
     if (!isOpen) return null;
 
     const handleAddUser = (event: React.MouseEvent<HTMLButtonElement>): void => {
         if (user != undefined) {
             onAdd(user);
+            setUser(new UserModel({ type: creatorType === UserType.admin ? UserType.supervisor : UserType.delegate }));
+            setUserWilayas([]);
         }
     }
 
@@ -127,6 +77,7 @@ const AddClientDialog: React.FC<AddClientDialogProps> = (props: AddClientDialogP
             target: { value },
         } = event;
         user.type = typeof value === 'string' ? 3 : value;
+        setStateTrigger(!stateTrigger);
     };
 
     const handleUsername = (event: React.ChangeEvent<HTMLInputElement>): void => {
@@ -146,6 +97,8 @@ const AddClientDialog: React.FC<AddClientDialogProps> = (props: AddClientDialogP
     }
 
     const handleClose = () => {
+        setUser(new UserModel({ type: creatorType === UserType.admin ? UserType.supervisor : UserType.delegate }));
+        setUserWilayas([]);
         onClose('selectedValue');
     };
 
@@ -167,42 +120,56 @@ const AddClientDialog: React.FC<AddClientDialogProps> = (props: AddClientDialogP
                         <Grid item xs={4}>
                             <TextField onChange={handlePhone01} id="standard-basic" label="téléphone" variant="standard" type="phone" />
                         </Grid>
-                        <Grid item xs={4}>
-                            <FormControl sx={{ flexGrow: '1', width: '100%' }}>
-                                <InputLabel id="demo-multiple-checkbox-label">Wilayat</InputLabel>
-                                <Select
-                                    labelId="demo-multiple-checkbox-label"
-                                    id="demo-multiple-checkbox"
-                                    multiple
-                                    value={userWilayas}
-                                    onChange={handleWilayaChange}
-                                    input={<OutlinedInput label="Tag" />}
-                                    renderValue={(selected) => selected.join(', ')}
-                                >
-                                    {wilayas.map((wilaya) => (
-                                        <MenuItem key={wilaya.id} value={wilaya.name}>
-                                            <Checkbox checked={userWilayas.indexOf(wilaya.name ?? '') > -1} />
-                                            <ListItemText primary={wilaya.name} />
-                                        </MenuItem>
-                                    ))}
-                                </Select>
-                            </FormControl>
-                        </Grid>
-                        <Grid item xs={4}>
-                            <FormControl fullWidth>
-                                <InputLabel id="demo-simple-select-label">type d'utilisateur</InputLabel>
-                                <Select
-                                    labelId="demo-simple-select-label"
-                                    id="demo-simple-select"
-                                    defaultValue={3}
-                                    label="type d'utilisateur"
-                                    onChange={handleTypeChange}
-                                >
-                                    <MenuItem value={2}>Superviseur</MenuItem>
-                                    <MenuItem value={3}>Délégué</MenuItem>
-                                </Select>
-                            </FormControl>
-                        </Grid>
+
+
+                        {
+                            creatorType === UserType.admin ? (
+                                <Grid item xs={4}>
+                                    <FormControl fullWidth>
+                                        <InputLabel id="demo-simple-select-label">type d'utilisateur</InputLabel>
+                                        <Select
+                                            labelId="demo-simple-select-label"
+                                            id="demo-simple-select"
+                                            defaultValue={2}
+                                            label="type d'utilisateur"
+                                            onChange={handleTypeChange}
+                                        >
+                                            <MenuItem value={2}>Superviseur</MenuItem>
+                                            <MenuItem value={4}>Kam</MenuItem>
+                                        </Select>
+                                    </FormControl>
+                                </Grid>
+                            ) : null
+                        }
+
+                     
+                                <Grid item xs={4}>
+                                    <FormControl sx={{
+                                        flexGrow: '1',
+                                        width: '100%',
+                                        opacity: creatorType === UserType.supervisor ? '1' : user.type === UserType.kam ? '1' : '0',
+                                        transition: 'all 300ms ease'
+                                    }}>
+                                        <InputLabel id="demo-multiple-checkbox-label">Wilayat</InputLabel>
+                                        <Select
+                                            labelId="demo-multiple-checkbox-label"
+                                            id="demo-multiple-checkbox"
+                                            multiple
+                                            value={userWilayas}
+                                            onChange={handleWilayaChange}
+                                            input={<OutlinedInput label="Tag" />}
+                                            renderValue={(selected) => selected.join(', ')}
+                                        >
+                                            {wilayas.map((wilaya) => (
+                                                <MenuItem key={wilaya.id} value={wilaya.name}>
+                                                    <Checkbox checked={userWilayas.indexOf(wilaya.name ?? '') > -1} />
+                                                    <ListItemText primary={wilaya.name} />
+                                                </MenuItem>
+                                            ))}
+                                        </Select>
+                                    </FormControl>
+                                </Grid>
+                            
                     </Grid>
                 </Box>
             </DialogContent>
