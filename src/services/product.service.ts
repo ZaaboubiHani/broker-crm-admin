@@ -23,6 +23,25 @@ export default class ProductService {
         }
         return [];
     }
+    async getAllDraftedProducts(): Promise<ProductModel[]> {
+        const token = localStorage.getItem('token');
+        var response = await axios.get(`${Globals.apiUrl}/company-products?filters[domainType][id][$eq]=1&publicationState=preview&filters[publishedAt][$null]=true`,
+            {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+
+        if (response.status == 200) {
+            var products: ProductModel[] = [];
+            for (let index = 0; index < response.data.data.length; index++) {
+                var product = ProductModel.fromJson(response.data.data[index]);
+                products.push(product);
+            }
+            return products;
+        }
+        return [];
+    }
 
     async createProduct(product: ProductModel): Promise<boolean> {
         const token = localStorage.getItem('token');
@@ -51,6 +70,26 @@ export default class ProductService {
         return false;
     }
     async draftProduct(productId: number): Promise<boolean> {
+        const token = localStorage.getItem('token');
+        var response = await axios.put(`${Globals.apiUrl}/company-products/${productId}`,
+            {
+                data: {
+                    publishedAt: null
+                }
+            },
+            {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+
+        if (response.status == 200) {
+
+            return true;
+        }
+        return false;
+    }
+    async publishProduct(productId: number): Promise<boolean> {
         const token = localStorage.getItem('token');
         var response = await axios.put(`${Globals.apiUrl}/company-products/${productId}`,
             {

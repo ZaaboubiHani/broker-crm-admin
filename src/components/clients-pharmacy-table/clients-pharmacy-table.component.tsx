@@ -47,7 +47,7 @@ const ClientsPharmacyTable: React.FC<ClientsPharmacyTableProps> = ({ total, size
 
     return (
 
-        <div id={id} style={{ display: 'flex', flexDirection: 'column', flexGrow: '1', }}>
+        <div id={id} style={{ display: 'flex', flexDirection: 'column', flexGrow: '1',}}>
             <TableContainer sx={{ flexGrow: '1', display: 'flex', flexDirection: 'column', borderRadius: '8px', margin: '8px', overflow: 'hidden' }} component={Paper}>
                 <Table sx={{ flexGrow: '1', display: 'flex', flexDirection: 'column', overflow: 'hidden', margin: '0px', width: "100%" }} size="small" aria-label="a dense table">
                     <TableHead sx={{ height: '45px', marginBottom: '16px' }}>

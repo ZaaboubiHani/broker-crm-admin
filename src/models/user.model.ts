@@ -60,10 +60,10 @@ class UserModel {
     static fromJson(json: any): UserModel {
         var wilayas: WilayaModel[] = [];
         if (json?.wilayaActivity?.wilayas) {
-            for (var i = 0; i < json?.wilayaActivity.wilayas.length ; i ++) {
-               
+            for (var i = 0; i < json?.wilayaActivity.wilayas.length; i++) {
+
                 var wilaya = WilayaModel.fromJson(json?.wilayaActivity.wilayas[i]);
-                
+
                 wilayas.push(wilaya);
             }
         }
@@ -75,7 +75,7 @@ class UserModel {
             phoneOne: json?.phoneOne || json?.attributes?.phoneOne,
             wilaya: json?.wilaya || json?.attributes?.wilaya,
             commune: json?.commun || json?.attributes?.commun,
-            type: json?.relatedType?.id === 1 ? UserType.admin : json?.relatedType?.id === 2 ? UserType.supervisor : json?.relatedType?.id === 3 ? UserType.delegate : UserType.kam,
+            type: json?.relatedType?.reference === 'admin' ? UserType.admin : json?.relatedType?.reference === 'supervisor' ? UserType.supervisor : json?.relatedType?.reference === 'delegate' ? UserType.delegate : UserType.kam,
             createdAt: new Date(json?.createdAt || json?.attributes?.createdAt),
             isBlocked: json?.blocked || json?.attributes?.blocked,
             wilayas: wilayas,

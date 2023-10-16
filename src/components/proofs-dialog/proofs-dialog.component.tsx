@@ -22,19 +22,12 @@ const ProofsDialog: React.FC<ProofsDialogProps> = ({ onClose, isOpen, data }) =>
     };
 
     const handleDownload = (url: string) => {
-        // const fileName = url.split("/").pop();
-        // const aTag = document.createElement('a');
-        // aTag.href = url;
-        // aTag.setAttribute("download", fileName!);
-        // document.body.appendChild(aTag);
-        // aTag.click();
-        // aTag.remove();
         window.open(url, '_blank');
     };
 
     return (
         <Dialog fullWidth={true} maxWidth='lg' onClose={handleClose} open={isOpen} >
-            <DialogTitle>Ajouter un utilisateur</DialogTitle>
+            <DialogTitle>Consulter piece jointes</DialogTitle>
             <DialogContent dividers={true}>
 
                 {data.map(

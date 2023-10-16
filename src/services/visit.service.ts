@@ -6,9 +6,17 @@ import { ClientType } from "../models/client.model";
 
 export default class VisitService {
 
-    async getAllVisits(date: Date): Promise<VisitModel[]> {
+    async getAllVisits(date: Date, clientType: ClientType): Promise<VisitModel[]> {
         const token = localStorage.getItem('token');
-        var response = await axios.get(`${Globals.apiUrl}/visits?filters[createdDate][$eq]=${formatDateToYYYYMMDD(date)}&populate[rapport][populate]=*&populate[client][populate]=relatedSpeciality.domainType&populate=user`,
+
+        var typeFilter: string = '';
+
+        if (clientType === ClientType.wholesaler) {
+            typeFilter = '&filters[client][relatedSpeciality][domainType][id][$eq]=3'
+        } else {
+            typeFilter = '&filters[client][relatedSpeciality][domainType][id][$ne]=3'
+        }
+        var response = await axios.get(`${Globals.apiUrl}/visits?filters[createdDate][$eq]=${formatDateToYYYYMMDD(date)}${typeFilter}&populate[rapport][populate]=*&populate[client][populate]=relatedSpeciality.domainType&populate=user`,
             {
                 headers: {
                     'Authorization': `Bearer ${token}`
@@ -46,14 +54,14 @@ export default class VisitService {
         return [];
     }
 
-    async getAllVisitsPaginated(page: number, size: number, text: string,clientType:ClientType): Promise<{ visits: VisitModel[], total: number }> {
+    async getAllVisitsPaginated(page: number, size: number, text: string, clientType: ClientType,superId:number): Promise<{ visits: VisitModel[], total: number }> {
         const token = localStorage.getItem('token');
         var textFilter = '';
         if (text.length > 0) {
             textFilter = `&filters[client][fullName][$containsi]=${text}`;
         }
-        var id = localStorage.getItem('id');
-        var response = await axios.get(`${Globals.apiUrl}/visits?populate[rapport][populate]=*&populate[client][populate]=relatedSpeciality.domainType&populate=user${textFilter}&pagination[page]=${page}&pagination[pageSize]=${size}&filters[client][relatedSpeciality][domainType][id][$eq]=${clientType === ClientType.doctor ? 1 : clientType === ClientType.pharmacy ? 2 : 3 }&filters[user][creatorId][$eq]=${id}`,
+      
+        var response = await axios.get(`${Globals.apiUrl}/visits?populate[rapport][populate]=*&populate[client][populate]=relatedSpeciality.domainType&populate=user${textFilter}&pagination[page]=${page}&pagination[pageSize]=${size}&filters[client][relatedSpeciality][domainType][reference][$eq]=${clientType === ClientType.doctor ? 'doctor' : clientType === ClientType.pharmacy ? 'pharmacy' : 'wholesaler'}&filters[user][creatorId][$eq]=${superId}`,
             {
                 headers: {
                     'Authorization': `Bearer ${token}`

@@ -39,8 +39,16 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import Snackbar from '@mui/material/Snackbar';
 import YesNoDialog from '../../components/yes-no-dialog/yes-no-dialog.component';
+import UserModel, { UserType } from '../../models/user.model';
+import UserService from '../../services/user.service';
+import Tabs from '@mui/material/Tabs';
+import Tab from '@mui/material/Tab';
+import Box from '@mui/material/Box';
+import CustomTabPanel from '../../components/custom-tab-panel/costum-tab-panel.component';
+import RestoreIcon from '@mui/icons-material/Restore';
 
 interface ConfigPageProps {
+    currentUser: UserModel;
     isLoading: boolean;
     hasData: boolean;
     specialityName: string;
@@ -48,14 +56,19 @@ interface ConfigPageProps {
     motivationContent: string;
     loadingSpecialitiesData: boolean;
     medicalSpecialities: SpecialityModel[];
+    draftedMedicalSpecialities: SpecialityModel[];
     loadingCommentsData: boolean;
     motivations: MotivationModel[];
+    draftedMotivations: MotivationModel[];
     loadingMotivationsData: boolean;
     comments: CommentModel[];
+    draftedComments: CommentModel[];
     supplier: SupplierModel;
     product: ProductModel;
     suppliers: SupplierModel[];
+    draftedSuppliers: SupplierModel[];
     products: ProductModel[];
+    draftedProducts: ProductModel[];
     loadingSuppliersData: boolean;
     loadingProductsData: boolean;
     wilayas: WilayaModel[];
@@ -64,22 +77,29 @@ interface ConfigPageProps {
     expensesConfig: ExpenseConfigModel;
     showSnackbar: boolean;
     showDeleteSpecialityDialog: boolean;
+    showRestoreSpecialityDialog: boolean;
     showDeleteCommentDialog: boolean;
+    showRestoreCommentDialog: boolean;
     showDeleteMotivationDialog: boolean;
+    showRestoreMotivationDialog: boolean;
     showDeleteSupplierDialog: boolean;
+    showRestoreSupplierDialog: boolean;
     showDeleteProductDialog: boolean;
+    showRestoreProductDialog: boolean;
     snackbarMessage: string;
     selectedSpecialityId: number;
     selectedCommentId: number;
     selectedMotivationId: number;
     selectedSupplierId: number;
     selectedProductId: number;
+    index: number;
 }
 
 class ConfigPage extends Component<{}, ConfigPageProps> {
     constructor({ }) {
         super({});
         this.state = {
+            currentUser: new UserModel(),
             hasData: false,
             isLoading: false,
             specialityName: '',
@@ -87,8 +107,13 @@ class ConfigPage extends Component<{}, ConfigPageProps> {
             motivationContent: '',
             loadingSpecialitiesData: false,
             medicalSpecialities: [],
+            draftedMedicalSpecialities: [],
+            draftedProducts: [],
+            draftedSuppliers: [],
             loadingCommentsData: false,
             comments: [],
+            draftedComments: [],
+            draftedMotivations: [],
             loadingMotivationsData: false,
             motivations: [],
             supplier: new SupplierModel({}),
@@ -102,9 +127,14 @@ class ConfigPage extends Component<{}, ConfigPageProps> {
             goals: [],
             showSnackbar: false,
             showDeleteSpecialityDialog: false,
+            showRestoreSpecialityDialog: false,
             showDeleteCommentDialog: false,
+            showRestoreCommentDialog: false,
             showDeleteMotivationDialog: false,
+            showRestoreMotivationDialog: false,
             showDeleteSupplierDialog: false,
+            showRestoreProductDialog: false,
+            showRestoreSupplierDialog: false,
             showDeleteProductDialog: false,
             snackbarMessage: '',
             selectedCommentId: 0,
@@ -112,6 +142,7 @@ class ConfigPage extends Component<{}, ConfigPageProps> {
             selectedSupplierId: 0,
             selectedSpecialityId: 0,
             selectedProductId: 0,
+            index: 0,
         }
     }
 
@@ -122,6 +153,7 @@ class ConfigPage extends Component<{}, ConfigPageProps> {
     wilayaService = new WilayaService();
     expenseService = new ExpenseService();
     goalService = new GoalService();
+    userService = new UserService();
     productService = new ProductService();
 
     loadConfigPageData = async () => {
@@ -130,20 +162,32 @@ class ConfigPage extends Component<{}, ConfigPageProps> {
 
         if (!this.state.isLoading) {
             var specialities = await this.specialityService.getAllMedicalSpecialities();
+            var draftedSpecialities = await this.specialityService.getAllDraftedMedicalSpecialities();
             var comments = await this.commentService.getAllComments();
+            var draftedComments = await this.commentService.getDraftedComments();
             var motivations = await this.motivationService.getAllMotivations();
+            var draftedMotivations = await this.motivationService.getAllDraftedMotivations();
             var suppliers = await this.supplierService.getAllSuppliers();
+            var draftedSuppliers = await this.supplierService.getAllDraftedSuppliers();
             var wilayas = await this.wilayaService.getAllWilayas();
             var expensesConfig = await this.expenseService.getExpensesConfig();
-            var goals = await this.goalService.getAllGoalsOfUserByDateMoth(new Date());
+            var currentUser = await this.userService.getMe();
+            var goals = await this.goalService.getAllGoalsOfUserByDateMoth(new Date(), currentUser.id!);
             var products = await this.productService.getAllProducts();
+            var draftedProducts = await this.productService.getAllDraftedProducts();
             if (!expensesConfig) {
                 expensesConfig = await this.expenseService.createExpensesConfig();
             }
             this.setState({
+                currentUser: currentUser,
                 isLoading: false,
                 hasData: true,
                 medicalSpecialities: specialities,
+                draftedComments: draftedComments,
+                draftedMotivations: draftedMotivations,
+                draftedMedicalSpecialities: draftedSpecialities,
+                draftedProducts: draftedProducts,
+                draftedSuppliers: draftedSuppliers,
                 motivations: motivations,
                 comments: comments,
                 suppliers: suppliers,
@@ -159,8 +203,18 @@ class ConfigPage extends Component<{}, ConfigPageProps> {
         this.setState({ loadingSpecialitiesData: true, showDeleteSpecialityDialog: false });
         await this.specialityService.draftMedicalSpeciality(this.state.selectedSpecialityId);
         var specialities = await this.specialityService.getAllMedicalSpecialities();
-        this.setState({ loadingSpecialitiesData: false, medicalSpecialities: specialities });
+        var draftedSpecialities = await this.specialityService.getAllDraftedMedicalSpecialities();
+        this.setState({ loadingSpecialitiesData: false, medicalSpecialities: specialities, draftedMedicalSpecialities: draftedSpecialities });
         this.setState({ showSnackbar: true, snackbarMessage: 'Spécialité supprimé' });
+    }
+
+    handleRestoreSpeciality = async () => {
+        this.setState({ loadingSpecialitiesData: true, showRestoreSpecialityDialog: false });
+        await this.specialityService.publishMedicalSpeciality(this.state.selectedSpecialityId);
+        var specialities = await this.specialityService.getAllMedicalSpecialities();
+        var draftedSpecialities = await this.specialityService.getAllDraftedMedicalSpecialities();
+        this.setState({ loadingSpecialitiesData: false, medicalSpecialities: specialities, draftedMedicalSpecialities: draftedSpecialities });
+        this.setState({ showSnackbar: true, snackbarMessage: 'Spécialité restauré' });
     }
 
     handleCreateSpeciality = async () => {
@@ -179,8 +233,25 @@ class ConfigPage extends Component<{}, ConfigPageProps> {
         this.setState({ loadingCommentsData: true, showDeleteCommentDialog: false });
         await this.commentService.draftComment(this.state.selectedCommentId);
         var comments = await this.commentService.getAllComments();
-        this.setState({ loadingCommentsData: false, comments: comments });
+        var draftedComments = await this.commentService.getDraftedComments();
+        this.setState({ loadingCommentsData: false, comments: comments, draftedComments: draftedComments });
         this.setState({ showSnackbar: true, snackbarMessage: 'Commentaire supprimé' });
+    }
+
+    handleRestoreComment = async () => {
+        this.setState({ loadingCommentsData: true, showRestoreCommentDialog: false });
+        if (this.state.comments.length < 5) {
+            await this.commentService.publishComment(this.state.selectedCommentId);
+            var comments = await this.commentService.getAllComments();
+            var draftedComments = await this.commentService.getDraftedComments();
+            this.setState({ loadingCommentsData: false, comments: comments, draftedComments: draftedComments });
+            this.setState({ showSnackbar: true, snackbarMessage: 'Commentaire restauré' });
+        } else {
+            var comments = await this.commentService.getAllComments();
+            var draftedComments = await this.commentService.getDraftedComments();
+            this.setState({ loadingCommentsData: false, comments: comments, draftedComments: draftedComments });
+            this.setState({ showSnackbar: true, snackbarMessage: 'Nombre de commentaires dépassés, veuillez supprimer un commentaire puis réessayer' });
+        }
     }
 
     handleCreateComment = async () => {
@@ -199,8 +270,18 @@ class ConfigPage extends Component<{}, ConfigPageProps> {
         this.setState({ loadingMotivationsData: true, showDeleteMotivationDialog: false });
         await this.motivationService.draftMotivation(this.state.selectedMotivationId);
         var motivations = await this.motivationService.getAllMotivations();
-        this.setState({ loadingMotivationsData: false, motivations: motivations });
+        var draftedMotivations = await this.motivationService.getAllDraftedMotivations();
+        this.setState({ loadingMotivationsData: false, motivations: motivations, draftedMotivations: draftedMotivations });
         this.setState({ showSnackbar: true, snackbarMessage: 'Motivation supprimé' });
+    }
+
+    handleRestoreMotivation = async () => {
+        this.setState({ loadingMotivationsData: true, showRestoreMotivationDialog: false });
+        await this.motivationService.publishMotivation(this.state.selectedMotivationId);
+        var motivations = await this.motivationService.getAllMotivations();
+        var draftedMotivations = await this.motivationService.getAllDraftedMotivations();
+        this.setState({ loadingMotivationsData: false, motivations: motivations, draftedMotivations: draftedMotivations });
+        this.setState({ showSnackbar: true, snackbarMessage: 'Motivation restauré' });
     }
 
     handleCreateMotivation = async () => {
@@ -235,16 +316,34 @@ class ConfigPage extends Component<{}, ConfigPageProps> {
         this.setState({ loadingSuppliersData: true, showDeleteSupplierDialog: false });
         await this.supplierService.draftSupplier(this.state.selectedSupplierId);
         var suppliers = await this.supplierService.getAllSuppliers();
-        this.setState({ loadingSuppliersData: false, suppliers: suppliers, });
+        var draftedSuppliers = await this.supplierService.getAllDraftedSuppliers();
+        this.setState({ loadingSuppliersData: false, suppliers: suppliers, draftedSuppliers: draftedSuppliers });
         this.setState({ showSnackbar: true, snackbarMessage: 'Fournisseur supprimé' });
+    }
+    handleRestoreSupplier = async () => {
+        this.setState({ loadingSuppliersData: true, showRestoreSupplierDialog: false });
+        await this.supplierService.publishSupplier(this.state.selectedSupplierId);
+        var suppliers = await this.supplierService.getAllSuppliers();
+        var draftedSuppliers = await this.supplierService.getAllDraftedSuppliers();
+        this.setState({ loadingSuppliersData: false, suppliers: suppliers, draftedSuppliers: draftedSuppliers });
+        this.setState({ showSnackbar: true, snackbarMessage: 'Fournisseur restauré' });
     }
 
     handleRemoveProduct = async () => {
         this.setState({ loadingProductsData: true, showDeleteProductDialog: false });
         await this.productService.draftProduct(this.state.selectedProductId);
         var products = await this.productService.getAllProducts();
-        this.setState({ loadingProductsData: false, products: products, });
+        var draftedProducts = await this.productService.getAllDraftedProducts();
+        this.setState({ loadingProductsData: false, products: products,draftedProducts:draftedProducts });
         this.setState({ showSnackbar: true, snackbarMessage: 'Produit supprimé' });
+    }
+    handleRestoreProduct = async () => {
+        this.setState({ loadingProductsData: true, showRestoreProductDialog: false });
+        await this.productService.publishProduct(this.state.selectedProductId);
+        var products = await this.productService.getAllProducts();
+        var draftedProducts = await this.productService.getAllDraftedProducts();
+        this.setState({ loadingProductsData: false, products: products,draftedProducts:draftedProducts });
+        this.setState({ showSnackbar: true, snackbarMessage: 'Produit restauré' });
     }
 
     handleSaveExpenseConfigChange = async () => {
@@ -261,6 +360,10 @@ class ConfigPage extends Component<{}, ConfigPageProps> {
 
     handleCloseSanckbar = (event: React.SyntheticEvent | Event, reason?: string) => {
         this.setState({ showSnackbar: false });
+    };
+
+    handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
+        this.setState({ index: newValue });
     };
 
     render() {
@@ -284,506 +387,804 @@ class ConfigPage extends Component<{}, ConfigPageProps> {
         }
         else {
             return (
-                <div className='config-container'>
-                    <div style={{ display: 'flex', width: '100%', maxHeight: '450px', marginTop: '8px' }}>
-                        <div style={{ width: '33%', display: 'flex', flexDirection: 'column' }}>
-                            <div style={{ display: 'flex', width: '100%', padding: '8px 8px 0px 8px' }}>
-                                <TextField value={this.state.specialityName} onChange={this.handleSpecialityNameChange} size="small" id="outlined-basic" label="Nom de spécialité" variant="outlined" sx={{ marginRight: '8px', backgroundColor: 'white', borderRadius: '4px', height: '40px', flexGrow: '1' }} />
-                                <IconButton onClick={() => this.handleCreateSpeciality()} sx={{ border: 'solid grey 1px', backgroundColor: 'white', borderRadius: '4px', height: '40px', }}>
-                                    <AddIcon />
-                                </IconButton>
-                            </div>
-                            <div style={{ display: 'flex', flexGrow: '1', padding: '8px 8px 0px 16px', marginBottom: '8px', maxHeight: '392px' }}>
-                                <Table sx={{ flexGrow: '1', display: 'flex', flexDirection: 'column', overflow: 'hidden', margin: '0px', width: "100%", borderRadius: '4px', }} aria-label="simple table">
-                                    <TableHead sx={{ height: '45px', display: 'flex', width: '100%' }}>
-                                        <TableRow sx={{ display: 'flex', width: '100%' }}>
-                                            <TableCell sx={{ width: '100%' }} align="left">Nom de spécialité </TableCell>
-                                            <TableCell sx={{ width: '100%' }} align="right">Supprimer</TableCell>
-                                        </TableRow>
-                                    </TableHead>
-                                    <TableBody sx={{ flexGrow: '1', overflowY: 'auto', overflowX: 'hidden', }}>
-                                        {
-                                            this.state.loadingSpecialitiesData ? (<div style={{
-                                                width: '100%',
-                                                flexGrow: '1',
-                                                overflow: 'hidden',
-                                                height: '100%',
-                                                display: 'flex',
-                                                justifyContent: 'center',
-                                                alignItems: 'center',
-                                            }}>
-                                                <DotSpinner
-                                                    size={40}
-                                                    speed={0.9}
-                                                    color="black"
-                                                />
-                                            </div>) :
-                                                this.state.medicalSpecialities.map((row) => (
-                                                    <TableRow
-                                                        key={row.id}
-                                                        sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-                                                    >
-                                                        <TableCell sx={{ width: '100%' }} align="left">{row.name}</TableCell>
-                                                        <TableCell sx={{ width: '100%', padding: '0px 16px 0px 0px' }} align="right">
-                                                            <IconButton onClick={() => {
-                                                                this.setState({ showDeleteSpecialityDialog: true, selectedSpecialityId: row.id! });
-                                                            }} >
-                                                                <DeleteIcon />
-                                                            </IconButton>
-                                                        </TableCell>
-                                                    </TableRow>
-                                                ))}
-                                    </TableBody>
-                                </Table>
-                            </div>
-                        </div>
-                        <Divider orientation="vertical" flexItem component="div" style={{ width: '0.5%' }} sx={{ borderRight: 'solid grey 1px' }} />
-                        <div style={{ width: '33%', display: 'flex', flexDirection: 'column' }}>
-                            <div style={{ display: 'flex', width: '100%', padding: '8px 8px 0px 8px' }}>
-                                <TextField disabled={this.state.comments.length === 5} value={this.state.commentContent} onChange={this.handleCommentContentChange} size="small" id="outlined-basic" label="Contenu du commentaire" variant="outlined" sx={{ marginRight: '8px', backgroundColor: 'white', borderRadius: '4px', height: '40px', flexGrow: '1' }} />
-                                <IconButton disabled={this.state.comments.length === 5} onClick={() => this.handleCreateComment()} sx={{ border: 'solid grey 1px', backgroundColor: 'white', borderRadius: '4px', height: '40px', }}>
-                                    <AddIcon />
-                                </IconButton>
-                            </div>
-                            <div style={{ display: 'flex', flexGrow: '1', padding: '8px 8px 0px 16px', marginBottom: '8px', maxHeight: '392px' }}>
-                                <Table sx={{ flexGrow: '1', display: 'flex', flexDirection: 'column', overflow: 'hidden', margin: '0px', width: "100%", borderRadius: '4px', }} aria-label="simple table">
-                                    <TableHead sx={{ height: '45px', display: 'flex', width: '100%' }}>
-                                        <TableRow sx={{ display: 'flex', width: '100%' }}>
-                                            <TableCell sx={{ width: '100%' }} align="left">Contenu du commentaire</TableCell>
-                                            <TableCell sx={{ width: '100%' }} align="right">Supprimer</TableCell>
-                                        </TableRow>
-                                    </TableHead>
-                                    <TableBody sx={{ flexGrow: '1', overflowY: 'auto', overflowX: 'hidden', }}>
-                                        {
-                                            this.state.loadingCommentsData ? (<div style={{
-                                                width: '100%',
-                                                flexGrow: '1',
-                                                overflow: 'hidden',
-                                                height: '100%',
-                                                display: 'flex',
-                                                justifyContent: 'center',
-                                                alignItems: 'center',
-                                            }}>
-                                                <DotSpinner
-                                                    size={40}
-                                                    speed={0.9}
-                                                    color="black"
-                                                />
-                                            </div>) :
-                                                this.state.comments.map((row) => (
-                                                    <TableRow
-                                                        key={row.id}
-                                                        sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-                                                    >
-                                                        <TableCell sx={{ width: '100%' }} align="left">{row.comment}</TableCell>
-                                                        <TableCell sx={{ width: '100%', padding: '0px 16px 0px 0px' }} align="right">
-                                                            <IconButton onClick={() => {
-                                                                this.setState({ showDeleteCommentDialog: true, selectedCommentId: row.id! });
-                                                            }}>
-                                                                <DeleteIcon />
-                                                            </IconButton>
-                                                        </TableCell>
-                                                    </TableRow>
-                                                ))}
-                                    </TableBody>
-                                </Table>
-                            </div>
-                        </div>
-                        <Divider orientation="vertical" flexItem component="div" style={{ width: '0.5%' }} sx={{ borderRight: 'solid grey 1px' }} />
-                        <div style={{ width: '33%', display: 'flex', flexDirection: 'column' }}>
-                            <div style={{ display: 'flex', width: '100%', padding: '8px 8px 0px 8px' }}>
-                                <TextField value={this.state.motivationContent} onChange={this.handleMotivationContentChange} size="small" id="outlined-basic" label="Nom de motivation" variant="outlined" sx={{ marginRight: '8px', backgroundColor: 'white', borderRadius: '4px', height: '40px', flexGrow: '1' }} />
-                                <IconButton onClick={() => this.handleCreateMotivation()} sx={{ border: 'solid grey 1px', backgroundColor: 'white', borderRadius: '4px', height: '40px', }}>
-                                    <AddIcon />
-                                </IconButton>
-                            </div>
-                            <div style={{ display: 'flex', flexGrow: '1', padding: '8px 8px 0px 16px', marginBottom: '8px', maxHeight: '392px' }}>
-                                <Table sx={{ flexGrow: '1', display: 'flex', flexDirection: 'column', overflow: 'hidden', margin: '0px', width: "100%", borderRadius: '4px', }} aria-label="simple table">
-                                    <TableHead sx={{ height: '45px', display: 'flex', width: '100%' }}>
-                                        <TableRow sx={{ display: 'flex', width: '100%' }}>
-                                            <TableCell sx={{ width: '100%' }} align="left">Nom de motivation</TableCell>
-                                            <TableCell sx={{ width: '100%' }} align="right">Supprimer</TableCell>
-                                        </TableRow>
-                                    </TableHead>
-                                    <TableBody sx={{ flexGrow: '1', overflowY: 'auto', overflowX: 'hidden', }}>
-                                        {
-                                            this.state.loadingMotivationsData ? (<div style={{
-                                                width: '100%',
-                                                flexGrow: '1',
-                                                overflow: 'hidden',
-                                                height: '100%',
-                                                display: 'flex',
-                                                justifyContent: 'center',
-                                                alignItems: 'center',
-                                            }}>
-                                                <DotSpinner
-                                                    size={40}
-                                                    speed={0.9}
-                                                    color="black"
-                                                />
-                                            </div>) :
-                                                this.state.motivations.map((row) => (
-                                                    <TableRow
-                                                        key={row.id}
-                                                        sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-                                                    >
-                                                        <TableCell sx={{ width: '100%' }} align="left">{row.content}</TableCell>
-                                                        <TableCell sx={{ width: '100%', padding: '0px 16px 0px 0px' }} align="right">
-                                                            <IconButton onClick={() => {
-                                                                this.setState({ showDeleteMotivationDialog: true, selectedMotivationId: row.id! });
-                                                            }} >
-                                                                <DeleteIcon />
-                                                            </IconButton>
-                                                        </TableCell>
-                                                    </TableRow>
-                                                ))}
-                                    </TableBody>
-                                </Table>
-                            </div>
-                        </div>
-                    </div>
-                    <Divider component="div" style={{ margin: '0px 16px' }} sx={{ borderBottom: 'solid grey 1px' }} />
-                    <div style={{ width: '100%', display: 'flex', maxHeight: '450px' }}>
-                        <div style={{ width: '40%', margin: '8px 0px 8px 8px', backgroundColor: 'white', borderRadius: '4px', padding: '16px' }}>
-                            <h4>
-                                Configuration des fournisseurs
-                            </h4>
-                            <div style={{ display: 'flex', margin: '8px 0px' }}>
-                                <TextField value={this.state.supplier.name} onChange={(event) => {
-                                    this.state.supplier.name = event.target.value;
-                                }} size="small" id="outlined-basic" label="Nom de fournisseur" variant="outlined" sx={{ marginRight: '16px', backgroundColor: 'white', borderRadius: '4px', height: '40px', flexGrow: '1' }} />
-                                <TextField value={this.state.supplier.name} onChange={(event) => {
-                                    this.state.supplier.email = event.target.value;
-                                }} type='email' size="small" label="Adresse e-mail" variant="outlined" sx={{ backgroundColor: 'white', borderRadius: '4px', height: '40px', flexGrow: '1' }} />
-                            </div>
-                            <div style={{ display: 'flex', margin: '8px 0px' }}>
-                                <TextField value={this.state.supplier.phone01} onChange={(event) => {
-                                    this.state.supplier.phone01 = event.target.value;
-                                }} size="small" id="outlined-basic" label="Numéro de téléphone 1" variant="outlined" sx={{ marginRight: '16px', backgroundColor: 'white', borderRadius: '4px', height: '40px', flexGrow: '1' }} />
+                <div className='clients-pharmacy-container' style={{ display: 'flex', flexDirection: 'column', height: '100%', alignItems: 'stretch', backgroundColor: '#eee' }}>
+                    <Box sx={{ width: '100%', height: '100%' }}>
+                        <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+                            <Tabs value={this.state.index} onChange={this.handleTabChange} aria-label="basic tabs example">
+                                <Tab label="Configuration" />
+                                <Tab label="Corbeille" />
 
-                                <TextField value={this.state.supplier.phone01} onChange={(event) => {
-                                    this.state.supplier.phone02 = event.target.value;
-                                }} size="small" label="Numéro de téléphone 2" variant="outlined" sx={{ backgroundColor: 'white', borderRadius: '4px', height: '40px', flexGrow: '1' }} />
-                            </div>
-                            <div style={{ display: 'flex', margin: '16px 0px' }}>
-                                <FormControl sx={{ width: '50%', marginRight: '16px', backgroundColor: 'white', borderRadius: '4px', height: '40px', flexGrow: '1' }} size="small">
-                                    <InputLabel id="demo-select-small-label">Wilaya</InputLabel>
-                                    <Select
-                                        value={this.state.supplier.wilaya}
-                                        onChange={(event) => {
-                                            this.state.supplier.wilaya = event.target.value;
-                                            this.setState({
-                                                selectedWilaya:
-                                                    event.target.value.length > 0 ?
-                                                        this.state.wilayas.find((e) => e.name === event.target.value)
-                                                        : undefined
-                                            });
-                                        }}
-                                    >
-                                        <MenuItem value="">
-                                            <em>None</em>
-                                        </MenuItem>
-                                        {
-                                            this.state.wilayas.map((e) => (
-                                                <MenuItem value={e.name}>{e.name}</MenuItem>
-                                            ))
-                                        }
-                                    </Select>
-                                </FormControl>
-                                <FormControl sx={{ width: '50%', backgroundColor: 'white', borderRadius: '4px', height: '40px', flexGrow: '1' }} size="small">
-                                    <InputLabel id="demo-select-small-label">Commune</InputLabel>
-                                    <Select
-                                        disabled={!this.state.selectedWilaya}
-                                        value={this.state.supplier.commun}
-                                        onChange={(event) => {
-                                            this.state.supplier.commun = event.target.value;
-                                        }}
-                                    >
-                                        <MenuItem value="">
-                                            <em>None</em>
-                                        </MenuItem>
-                                        {
-                                            this.state.selectedWilaya?.communes?.map((e) => (
-                                                <MenuItem value={e}>{e}</MenuItem>
-                                            ))
-                                        }
-                                    </Select>
-                                </FormControl>
-                            </div>
+                            </Tabs>
+                        </Box>
 
-                            <div style={{ display: 'flex', margin: '16px 0px 0px 0px' }}>
-                                <FormControl sx={{ marginRight: '16px', backgroundColor: 'white', borderRadius: '4px', height: '40px', flexGrow: '1' }} size="small">
-                                    <InputLabel id="demo-select-small-label">Type</InputLabel>
-                                    <Select
-                                        value={this.state.supplier.type ? 1 : 0}
-                                        onChange={(event) => {
-                                            this.state.supplier.type = event.target.value === 1;
-                                            this.setState({ supplier: this.state.supplier });
-                                        }}
-                                    >
-                                        <MenuItem value={0}>Pharmacétique</MenuItem>
-                                        <MenuItem value={1}>Parapharmacétique</MenuItem>
-                                    </Select>
-                                </FormControl>
-                                <Button onClick={() => this.handleCreateSupplier()} startIcon={<AddIcon />} sx={{ border: 'solid grey 1px', backgroundColor: 'white', borderRadius: '4px', height: '40px', }}>
-                                    Ajouter
-                                </Button>
-                            </div>
-                        </div>
-                        <div style={{ width: '60%', display: 'flex', flexGrow: '1', padding: '8px 8px 0px 8px', marginBottom: '8px', maxHeight: '400px' }}>
-                            <Table sx={{ flexGrow: '1', display: 'flex', flexDirection: 'column', overflow: 'hidden', margin: '0px', width: "100%", borderRadius: '4px', }} aria-label="simple table">
-                                <TableHead sx={{ height: '45px', display: 'flex', width: '100%' }}>
-                                    <TableRow sx={{ display: 'flex', width: '100%' }}>
-                                        <TableCell sx={{ width: '50%' }} align="left">Nom de fournisseur</TableCell>
-                                        <TableCell sx={{ width: '50%' }} align="left">Wilaya et commune</TableCell>
-                                        <TableCell sx={{ width: '50%' }} align="left">Type</TableCell>
-                                        <TableCell sx={{ width: '50%' }} align="right">Supprimer</TableCell>
-                                    </TableRow>
-                                </TableHead>
-                                <TableBody sx={{ flexGrow: '1', overflowY: 'auto', overflowX: 'hidden', }}>
-                                    {
-                                        this.state.loadingSuppliersData ? (<div style={{
-                                            width: '100%',
-                                            flexGrow: '1',
-                                            overflow: 'hidden',
-                                            height: '100%',
-                                            display: 'flex',
-                                            justifyContent: 'center',
-                                            alignItems: 'center',
-                                        }}>
-                                            <DotSpinner
-                                                size={40}
-                                                speed={0.9}
-                                                color="black"
-                                            />
-                                        </div>) :
-                                            this.state.suppliers.map((row) => (
-                                                <TableRow
-                                                    key={row.id}
-                                                    sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                        <CustomTabPanel style={{ display: 'flex', flexDirection: 'row', flexGrow: '1', height: 'calc(100% - 50px)' }} value={this.state.index} index={0} >
+                            <div className='config-container'>
+                                <div style={{ display: 'flex', width: '100%', maxHeight: '450px', marginTop: '8px' }}>
+                                    <div style={{ width: '33%', display: 'flex', flexDirection: 'column' }}>
+                                        <div style={{ display: 'flex', width: '100%', padding: '8px 8px 0px 8px' }}>
+                                            <TextField value={this.state.specialityName} onChange={this.handleSpecialityNameChange} size="small" id="outlined-basic" label="Nom de spécialité" variant="outlined" sx={{ marginRight: '8px', backgroundColor: 'white', borderRadius: '4px', height: '40px', flexGrow: '1' }} />
+                                            <IconButton onClick={() => this.handleCreateSpeciality()} sx={{ border: 'solid grey 1px', backgroundColor: 'white', borderRadius: '4px', height: '40px', }}>
+                                                <AddIcon />
+                                            </IconButton>
+                                        </div>
+                                        <div style={{ display: 'flex', flexGrow: '1', padding: '8px 8px 0px 16px', marginBottom: '8px', maxHeight: '392px' }}>
+                                            <Table sx={{ flexGrow: '1', display: 'flex', flexDirection: 'column', overflow: 'hidden', margin: '0px', width: "100%", borderRadius: '4px', }} aria-label="simple table">
+                                                <TableHead sx={{ height: '45px', display: 'flex', width: '100%' }}>
+                                                    <TableRow sx={{ display: 'flex', width: '100%' }}>
+                                                        <TableCell sx={{ width: '100%' }} align="left">Nom de spécialité </TableCell>
+                                                        <TableCell sx={{ width: '100%' }} align="right">Supprimer</TableCell>
+                                                    </TableRow>
+                                                </TableHead>
+                                                <TableBody sx={{ flexGrow: '1', overflowY: 'auto', overflowX: 'hidden', }}>
+                                                    {
+                                                        this.state.loadingSpecialitiesData ? (<div style={{
+                                                            width: '100%',
+                                                            flexGrow: '1',
+                                                            overflow: 'hidden',
+                                                            height: '100%',
+                                                            display: 'flex',
+                                                            justifyContent: 'center',
+                                                            alignItems: 'center',
+                                                        }}>
+                                                            <DotSpinner
+                                                                size={40}
+                                                                speed={0.9}
+                                                                color="black"
+                                                            />
+                                                        </div>) :
+                                                            this.state.medicalSpecialities.map((row) => (
+                                                                <TableRow
+                                                                    key={row.id}
+                                                                    sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                                                                >
+                                                                    <TableCell sx={{ width: '100%' }} align="left">{row.name}</TableCell>
+                                                                    <TableCell sx={{ width: '100%', padding: '0px 16px 0px 0px' }} align="right">
+                                                                        <IconButton onClick={() => {
+                                                                            this.setState({ showDeleteSpecialityDialog: true, selectedSpecialityId: row.id! });
+                                                                        }} >
+                                                                            <DeleteIcon />
+                                                                        </IconButton>
+                                                                    </TableCell>
+                                                                </TableRow>
+                                                            ))}
+                                                </TableBody>
+                                            </Table>
+                                        </div>
+                                    </div>
+                                    <Divider orientation="vertical" flexItem component="div" style={{ width: '0.5%' }} sx={{ borderRight: 'solid grey 1px' }} />
+                                    <div style={{ width: '33%', display: 'flex', flexDirection: 'column' }}>
+                                        <div style={{ display: 'flex', width: '100%', padding: '8px 8px 0px 8px' }}>
+                                            <TextField disabled={this.state.comments.length === 5} value={this.state.commentContent} onChange={this.handleCommentContentChange} size="small" id="outlined-basic" label="Contenu du commentaire" variant="outlined" sx={{ marginRight: '8px', backgroundColor: 'white', borderRadius: '4px', height: '40px', flexGrow: '1' }} />
+                                            <IconButton disabled={this.state.comments.length === 5} onClick={() => this.handleCreateComment()} sx={{ border: 'solid grey 1px', backgroundColor: 'white', borderRadius: '4px', height: '40px', }}>
+                                                <AddIcon />
+                                            </IconButton>
+                                        </div>
+                                        <div style={{ display: 'flex', flexGrow: '1', padding: '8px 8px 0px 16px', marginBottom: '8px', maxHeight: '392px' }}>
+                                            <Table sx={{ flexGrow: '1', display: 'flex', flexDirection: 'column', overflow: 'hidden', margin: '0px', width: "100%", borderRadius: '4px', }} aria-label="simple table">
+                                                <TableHead sx={{ height: '45px', display: 'flex', width: '100%' }}>
+                                                    <TableRow sx={{ display: 'flex', width: '100%' }}>
+                                                        <TableCell sx={{ width: '100%' }} align="left">Contenu du commentaire</TableCell>
+                                                        <TableCell sx={{ width: '100%' }} align="right">Supprimer</TableCell>
+                                                    </TableRow>
+                                                </TableHead>
+                                                <TableBody sx={{ flexGrow: '1', overflowY: 'auto', overflowX: 'hidden', }}>
+                                                    {
+                                                        this.state.loadingCommentsData ? (<div style={{
+                                                            width: '100%',
+                                                            flexGrow: '1',
+                                                            overflow: 'hidden',
+                                                            height: '100%',
+                                                            display: 'flex',
+                                                            justifyContent: 'center',
+                                                            alignItems: 'center',
+                                                        }}>
+                                                            <DotSpinner
+                                                                size={40}
+                                                                speed={0.9}
+                                                                color="black"
+                                                            />
+                                                        </div>) :
+                                                            this.state.comments.map((row) => (
+                                                                <TableRow
+                                                                    key={row.id}
+                                                                    sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                                                                >
+                                                                    <TableCell sx={{ width: '100%' }} align="left">{row.comment}</TableCell>
+                                                                    <TableCell sx={{ width: '100%', padding: '0px 16px 0px 0px' }} align="right">
+                                                                        <IconButton onClick={() => {
+                                                                            this.setState({ showDeleteCommentDialog: true, selectedCommentId: row.id! });
+                                                                        }}>
+                                                                            <DeleteIcon />
+                                                                        </IconButton>
+                                                                    </TableCell>
+                                                                </TableRow>
+                                                            ))}
+                                                </TableBody>
+                                            </Table>
+                                        </div>
+                                    </div>
+                                    <Divider orientation="vertical" flexItem component="div" style={{ width: '0.5%' }} sx={{ borderRight: 'solid grey 1px' }} />
+                                    <div style={{ width: '33%', display: 'flex', flexDirection: 'column' }}>
+                                        <div style={{ display: 'flex', width: '100%', padding: '8px 8px 0px 8px' }}>
+                                            <TextField value={this.state.motivationContent} onChange={this.handleMotivationContentChange} size="small" id="outlined-basic" label="Nom de motivation" variant="outlined" sx={{ marginRight: '8px', backgroundColor: 'white', borderRadius: '4px', height: '40px', flexGrow: '1' }} />
+                                            <IconButton onClick={() => this.handleCreateMotivation()} sx={{ border: 'solid grey 1px', backgroundColor: 'white', borderRadius: '4px', height: '40px', }}>
+                                                <AddIcon />
+                                            </IconButton>
+                                        </div>
+                                        <div style={{ display: 'flex', flexGrow: '1', padding: '8px 8px 0px 16px', marginBottom: '8px', maxHeight: '392px' }}>
+                                            <Table sx={{ flexGrow: '1', display: 'flex', flexDirection: 'column', overflow: 'hidden', margin: '0px', width: "100%", borderRadius: '4px', }} aria-label="simple table">
+                                                <TableHead sx={{ height: '45px', display: 'flex', width: '100%' }}>
+                                                    <TableRow sx={{ display: 'flex', width: '100%' }}>
+                                                        <TableCell sx={{ width: '100%' }} align="left">Nom de motivation</TableCell>
+                                                        <TableCell sx={{ width: '100%' }} align="right">Supprimer</TableCell>
+                                                    </TableRow>
+                                                </TableHead>
+                                                <TableBody sx={{ flexGrow: '1', overflowY: 'auto', overflowX: 'hidden', }}>
+                                                    {
+                                                        this.state.loadingMotivationsData ? (<div style={{
+                                                            width: '100%',
+                                                            flexGrow: '1',
+                                                            overflow: 'hidden',
+                                                            height: '100%',
+                                                            display: 'flex',
+                                                            justifyContent: 'center',
+                                                            alignItems: 'center',
+                                                        }}>
+                                                            <DotSpinner
+                                                                size={40}
+                                                                speed={0.9}
+                                                                color="black"
+                                                            />
+                                                        </div>) :
+                                                            this.state.motivations.map((row) => (
+                                                                <TableRow
+                                                                    key={row.id}
+                                                                    sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                                                                >
+                                                                    <TableCell sx={{ width: '100%' }} align="left">{row.content}</TableCell>
+                                                                    <TableCell sx={{ width: '100%', padding: '0px 16px 0px 0px' }} align="right">
+                                                                        <IconButton onClick={() => {
+                                                                            this.setState({ showDeleteMotivationDialog: true, selectedMotivationId: row.id! });
+                                                                        }} >
+                                                                            <DeleteIcon />
+                                                                        </IconButton>
+                                                                    </TableCell>
+                                                                </TableRow>
+                                                            ))}
+                                                </TableBody>
+                                            </Table>
+                                        </div>
+                                    </div>
+                                </div>
+                                <Divider component="div" style={{ margin: '0px 16px' }} sx={{ borderBottom: 'solid grey 1px' }} />
+                                <div style={{ width: '100%', display: 'flex', maxHeight: '450px' }}>
+                                    <div style={{ width: '40%', margin: '8px 0px 8px 8px', backgroundColor: 'white', borderRadius: '4px', padding: '16px' }}>
+                                        <h4>
+                                            Configuration des fournisseurs
+                                        </h4>
+                                        <div style={{ display: 'flex', margin: '8px 0px' }}>
+                                            <TextField value={this.state.supplier.name} onChange={(event) => {
+                                                this.state.supplier.name = event.target.value;
+                                            }} size="small" id="outlined-basic" label="Nom de fournisseur" variant="outlined" sx={{ marginRight: '16px', backgroundColor: 'white', borderRadius: '4px', height: '40px', flexGrow: '1' }} />
+                                            <TextField value={this.state.supplier.name} onChange={(event) => {
+                                                this.state.supplier.email = event.target.value;
+                                            }} type='email' size="small" label="Adresse e-mail" variant="outlined" sx={{ backgroundColor: 'white', borderRadius: '4px', height: '40px', flexGrow: '1' }} />
+                                        </div>
+                                        <div style={{ display: 'flex', margin: '8px 0px' }}>
+                                            <TextField value={this.state.supplier.phone01} onChange={(event) => {
+                                                this.state.supplier.phone01 = event.target.value;
+                                            }} size="small" id="outlined-basic" label="Numéro de téléphone 1" variant="outlined" sx={{ marginRight: '16px', backgroundColor: 'white', borderRadius: '4px', height: '40px', flexGrow: '1' }} />
+
+                                            <TextField value={this.state.supplier.phone01} onChange={(event) => {
+                                                this.state.supplier.phone02 = event.target.value;
+                                            }} size="small" label="Numéro de téléphone 2" variant="outlined" sx={{ backgroundColor: 'white', borderRadius: '4px', height: '40px', flexGrow: '1' }} />
+                                        </div>
+                                        <div style={{ display: 'flex', margin: '16px 0px' }}>
+                                            <FormControl sx={{ width: '50%', marginRight: '16px', backgroundColor: 'white', borderRadius: '4px', height: '40px', flexGrow: '1' }} size="small">
+                                                <InputLabel id="demo-select-small-label">Wilaya</InputLabel>
+                                                <Select
+                                                    value={this.state.supplier.wilaya}
+                                                    onChange={(event) => {
+                                                        this.state.supplier.wilaya = event.target.value;
+                                                        this.setState({
+                                                            selectedWilaya:
+                                                                event.target.value.length > 0 ?
+                                                                    this.state.wilayas.find((e) => e.name === event.target.value)
+                                                                    : undefined
+                                                        });
+                                                    }}
                                                 >
-                                                    <TableCell sx={{ width: '32%' }} align="left">{row.name}</TableCell>
-                                                    <TableCell sx={{ width: '32%' }} align="left">{row.wilaya + ', ' + row.commun}</TableCell>
-                                                    <TableCell sx={{ width: '50%' }} align="left">{row.type ? 'Pharmacétique' : 'Parapharmacétique'}</TableCell>
-                                                    <TableCell sx={{ padding: '0px 16px 0px 0px' }} align="right">
-                                                        <IconButton onClick={() => {
-                                                            this.setState({ showDeleteSupplierDialog: true, selectedSupplierId: row.id! });
-                                                        }} >
-                                                            <DeleteIcon />
-                                                        </IconButton>
-                                                    </TableCell>
-                                                </TableRow>
-                                            ))}
-                                </TableBody>
-                            </Table>
-                        </div>
-                    </div>
-                    <Divider component="div" style={{ margin: '0px 16px' }} sx={{ borderBottom: 'solid grey 1px' }} />
-                    <div style={{ width: '100%', display: 'flex', maxHeight: '450px' }}>
-                        <div style={{ width: '40%', margin: '8px 0px 8px 8px', backgroundColor: 'white', borderRadius: '4px', padding: '16px' }}>
-                            <h4>
-                                Configuration des produits
-                            </h4>
-                            <div style={{ display: 'flex', margin: '8px 0px' }}>
-                                <TextField value={this.state.product.name} onChange={(event) => {
-                                    this.state.product.name = event.target.value;
-                                }} size="small" id="outlined-basic" label="Nom de produit" variant="outlined" sx={{ marginRight: '16px', backgroundColor: 'white', borderRadius: '4px', height: '40px', flexGrow: '1' }} />
-                                <TextField value={this.state.product.ug} onChange={(event) => {
-                                    this.state.product.ug = parseInt(event.target.value);
-                                }} type='number' size="small" label="UG" variant="outlined" sx={{ backgroundColor: 'white', borderRadius: '4px', height: '40px', flexGrow: '1' }} />
-                            </div>
-                            <div style={{ display: 'flex', margin: '8px 0px' }}>
-                                <TextField value={this.state.product.remise} onChange={(event) => {
-                                    this.state.product.remise = parseInt(event.target.value);
-                                }} type='number' size="small" id="outlined-basic" label="Remise" variant="outlined" sx={{ marginRight: '16px', backgroundColor: 'white', borderRadius: '4px', height: '40px', flexGrow: '1' }} />
-
-                                <TextField value={this.state.product.wholesalePriceUnit} onChange={(event) => {
-                                    this.state.product.wholesalePriceUnit = parseInt(event.target.value);
-                                }} type='number' size="small" label="Grossiste prix unitaire" variant="outlined" sx={{ backgroundColor: 'white', borderRadius: '4px', height: '40px', flexGrow: '1' }} />
-                            </div>
-                            <div style={{ display: 'flex', margin: '8px 0px' }}>
-                                <TextField value={this.state.product.pharmacyPriceUnit} onChange={(event) => {
-                                    this.state.product.pharmacyPriceUnit = parseInt(event.target.value);
-                                }} type='number' size="small" id="outlined-basic" label="Pharmacie prix unitaire" variant="outlined" sx={{ marginRight: '16px', backgroundColor: 'white', borderRadius: '4px', height: '40px', flexGrow: '1' }} />
-
-                                <TextField value={this.state.product.superWholesalePriceUnit} onChange={(event) => {
-                                    this.state.product.superWholesalePriceUnit = parseInt(event.target.value);
-                                }} type='number' size="small" label="Super grossiste prix unitaire" variant="outlined" sx={{ backgroundColor: 'white', borderRadius: '4px', height: '40px', flexGrow: '1' }} />
-                            </div>
-                            <div style={{ display: 'flex', margin: '8px 0px' }}>
-                                <TextField value={this.state.product.collision} onChange={(event) => {
-                                    this.state.product.collision = parseInt(event.target.value);
-                                }} type='number' size="small" id="outlined-basic" label="Collisage" variant="outlined" sx={{ marginRight: '16px', backgroundColor: 'white', borderRadius: '4px', height: '40px', flexGrow: '1' }} />
-
-                                <TextField value={this.state.product.superWholesalePriceUnit} onChange={(event) => {
-                                    this.state.product.superWholesalePriceUnit = parseInt(event.target.value);
-                                }} type='number' size="small" label="Super grossiste prix unitaire" variant="outlined" sx={{ backgroundColor: 'white', borderRadius: '4px', height: '40px', flexGrow: '1' }} />
-                            </div>
-                            <div style={{ display: 'flex', margin: '16px 0px 16px 0px' }}>
-                                <LocalizationProvider dateAdapter={AdapterDayjs}>
-                                    <DatePicker value={this.state.product.ddp} onChange={(date) => {
-                                        this.state.product.ddp = date;
-                                    }} label="DDP" />
-                                </LocalizationProvider>
-                                <Button onClick={() => this.handleCreateProduct()} startIcon={<AddIcon />} sx={{ border: 'solid grey 1px', backgroundColor: 'white', borderRadius: '4px', marginLeft: '16px' }}>
-                                    Ajouter
-                                </Button>
-                            </div>
-                        </div>
-                        <div style={{ width: '60%', display: 'flex', flexGrow: '1', padding: '8px 8px 0px 8px', marginBottom: '8px', maxHeight: '400px' }}>
-                            <Table sx={{ flexGrow: '1', display: 'flex', flexDirection: 'column', overflow: 'hidden', margin: '0px', width: "100%", borderRadius: '4px', }} aria-label="simple table">
-                                <TableHead sx={{ height: '45px', display: 'flex', width: '100%' }}>
-                                    <TableRow sx={{ display: 'flex', width: '100%' }}>
-                                        <TableCell sx={{ width: '50%' }} align="left">Nom de fournisseur</TableCell>
-                                        <TableCell sx={{ width: '50%' }} align="left">
-                                            UG
-                                        </TableCell>
-                                        <TableCell sx={{ width: '50%' }} align="left">Prix grossiste</TableCell>
-                                        <TableCell sx={{ width: '50%' }} align="right">Supprimer</TableCell>
-                                    </TableRow>
-                                </TableHead>
-                                <TableBody sx={{ flexGrow: '1', overflowY: 'auto', overflowX: 'hidden', }}>
-                                    {
-                                        this.state.loadingProductsData ? (<div style={{
-                                            width: '100%',
-                                            flexGrow: '1',
-                                            overflow: 'hidden',
-                                            height: '100%',
-                                            display: 'flex',
-                                            justifyContent: 'center',
-                                            alignItems: 'center',
-                                        }}>
-                                            <DotSpinner
-                                                size={40}
-                                                speed={0.9}
-                                                color="black"
-                                            />
-                                        </div>) :
-                                            this.state.products.map((row) => (
-                                                <TableRow
-                                                    key={row.id}
-                                                    sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                                                    <MenuItem value="">
+                                                        <em>None</em>
+                                                    </MenuItem>
+                                                    {
+                                                        this.state.wilayas.map((e) => (
+                                                            <MenuItem value={e.name}>{e.name}</MenuItem>
+                                                        ))
+                                                    }
+                                                </Select>
+                                            </FormControl>
+                                            <FormControl sx={{ width: '50%', backgroundColor: 'white', borderRadius: '4px', height: '40px', flexGrow: '1' }} size="small">
+                                                <InputLabel id="demo-select-small-label">Commune</InputLabel>
+                                                <Select
+                                                    disabled={!this.state.selectedWilaya}
+                                                    value={this.state.supplier.commun}
+                                                    onChange={(event) => {
+                                                        this.state.supplier.commun = event.target.value;
+                                                    }}
                                                 >
-                                                    <TableCell sx={{ width: '32%' }} align="left">{row.name}</TableCell>
-                                                    <TableCell sx={{ width: '32%' }} align="left">{row.ug}</TableCell>
-                                                    <TableCell sx={{ width: '50%' }} align="left">{row.wholesalePriceUnit}</TableCell>
-                                                    <TableCell sx={{ padding: '0px 16px 0px 0px' }} align="right">
-                                                        <IconButton onClick={() => {
-                                                            this.setState({ showDeleteProductDialog: true, selectedProductId: row.id! });
-                                                        }} >
-                                                            <DeleteIcon />
-                                                        </IconButton>
-                                                    </TableCell>
+                                                    <MenuItem value="">
+                                                        <em>None</em>
+                                                    </MenuItem>
+                                                    {
+                                                        this.state.selectedWilaya?.communes?.map((e) => (
+                                                            <MenuItem value={e}>{e}</MenuItem>
+                                                        ))
+                                                    }
+                                                </Select>
+                                            </FormControl>
+                                        </div>
+
+                                        <div style={{ display: 'flex', margin: '16px 0px 0px 0px' }}>
+                                            <FormControl sx={{ marginRight: '16px', backgroundColor: 'white', borderRadius: '4px', height: '40px', flexGrow: '1' }} size="small">
+                                                <InputLabel id="demo-select-small-label">Type</InputLabel>
+                                                <Select
+                                                    value={this.state.supplier.type ? 1 : 0}
+                                                    onChange={(event) => {
+                                                        this.state.supplier.type = event.target.value === 1;
+                                                        this.setState({ supplier: this.state.supplier });
+                                                    }}
+                                                >
+                                                    <MenuItem value={0}>Pharmacétique</MenuItem>
+                                                    <MenuItem value={1}>Parapharmacétique</MenuItem>
+                                                </Select>
+                                            </FormControl>
+                                            <Button onClick={() => this.handleCreateSupplier()} startIcon={<AddIcon />} sx={{ border: 'solid grey 1px', backgroundColor: 'white', borderRadius: '4px', height: '40px', }}>
+                                                Ajouter
+                                            </Button>
+                                        </div>
+                                    </div>
+                                    <div style={{ width: '60%', display: 'flex', flexGrow: '1', padding: '8px 8px 0px 8px', marginBottom: '8px', maxHeight: '400px' }}>
+                                        <Table sx={{ flexGrow: '1', display: 'flex', flexDirection: 'column', overflow: 'hidden', margin: '0px', width: "100%", borderRadius: '4px', }} aria-label="simple table">
+                                            <TableHead sx={{ height: '45px', display: 'flex', width: '100%' }}>
+                                                <TableRow sx={{ display: 'flex', width: '100%' }}>
+                                                    <TableCell sx={{ width: '50%' }} align="left">Nom de fournisseur</TableCell>
+                                                    <TableCell sx={{ width: '50%' }} align="left">Wilaya et commune</TableCell>
+                                                    <TableCell sx={{ width: '50%' }} align="left">Type</TableCell>
+                                                    <TableCell sx={{ width: '50%' }} align="right">Supprimer</TableCell>
                                                 </TableRow>
-                                            ))}
-                                </TableBody>
-                            </Table>
-                        </div>
-                    </div>
-                    <Divider component="div" style={{ margin: '0px 16px' }} sx={{ borderBottom: 'solid grey 1px' }} />
-                    <div style={{ width: '100%', maxHeight: '450px' }}>
-                        <div style={{ margin: '8px', backgroundColor: 'white', borderRadius: '4px', padding: '16px' }}>
-                            <h4>
-                                Configuration des chiffres d'affaires
-                            </h4>
-                            <div style={{ display: 'flex', marginTop: '8px' }}>
-                                <TextField value={this.state.expensesConfig.nightPrice} onChange={(event) => {
-                                    this.state.expensesConfig.nightPrice = parseInt(event.target.value);
-                                    this.setState({ expensesConfig: this.state.expensesConfig });
-                                }} type="number" size="small" id="outlined-basic" label="Prix de nuit" variant="outlined" sx={{ marginRight: '16px', backgroundColor: 'white', borderRadius: '4px', height: '40px', flexGrow: '1' }} />
-                                <TextField value={this.state.expensesConfig.kmPrice} onChange={(event) => {
-                                    this.state.expensesConfig.kmPrice = parseInt(event.target.value);
-                                    this.setState({ expensesConfig: this.state.expensesConfig });
-                                }} type="number" size="small" id="outlined-basic" label="km Prix" variant="outlined" sx={{ marginRight: '16px', backgroundColor: 'white', borderRadius: '4px', height: '40px', flexGrow: '1' }} />
-                                <Button onClick={() => this.handleSaveExpenseConfigChange()} startIcon={<SaveIcon />} sx={{ border: 'solid grey 1px', backgroundColor: 'white', borderRadius: '4px', height: '40px', }}>
-                                    enregistrer les modifications
-                                </Button>
-                            </div>
-                        </div>
-                    </div>
-                    <Divider component="div" style={{ margin: '0px 16px' }} sx={{ borderBottom: 'solid grey 1px' }} />
-                    <div style={{ width: '100%', display: 'flex', flexGrow: '1', flexDirection: 'column', padding: '8px 0px 0px 8px', marginBottom: '8px', maxHeight: '400px' }}>
-                        <Table sx={{ flexGrow: '1', display: 'flex', flexDirection: 'column', overflow: 'hidden', margin: '0px', width: "100%", borderRadius: '4px', }} aria-label="simple table">
-                            <TableHead sx={{ height: '45px', display: 'flex', width: '100%' }}>
-                                <TableRow sx={{ display: 'flex', width: '100%' }}>
-                                    <TableCell sx={{ width: '25%' }} align="left">Délégué</TableCell>
-                                    <TableCell sx={{ width: '25%' }} align="left">Wilaya et commune</TableCell>
-                                    <TableCell sx={{ width: '30%' }} align="left">Objectifs de ventes</TableCell>
-                                    <TableCell sx={{ width: '30%' }} align="left">Objectifs de visites</TableCell>
-                                </TableRow>
-                            </TableHead>
-                            <TableBody sx={{ flexGrow: '1', overflowY: 'auto', overflowX: 'hidden', }}>
+                                            </TableHead>
+                                            <TableBody sx={{ flexGrow: '1', overflowY: 'auto', overflowX: 'hidden', }}>
+                                                {
+                                                    this.state.loadingSuppliersData ? (<div style={{
+                                                        width: '100%',
+                                                        flexGrow: '1',
+                                                        overflow: 'hidden',
+                                                        height: '100%',
+                                                        display: 'flex',
+                                                        justifyContent: 'center',
+                                                        alignItems: 'center',
+                                                    }}>
+                                                        <DotSpinner
+                                                            size={40}
+                                                            speed={0.9}
+                                                            color="black"
+                                                        />
+                                                    </div>) :
+                                                        this.state.suppliers.map((row) => (
+                                                            <TableRow
+                                                                key={row.id}
+                                                                sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                                                            >
+                                                                <TableCell sx={{ width: '32%' }} align="left">{row.name}</TableCell>
+                                                                <TableCell sx={{ width: '32%' }} align="left">{row.wilaya + ', ' + row.commun}</TableCell>
+                                                                <TableCell sx={{ width: '50%' }} align="left">{row.type ? 'Pharmacétique' : 'Parapharmacétique'}</TableCell>
+                                                                <TableCell sx={{ padding: '0px 16px 0px 0px' }} align="right">
+                                                                    <IconButton onClick={() => {
+                                                                        this.setState({ showDeleteSupplierDialog: true, selectedSupplierId: row.id! });
+                                                                    }} >
+                                                                        <DeleteIcon />
+                                                                    </IconButton>
+                                                                </TableCell>
+                                                            </TableRow>
+                                                        ))}
+                                            </TableBody>
+                                        </Table>
+                                    </div>
+                                </div>
+                                <Divider component="div" style={{ margin: '0px 16px' }} sx={{ borderBottom: 'solid grey 1px' }} />
+                                <div style={{ width: '100%', display: 'flex', maxHeight: '450px' }}>
+                                    <div style={{ width: '40%', margin: '8px 0px 8px 8px', backgroundColor: 'white', borderRadius: '4px', padding: '16px' }}>
+                                        <h4>
+                                            Configuration des produits
+                                        </h4>
+                                        <div style={{ display: 'flex', margin: '8px 0px' }}>
+                                            <TextField value={this.state.product.name} onChange={(event) => {
+                                                this.state.product.name = event.target.value;
+                                            }} size="small" id="outlined-basic" label="Nom de produit" variant="outlined" sx={{ marginRight: '16px', backgroundColor: 'white', borderRadius: '4px', height: '40px', flexGrow: '1' }} />
+                                            <TextField value={this.state.product.ug} onChange={(event) => {
+                                                this.state.product.ug = parseInt(event.target.value);
+                                            }} type='number' size="small" label="UG" variant="outlined" sx={{ backgroundColor: 'white', borderRadius: '4px', height: '40px', flexGrow: '1' }} />
+                                        </div>
+                                        <div style={{ display: 'flex', margin: '8px 0px' }}>
+                                            <TextField value={this.state.product.remise} onChange={(event) => {
+                                                this.state.product.remise = parseInt(event.target.value);
+                                            }} type='number' size="small" id="outlined-basic" label="Remise" variant="outlined" sx={{ marginRight: '16px', backgroundColor: 'white', borderRadius: '4px', height: '40px', flexGrow: '1' }} />
+
+                                            <TextField value={this.state.product.wholesalePriceUnit} onChange={(event) => {
+                                                this.state.product.wholesalePriceUnit = parseInt(event.target.value);
+                                            }} type='number' size="small" label="Grossiste prix unitaire" variant="outlined" sx={{ backgroundColor: 'white', borderRadius: '4px', height: '40px', flexGrow: '1' }} />
+                                        </div>
+                                        <div style={{ display: 'flex', margin: '8px 0px' }}>
+                                            <TextField value={this.state.product.pharmacyPriceUnit} onChange={(event) => {
+                                                this.state.product.pharmacyPriceUnit = parseInt(event.target.value);
+                                            }} type='number' size="small" id="outlined-basic" label="Pharmacie prix unitaire" variant="outlined" sx={{ marginRight: '16px', backgroundColor: 'white', borderRadius: '4px', height: '40px', flexGrow: '1' }} />
+
+                                            <TextField value={this.state.product.superWholesalePriceUnit} onChange={(event) => {
+                                                this.state.product.superWholesalePriceUnit = parseInt(event.target.value);
+                                            }} type='number' size="small" label="Super grossiste prix unitaire" variant="outlined" sx={{ backgroundColor: 'white', borderRadius: '4px', height: '40px', flexGrow: '1' }} />
+                                        </div>
+                                        <div style={{ display: 'flex', margin: '8px 0px' }}>
+                                            <TextField value={this.state.product.collision} onChange={(event) => {
+                                                this.state.product.collision = parseInt(event.target.value);
+                                            }} type='number' size="small" id="outlined-basic" label="Collisage" variant="outlined" sx={{ marginRight: '16px', backgroundColor: 'white', borderRadius: '4px', height: '40px', flexGrow: '1' }} />
+
+                                            <TextField value={this.state.product.superWholesalePriceUnit} onChange={(event) => {
+                                                this.state.product.superWholesalePriceUnit = parseInt(event.target.value);
+                                            }} type='number' size="small" label="Super grossiste prix unitaire" variant="outlined" sx={{ backgroundColor: 'white', borderRadius: '4px', height: '40px', flexGrow: '1' }} />
+                                        </div>
+                                        <div style={{ display: 'flex', margin: '16px 0px 16px 0px' }}>
+                                            <LocalizationProvider dateAdapter={AdapterDayjs}>
+                                                <DatePicker value={this.state.product.ddp} onChange={(date) => {
+                                                    this.state.product.ddp = date;
+                                                }} label="DDP" />
+                                            </LocalizationProvider>
+                                            <Button onClick={() => this.handleCreateProduct()} startIcon={<AddIcon />} sx={{ border: 'solid grey 1px', backgroundColor: 'white', borderRadius: '4px', marginLeft: '16px' }}>
+                                                Ajouter
+                                            </Button>
+                                        </div>
+                                    </div>
+                                    <div style={{ width: '60%', display: 'flex', flexGrow: '1', padding: '8px 8px 0px 8px', marginBottom: '8px', maxHeight: '400px' }}>
+                                        <Table sx={{ flexGrow: '1', display: 'flex', flexDirection: 'column', overflow: 'hidden', margin: '0px', width: "100%", borderRadius: '4px', }} aria-label="simple table">
+                                            <TableHead sx={{ height: '45px', display: 'flex', width: '100%' }}>
+                                                <TableRow sx={{ display: 'flex', width: '100%' }}>
+                                                    <TableCell sx={{ width: '50%' }} align="left">Nom de fournisseur</TableCell>
+                                                    <TableCell sx={{ width: '50%' }} align="left">
+                                                        UG
+                                                    </TableCell>
+                                                    <TableCell sx={{ width: '50%' }} align="left">Prix grossiste</TableCell>
+                                                    <TableCell sx={{ width: '50%' }} align="right">Supprimer</TableCell>
+                                                </TableRow>
+                                            </TableHead>
+                                            <TableBody sx={{ flexGrow: '1', overflowY: 'auto', overflowX: 'hidden', }}>
+                                                {
+                                                    this.state.loadingProductsData ? (<div style={{
+                                                        width: '100%',
+                                                        flexGrow: '1',
+                                                        overflow: 'hidden',
+                                                        height: '100%',
+                                                        display: 'flex',
+                                                        justifyContent: 'center',
+                                                        alignItems: 'center',
+                                                    }}>
+                                                        <DotSpinner
+                                                            size={40}
+                                                            speed={0.9}
+                                                            color="black"
+                                                        />
+                                                    </div>) :
+                                                        this.state.products.map((row) => (
+                                                            <TableRow
+                                                                key={row.id}
+                                                                sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                                                            >
+                                                                <TableCell sx={{ width: '32%' }} align="left">{row.name}</TableCell>
+                                                                <TableCell sx={{ width: '32%' }} align="left">{row.ug}</TableCell>
+                                                                <TableCell sx={{ width: '50%' }} align="left">{row.wholesalePriceUnit}</TableCell>
+                                                                <TableCell sx={{ padding: '0px 16px 0px 0px' }} align="right">
+                                                                    <IconButton onClick={() => {
+                                                                        this.setState({ showDeleteProductDialog: true, selectedProductId: row.id! });
+                                                                    }} >
+                                                                        <DeleteIcon />
+                                                                    </IconButton>
+                                                                </TableCell>
+                                                            </TableRow>
+                                                        ))}
+                                            </TableBody>
+                                        </Table>
+                                    </div>
+                                </div>
                                 {
-                                    this.state.loadingSuppliersData ? (<div style={{
-                                        width: '100%',
-                                        flexGrow: '1',
-                                        overflow: 'hidden',
-                                        height: '100%',
-                                        display: 'flex',
-                                        justifyContent: 'center',
-                                        alignItems: 'center',
-                                    }}>
-                                        <DotSpinner
-                                            size={40}
-                                            speed={0.9}
-                                            color="black"
-                                        />
-                                    </div>) :
-                                        this.state.goals.map((row) => (
-                                            <TableRow
-                                                key={row.id}
-                                                sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-                                            >
-                                                <TableCell sx={{ width: '25%' }} align="left">{row.user?.username}</TableCell>
-                                                <TableCell sx={{ width: '25%' }} align="left">{row.user?.wilaya + ', ' + row.user?.commune}</TableCell>
-                                                <TableCell sx={{ width: '30%' }} align="left">
-                                                    <TextField value={row.totalSales} onChange={(event) => {
-                                                        row.totalSales = parseInt(event.target.value);
-                                                        this.setState({});
-                                                    }} type="number" size="small" variant="outlined" sx={{ marginRight: '16px', backgroundColor: 'white', borderRadius: '4px', height: '40px', flexGrow: '1' }} />
-                                                </TableCell>
-                                                <TableCell sx={{ width: '30%' }} align="left">
-                                                    <TextField value={row.totalVisits} onChange={(event) => {
-                                                        row.totalVisits = parseInt(event.target.value);
-                                                        this.setState({});
-                                                    }} type="number" size="small" variant="outlined" sx={{ marginRight: '16px', backgroundColor: 'white', borderRadius: '4px', height: '40px', flexGrow: '1' }} />
-                                                </TableCell>
+                                    this.state.currentUser
+                                        .type === UserType.admin ? (
+                                        <div>
+                                            <Divider component="div" style={{ margin: '0px 16px' }} sx={{ borderBottom: 'solid grey 1px' }} />
+                                            <div style={{ width: '100%', maxHeight: '450px' }}>
+                                                <div style={{ margin: '8px', backgroundColor: 'white', borderRadius: '4px', padding: '16px' }}>
+                                                    <h4>
+                                                        Configuration des chiffres d'affaires
+                                                    </h4>
+                                                    <div style={{ display: 'flex', marginTop: '8px' }}>
+                                                        <TextField value={this.state.expensesConfig.nightPrice} onChange={(event) => {
+                                                            this.state.expensesConfig.nightPrice = parseInt(event.target.value);
+                                                            this.setState({ expensesConfig: this.state.expensesConfig });
+                                                        }} type="number" size="small" id="outlined-basic" label="Prix de nuit" variant="outlined" sx={{ marginRight: '16px', backgroundColor: 'white', borderRadius: '4px', height: '40px', flexGrow: '1' }} />
+                                                        <TextField value={this.state.expensesConfig.kmPrice} onChange={(event) => {
+                                                            this.state.expensesConfig.kmPrice = parseInt(event.target.value);
+                                                            this.setState({ expensesConfig: this.state.expensesConfig });
+                                                        }} type="number" size="small" id="outlined-basic" label="km Prix" variant="outlined" sx={{ marginRight: '16px', backgroundColor: 'white', borderRadius: '4px', height: '40px', flexGrow: '1' }} />
+                                                        <Button onClick={() => this.handleSaveExpenseConfigChange()} startIcon={<SaveIcon />} sx={{ border: 'solid grey 1px', backgroundColor: 'white', borderRadius: '4px', height: '40px', }}>
+                                                            enregistrer les modifications
+                                                        </Button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    ) : null
+                                }
+                                <Divider component="div" style={{ margin: '0px 16px' }} sx={{ borderBottom: 'solid grey 1px' }} />
+                                <div style={{ width: '100%', display: 'flex', flexGrow: '1', flexDirection: 'column', padding: '8px 0px 0px 8px', marginBottom: '8px', maxHeight: '400px' }}>
+                                    <Table sx={{ flexGrow: '1', display: 'flex', flexDirection: 'column', overflow: 'hidden', margin: '0px', width: "100%", borderRadius: '4px', }} aria-label="simple table">
+                                        <TableHead sx={{ height: '45px', display: 'flex', width: '100%' }}>
+                                            <TableRow sx={{ display: 'flex', width: '100%' }}>
+                                                <TableCell sx={{ width: '25%' }} align="left">Délégué</TableCell>
+                                                <TableCell sx={{ width: '25%' }} align="left">Wilaya et commune</TableCell>
+                                                <TableCell sx={{ width: '30%' }} align="left">Objectifs de ventes</TableCell>
+                                                <TableCell sx={{ width: '30%' }} align="left">Objectifs de visites</TableCell>
                                             </TableRow>
-                                        ))}
-                            </TableBody>
-                        </Table>
-                        <Button startIcon={<SaveIcon />} onClick={() => this.handleSaveGoalsChange()} sx={{ width: '350px', border: 'solid grey 1px', backgroundColor: 'white', borderRadius: '4px', height: '40px', margin: '8px' }}>
-                            enregistrer les modifications
-                        </Button>
-                    </div>
-                    <Snackbar anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }} onClose={this.handleCloseSanckbar} open={this.state.showSnackbar} autoHideDuration={3000} message={this.state.snackbarMessage} />
-                    <YesNoDialog onNo={() => {
-                        this.setState({ showDeleteSpecialityDialog: false });
-                    }} onYes={() => this.handleRemoveSpeciality()} isOpen={this.state.showDeleteSpecialityDialog} onClose={() => {
-                        this.setState({ showDeleteSpecialityDialog: false });
-                    }} message='Voulez-vous supprimer cette spécialité?'></YesNoDialog>
-                    <YesNoDialog onNo={() => {
-                        this.setState({ showDeleteCommentDialog: false });
-                    }} onYes={() => this.handleRemoveComment()} isOpen={this.state.showDeleteCommentDialog} onClose={() => {
-                        this.setState({ showDeleteCommentDialog: false });
-                    }} message='Voulez-vous supprimer ce commentaire?'></YesNoDialog>
-                    <YesNoDialog onNo={() => {
-                        this.setState({ showDeleteMotivationDialog: false });
-                    }} onYes={() => this.handleRemoveMotivation()} isOpen={this.state.showDeleteMotivationDialog} onClose={() => {
-                        this.setState({ showDeleteMotivationDialog: false });
-                    }} message='Voulez-vous supprimer cette motivation?'></YesNoDialog>
-                    <YesNoDialog onNo={() => {
-                        this.setState({ showDeleteSupplierDialog: false });
-                    }} onYes={() => this.handleRemoveSupplier()} isOpen={this.state.showDeleteSupplierDialog} onClose={() => {
-                        this.setState({ showDeleteSupplierDialog: false });
-                    }} message='Voulez-vous supprimer cette fournisseur?'></YesNoDialog>
-                    <YesNoDialog onNo={() => {
-                        this.setState({ showDeleteProductDialog: false });
-                    }} onYes={() => this.handleRemoveProduct()} isOpen={this.state.showDeleteProductDialog} onClose={() => {
-                        this.setState({ showDeleteProductDialog: false });
-                    }} message='Voulez-vous supprimer  ce produit?'></YesNoDialog>
+                                        </TableHead>
+                                        <TableBody sx={{ flexGrow: '1', overflowY: 'auto', overflowX: 'hidden', }}>
+                                            {
+                                                this.state.loadingSuppliersData ? (<div style={{
+                                                    width: '100%',
+                                                    flexGrow: '1',
+                                                    overflow: 'hidden',
+                                                    height: '100%',
+                                                    display: 'flex',
+                                                    justifyContent: 'center',
+                                                    alignItems: 'center',
+                                                }}>
+                                                    <DotSpinner
+                                                        size={40}
+                                                        speed={0.9}
+                                                        color="black"
+                                                    />
+                                                </div>) :
+                                                    this.state.goals.map((row) => (
+                                                        <TableRow
+                                                            key={row.id}
+                                                            sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                                                        >
+                                                            <TableCell sx={{ width: '25%' }} align="left">{row.user?.username}</TableCell>
+                                                            <TableCell sx={{ width: '25%' }} align="left">{row.user?.wilaya + ', ' + row.user?.commune}</TableCell>
+                                                            <TableCell sx={{ width: '30%' }} align="left">
+                                                                <TextField value={row.totalSales} onChange={(event) => {
+                                                                    row.totalSales = parseInt(event.target.value);
+                                                                    this.setState({});
+                                                                }} type="number" size="small" variant="outlined" sx={{ marginRight: '16px', backgroundColor: 'white', borderRadius: '4px', height: '40px', flexGrow: '1' }} />
+                                                            </TableCell>
+                                                            <TableCell sx={{ width: '30%' }} align="left">
+                                                                <TextField value={row.totalVisits} onChange={(event) => {
+                                                                    row.totalVisits = parseInt(event.target.value);
+                                                                    this.setState({});
+                                                                }} type="number" size="small" variant="outlined" sx={{ marginRight: '16px', backgroundColor: 'white', borderRadius: '4px', height: '40px', flexGrow: '1' }} />
+                                                            </TableCell>
+                                                        </TableRow>
+                                                    ))}
+                                        </TableBody>
+                                    </Table>
+                                    <Button startIcon={<SaveIcon />} onClick={() => this.handleSaveGoalsChange()} sx={{ width: '350px', border: 'solid grey 1px', backgroundColor: 'white', borderRadius: '4px', height: '40px', margin: '8px' }}>
+                                        enregistrer les modifications
+                                    </Button>
+                                </div>
+                                <Snackbar anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }} onClose={this.handleCloseSanckbar} open={this.state.showSnackbar} autoHideDuration={3000} message={this.state.snackbarMessage} />
+                                <YesNoDialog onNo={() => {
+                                    this.setState({ showDeleteSpecialityDialog: false });
+                                }} onYes={() => this.handleRemoveSpeciality()} isOpen={this.state.showDeleteSpecialityDialog} onClose={() => {
+                                    this.setState({ showDeleteSpecialityDialog: false });
+                                }} message='Voulez-vous supprimer cette spécialité?'></YesNoDialog>
+                                <YesNoDialog onNo={() => {
+                                    this.setState({ showDeleteCommentDialog: false });
+                                }} onYes={() => this.handleRemoveComment()} isOpen={this.state.showDeleteCommentDialog} onClose={() => {
+                                    this.setState({ showDeleteCommentDialog: false });
+                                }} message='Voulez-vous supprimer ce commentaire?'></YesNoDialog>
+                                <YesNoDialog onNo={() => {
+                                    this.setState({ showDeleteMotivationDialog: false });
+                                }} onYes={() => this.handleRemoveMotivation()} isOpen={this.state.showDeleteMotivationDialog} onClose={() => {
+                                    this.setState({ showDeleteMotivationDialog: false });
+                                }} message='Voulez-vous supprimer cette motivation?'></YesNoDialog>
+                                <YesNoDialog onNo={() => {
+                                    this.setState({ showDeleteSupplierDialog: false });
+                                }} onYes={() => this.handleRemoveSupplier()} isOpen={this.state.showDeleteSupplierDialog} onClose={() => {
+                                    this.setState({ showDeleteSupplierDialog: false });
+                                }} message='Voulez-vous supprimer cette fournisseur?'></YesNoDialog>
+                                <YesNoDialog onNo={() => {
+                                    this.setState({ showDeleteProductDialog: false });
+                                }} onYes={() => this.handleRemoveProduct()} isOpen={this.state.showDeleteProductDialog} onClose={() => {
+                                    this.setState({ showDeleteProductDialog: false });
+                                }} message='Voulez-vous supprimer  ce produit?'></YesNoDialog>
 
+                            </div>
+                        </CustomTabPanel>
+                        <CustomTabPanel style={{ display: 'flex', flexDirection: 'row', flexGrow: '1', height: 'calc(100% - 50px)', }} value={this.state.index} index={1} >
+                            <div className='config-container'>
+                                <div style={{ display: 'flex', width: '100%', maxHeight: '450px', marginTop: '8px' }}>
+                                    <div style={{ width: '33%', display: 'flex', flexDirection: 'column' }}>
+                                        <div style={{ display: 'flex', flexGrow: '1', padding: '8px 8px 0px 16px', marginBottom: '8px', maxHeight: '392px' }}>
+                                            <Table sx={{ flexGrow: '1', display: 'flex', flexDirection: 'column', overflow: 'hidden', margin: '0px', width: "100%", borderRadius: '4px', }} aria-label="simple table">
+                                                <TableHead sx={{ height: '45px', display: 'flex', width: '100%' }}>
+                                                    <TableRow sx={{ display: 'flex', width: '100%' }}>
+                                                        <TableCell sx={{ width: '100%' }} align="left">Nom de spécialité </TableCell>
+                                                        <TableCell sx={{ width: '100%' }} align="right">Restaurer</TableCell>
+                                                    </TableRow>
+                                                </TableHead>
+                                                <TableBody sx={{ flexGrow: '1', overflowY: 'auto', overflowX: 'hidden', }}>
+                                                    {
+                                                        this.state.loadingSpecialitiesData ? (<div style={{
+                                                            width: '100%',
+                                                            flexGrow: '1',
+                                                            overflow: 'hidden',
+                                                            height: '100%',
+                                                            display: 'flex',
+                                                            justifyContent: 'center',
+                                                            alignItems: 'center',
+                                                        }}>
+                                                            <DotSpinner
+                                                                size={40}
+                                                                speed={0.9}
+                                                                color="black"
+                                                            />
+                                                        </div>) :
+                                                            this.state.draftedMedicalSpecialities.map((row) => (
+                                                                <TableRow
+                                                                    key={row.id}
+                                                                    sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                                                                >
+                                                                    <TableCell sx={{ width: '100%' }} align="left">{row.name}</TableCell>
+                                                                    <TableCell sx={{ width: '100%', padding: '0px 16px 0px 0px' }} align="right">
+                                                                        <IconButton onClick={() => {
+                                                                            this.setState({ showRestoreSpecialityDialog: true, selectedSpecialityId: row.id! });
+                                                                        }} >
+                                                                            <RestoreIcon />
+                                                                        </IconButton>
+                                                                    </TableCell>
+                                                                </TableRow>
+                                                            ))}
+                                                </TableBody>
+                                            </Table>
+
+                                        </div>
+                                    </div>
+                                    <Divider orientation="vertical" flexItem component="div" style={{ width: '0.5%' }} sx={{ borderRight: 'solid grey 1px' }} />
+                                    <div style={{ width: '33%', display: 'flex', flexDirection: 'column' }}>
+
+                                        <div style={{ display: 'flex', flexGrow: '1', padding: '8px 8px 0px 16px', marginBottom: '8px', maxHeight: '392px' }}>
+                                            <Table sx={{ flexGrow: '1', display: 'flex', flexDirection: 'column', overflow: 'hidden', margin: '0px', width: "100%", borderRadius: '4px', }} aria-label="simple table">
+                                                <TableHead sx={{ height: '45px', display: 'flex', width: '100%' }}>
+                                                    <TableRow sx={{ display: 'flex', width: '100%' }}>
+                                                        <TableCell sx={{ width: '100%' }} align="left">Contenu du commentaire</TableCell>
+                                                        <TableCell sx={{ width: '100%' }} align="right">Restaurer</TableCell>
+                                                    </TableRow>
+                                                </TableHead>
+                                                <TableBody sx={{ flexGrow: '1', overflowY: 'auto', overflowX: 'hidden', }}>
+                                                    {
+                                                        this.state.loadingCommentsData ? (<div style={{
+                                                            width: '100%',
+                                                            flexGrow: '1',
+                                                            overflow: 'hidden',
+                                                            height: '100%',
+                                                            display: 'flex',
+                                                            justifyContent: 'center',
+                                                            alignItems: 'center',
+                                                        }}>
+                                                            <DotSpinner
+                                                                size={40}
+                                                                speed={0.9}
+                                                                color="black"
+                                                            />
+                                                        </div>) :
+                                                            this.state.draftedComments.map((row) => (
+                                                                <TableRow
+                                                                    key={row.id}
+                                                                    sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                                                                >
+                                                                    <TableCell sx={{ width: '100%' }} align="left">{row.comment}</TableCell>
+                                                                    <TableCell sx={{ width: '100%', padding: '0px 16px 0px 0px' }} align="right">
+                                                                        <IconButton onClick={() => {
+                                                                            this.setState({ showRestoreCommentDialog: true, selectedCommentId: row.id! });
+                                                                        }}>
+                                                                            <RestoreIcon />
+                                                                        </IconButton>
+                                                                    </TableCell>
+                                                                </TableRow>
+                                                            ))}
+                                                </TableBody>
+                                            </Table>
+                                        </div>
+                                    </div>
+                                    <Divider orientation="vertical" flexItem component="div" style={{ width: '0.5%' }} sx={{ borderRight: 'solid grey 1px' }} />
+                                    <div style={{ width: '33%', display: 'flex', flexDirection: 'column' }}>
+
+                                        <div style={{ display: 'flex', flexGrow: '1', padding: '8px 8px 0px 16px', marginBottom: '8px', maxHeight: '392px' }}>
+                                            <Table sx={{ flexGrow: '1', display: 'flex', flexDirection: 'column', overflow: 'hidden', margin: '0px', width: "100%", borderRadius: '4px', }} aria-label="simple table">
+                                                <TableHead sx={{ height: '45px', display: 'flex', width: '100%' }}>
+                                                    <TableRow sx={{ display: 'flex', width: '100%' }}>
+                                                        <TableCell sx={{ width: '100%' }} align="left">Nom de motivation</TableCell>
+                                                        <TableCell sx={{ width: '100%' }} align="right">Restaurer</TableCell>
+                                                    </TableRow>
+                                                </TableHead>
+                                                <TableBody sx={{ flexGrow: '1', overflowY: 'auto', overflowX: 'hidden', }}>
+                                                    {
+                                                        this.state.loadingMotivationsData ? (<div style={{
+                                                            width: '100%',
+                                                            flexGrow: '1',
+                                                            overflow: 'hidden',
+                                                            height: '100%',
+                                                            display: 'flex',
+                                                            justifyContent: 'center',
+                                                            alignItems: 'center',
+                                                        }}>
+                                                            <DotSpinner
+                                                                size={40}
+                                                                speed={0.9}
+                                                                color="black"
+                                                            />
+                                                        </div>) :
+                                                            this.state.draftedMotivations.map((row) => (
+                                                                <TableRow
+                                                                    key={row.id}
+                                                                    sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                                                                >
+                                                                    <TableCell sx={{ width: '100%' }} align="left">{row.content}</TableCell>
+                                                                    <TableCell sx={{ width: '100%', padding: '0px 16px 0px 0px' }} align="right">
+                                                                        <IconButton onClick={() => {
+                                                                            this.setState({ showRestoreMotivationDialog: true, selectedMotivationId: row.id! });
+                                                                        }} >
+                                                                            <RestoreIcon />
+                                                                        </IconButton>
+                                                                    </TableCell>
+                                                                </TableRow>
+                                                            ))}
+                                                </TableBody>
+                                            </Table>
+                                        </div>
+                                    </div>
+                                </div>
+                                <Divider component="div" style={{ margin: '0px 16px' }} sx={{ borderBottom: 'solid grey 1px' }} />
+                                <div style={{ width: '100%', display: 'flex', maxHeight: '450px' }}>
+
+                                    <div style={{ width: '60%', display: 'flex', flexGrow: '1', padding: '8px 8px 0px 8px', marginBottom: '8px', maxHeight: '400px' }}>
+                                        <Table sx={{ flexGrow: '1', display: 'flex', flexDirection: 'column', overflow: 'hidden', margin: '0px', width: "100%", borderRadius: '4px', }} aria-label="simple table">
+                                            <TableHead sx={{ height: '45px', display: 'flex', width: '100%' }}>
+                                                <TableRow sx={{ display: 'flex', width: '100%' }}>
+                                                    <TableCell sx={{ width: '50%' }} align="left">Nom de fournisseur</TableCell>
+                                                    <TableCell sx={{ width: '50%' }} align="left">Wilaya et commune</TableCell>
+                                                    <TableCell sx={{ width: '50%' }} align="left">Type</TableCell>
+                                                    <TableCell sx={{ width: '50%' }} align="right">Restaurer</TableCell>
+                                                </TableRow>
+                                            </TableHead>
+                                            <TableBody sx={{ flexGrow: '1', overflowY: 'auto', overflowX: 'hidden', }}>
+                                                {
+                                                    this.state.loadingSuppliersData ? (<div style={{
+                                                        width: '100%',
+                                                        flexGrow: '1',
+                                                        overflow: 'hidden',
+                                                        height: '100%',
+                                                        display: 'flex',
+                                                        justifyContent: 'center',
+                                                        alignItems: 'center',
+                                                    }}>
+                                                        <DotSpinner
+                                                            size={40}
+                                                            speed={0.9}
+                                                            color="black"
+                                                        />
+                                                    </div>) :
+                                                        this.state.draftedSuppliers.map((row) => (
+                                                            <TableRow
+                                                                key={row.id}
+                                                                sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                                                            >
+                                                                <TableCell sx={{ width: '32%' }} align="left">{row.name}</TableCell>
+                                                                <TableCell sx={{ width: '32%' }} align="left">{row.wilaya + ', ' + row.commun}</TableCell>
+                                                                <TableCell sx={{ width: '50%' }} align="left">{row.type ? 'Pharmacétique' : 'Parapharmacétique'}</TableCell>
+                                                                <TableCell sx={{ padding: '0px 16px 0px 0px' }} align="right">
+                                                                    <IconButton onClick={() => {
+                                                                        this.setState({ showRestoreSupplierDialog: true, selectedSupplierId: row.id! });
+                                                                    }} >
+                                                                        <RestoreIcon />
+                                                                    </IconButton>
+                                                                </TableCell>
+                                                            </TableRow>
+                                                        ))}
+                                            </TableBody>
+                                        </Table>
+                                    </div>
+                                </div>
+                                <Divider component="div" style={{ margin: '0px 16px' }} sx={{ borderBottom: 'solid grey 1px' }} />
+                                <div style={{ width: '100%', display: 'flex', maxHeight: '450px' }}>
+
+                                    <div style={{ width: '60%', display: 'flex', flexGrow: '1', padding: '8px 8px 0px 8px', marginBottom: '8px', maxHeight: '400px' }}>
+                                        <Table sx={{ flexGrow: '1', display: 'flex', flexDirection: 'column', overflow: 'hidden', margin: '0px', width: "100%", borderRadius: '4px', }} aria-label="simple table">
+                                            <TableHead sx={{ height: '45px', display: 'flex', width: '100%' }}>
+                                                <TableRow sx={{ display: 'flex', width: '100%' }}>
+                                                    <TableCell sx={{ width: '50%' }} align="left">Nom de fournisseur</TableCell>
+                                                    <TableCell sx={{ width: '50%' }} align="left">
+                                                        UG
+                                                    </TableCell>
+                                                    <TableCell sx={{ width: '50%' }} align="left">Prix grossiste</TableCell>
+                                                    <TableCell sx={{ width: '50%' }} align="right">Restaurer</TableCell>
+                                                </TableRow>
+                                            </TableHead>
+                                            <TableBody sx={{ flexGrow: '1', overflowY: 'auto', overflowX: 'hidden', }}>
+                                                {
+                                                    this.state.loadingProductsData ? (<div style={{
+                                                        width: '100%',
+                                                        flexGrow: '1',
+                                                        overflow: 'hidden',
+                                                        height: '100%',
+                                                        display: 'flex',
+                                                        justifyContent: 'center',
+                                                        alignItems: 'center',
+                                                    }}>
+                                                        <DotSpinner
+                                                            size={40}
+                                                            speed={0.9}
+                                                            color="black"
+                                                        />
+                                                    </div>) :
+                                                        this.state.draftedProducts.map((row) => (
+                                                            <TableRow
+                                                                key={row.id}
+                                                                sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                                                            >
+                                                                <TableCell sx={{ width: '32%' }} align="left">{row.name}</TableCell>
+                                                                <TableCell sx={{ width: '32%' }} align="left">{row.ug}</TableCell>
+                                                                <TableCell sx={{ width: '50%' }} align="left">{row.wholesalePriceUnit}</TableCell>
+                                                                <TableCell sx={{ padding: '0px 16px 0px 0px' }} align="right">
+                                                                    <IconButton onClick={() => {
+                                                                        this.setState({ showRestoreProductDialog: true, selectedProductId: row.id! });
+                                                                    }} >
+                                                                        <RestoreIcon />
+                                                                    </IconButton>
+                                                                </TableCell>
+                                                            </TableRow>
+                                                        ))}
+                                            </TableBody>
+                                        </Table>
+                                    </div>
+                                </div>
+                                <Snackbar anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }} onClose={this.handleCloseSanckbar} open={this.state.showSnackbar} autoHideDuration={3000} message={this.state.snackbarMessage} />
+                                <YesNoDialog onNo={() => {
+                                    this.setState({ showRestoreSpecialityDialog: false });
+                                }} onYes={() => this.handleRestoreSpeciality()} isOpen={this.state.showRestoreSpecialityDialog} onClose={() => {
+                                    this.setState({ showRestoreSpecialityDialog: false });
+                                }} message='Voulez-vous restaurer cette spécialité?'></YesNoDialog>
+                                <YesNoDialog onNo={() => {
+                                    this.setState({ showRestoreCommentDialog: false });
+                                }} onYes={() => this.handleRestoreComment()} isOpen={this.state.showRestoreCommentDialog} onClose={() => {
+                                    this.setState({ showRestoreCommentDialog: false });
+                                }} message='Voulez-vous restaurer ce commentaire?'></YesNoDialog>
+                                <YesNoDialog onNo={() => {
+                                    this.setState({ showRestoreMotivationDialog: false });
+                                }} onYes={() => this.handleRestoreMotivation()} isOpen={this.state.showRestoreMotivationDialog} onClose={() => {
+                                    this.setState({ showRestoreMotivationDialog: false });
+                                }} message='Voulez-vous restaurer cette motivation?'></YesNoDialog>
+                                <YesNoDialog onNo={() => {
+                                    this.setState({ showRestoreSupplierDialog: false });
+                                }} onYes={() => this.handleRestoreSupplier()} isOpen={this.state.showRestoreSupplierDialog} onClose={() => {
+                                    this.setState({ showRestoreSupplierDialog: false });
+                                }} message='Voulez-vous restaurer cette fournisseur?'></YesNoDialog>
+                                <YesNoDialog onNo={() => {
+                                    this.setState({ showRestoreProductDialog: false });
+                                }} onYes={() => this.handleRestoreProduct()} isOpen={this.state.showRestoreProductDialog} onClose={() => {
+                                    this.setState({ showRestoreProductDialog: false });
+                                }} message='Voulez-vous restaurer  ce produit?'></YesNoDialog>
+                            </div>
+                        </CustomTabPanel>
+                    </Box>
                 </div>
+
             );
         }
     }

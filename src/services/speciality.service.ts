@@ -24,6 +24,26 @@ export default class SpecialityService {
         return [];
     }
 
+    async getAllDraftedMedicalSpecialities(): Promise<SpecialityModel[]> {
+        const token = localStorage.getItem('token');
+        var response = await axios.get(`${Globals.apiUrl}/specialities?filters[domainType][id][$eq]=1&publicationState=preview&filters[publishedAt][$null]=true`,
+            {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+
+        if (response.status == 200) {
+            var specialitys: SpecialityModel[] = [];
+            for (let index = 0; index < response.data.data.length; index++) {
+                var speciality = SpecialityModel.fromJson(response.data.data[index]);
+                specialitys.push(speciality);
+            }
+            return specialitys;
+        }
+        return [];
+    }
+
     async createMedicalSpeciality(name: string): Promise<boolean> {
         const token = localStorage.getItem('token');
         var response = await axios.post(`${Globals.apiUrl}/specialities`,
@@ -44,12 +64,34 @@ export default class SpecialityService {
         }
         return false;
     }
+
     async draftMedicalSpeciality(specialityId: number): Promise<boolean> {
         const token = localStorage.getItem('token');
         var response = await axios.put(`${Globals.apiUrl}/specialities/${specialityId}`,
             {
                 data: {
                     publishedAt: null
+                }
+            },
+            {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+
+        if (response.status == 200) {
+
+            return true;
+        }
+        return false;
+    }
+
+    async publishMedicalSpeciality(specialityId: number): Promise<boolean> {
+        const token = localStorage.getItem('token');
+        var response = await axios.put(`${Globals.apiUrl}/specialities/${specialityId}`,
+            {
+                data: {
+                    publishedAt: new Date()
                 }
             },
             {

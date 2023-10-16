@@ -23,6 +23,25 @@ export default class SupplierService {
         }
         return [];
     }
+    async getAllDraftedSuppliers(): Promise<SupplierModel[]> {
+        const token = localStorage.getItem('token');
+        var response = await axios.get(`${Globals.apiUrl}/company-suppliers?publicationState=preview&filters[publishedAt][$null]=true`,
+            {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+
+        if (response.status == 200) {
+            var suppliers: SupplierModel[] = [];
+            for (let index = 0; index < response.data.data.length; index++) {
+                var supplier = SupplierModel.fromJson(response.data.data[index]);
+                suppliers.push(supplier);
+            }
+            return suppliers;
+        }
+        return [];
+    }
 
     async createSupplier(supplier: SupplierModel): Promise<boolean> {
         const token = localStorage.getItem('token');
@@ -56,6 +75,26 @@ export default class SupplierService {
             {
                 data: {
                     publishedAt: null
+                }
+            },
+            {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+
+        if (response.status == 200) {
+
+            return true;
+        }
+        return false;
+    }
+    async publishSupplier(supplierId: number): Promise<boolean> {
+        const token = localStorage.getItem('token');
+        var response = await axios.put(`${Globals.apiUrl}/company-suppliers/${supplierId}`,
+            {
+                data: {
+                    publishedAt: new Date()
                 }
             },
             {

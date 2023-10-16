@@ -7,7 +7,7 @@ import Form from 'react-bootstrap/Form';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSearch } from '@fortawesome/free-solid-svg-icons';
 import UserService from '../../services/user.service';
-import UserModel from '../../models/user.model';
+import UserModel, { UserType } from '../../models/user.model';
 import { DotSpinner } from '@uiball/loaders'
 import VisitService from '../../services/visit.service';
 import VisitModel from '../../models/visit.model';
@@ -19,6 +19,7 @@ import CommandService from '../../services/command.service';
 import CommandPanel from '../../components/comand-panel/command-panel.component';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
+import { ClientType } from '../../models/client.model';
 
 
 interface HomePageState {
@@ -90,7 +91,12 @@ class HomePage extends Component<HomePageProps, HomePageState> {
             if (user != undefined) {
                 this.setState({ user: user });
             }
-            var visits = await this.visitService.getAllVisits(new Date());
+            var visits: VisitModel[];
+            if (user.type === UserType.supervisor) {
+                visits = await this.visitService.getAllVisits(new Date(), ClientType.pharmacy);
+            } else {
+                visits = await this.visitService.getAllVisits(new Date(), ClientType.wholesaler);
+            }
             this.setState({ isLoading: false, hasData: true, visits: visits, filteredVisits: visits });
         }
 
@@ -99,7 +105,12 @@ class HomePage extends Component<HomePageProps, HomePageState> {
 
     handleOnPickDate = async (date: Date) => {
         this.setState({ loadingVisitsData: true, selectedReport: undefined });
-        var visits = await this.visitService.getAllVisits(date);
+        var visits: VisitModel[];
+        if (this.state.user.type === UserType.supervisor) {
+            visits = await this.visitService.getAllVisits(date, ClientType.pharmacy);
+        } else {
+            visits = await this.visitService.getAllVisits(date, ClientType.wholesaler);
+        }
         this.setState({ selectedDate: date, visits: visits, loadingVisitsData: false, filteredVisits: visits });
     }
 
@@ -142,7 +153,7 @@ class HomePage extends Component<HomePageProps, HomePageState> {
             return (
                 <div style={{ backgroundColor: '#eee', display: 'flex', flexDirection: 'column', width: '100%', height: '100%', overflow: 'auto' }}>
                     <DatePickerBar onPick={this.handleOnPickDate}></DatePickerBar>
-                    <div className='search-bar' style={{marginBottom:'8px'}}>
+                    <div className='search-bar' style={{ marginBottom: '8px' }}>
                         <TextField
                             label='Recherche par nom de délégué'
                             size="small"

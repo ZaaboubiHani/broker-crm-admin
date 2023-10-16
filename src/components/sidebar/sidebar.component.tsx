@@ -52,14 +52,9 @@ const Sidebar: React.FC<SidebarProps> = () => {
         <Nav.Link className={location.pathname === '/report' ? 'active' : ''} href="/report">
           Rapports des visites
         </Nav.Link>
-        <Expander toggle={handleCommandToggle} isOpen={commandOpened} title="Bons de commandes">
-          <Nav.Link className={location.pathname === '/command/delegates' ? 'active' : ''} href="/command/delegates">
-            Délégués
-          </Nav.Link>
-          <Nav.Link className={location.pathname === '/command/cam' ? 'active' : ''} href="/command/cam">
-            Kam
-          </Nav.Link>
-        </Expander>
+        <Nav.Link className={location.pathname === '/command' ? 'active' : ''} href="/command">
+        Bons de commandes
+        </Nav.Link>
         <Nav.Link className={location.pathname === '/expense' ? 'active' : ''} href="/expense">
           Notes des frais
         </Nav.Link>
