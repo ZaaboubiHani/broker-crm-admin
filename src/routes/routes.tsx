@@ -11,8 +11,7 @@ import Content from '../components/content/content.component';
 import ReportPage from '../pages/report-page/report-page.component';
 import { Link, useLocation } from 'react-router-dom';
 import DelegatePage from '../pages/delegate-page/delegate-page.component';
-import CommandCamPage from '../pages/command-pages/command-cam-page/command-cam-page.component';
-import CommandDelegatePage from '../pages/command-pages/command-delegate-page/command-delegate-page.component';
+import CommandPage from '../pages/command-page/command-page.component';
 import ExpensePage from '../pages/expense-page/expense-page.component';
 import ClientsPharmacyPage from '../pages/clients-page/clients-page.component';
 import RevenuePage from '../pages/revenue-page/revenue-page.component';
@@ -45,8 +44,7 @@ const AppRouter: React.FC = () => {
                   <Route path="/plan" Component={PlanPage} />
                   <Route path="/report" Component={ReportPage} />
                   <Route path="/profile" Component={ProfilePage} />
-                  <Route path="/command/cam" Component={CommandCamPage} />
-                  <Route path="/command/delegates" Component={CommandDelegatePage} />
+                  <Route path="/command" Component={CommandPage} />
                   <Route path="/expense" Component={ExpensePage} />
                   <Route path="/clients" Component={ClientsPage} />
                   <Route path="/revenue" Component={RevenuePage} />

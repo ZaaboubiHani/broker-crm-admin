@@ -33,12 +33,12 @@ const AddClientDialog: React.FC<AddClientDialogProps> = (props: AddClientDialogP
     const [userWilayas, setUserWilayas] = React.useState<string[]>([]);
 
     const wilayas: WilayaModel[] = [
-        { id: 3, name: "Adrar" },
-        { id: 2, name: "Alger" },
+        { id: 2, name: "Adrar" },
+        { id: 3, name: "Alger" },
         { id: 1, name: "Batna" },
     ];
 
-    const [user, setUser] = useState<UserModel>(new UserModel({ type: creatorType === UserType.admin ? UserType.supervisor : UserType.delegate }));
+    const [user, setUser] = useState<UserModel>(new UserModel({ type: creatorType === UserType.admin || creatorType === undefined ? UserType.supervisor : UserType.delegate }));
 
     if (!isOpen) return null;
 
@@ -142,34 +142,34 @@ const AddClientDialog: React.FC<AddClientDialogProps> = (props: AddClientDialogP
                             ) : null
                         }
 
-                     
-                                <Grid item xs={4}>
-                                    <FormControl sx={{
-                                        flexGrow: '1',
-                                        width: '100%',
-                                        opacity: creatorType === UserType.supervisor ? '1' : user.type === UserType.kam ? '1' : '0',
-                                        transition: 'all 300ms ease'
-                                    }}>
-                                        <InputLabel id="demo-multiple-checkbox-label">Wilayat</InputLabel>
-                                        <Select
-                                            labelId="demo-multiple-checkbox-label"
-                                            id="demo-multiple-checkbox"
-                                            multiple
-                                            value={userWilayas}
-                                            onChange={handleWilayaChange}
-                                            input={<OutlinedInput label="Tag" />}
-                                            renderValue={(selected) => selected.join(', ')}
-                                        >
-                                            {wilayas.map((wilaya) => (
-                                                <MenuItem key={wilaya.id} value={wilaya.name}>
-                                                    <Checkbox checked={userWilayas.indexOf(wilaya.name ?? '') > -1} />
-                                                    <ListItemText primary={wilaya.name} />
-                                                </MenuItem>
-                                            ))}
-                                        </Select>
-                                    </FormControl>
-                                </Grid>
-                            
+
+                        <Grid item xs={4}>
+                            <FormControl sx={{
+                                flexGrow: '1',
+                                width: '100%',
+                                opacity: creatorType === UserType.supervisor ? '1' : user.type === UserType.kam ? '1' : '0',
+                                transition: 'all 300ms ease'
+                            }}>
+                                <InputLabel id="demo-multiple-checkbox-label">Wilayat</InputLabel>
+                                <Select
+                                    labelId="demo-multiple-checkbox-label"
+                                    id="demo-multiple-checkbox"
+                                    multiple
+                                    value={userWilayas}
+                                    onChange={handleWilayaChange}
+                                    input={<OutlinedInput label="Tag" />}
+                                    renderValue={(selected) => selected.join(', ')}
+                                >
+                                    {wilayas.map((wilaya) => (
+                                        <MenuItem key={wilaya.id} value={wilaya.name}>
+                                            <Checkbox checked={userWilayas.indexOf(wilaya.name ?? '') > -1} />
+                                            <ListItemText primary={wilaya.name} />
+                                        </MenuItem>
+                                    ))}
+                                </Select>
+                            </FormControl>
+                        </Grid>
+
                     </Grid>
                 </Box>
             </DialogContent>

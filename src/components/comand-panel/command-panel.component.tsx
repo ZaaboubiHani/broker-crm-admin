@@ -7,26 +7,53 @@ import HailIcon from '@mui/icons-material/Hail';
 import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf';
 import Button from '@mui/material/Button/Button';
 import jsPDF from 'jspdf';
+import { formatDateToYYYYMMDD } from '../../functions/date-format';
 
 interface CommandPanelProps {
     command?: CommandModel;
 }
-const generatePdf = () => {
+
+const generatePdf = (command: CommandModel) => {
     const pdf = new jsPDF();
-
-    pdf.text('Hello, this is a sample PDF.', 10, 10);
-
-    pdf.save('example.pdf');
+    pdf.setFontSize(12);
+    pdf.text(`Statut: ${command.isHonored ? 'honoré' : 'non honoré'}`, 10, 8);
+    pdf.text(`Total: ${command.totalRemised},00 DA`, 10, 16);
+    pdf.text(`Client: ${command?.visit?.client?.name}`, 10, 24);
+    pdf.text(`Localisation: ${command?.visit?.client?.wilaya + ', ' + command?.visit?.client?.commune}`, 10, 32);
+    pdf.text(`Téléphone: ${command?.visit?.client?.phoneOne}`, 10, 40);
+    pdf.text(`Total des vendeurs: ${command?.visit?.client?.totalSellers}`, 10, 48);
+    pdf.text(`Total post chifa: ${command?.visit?.client?.totalPostChifa}`, 10, 56);
+    pdf.text(`Potentiel: ${command?.visit?.client?.potential === 0 ? 'C' : command?.visit?.client?.potential === 1 ? 'B' : 'A'}`, 10, 64);
+    pdf.text(`Produits:`, 10, 76);
+    const productsData: { [key: string]: string; }[] = [];
+    command.products?.map(product => productsData.push({ Nom: product.name ?? '', Quantité: `${product.quantity}` ?? '' }));
+    pdf.table(10, 80, productsData, [{ name: 'Nom', prompt: 'Nom', align: 'left', padding: 2, width: 100 },
+    { name: 'Quantité', prompt: 'Quantité', align: 'left', padding: 2, width: 100 },
+    ], {});
+    var supplierTitleY = (productsData.length + 1) * 10 + 94;
+    pdf.text(`Fournisseurs:`, 10, supplierTitleY);
+    const suppliersData: { [key: string]: string; }[] = [];
+    command.suppliers?.map(supplier => suppliersData.push({ Nom: supplier.name ?? '', Wilaya: supplier.wilaya ?? '', Commune: supplier.commun ?? '' }));
+    pdf.table(10, supplierTitleY + 4, suppliersData, [
+        { name: 'Nom', prompt: 'Nom', align: 'left', padding: 2, width: 75 },
+        { name: 'Wilaya', prompt: 'Wilaya', align: 'left', padding: 2, width: 75 },
+        { name: 'Commune', prompt: 'Commune', align: 'left', padding: 2, width: 75 },
+    ], {});
+    var motivationTitleY = (suppliersData.length + 1) * 10 + supplierTitleY + 18;
+    pdf.text(`Motivation:`, 10, motivationTitleY);
+    pdf.setFont("Arial", "bold");
+    pdf.text(command.motivations?.map((motivation) => motivation.content ?? '').join(', ') ?? '', 16, motivationTitleY + 4);
+    pdf.save(`${command?.visit?.client?.name}_${formatDateToYYYYMMDD(new Date())}.pdf`);
 };
 
 const CommandPanel: React.FC<CommandPanelProps> = ({ command }) => {
     if (command) {
         return (
             <div style={{ margin: '8px', flexGrow: '1' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between',alignItems:'end' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'end' }}>
                     <h4 style={{ fontSize: 15, fontWeight: '400' }}> Statut: {command.isHonored ? 'honoré' : 'non honoré'}</h4>
                     <h4 style={{ fontSize: 15, fontWeight: '400' }}> Total: {command.totalRemised?.toLocaleString('fr-DZ', { style: 'currency', currency: 'DZD' })}</h4>
-                    <Button onClick={generatePdf} variant="outlined"> <PictureAsPdfIcon />Télécharger PDF</Button>
+                    <Button onClick={() => generatePdf(command)} variant="outlined"> <PictureAsPdfIcon />Télécharger PDF</Button>
                 </div>
                 <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                     <h4 style={{ fontSize: 15, fontWeight: '400' }}> Client: {command?.visit?.client?.name}</h4>

@@ -5,9 +5,9 @@ import GoalModel from "../models/goal.model";
 
 export default class GoalService {
 
-    async getAllGoalsOfUserByDateMoth(date: Date): Promise<GoalModel[]> {
+    async getAllGoalsOfUserByDateMoth(date: Date,superId:number): Promise<GoalModel[]> {
         const token = localStorage.getItem('token');
-        var response = await axios.get(`${Globals.apiUrl}/goals?filters[users_permissions_user][relatedType][id][$eq]=3&filters[goalDate][$startsWithi]=${formatDateToYYYYMM(date)}&populate=users_permissions_user`,
+        var response = await axios.get(`${Globals.apiUrl}/goals?filters[users_permissions_user][relatedType][reference][$eq]=delegate&filters[users_permissions_user][creatorId][$eq]=${superId}&filters[goalDate][$startsWithi]=${formatDateToYYYYMM(date)}&populate=users_permissions_user`,
             {
                 headers: {
                     'Authorization': `Bearer ${token}`
