@@ -20,6 +20,7 @@ import CustomTabPanel from '../../components/custom-tab-panel/costum-tab-panel.c
 
 
 interface StatisticsPageProps {
+    currentUser:UserModel;
     selectedDate: Date;
     isLoading: boolean;
     hasData: boolean;
@@ -46,6 +47,7 @@ class StatisticsPage extends Component<{}, StatisticsPageProps> {
     constructor({ }) {
         super({});
         this.state = {
+            currentUser:new UserModel(),
             selectedDate: new Date(),
             isLoading: false,
             hasData: false,
@@ -337,14 +339,14 @@ class StatisticsPage extends Component<{}, StatisticsPageProps> {
 
         var visitStats = await this.statisticsService.getDelegateYearVisitStats(this.state.selectedDate, delegate!.id!);
         var salesStats = await this.statisticsService.getDelegateYearSaleStats(this.state.selectedDate, delegate!.id!);
-        var contributionStats = await this.statisticsService.getDelegateContributionStats(this.state.selectedDate, delegate!.id!);
-        var teamVisitsData = await this.statisticsService.getTeamYearVisitStats(this.state.selectedDate);
-        var teamSalesData = await this.statisticsService.getTeamYearSaleStats(this.state.selectedDate);
+        var contributionStats = await this.statisticsService.getDelegateContributionStats(this.state.selectedDate, delegate!.id!,this.state.currentUser.id!);
+        var teamVisitsData = await this.statisticsService.getTeamYearVisitStats(this.state.selectedDate,this.state.currentUser.id!);
+        var teamSalesData = await this.statisticsService.getTeamYearSaleStats(this.state.selectedDate,this.state.currentUser.id!);
         var successRate = await this.statisticsService.getDelegateSuccessRateYear(delegate!.id!, this.state.selectedDate);
         //todo: get supervisor id
-        var teamSuccessRate = await this.statisticsService.getTeamSuccessRateYear(2, this.state.selectedDate);
-        var delegatesContributions = await this.statisticsService.getDelegatesContributionsOfSupervisor(2, this.state.selectedDate,);
-        var teamContribution = await this.statisticsService.getTeamContributionsOfSupervisor(2, this.state.selectedDate,);
+        var teamSuccessRate = await this.statisticsService.getTeamSuccessRateYear(this.state.currentUser.id!, this.state.selectedDate);
+        var delegatesContributions = await this.statisticsService.getDelegatesContributionsOfSupervisor(this.state.currentUser.id!, this.state.selectedDate,);
+        var teamContribution = await this.statisticsService.getTeamContributionsOfSupervisor(this.state.currentUser.id!, this.state.selectedDate,);
 
         this.state.chartPieOptions.series = [contributionStats.delegateSales, contributionStats.teamSales - contributionStats.delegateSales];
         this.state.chartPieOptions.labels?.splice(0, this.state.chartPieOptions.labels?.length);
@@ -469,14 +471,14 @@ class StatisticsPage extends Component<{}, StatisticsPageProps> {
         if (this.state.selectedDelegate) {
             var visitStats = await this.statisticsService.getDelegateYearVisitStats(date, this.state.selectedDelegate!.id!);
             var salesStats = await this.statisticsService.getDelegateYearSaleStats(date, this.state.selectedDelegate!.id!);
-            var contributionStats = await this.statisticsService.getDelegateContributionStats(date, this.state.selectedDelegate!.id!);
-            var teamVisitsData = await this.statisticsService.getTeamYearVisitStats(date);
-            var teamSalesData = await this.statisticsService.getTeamYearSaleStats(date);
+            var contributionStats = await this.statisticsService.getDelegateContributionStats(date, this.state.selectedDelegate!.id!,this.state.currentUser.id!);
+            var teamVisitsData = await this.statisticsService.getTeamYearVisitStats(date,this.state.currentUser.id!);
+            var teamSalesData = await this.statisticsService.getTeamYearSaleStats(date,this.state.currentUser.id!);
             var successRate = await this.statisticsService.getDelegateSuccessRateYear(this.state.selectedDelegate!.id!, date);
 
-            var teamSuccessRate = await this.statisticsService.getTeamSuccessRateYear(2, date);
-            var delegatesContributions = await this.statisticsService.getDelegatesContributionsOfSupervisor(2, date,);
-            var teamContribution = await this.statisticsService.getTeamContributionsOfSupervisor(2, date,);
+            var teamSuccessRate = await this.statisticsService.getTeamSuccessRateYear(this.state.currentUser.id!, date);
+            var delegatesContributions = await this.statisticsService.getDelegatesContributionsOfSupervisor(this.state.currentUser.id!, date,);
+            var teamContribution = await this.statisticsService.getTeamContributionsOfSupervisor(this.state.currentUser.id!, date,);
 
             this.state.chartPieOptions.series = [contributionStats.delegateSales, contributionStats.teamSales - contributionStats.delegateSales];
             this.state.chartPieOptions.labels?.splice(0, this.state.chartPieOptions.labels?.length);
@@ -599,18 +601,19 @@ class StatisticsPage extends Component<{}, StatisticsPageProps> {
 
         if (!this.state.isLoading) {
             var delegates = await this.userService.getDelegateUsers();
+            var currentUser = await this.userService.getMe();
             if (delegates.length > 0) {
                 this.setState({ selectedDelegate: delegates[0] });
                 var visitStats = await this.statisticsService.getDelegateYearVisitStats(new Date(), delegates[0].id!);
                 var salesStats = await this.statisticsService.getDelegateYearSaleStats(new Date(), delegates[0].id!);
-                var contributionStats = await this.statisticsService.getDelegateContributionStats(new Date(), delegates[0].id!);
-                var teamVisitsData = await this.statisticsService.getTeamYearVisitStats(new Date());
+                var contributionStats = await this.statisticsService.getDelegateContributionStats(new Date(), delegates[0].id!,currentUser.id!);
+                var teamVisitsData = await this.statisticsService.getTeamYearVisitStats(new Date(),currentUser.id!);
                 var successRate = await this.statisticsService.getDelegateSuccessRateYear(delegates[0].id!, new Date());
-                var teamSalesData = await this.statisticsService.getTeamYearSaleStats(new Date());
+                var teamSalesData = await this.statisticsService.getTeamYearSaleStats(new Date(),currentUser.id!);
 
-                var teamSuccessRate = await this.statisticsService.getTeamSuccessRateYear(2, new Date());
-                var delegatesContributions = await this.statisticsService.getDelegatesContributionsOfSupervisor(2, new Date());
-                var teamContribution = await this.statisticsService.getTeamContributionsOfSupervisor(2, new Date());
+                var teamSuccessRate = await this.statisticsService.getTeamSuccessRateYear(currentUser.id!, new Date());
+                var delegatesContributions = await this.statisticsService.getDelegatesContributionsOfSupervisor(currentUser.id!, new Date());
+                var teamContribution = await this.statisticsService.getTeamContributionsOfSupervisor(currentUser.id!, new Date());
 
                 this.state.chartPieOptions.series = [contributionStats.delegateSales, contributionStats.teamSales - contributionStats.delegateSales];
                 this.state.chartPieOptions.labels?.splice(0, this.state.chartPieOptions.labels?.length);
@@ -717,7 +720,7 @@ class StatisticsPage extends Component<{}, StatisticsPageProps> {
                 this.setState({ loadingStatisticsData: false, visitGoalAreaChart: this.state.visitGoalAreaChart, visitTaskAreaChart: this.state.visitTaskAreaChart, salesAreaChart: this.state.salesAreaChart, chartPieOptions: this.state.chartPieOptions });
 
             }
-            this.setState({ isLoading: false, delegates: delegates, filtredDelegates: delegates, hasData: true });
+            this.setState({ isLoading: false, delegates: delegates, filtredDelegates: delegates, hasData: true,currentUser:currentUser });
         }
     }
 

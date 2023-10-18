@@ -218,11 +218,11 @@ export default class StatisticsService {
     }
 
 
-    async getDelegateContributionStats(date: Date, userId: number,): Promise<{ teamSales: number, delegateSales: number }> {
+    async getDelegateContributionStats(date: Date, userId: number,superId:number): Promise<{ teamSales: number, delegateSales: number }> {
 
         const token = localStorage.getItem('token');
 
-        var response = await axios.get(`${Globals.apiUrl}/contributionDelegateTeam?supervisor=2&user=${userId}&year=${formatDateToYYYY(date)}`,
+        var response = await axios.get(`${Globals.apiUrl}/contributionDelegateTeam?supervisor=${superId}&user=${userId}&year=${formatDateToYYYY(date)}`,
             {
                 headers: {
                     'Authorization': `Bearer ${token}`
@@ -235,11 +235,11 @@ export default class StatisticsService {
 
         return { teamSales: 0, delegateSales: 0 };
     }
-    async getTeamYearVisitStats(date: Date): Promise<{ month: string, numberOfTasks: number, numberOfVisits: number, visitsGoal: number }[]> {
+    async getTeamYearVisitStats(date: Date,superId:number): Promise<{ month: string, numberOfTasks: number, numberOfVisits: number, visitsGoal: number }[]> {
 
         const token = localStorage.getItem('token');
 
-        var response = await axios.get(`${Globals.apiUrl}/teamYearVisitStats?supervisor=2&year=${formatDateToYYYY(date)}`,
+        var response = await axios.get(`${Globals.apiUrl}/teamYearVisitStats?supervisor=${superId}&year=${formatDateToYYYY(date)}`,
             {
                 headers: {
                     'Authorization': `Bearer ${token}`
@@ -255,11 +255,11 @@ export default class StatisticsService {
         return [];
     }
 
-    async getTeamYearSaleStats(date: Date): Promise<{ month: string, totalSales: number, salesGoal: number }[]> {
+    async getTeamYearSaleStats(date: Date,superId:number): Promise<{ month: string, totalSales: number, salesGoal: number }[]> {
 
         const token = localStorage.getItem('token');
 
-        var response = await axios.get(`${Globals.apiUrl}/teamYearSaleStats?supervisor=2&year=${formatDateToYYYY(date)}`,
+        var response = await axios.get(`${Globals.apiUrl}/teamYearSaleStats?supervisor=${superId}&year=${formatDateToYYYY(date)}`,
             {
                 headers: {
                     'Authorization': `Bearer ${token}`
@@ -334,11 +334,11 @@ export default class StatisticsService {
         return [];
     }
 
-    async getDelegatesContributionsOfSupervisor(userId: number, date: Date): Promise<{ delegateId: number, delegateName: string, ChiffreDaffaire: number }[]> {
+    async getDelegatesContributionsOfSupervisor(superId: number, date: Date): Promise<{ delegateId: number, delegateName: string, ChiffreDaffaire: number }[]> {
 
         const token = localStorage.getItem('token');
 
-        var response = await axios.get(`${Globals.apiUrl}/classementChiffreDaffaireEquipeAnnuel?supervisor=${userId}&year=${formatDateToYYYY(date)}`,
+        var response = await axios.get(`${Globals.apiUrl}/classementChiffreDaffaireEquipeAnnuel?supervisor=${superId}&year=${formatDateToYYYY(date)}`,
             {
                 headers: {
                     'Authorization': `Bearer ${token}`

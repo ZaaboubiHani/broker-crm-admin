@@ -28,7 +28,7 @@ const PlanTable: React.FC<PlanTableProps> = ({ data, id, isLoading, onDisplayDet
                 <TableHead sx={{ height: '45px', marginBottom: '16px', }}>
                     <TableRow >
                         <TableCell sx={{ width: '130px'}} align='left'>Date</TableCell>
-                        <TableCell sx={{ width: '20%' }} align="center">wilaya</TableCell>
+                        <TableCell sx={{ width: '20%' }} align="center">wilayas</TableCell>
                         <TableCell sx={{ width: '20%' }} align="center">Visites programmes</TableCell>
                         <TableCell sx={{ width: '20%' }} align="right">visites realiser</TableCell>
                         <TableCell sx={{ width: '20%' }} align="right">Details</TableCell>
