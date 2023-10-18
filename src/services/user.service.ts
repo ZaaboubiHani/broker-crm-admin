@@ -23,7 +23,7 @@ export default class UserService {
                 }
             });
         }
-        
+
 
         var response = await axios.post(`${Globals.apiUrl}/users`,
             {
@@ -130,11 +130,30 @@ export default class UserService {
         return [];
     }
 
-    async getUsersByType(creatorId: number): Promise<UserModel[]> {
+    async getUsersByCreator(creatorId: number, userType: UserType): Promise<UserModel[]> {
         const token = localStorage.getItem('token');
+        var typeFilter = '';
 
+        switch (userType) {
+            case UserType.delegate: {
+                typeFilter = `&filters[relatedType][reference][$eq]=delegate`;
+                break;
+            }
+            case UserType.supervisor: {
+                typeFilter = `&filters[relatedType][reference][$eq]=supervisor`;
+                break;
+            }
+            case UserType.kam: {
+                typeFilter = `&filters[relatedType][reference][$eq]=cam`;
+                break;
+            }
+            default: {
+                typeFilter = '';
+                break;
+            }
+        }
 
-        var response = await axios.get(`${Globals.apiUrl}/users?populate=wilayaActivity.wilayas&populate=relatedType&populate=company&filters[creatorId][\$eq]=${creatorId}`,
+        var response = await axios.get(`${Globals.apiUrl}/users?populate=wilayaActivity.wilayas&populate=relatedType&populate=company&filters[creatorId][\$eq]=${creatorId}${typeFilter}`,
             {
                 headers: {
                     'Authorization': `Bearer ${token}`

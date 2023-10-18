@@ -20,11 +20,13 @@ import CommandPanel from '../../components/comand-panel/command-panel.component'
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import { ClientType } from '../../models/client.model';
-
+import CustomTabPanel from '../../components/custom-tab-panel/costum-tab-panel.component';
+import Box from '@mui/material/Box';
+import Tabs from '@mui/material/Tabs';
+import Tab from '@mui/material/Tab';
 
 interface HomePageState {
     selectedDate: Date;
-    user: UserModel;
     selectedReport?: ReportModel;
     selectedCommand?: CommandModel;
     selectedVisit?: VisitModel;
@@ -33,34 +35,43 @@ interface HomePageState {
     loadingVisitsData: boolean;
     loadingReportData: boolean;
     showReportPanel: boolean;
-    visits: VisitModel[];
-    filteredVisits: VisitModel[];
-    searchText: string;
+    delegateVisits: VisitModel[];
+    filteredDelegateVisits: VisitModel[];
+    kamVisits: VisitModel[];
+    filteredKamVisits: VisitModel[];
+    delegateSearchText: string;
+    kamSearchText: string;
+    index: number;
+    currentUser: UserModel;
+    supervisors: UserModel[];
+    selectedSupervisor?: UserModel;
 }
 
 interface HomePageProps {
 
 }
 
-const kPrincipal = '#35d9da';
-const kSecondary = '#0A2C3B';
-const kTernary = '#3D7C98';
 
 class HomePage extends Component<HomePageProps, HomePageState> {
 
     constructor(props: HomePageProps) {
         super(props);
         this.state = {
+            currentUser: new UserModel(),
+            index: 0,
             selectedDate: new Date(),
-            user: new UserModel({}),
             isLoading: false,
             loadingVisitsData: false,
             loadingReportData: false,
-            visits: [],
-            filteredVisits: [],
+            delegateVisits: [],
+            filteredDelegateVisits: [],
+            kamVisits: [],
+            filteredKamVisits: [],
             showReportPanel: true,
             hasData: false,
-            searchText: '',
+            delegateSearchText: '',
+            kamSearchText: '',
+            supervisors: [],
         }
     }
 
@@ -86,18 +97,32 @@ class HomePage extends Component<HomePageProps, HomePageState> {
         this.setState({ isLoading: true });
         if (!this.state.isLoading) {
 
-            var user = await this.userService.getMe();
+            var currentUser = await this.userService.getMe();
 
-            if (user != undefined) {
-                this.setState({ user: user });
+            if (currentUser != undefined) {
+                this.setState({ currentUser: currentUser });
             }
-            var visits: VisitModel[];
-            if (user.type === UserType.supervisor) {
-                visits = await this.visitService.getAllVisits(new Date(), ClientType.pharmacy);
+            if (currentUser.type === UserType.supervisor) {
+                var visits = await this.visitService.getAllVisits(new Date(), ClientType.pharmacy, currentUser.id!);
+                this.setState({ isLoading: false, hasData: true, delegateVisits: visits, filteredDelegateVisits: visits, });
             } else {
-                visits = await this.visitService.getAllVisits(new Date(), ClientType.wholesaler);
+                var supervisors = await this.userService.getUsersByCreator(currentUser.id!, UserType.supervisor);
+                if (supervisors.length > 0) {
+
+                    var delegateVisits = await this.visitService.getAllVisits(new Date(), ClientType.pharmacy, supervisors[0].id!);
+                    var kamVisits = await this.visitService.getAllVisits(new Date(), ClientType.wholesaler, currentUser.id!);
+                    this.setState({
+                        isLoading: false,
+                        hasData: true,
+                        delegateVisits: delegateVisits,
+                        filteredDelegateVisits: delegateVisits,
+                        kamVisits: kamVisits,
+                        filteredKamVisits: kamVisits,
+                        selectedSupervisor: supervisors[0],
+                        supervisors: supervisors
+                    });
+                }
             }
-            this.setState({ isLoading: false, hasData: true, visits: visits, filteredVisits: visits });
         }
 
     };
@@ -105,30 +130,71 @@ class HomePage extends Component<HomePageProps, HomePageState> {
 
     handleOnPickDate = async (date: Date) => {
         this.setState({ loadingVisitsData: true, selectedReport: undefined });
-        var visits: VisitModel[];
-        if (this.state.user.type === UserType.supervisor) {
-            visits = await this.visitService.getAllVisits(date, ClientType.pharmacy);
+
+        if (this.state.currentUser.type === UserType.supervisor) {
+            var visits = await this.visitService.getAllVisits(date, ClientType.pharmacy, this.state.currentUser.id!);
+            this.setState({ selectedDate: date, delegateVisits: visits, loadingVisitsData: false, filteredDelegateVisits: visits });
         } else {
-            visits = await this.visitService.getAllVisits(date, ClientType.wholesaler);
+            var delegateVisits = await this.visitService.getAllVisits(date, ClientType.pharmacy, this.state.selectedSupervisor!.id!);
+            var kamVisits = await this.visitService.getAllVisits(date, ClientType.wholesaler, this.state.currentUser.id!);
+            this.setState({
+                selectedDate: date,
+                delegateVisits: delegateVisits,
+                filteredDelegateVisits: delegateVisits,
+                kamVisits: kamVisits,
+                filteredKamVisits: kamVisits,
+                loadingVisitsData: false,
+            });
         }
-        this.setState({ selectedDate: date, visits: visits, loadingVisitsData: false, filteredVisits: visits });
     }
 
-    handleVisitsFilter = () => {
+    handleDelegateVisitsFilter = () => {
         this.setState({ selectedReport: undefined });
-        if (this.state.searchText.length === 0) {
-            var filteredVisits = [...this.state.visits];
-            this.setState({ filteredVisits: filteredVisits });
+        if (this.state.delegateSearchText.length === 0) {
+            var filteredVisits = [...this.state.delegateVisits];
+            this.setState({ filteredDelegateVisits: filteredVisits });
         }
         else {
-            var filteredVisits = this.state.visits.filter(visit => visit?.user?.username!.toLowerCase().includes(this.state.searchText.toLowerCase()));
-            this.setState({ filteredVisits: filteredVisits });
+            var filteredVisits = this.state.delegateVisits.filter(visit => visit?.user?.username!.toLowerCase().includes(this.state.delegateSearchText.toLowerCase()));
+            this.setState({ filteredDelegateVisits: filteredVisits });
         }
     }
 
-    handleSearchTextChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        this.setState({ searchText: event.target.value });
+    handleKamVisitsFilter = () => {
+        this.setState({ selectedReport: undefined });
+        if (this.state.kamSearchText.length === 0) {
+            var filteredVisits = [...this.state.kamVisits];
+            this.setState({ filteredKamVisits: filteredVisits });
+        }
+        else {
+            var filteredVisits = this.state.kamVisits.filter(visit => visit?.user?.username!.toLowerCase().includes(this.state.kamSearchText.toLowerCase()));
+            this.setState({ filteredKamVisits: filteredVisits });
+        }
     }
+
+    handleSelectSupervisor = async (supervisor: UserModel) => {
+        this.setState({ loadingVisitsData: true, selectedReport: undefined });
+        var visits = await this.visitService.getAllVisits(this.state.selectedDate, ClientType.pharmacy, supervisor.id!);
+
+        this.setState({
+            selectedSupervisor: supervisor,
+            delegateVisits: visits,
+            loadingVisitsData: false,
+            filteredDelegateVisits: visits,
+        });
+    }
+
+    handleDelegateSearchTextChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        this.setState({ delegateSearchText: event.target.value });
+    }
+
+    handleKamSearchTextChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        this.setState({ kamSearchText: event.target.value });
+    }
+
+    handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
+        this.setState({ index: newValue });
+    };
 
     render() {
         if (!this.state.hasData) {
@@ -151,58 +217,135 @@ class HomePage extends Component<HomePageProps, HomePageState> {
         }
         else {
             return (
-                <div style={{ backgroundColor: '#eee', display: 'flex', flexDirection: 'column', width: '100%', height: '100%', overflow: 'auto' }}>
-                    <DatePickerBar onPick={this.handleOnPickDate}></DatePickerBar>
-                    <div className='search-bar' style={{ marginBottom: '8px' }}>
-                        <TextField
-                            label='Recherche par nom de délégué'
-                            size="small"
-                            onChange={this.handleSearchTextChange}
-                            sx={{ width: '300px', marginRight: '8px', backgroundColor: 'white', borderRadius: '4px', height: '40px', }}
-                        />
-                        <Button onClick={this.handleVisitsFilter} variant='outlined' sx={{ border: 'solid grey 1px', backgroundColor: 'white', borderRadius: '4px', height: '40px', }}>
-                            <FontAwesomeIcon icon={faSearch} style={{ color: 'black' }} />
-                        </Button>
-                    </div>
-                    <div className='table-panel'>
-                        <HomeTable id='hometable'
-                            isLoading={this.state.loadingVisitsData}
-                            data={this.state.filteredVisits}
-                            onDisplayReport={this.handleDisplayReport}
-                            onDisplayCommand={this.handleDisplayCommand}
-                        ></HomeTable>
-                        <div className='user-panel'>
-                            {
-                                this.state.loadingReportData ?
-                                    (<div style={{
-                                        width: '100%',
-                                        overflow: 'hidden',
-                                        flexGrow: '1',
-                                        display: 'flex',
-                                        flexDirection: 'column',
-                                        justifyContent: 'center',
-                                        alignItems: 'center',
-                                        transition: 'all 300ms ease'
-                                    }}>
-                                        <DotSpinner
-                                            size={40}
-                                            speed={0.9}
-                                            color="black"
-                                        />
+
+                <div style={{ display: 'flex', flexDirection: 'column', height: '100%', width: '100%', backgroundColor: '#eee' }}>
+                    <Box sx={{ width: '100%', height: '100%' }}>
+                        <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+                            <Tabs value={this.state.index} onChange={this.handleTabChange} aria-label="basic tabs example">
+                                <Tab label="Superviseurs" />
+                                {
+                                    this.state.currentUser.type === UserType.admin ? (<Tab label="Kams" />) : null
+                                }
+                            </Tabs>
+                        </Box>
+                        <CustomTabPanel style={{ display: 'flex', flexDirection: 'row', flexGrow: '1', height: 'calc(100% - 50px)', width: '100%' }} value={this.state.index} index={0} >
+                            <div style={{ display: 'flex', flexDirection: 'column', flexGrow: '1', height: 'calc(100% - 40px)', width: '100%', }}>
+                                {
+                                    this.state.currentUser.type === UserType.admin ? (<div style={{ display: 'flex' }}>
+                                        <UserPicker delegates={this.state.supervisors} onSelect={this.handleSelectSupervisor}></UserPicker>
+                                    </div>) : null
+                                }
+                                <DatePickerBar onPick={this.handleOnPickDate} initialDate={this.state.selectedDate}></DatePickerBar>
+                                <div className='search-bar' style={{ marginBottom: '8px' }}>
+                                    <TextField
+                                        label='Recherche par nom de délégué'
+                                        size="small"
+                                        onChange={this.handleDelegateSearchTextChange}
+                                        sx={{ width: '300px', marginRight: '8px', backgroundColor: 'white', borderRadius: '4px', height: '40px', }}
+                                    />
+                                    <Button onClick={this.handleDelegateVisitsFilter} variant='outlined' sx={{ border: 'solid grey 1px', backgroundColor: 'white', borderRadius: '4px', height: '40px', }}>
+                                        <FontAwesomeIcon icon={faSearch} style={{ color: 'black' }} />
+                                    </Button>
+                                </div>
+                                <div className='table-panel'>
+                                    <HomeTable id='hometable'
+                                    firstHeader='Délégué'
+                                        isLoading={this.state.loadingVisitsData}
+                                        data={this.state.filteredDelegateVisits}
+                                        onDisplayReport={this.handleDisplayReport}
+                                        onDisplayCommand={this.handleDisplayCommand}
+                                    ></HomeTable>
+                                    <div className='user-panel'>
+                                        {
+                                            this.state.loadingReportData ?
+                                                (<div style={{
+                                                    width: '100%',
+                                                    overflow: 'hidden',
+                                                    flexGrow: '1',
+                                                    display: 'flex',
+                                                    flexDirection: 'column',
+                                                    justifyContent: 'center',
+                                                    alignItems: 'center',
+                                                    transition: 'all 300ms ease'
+                                                }}>
+                                                    <DotSpinner
+                                                        size={40}
+                                                        speed={0.9}
+                                                        color="black"
+                                                    />
+                                                </div>
+                                                )
+                                                :
+                                                this.state.showReportPanel ? (
+
+                                                    <ReportPanel report={this.state.selectedReport} clientType={this.state.selectedVisit?.client?.type}></ReportPanel>
+                                                ) :
+                                                    (
+                                                        <CommandPanel command={this.state.selectedCommand} ></CommandPanel>
+                                                    )
+                                        }
+
                                     </div>
-                                    )
-                                    :
-                                    this.state.showReportPanel ? (
+                                </div>
+                            </div>
+                        </CustomTabPanel>
+                        <CustomTabPanel style={{ display: 'flex', flexDirection: 'row', flexGrow: '1', height: 'calc(100% - 50px)', width: '100%' }} value={this.state.index} index={1} >
+                            <div style={{ display: 'flex', flexDirection: 'column', flexGrow: '1', height: 'calc(100% - 40px)', width: '100%', }}>
+                                <DatePickerBar onPick={this.handleOnPickDate} initialDate={this.state.selectedDate}></DatePickerBar>
+                                <div className='search-bar' style={{ marginBottom: '8px' }}>
+                                    <TextField
+                                        label='Recherche par nom de kam'
+                                        size="small"
+                                        onChange={this.handleKamSearchTextChange}
+                                        sx={{ width: '300px', marginRight: '8px', backgroundColor: 'white', borderRadius: '4px', height: '40px', }}
+                                    />
+                                    <Button onClick={this.handleKamVisitsFilter} variant='outlined' sx={{ border: 'solid grey 1px', backgroundColor: 'white', borderRadius: '4px', height: '40px', }}>
+                                        <FontAwesomeIcon icon={faSearch} style={{ color: 'black' }} />
+                                    </Button>
+                                </div>
+                                <div className='table-panel'>
+                                    <HomeTable id='hometable'
+                                    firstHeader='Kam'
+                                        isLoading={this.state.loadingVisitsData}
+                                        data={this.state.filteredKamVisits}
+                                        onDisplayReport={this.handleDisplayReport}
+                                        onDisplayCommand={this.handleDisplayCommand}
+                                    ></HomeTable>
+                                    <div className='user-panel'>
+                                        {
+                                            this.state.loadingReportData ?
+                                                (<div style={{
+                                                    width: '100%',
+                                                    overflow: 'hidden',
+                                                    flexGrow: '1',
+                                                    display: 'flex',
+                                                    flexDirection: 'column',
+                                                    justifyContent: 'center',
+                                                    alignItems: 'center',
+                                                    transition: 'all 300ms ease'
+                                                }}>
+                                                    <DotSpinner
+                                                        size={40}
+                                                        speed={0.9}
+                                                        color="black"
+                                                    />
+                                                </div>
+                                                )
+                                                :
+                                                this.state.showReportPanel ? (
 
-                                        <ReportPanel report={this.state.selectedReport} clientType={this.state.selectedVisit?.client?.type}></ReportPanel>
-                                    ) :
-                                        (
-                                            <CommandPanel command={this.state.selectedCommand} ></CommandPanel>
-                                        )
-                            }
+                                                    <ReportPanel report={this.state.selectedReport} clientType={this.state.selectedVisit?.client?.type}></ReportPanel>
+                                                ) :
+                                                    (
+                                                        <CommandPanel command={this.state.selectedCommand} ></CommandPanel>
+                                                    )
+                                        }
 
-                        </div>
-                    </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </CustomTabPanel>
+                    </Box>
                 </div>
             );
         }
