@@ -343,7 +343,7 @@ class StatisticsPage extends Component<{}, StatisticsPageProps> {
         var teamVisitsData = await this.statisticsService.getTeamYearVisitStats(this.state.selectedDate,this.state.currentUser.id!);
         var teamSalesData = await this.statisticsService.getTeamYearSaleStats(this.state.selectedDate,this.state.currentUser.id!);
         var successRate = await this.statisticsService.getDelegateSuccessRateYear(delegate!.id!, this.state.selectedDate);
-        //todo: get supervisor id
+       
         var teamSuccessRate = await this.statisticsService.getTeamSuccessRateYear(this.state.currentUser.id!, this.state.selectedDate);
         var delegatesContributions = await this.statisticsService.getDelegatesContributionsOfSupervisor(this.state.currentUser.id!, this.state.selectedDate,);
         var teamContribution = await this.statisticsService.getTeamContributionsOfSupervisor(this.state.currentUser.id!, this.state.selectedDate,);
@@ -353,7 +353,7 @@ class StatisticsPage extends Component<{}, StatisticsPageProps> {
         this.state.chartPieOptions.labels?.push(delegate.username!);
         this.state.chartPieOptions.labels?.push('reste d\'equipe');
 
-        this.state.teamContributionPieOptions.series = [teamContribution.teamSales, teamContribution.teamSales - teamContribution.companySales];
+        this.state.teamContributionPieOptions.series = [teamContribution.teamSales, teamContribution.companySales - teamContribution.teamSales];
         this.state.teamContributionPieOptions.labels?.splice(0, this.state.teamContributionPieOptions.labels?.length);
         this.state.teamContributionPieOptions.labels?.push('equipe');
         this.state.teamContributionPieOptions.labels?.push('entreprise');
@@ -485,7 +485,7 @@ class StatisticsPage extends Component<{}, StatisticsPageProps> {
             this.state.chartPieOptions.labels?.push(this.state.selectedDelegate!.username!);
             this.state.chartPieOptions.labels?.push('reste d\'equipe');
 
-            this.state.teamContributionPieOptions.series = [teamContribution.teamSales, teamContribution.teamSales - teamContribution.companySales];
+            this.state.teamContributionPieOptions.series = [teamContribution.teamSales,teamContribution.companySales - teamContribution.teamSales];
             this.state.teamContributionPieOptions.labels?.splice(0, this.state.teamContributionPieOptions.labels?.length);
             this.state.teamContributionPieOptions.labels?.push('equipe');
             this.state.teamContributionPieOptions.labels?.push('entreprise');
@@ -620,7 +620,7 @@ class StatisticsPage extends Component<{}, StatisticsPageProps> {
                 this.state.chartPieOptions.labels?.push(delegates[0].username!);
                 this.state.chartPieOptions.labels?.push('reste d\'equipe');
 
-                this.state.teamContributionPieOptions.series = [teamContribution.teamSales, teamContribution.teamSales - teamContribution.companySales];
+                this.state.teamContributionPieOptions.series = [teamContribution.teamSales,teamContribution.companySales - teamContribution.teamSales];
                 this.state.teamContributionPieOptions.labels?.splice(0, this.state.teamContributionPieOptions.labels?.length);
                 this.state.teamContributionPieOptions.labels?.push('equipe');
                 this.state.teamContributionPieOptions.labels?.push('entreprise');
