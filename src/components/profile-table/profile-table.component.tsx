@@ -28,22 +28,19 @@ import WilayaModel from '../../models/wilaya.model';
 export interface ProfileTableProps {
     data: UserModel[];
     isLoading: boolean;
+    wilayas: WilayaModel[];
 }
 
-const ProfileTable: React.FC<ProfileTableProps> = ({ data, isLoading }) => {
+const ProfileTable: React.FC<ProfileTableProps> = ({ data, isLoading, wilayas}) => {
     const [stateTrigger, setStateTrigger] = React.useState<boolean>(false);
 
-    const wilayas: WilayaModel[] = [
-        { id: 3, name: "Adrar" },
-        { id: 2, name: "Alger" },
-        { id: 1, name: "Batna" },
-    ];
 
-    const handleChange = (value :string[] , index : number) => {
-        data[index].wilayas = [...wilayas.filter(w=> value.includes(w.name!.toLowerCase()))];
+
+    const handleChange = (value: string[], index: number) => {
+        data[index].wilayas = [...wilayas.filter(w => value.includes(w.name!.toLowerCase()))];
 
         setStateTrigger(!stateTrigger);
-     };
+    };
 
     const [showPassword, setShowPassword] = React.useState(false);
 
@@ -57,15 +54,15 @@ const ProfileTable: React.FC<ProfileTableProps> = ({ data, isLoading }) => {
     return (
         <TableContainer sx={{ flexGrow: '1', display: 'flex', flexDirection: 'column', borderRadius: '8px', margin: '8px', overflow: 'hidden', height: 'calc(100% -400px)' }} component={Paper}>
             <Table sx={{ flexGrow: '1', display: 'flex', flexDirection: 'column', overflow: 'hidden', margin: '0px', width: "100%" }} size="small" aria-label="a dense table">
-                <TableHead sx={{flexGrow: '1', display: 'flex',  height: '45px', }}>
+                <TableHead sx={{ flexGrow: '1', display: 'flex', height: '45px', }}>
                     <TableRow sx={{ flexGrow: '1', width: '100%' }}>
                         <TableCell sx={{ width: '100px' }} align='left'>Création</TableCell>
-                        <TableCell sx={{ m: 1, width: '15%' }} align='center'>Nom et prénom</TableCell>
-                        <TableCell sx={{ width: '13%' }} align="center">Mobile</TableCell>
-                        <TableCell sx={{ width: '15%' }} align="center">E-mail</TableCell>
-                        <TableCell sx={{ width: '10%' }} align="center">Type</TableCell>
-                        <TableCell sx={{ width: '13%' }} align="right">Mot de passe</TableCell>
-                        <TableCell sx={{ m: 1, width: '200px' }} align="right">Wilayat</TableCell>
+                        <TableCell sx={{ width: '15%' }} align='left'>Nom et prénom</TableCell>
+                        <TableCell sx={{ width: '15%' }} align="left">Mobile</TableCell>
+                        <TableCell sx={{ width: '15%' }} align="left">E-mail</TableCell>
+                        <TableCell sx={{ width: '10%' }} align="left">Type</TableCell>
+                        <TableCell sx={{ width: '17%' }} align="right">Mot de passe</TableCell>
+                        <TableCell sx={{ width: '200px' }} align="right">Wilayat</TableCell>
                         <TableCell sx={{ width: '100px' }} align="right">Blocage</TableCell>
                     </TableRow>
                 </TableHead>
@@ -86,12 +83,12 @@ const ProfileTable: React.FC<ProfileTableProps> = ({ data, isLoading }) => {
                                 color="black"
                             />
                         </div>) :
-                            data.map((row,index) => (
+                            data.map((row, index) => (
                                 <TableRow
                                     key={row.id!}
                                     sx={{ '&:last-child td, &:last-child th': { border: 0 }, flexGrow: '1', width: '100%' }}
                                 >
-                                    <TableCell sx={{ width: '10%', whiteSpace: 'nowrap', margin: '0px' }} >{formatDateToYYYYMMDD(row.createdAt || new Date())}</TableCell>
+                                    <TableCell sx={{ width: '100px', whiteSpace: 'nowrap', margin: '0px' }} >{formatDateToYYYYMMDD(row.createdAt || new Date())}</TableCell>
                                     <TableCell sx={{ width: '15%' }} align="left">{row.username}</TableCell>
                                     <TableCell sx={{ width: '15%' }} align="left">{row.phoneOne}</TableCell>
                                     <TableCell sx={{ width: '15%' }} align="left">{row.email}</TableCell>
@@ -120,11 +117,11 @@ const ProfileTable: React.FC<ProfileTableProps> = ({ data, isLoading }) => {
                                             />
                                         </FormControl>
                                     </TableCell>
-                                    <TableCell sx={{ width: '1%', margin: '0px', padding: '0px' }} align="right">
+                                    <TableCell sx={{ width: '200px', margin: '0px', padding: '0px' }} align="right">
                                         {
                                             row.type === UserType.supervisor ? (
                                                 <div style={{ width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'end', height: '60px', margin: '0px', padding: '0px' }}>
-                                                    <p style={{fontSize:'17px',fontWeight:'500'}}>
+                                                    <p style={{ fontSize: '17px', fontWeight: '500' }}>
                                                         Accès total
                                                     </p>
                                                 </div>
@@ -136,9 +133,9 @@ const ProfileTable: React.FC<ProfileTableProps> = ({ data, isLoading }) => {
                                                         id="demo-multiple-checkbox"
                                                         multiple
                                                         value={row.wilayas?.map<string>(w => w.name?.toLowerCase() ?? '')}
-                                                        onChange={(event)=>handleChange((event.target.value as string[]),index)}
+                                                        onChange={(event) => handleChange((event.target.value as string[]), index)}
                                                         input={<OutlinedInput label="Tag" />}
-                                                        renderValue={(selected) => selected.map(e=>e.charAt(0).toUpperCase() + e.slice(1)).join(',')}
+                                                        renderValue={(selected) => selected.map(e => e.charAt(0).toUpperCase() + e.slice(1)).join(',')}
                                                     >
                                                         {wilayas.map((wilaya) => (
                                                             <MenuItem key={wilaya.id} value={wilaya.name?.toLowerCase()}>
@@ -151,7 +148,7 @@ const ProfileTable: React.FC<ProfileTableProps> = ({ data, isLoading }) => {
                                             )
                                         }
                                     </TableCell>
-                                    <TableCell sx={{ width: '6%', padding: '0px' }} align='center'>
+                                    <TableCell sx={{ width: '100px', padding: '0px' }} align='center'>
                                         <Switch onChange={() => {
                                             row.isBlocked = !row.isBlocked;
                                         }} checked={row.isBlocked} />

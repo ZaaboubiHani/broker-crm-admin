@@ -11,6 +11,8 @@ import DotSpinner from '@uiball/loaders/dist/components/DotSpinner';
 import ProfileTable from '../../components/profile-table/profile-table.component';
 import Button from '@mui/material/Button/Button';
 import SaveIcon from '@mui/icons-material/Save';
+import WilayaModel from '../../models/wilaya.model';
+import WilayaService from '../../services/wilaya.serivce';
 
 interface ProfilePageProps {
 
@@ -18,6 +20,7 @@ interface ProfilePageProps {
 
 interface ProfilePageState {
     users: User[];
+    wilayas:WilayaModel[],
     currentUser: User;
     loadingUsers: boolean;
     isLoading: boolean;
@@ -34,12 +37,14 @@ class ProfilePage extends Component<ProfilePageProps, ProfilePageState> {
             isLoading: true,
             currentUser: new UserModel(),
             users: [],
+            wilayas:[],
             loadingUsers: true,
             addClientDialogIsOpen: false
         };
     }
 
     userService = new UserService();
+    wilayaService = new WilayaService();
 
 
     handleSaveChanges = async () => {
@@ -69,10 +74,11 @@ class ProfilePage extends Component<ProfilePageProps, ProfilePageState> {
 
     loadProfilePageData = async () => {
         this.setState({ addClientDialogIsOpen: false, isLoading: false });
-        var me = await this.userService.getMe();
-        var users = await this.userService.getUsersByType(me.id!);
+        var currentUser = await this.userService.getMe();
+        var users = await this.userService.getUsersByType(currentUser.id!);
+        var wilayas = await this.wilayaService.getAllWilayas();
         this.setState({ users: users, loadingUsers: false });
-        this.setState({ isLoading: false, currentUser: me });
+        this.setState({ isLoading: false, currentUser: currentUser,wilayas:wilayas });
     }
 
     render() {
@@ -116,12 +122,20 @@ class ProfilePage extends Component<ProfilePageProps, ProfilePageState> {
                     </div>
                     <div style={{ width: '100%', display: 'flex', flexGrow: '1', justifyContent: 'stretch' }}>
                         {
-                            this.state.loadingUsers ? <DotSpinner
-                                size={40}
-                                speed={0.9}
-                                color="black"
-                            /> :
-                                <ProfileTable isLoading={false} data={this.state.users} />}
+                            this.state.loadingUsers ? <div style={{
+                                width: '100%',
+                                height: '100vh',
+                                display: 'flex',
+                                justifyContent: 'center',
+                                alignItems: 'center',
+                            }}>
+                                <DotSpinner
+                                    size={40}
+                                    speed={0.9}
+                                    color="black"
+                                />
+                            </div> :
+                                <ProfileTable isLoading={false} data={this.state.users} wilayas={this.state.wilayas}/>}
                     </div>
                     <AddClientDialog onAdd={this.handleAddUser} isOpen={this.state.addClientDialogIsOpen} onClose={this.handleCloseAddClientDialog} creatorType={this.state.currentUser.type!}></AddClientDialog>
                 </div>
