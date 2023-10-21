@@ -13,8 +13,10 @@ import RevenueTable from '../../components/revenue-table/revenue-table.component
 import StatisticsService from '../../services/statics.service';
 import RevenuePanel from '../../components/revenue-panel/revenue-panel.component';
 import CircularProgressLabel from '../../components/circular-progress-label/circular-progress-label.component';
+import UserModel from '../../models/user.model';
 
 interface RevenuePageProps {
+    currentUser: UserModel;
     selectedDate: Date;
     hasData: boolean;
     isLoading: boolean;
@@ -38,6 +40,7 @@ class RevenuePage extends Component<{}, RevenuePageProps> {
     constructor({ }) {
         super({});
         this.state = {
+            currentUser: new UserModel(),
             selectedDate: new Date(),
             hasData: false,
             isLoading: false,
@@ -79,10 +82,15 @@ class RevenuePage extends Component<{}, RevenuePageProps> {
     loadRevenuePageData = async () => {
         this.setState({ isLoading: true });
         if (!this.state.isLoading) {
-            var revenues = await this.revenueService.getAllRevenuesMonth(new Date());
-            var totalTeamRevenue = await this.statisticsService.getTotalTeamRevenue(new Date());
-            var totalTeamRevenueHonored = await this.statisticsService.getTotalTeamRevenue(new Date(), true);
-            var totalTeamRevenueNotHonored = await this.statisticsService.getTotalTeamRevenue(new Date(), false);
+            var currentUser = await this.userService.getMe();
+
+            if (currentUser != undefined) {
+                this.setState({ currentUser: currentUser });
+            }
+            var revenues = await this.revenueService.getAllRevenuesMonth(new Date(), currentUser.id!);
+            var totalTeamRevenue = await this.statisticsService.getTotalTeamRevenue(new Date(), currentUser.id!);
+            var totalTeamRevenueHonored = await this.statisticsService.getTotalTeamRevenue(new Date(), currentUser.id!, true);
+            var totalTeamRevenueNotHonored = await this.statisticsService.getTotalTeamRevenue(new Date(), currentUser.id!, false);
             this.setState({
                 revenues: revenues,
                 filteredRevenues: revenues,
@@ -97,10 +105,10 @@ class RevenuePage extends Component<{}, RevenuePageProps> {
 
     handleOnPickDate = async (date: Date) => {
         this.setState({ loadingRevenuesData: true, showDetails: false });
-        var revenues = await this.revenueService.getAllRevenuesMonth(date);
-        var totalTeamRevenue = await this.statisticsService.getTotalTeamRevenue(date);
-        var totalTeamRevenueHonored = await this.statisticsService.getTotalTeamRevenue(date, true);
-        var totalTeamRevenueNotHonored = await this.statisticsService.getTotalTeamRevenue(date, false);
+        var revenues = await this.revenueService.getAllRevenuesMonth(date,this.state.currentUser.id!);
+        var totalTeamRevenue = await this.statisticsService.getTotalTeamRevenue(date,this.state.currentUser.id!);
+        var totalTeamRevenueHonored = await this.statisticsService.getTotalTeamRevenue(date,this.state.currentUser.id!, true);
+        var totalTeamRevenueNotHonored = await this.statisticsService.getTotalTeamRevenue(date,this.state.currentUser.id!, false);
         this.setState({ selectedDate: date, revenues: revenues, loadingRevenuesData: false, filteredRevenues: revenues, totalTeamRevenue: totalTeamRevenue, totalTeamRevenueHonored: totalTeamRevenueHonored, totalTeamRevenueNotHonored: totalTeamRevenueNotHonored });
     }
 
@@ -172,7 +180,7 @@ class RevenuePage extends Component<{}, RevenuePageProps> {
                             direction='row'
                             secondTitle="Total non honore:"
                             firstTitle={this.state.totalTeamRevenueNotHonored?.toLocaleString('fr-DZ', { style: 'currency', currency: 'DZD' })}
-                            value={ this.state.totalTeamRevenue !== 0 ?  this.state.totalTeamRevenueNotHonored / this.state.totalTeamRevenue * 100 : 0} />
+                            value={this.state.totalTeamRevenue !== 0 ? this.state.totalTeamRevenueNotHonored / this.state.totalTeamRevenue * 100 : 0} />
                     </div>
                     <div style={{ width: '100%', display: 'flex', flexGrow: '1' }}>
                         <RevenueTable id='revenue-table' data={this.state.filteredRevenues} isLoading={this.state.loadingRevenuesData} displayDetails={this.handleDisplayDetails}></RevenueTable>

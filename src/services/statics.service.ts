@@ -92,7 +92,7 @@ export default class StatisticsService {
         return 0;
     }
 
-    async getTotalTeamRevenue(date: Date, isHonored?: boolean): Promise<number> {
+    async getTotalTeamRevenue(date: Date,superId:number, isHonored?: boolean,): Promise<number> {
 
         const token = localStorage.getItem('token');
         var honorFilter: string = ''
@@ -100,7 +100,7 @@ export default class StatisticsService {
             honorFilter = `&isHonored=${isHonored}`;
         }
 
-        var response = await axios.get(`${Globals.apiUrl}/totalChiffreDaffaireEquipe?supervisor=2&year=${formatDateToYYYY(date)}&month=${formatDateToMM(date)}${honorFilter}`,
+        var response = await axios.get(`${Globals.apiUrl}/totalChiffreDaffaireEquipe?supervisor=${superId}&year=${formatDateToYYYY(date)}&month=${formatDateToMM(date)}${honorFilter}`,
             {
                 headers: {
                     'Authorization': `Bearer ${token}`

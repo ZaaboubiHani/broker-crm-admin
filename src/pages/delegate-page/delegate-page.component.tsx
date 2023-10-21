@@ -9,7 +9,7 @@ import Form from 'react-bootstrap/Form';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSearch } from '@fortawesome/free-solid-svg-icons';
 import UserPicker from '../../components/user-picker/user-picker.component';
-import UserModel from '../../models/user.model';
+import UserModel, { UserType } from '../../models/user.model';
 import { DotSpinner } from '@uiball/loaders';
 import UserService from '../../services/user.service';
 import VisitService from '../../services/visit.service';
@@ -22,6 +22,7 @@ import ReportPanel from '../../components/report-panel/report-panel.component';
 import CommandPanel from '../../components/comand-panel/command-panel.component';
 import StatisticsService from '../../services/statics.service';
 import CircularProgressLabel from '../../components/circular-progress-label/circular-progress-label.component';
+import { ClientType } from '../../models/client.model';
 
 
 
@@ -47,6 +48,9 @@ interface DelegatePageState {
     objectifChiffreDaffaire: number;
     objectifVisites: number;
     successRate: number;
+    currentUser: UserModel;
+    supervisors: UserModel[];
+    selectedSupervisor?: UserModel;
 }
 
 class DelegatePage extends Component<{}, DelegatePageState> {
@@ -54,6 +58,8 @@ class DelegatePage extends Component<{}, DelegatePageState> {
         super({});
         this.state = {
             selectedDate: new Date(),
+            currentUser: new UserModel(),
+            supervisors: [],
             visits: [],
             delegates: [],
             filtredDelegates: [],
@@ -153,33 +159,106 @@ class DelegatePage extends Component<{}, DelegatePageState> {
     loadDelegatePageData = async () => {
         this.setState({ isLoading: true });
         if (!this.state.isLoading) {
-            var delegates = await this.userService.getDelegateUsers();
-            if (delegates.length > 0) {
-                this.setState({ selectedDelegate: delegates[0] });
-                var visits = await this.visitService.getAllVisitsOfDelegate(this.state.selectedDate, delegates[0].id!);
-                var planDeTournee = await this.statisticsService.getPlanDeTournee(this.state.selectedDate, delegates[0].id!);
-                var couverturePortfeuille = await this.statisticsService.getCouverturePortfeuille(this.state.selectedDate, delegates[0].id!);
-                var moyenneVisitesParJour = await this.statisticsService.getMoyenneVisitesParJour(this.state.selectedDate, delegates[0].id!);
-                var objectifChiffreDaffaire = await this.statisticsService.getObjectifChiffreDaffaire(this.state.selectedDate, delegates[0].id!);
-                var objectifVisites = await this.statisticsService.getObjectifVisites(this.state.selectedDate, delegates[0].id!);
-                var successRate = await this.statisticsService.getDelegateSuccessRateMonth(this.state.selectedDate, delegates[0].id!);
+            var currentUser = await this.userService.getMe();
+            if (currentUser != undefined) {
+                this.setState({ currentUser: currentUser });
+            }
+            if (currentUser.type === UserType.supervisor) {
+                var delegates = await this.userService.getUsersByCreator(currentUser.id!, UserType.delegate);
+                if (delegates.length > 0) {
+                    this.setState({ selectedDelegate: delegates[0] });
+                    var visits = await this.visitService.getAllVisitsOfDelegate(this.state.selectedDate, delegates[0].id!);
+                    var planDeTournee = await this.statisticsService.getPlanDeTournee(this.state.selectedDate, delegates[0].id!);
+                    var couverturePortfeuille = await this.statisticsService.getCouverturePortfeuille(this.state.selectedDate, delegates[0].id!);
+                    var moyenneVisitesParJour = await this.statisticsService.getMoyenneVisitesParJour(this.state.selectedDate, delegates[0].id!);
+                    var objectifChiffreDaffaire = await this.statisticsService.getObjectifChiffreDaffaire(this.state.selectedDate, delegates[0].id!);
+                    var objectifVisites = await this.statisticsService.getObjectifVisites(this.state.selectedDate, delegates[0].id!);
+                    var successRate = await this.statisticsService.getDelegateSuccessRateMonth(this.state.selectedDate, delegates[0].id!);
+                    this.setState({
+                        visits: visits,
+                        loadingVisitsData: false,
+                        planDeTournee: planDeTournee,
+                        couverturePortfeuille: couverturePortfeuille,
+                        moyenneVisitesParJour: moyenneVisitesParJour,
+                        objectifChiffreDaffaire: objectifChiffreDaffaire,
+                        objectifVisites: objectifVisites,
+                        successRate: successRate
+                    });
+                }
+                this.setState({ isLoading: false, delegates: delegates, filtredDelegates: delegates, hasData: true });
+            } else {
+                var supervisors = await this.userService.getUsersByCreator(currentUser.id!, UserType.supervisor);
+                if (supervisors.length > 0) {
+                    var delegates = await this.userService.getUsersByCreator(supervisors[0].id!, UserType.delegate);
+                    if (delegates.length > 0) {
+                        this.setState({ selectedDelegate: delegates[0] });
+                        var visits = await this.visitService.getAllVisitsOfDelegate(this.state.selectedDate, delegates[0].id!);
+                        var planDeTournee = await this.statisticsService.getPlanDeTournee(this.state.selectedDate, delegates[0].id!);
+                        var couverturePortfeuille = await this.statisticsService.getCouverturePortfeuille(this.state.selectedDate, delegates[0].id!);
+                        var moyenneVisitesParJour = await this.statisticsService.getMoyenneVisitesParJour(this.state.selectedDate, delegates[0].id!);
+                        var objectifChiffreDaffaire = await this.statisticsService.getObjectifChiffreDaffaire(this.state.selectedDate, delegates[0].id!);
+                        var objectifVisites = await this.statisticsService.getObjectifVisites(this.state.selectedDate, delegates[0].id!);
+                        var successRate = await this.statisticsService.getDelegateSuccessRateMonth(this.state.selectedDate, delegates[0].id!);
+                        this.setState({
+                            visits: visits,
+                            loadingVisitsData: false,
+                            planDeTournee: planDeTournee,
+                            couverturePortfeuille: couverturePortfeuille,
+                            moyenneVisitesParJour: moyenneVisitesParJour,
+                            objectifChiffreDaffaire: objectifChiffreDaffaire,
+                            objectifVisites: objectifVisites,
+                            successRate: successRate
+                        });
+                    }
+                    this.setState({
+                        isLoading: false,
+                        delegates: delegates,
+                        filtredDelegates: delegates,
+                        hasData: true,
+                        selectedSupervisor: supervisors[0]
+                    });
+
+                }
                 this.setState({
-                    visits: visits,
-                    loadingVisitsData: false,
-                    planDeTournee: planDeTournee,
-                    couverturePortfeuille: couverturePortfeuille,
-                    moyenneVisitesParJour: moyenneVisitesParJour,
-                    objectifChiffreDaffaire: objectifChiffreDaffaire,
-                    objectifVisites: objectifVisites,
-                    successRate: successRate
+                    isLoading: false,
+                    hasData: true,
+                    supervisors: supervisors
                 });
             }
-            this.setState({ isLoading: false, delegates: delegates, filtredDelegates: delegates, hasData: true });
+
         }
     };
 
     handleSearchTextChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         this.setState({ searchText: event.target.value });
+    }
+
+
+    handleSelectSupervisor = async (supervisor: UserModel) => {
+        this.setState({ loadingVisitsData: true, selectedReport: undefined,delegates:[],filtredDelegates:[] });
+        var delegates = await this.userService.getUsersByCreator(supervisor.id!, UserType.delegate);
+        if (delegates.length > 0) {
+            this.setState({ selectedDelegate: delegates[0] });
+            var visits = await this.visitService.getAllVisitsOfDelegate(this.state.selectedDate, delegates[0].id!);
+            var planDeTournee = await this.statisticsService.getPlanDeTournee(this.state.selectedDate, delegates[0].id!);
+            var couverturePortfeuille = await this.statisticsService.getCouverturePortfeuille(this.state.selectedDate, delegates[0].id!);
+            var moyenneVisitesParJour = await this.statisticsService.getMoyenneVisitesParJour(this.state.selectedDate, delegates[0].id!);
+            var objectifChiffreDaffaire = await this.statisticsService.getObjectifChiffreDaffaire(this.state.selectedDate, delegates[0].id!);
+            var objectifVisites = await this.statisticsService.getObjectifVisites(this.state.selectedDate, delegates[0].id!);
+            var successRate = await this.statisticsService.getDelegateSuccessRateMonth(this.state.selectedDate, delegates[0].id!);
+            this.setState({
+                visits: visits,
+                loadingVisitsData: false,
+                planDeTournee: planDeTournee,
+                couverturePortfeuille: couverturePortfeuille,
+                moyenneVisitesParJour: moyenneVisitesParJour,
+                objectifChiffreDaffaire: objectifChiffreDaffaire,
+                objectifVisites: objectifVisites,
+                successRate: successRate,
+                selectedSupervisor: supervisor,
+            });
+        }
+        this.setState({ isLoading: false, delegates: delegates, filtredDelegates: delegates, hasData: true });
     }
 
     render() {
@@ -204,7 +283,13 @@ class DelegatePage extends Component<{}, DelegatePageState> {
         else {
             return (
                 <div className='delegate-container' style={{ height: '100vh' }}>
-                    <div style={{ display: 'flex', height: '40px', marginLeft: '8px', marginTop: '8px' }}>
+
+                    {
+                        this.state.currentUser.type === UserType.admin ? (<div style={{ display: 'flex' }}>
+                            <UserPicker delegates={this.state.supervisors} onSelect={this.handleSelectSupervisor}></UserPicker>
+                        </div>) : null
+                    }
+                    <div style={{ display: 'flex', height: '40px', marginLeft: '8px', marginTop: '0px' }}>
                         <Form>
                             <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
                                 <Form.Control type="search" placeholder="Recherche" onChange={this.handleSearchTextChange} />
@@ -226,8 +311,8 @@ class DelegatePage extends Component<{}, DelegatePageState> {
                         <CircularProgressLabel colorStroke='#FC4630' direction='row' secondTitle='Moyen visite/jour' value={this.state.moyenneVisitesParJour} />
                         <CircularProgressLabel colorStroke='#3A25E6' direction='row' secondTitle='Taux de réussite' value={this.state.successRate} />
                     </div>
-                    <div style={{ display: 'flex', flexDirection: 'row', flexGrow:'1',height: 'calc(100% - 500px)' }}>
-                       
+                    <div style={{ display: 'flex', flexDirection: 'row', flexGrow: '1', height: 'calc(100% - 500px)' }}>
+
                         <DelegateTable id='delegatetable' isLoading={this.state.loadingVisitsData} data={this.state.visits} onDisplayCommand={this.handleDisplayCommand} onDisplayReport={this.handleDisplayReport}></DelegateTable>
                         <div className='user-panel'>
                             {

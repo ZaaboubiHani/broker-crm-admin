@@ -23,6 +23,11 @@
     width: 40%;
 }
 
+.table-panel
+#command-cam-table{
+    width: 60%;
+}
+
 .command-delegate-container
 .user-panel{
     width: 60%;
