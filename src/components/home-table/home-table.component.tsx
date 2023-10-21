@@ -15,12 +15,13 @@ import Button from '@mui/material/Button';
 interface HomeTableProps {
     data: VisitModel[];
     isLoading: boolean;
+    firstHeader: string;
     onDisplayReport: (visit: VisitModel) => void;
     onDisplayCommand: (visit: VisitModel) => void;
     id?: string;
 }
 
-const HomeTable: React.FC<HomeTableProps> = ({ data, id, isLoading, onDisplayReport, onDisplayCommand }) => {
+const HomeTable: React.FC<HomeTableProps> = ({ data, id, isLoading, firstHeader,onDisplayReport, onDisplayCommand }) => {
 
     
     
@@ -30,7 +31,7 @@ const HomeTable: React.FC<HomeTableProps> = ({ data, id, isLoading, onDisplayRep
                 <Table sx={{ flexGrow: '1', display: 'flex', flexDirection: 'column', overflow: 'hidden', margin: '0px', width: "100%" }} size="small" aria-label="a dense table">
                     <TableHead sx={{ height: '45px', marginBottom: '16px' }}>
                         <TableRow>
-                            <TableCell>Délégué</TableCell>
+                            <TableCell>{firstHeader}</TableCell>
                             <TableCell align="right">Client</TableCell>
                             <TableCell align="right">Specialite</TableCell>
                             <TableCell align="right">Wilaya</TableCell>

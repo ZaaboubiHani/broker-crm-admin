@@ -6,7 +6,14 @@ import Box from '@mui/material/Box';
 import React from 'react';
 
 function CircularProgressLabel(
-    props: CircularProgressProps & { value: number, firstTitle?: string, secondTitle?: string, colorStroke?: string, direction?: 'row' | 'row-reverse' | 'column' | 'column-reverse' },
+    props: CircularProgressProps & { 
+        value: number, 
+        firstTitle?: string, 
+        secondTitle?: string, 
+        colorStroke?: string, 
+        direction?: 'row' | 'row-reverse' | 'column' | 'column-reverse',
+        formatter?: (val:number)=>string
+    },
 ) {
     return (
         <div style={{ width: 'max-content', display: 'flex', justifyContent: 'center', alignItems: 'center', flexDirection: props.direction ?? 'column', margin: '0px 0px' }}>
@@ -32,7 +39,7 @@ function CircularProgressLabel(
                         variant="caption"
                         component="div"
                         color='#333'
-                    >{`${props.value.toFixed(2)}%`}</Typography>
+                    >{props.formatter ? props.formatter(props.value) : `${props.value.toFixed(2)}%`}</Typography>
                 </Box>
             </Box>
             <div>

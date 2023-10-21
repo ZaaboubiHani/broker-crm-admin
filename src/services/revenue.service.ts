@@ -7,9 +7,9 @@ import { formatDateToMM, formatDateToYYYY, formatDateToYYYYMMDD } from "../funct
 
 export default class RevenueService {
 
-    async getAllRevenuesMonth(date: Date): Promise<RevenueModel[]> {
+    async getAllRevenuesMonth(date: Date,superId:number): Promise<RevenueModel[]> {
         const token = localStorage.getItem('token');
-        var response = await axios.get(`${Globals.apiUrl}/classementChiffreDaffaireEquipe?supervisor=2&year=${formatDateToYYYY(date)}&month=${formatDateToMM(date)}`,
+        var response = await axios.get(`${Globals.apiUrl}/classementChiffreDaffaireEquipe?supervisor=${superId}&year=${formatDateToYYYY(date)}&month=${formatDateToMM(date)}`,
             {
                 headers: {
                     'Authorization': `Bearer ${token}`

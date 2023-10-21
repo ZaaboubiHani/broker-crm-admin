@@ -40,6 +40,8 @@ interface CommandDelegatePageProps {
     kams: UserModel[];
     filtredDelegates: UserModel[];
     filtredKams: UserModel[];
+    supervisors: UserModel[];
+    selectedSupervisor?: UserModel;
     selectedDelegate?: UserModel;
     selectedKam?: UserModel;
     loadingDelegateCommandData?: boolean;
@@ -57,6 +59,7 @@ class CommandPage extends Component<{}, CommandDelegatePageProps> {
         super({});
         this.state = {
             currentUser: new UserModel(),
+            supervisors: [],
             selectedDateDelegate: new Date(),
             selectedDateKam: new Date(),
             delegateSearchText: '',
@@ -121,6 +124,11 @@ class CommandPage extends Component<{}, CommandDelegatePageProps> {
         var commands = await this.commandService.getAllCommandsOfDelegate(this.state.selectedDateDelegate, delegate.id!);
         this.setState({ selectedDelegate: delegate, delegateCommands: commands, loadingDelegateCommandsData: false, });
     }
+    handleSelectKam = async (kam: UserModel) => {
+        this.setState({ loadingKamCommandsData: true, kamCommandData: undefined });
+        var commands = await this.commandService.getAllCommandsOfDelegate(this.state.selectedDateKam, kam.id!);
+        this.setState({ selectedKam: kam, kamCommands: commands, loadingKamCommandsData: false, });
+    }
 
     handleOnPickDateDelegate = async (date: Date) => {
         this.setState({ loadingDelegateCommandsData: true, delegateCommandData: undefined });
@@ -138,13 +146,48 @@ class CommandPage extends Component<{}, CommandDelegatePageProps> {
         this.setState({ isLoading: true });
         if (!this.state.isLoading) {
             var currentUser = await this.userService.getMe();
-            var delegates = await this.userService.getDelegateUsers();
-            if (delegates.length > 0) {
-                this.setState({ selectedDelegate: delegates[0] });
-                var commands = await this.commandService.getAllCommandsOfDelegate(new Date(), delegates[0].id!);
-                this.setState({ delegateCommands: commands });
+            if (currentUser != undefined) {
+                this.setState({ currentUser: currentUser });
             }
-            this.setState({ currentUser: currentUser, isLoading: false, delegates: delegates, filtredDelegates: delegates, hasData: true });
+
+            if (currentUser.type === UserType.supervisor) {
+                var delegates = await this.userService.getUsersByCreator(currentUser.id!, UserType.delegate);
+                if (delegates.length > 0) {
+                    this.setState({ selectedDelegate: delegates[0] });
+                    var commands = await this.commandService.getAllCommandsOfDelegate(new Date(), delegates[0].id!);
+                    this.setState({ delegateCommands: commands });
+                }
+                this.setState({ currentUser: currentUser, isLoading: false, delegates: delegates, filtredDelegates: delegates, hasData: true });
+                this.setState({ isLoading: false, delegates: delegates, filtredDelegates: delegates, hasData: true });
+            } else {
+                var supervisors = await this.userService.getUsersByCreator(currentUser.id!, UserType.supervisor);
+                var kams = await this.userService.getUsersByCreator(currentUser.id!, UserType.kam);
+                if (supervisors.length > 0) {
+                    var delegates = await this.userService.getUsersByCreator(supervisors[0].id!, UserType.delegate);
+                    if (delegates.length > 0) {
+                        this.setState({ selectedDelegate: delegates[0] });
+                        var commands = await this.commandService.getAllCommandsOfDelegate(new Date(), delegates[0].id!);
+                        this.setState({ delegateCommands: commands });
+                    }
+                    this.setState({ currentUser: currentUser, isLoading: false, delegates: delegates, filtredDelegates: delegates, hasData: true });
+                    this.setState({
+                        isLoading: false,
+                        delegates: delegates,
+                        filtredDelegates: delegates,
+                        hasData: true,
+                        selectedSupervisor: supervisors[0]
+                    });
+
+                }
+                this.setState({
+                    isLoading: false,
+                    hasData: true,
+                    supervisors: supervisors, 
+                    kams: kams,
+                    filtredKams: kams
+                });
+            }
+
         }
     }
 
@@ -168,6 +211,17 @@ class CommandPage extends Component<{}, CommandDelegatePageProps> {
             await this.commandService.dishonorCommand(command!.id!);
             this.setState({ showDialog: true, dialogMessage: 'Bon de commande dishonoré' });
         }
+    }
+
+    handleSelectSupervisor = async (supervisor: UserModel) => {
+        this.setState({ loadingDelegateCommandsData: true, delegateCommandData: undefined, delegates: [], filtredDelegates: [] });
+        var delegates = await this.userService.getUsersByCreator(supervisor.id!, UserType.delegate);
+        if (delegates.length > 0) {
+            this.setState({ selectedDelegate: delegates[0] });
+            var commands = await this.commandService.getAllCommandsOfDelegate(new Date(), delegates[0].id!);
+            this.setState({ delegateCommands: commands });
+        }
+        this.setState({ delegates: delegates, filtredDelegates: delegates, loadingDelegateCommandsData: false });
     }
 
     handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
@@ -208,9 +262,14 @@ class CommandPage extends Component<{}, CommandDelegatePageProps> {
                             </Tabs>
                         </Box>
                     </Box>
-                    <CustomTabPanel style={{ display: 'flex', flexDirection: 'row', flexGrow: '1', height: 'calc(100% - 50px)' }} value={this.state.index} index={0} >
+                    <CustomTabPanel style={{ display: 'flex', flexDirection: 'row', flexGrow: '1', height: 'calc(100% - 50px)',padding:'0px' }} value={this.state.index} index={0} >
                         <div style={{ display: 'flex', flexDirection: 'column', flexGrow: '1', height: 'calc(100% - 40px)' }}>
-                            <div className='search-bar'>
+                            {
+                                this.state.currentUser.type === UserType.admin ? (<div style={{ display: 'flex' }}>
+                                    <UserPicker delegates={this.state.supervisors} onSelect={this.handleSelectSupervisor}></UserPicker>
+                                </div>) : null
+                            }
+                            <div  style={{ display: 'flex', height: '40px', marginLeft: '8px', marginTop: '0px' }}>
                                 <Form>
                                     <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
                                         <Form.Control type="search" placeholder="Recherche" onChange={this.handleDelegateSearchTextChange} />
@@ -275,7 +334,7 @@ class CommandPage extends Component<{}, CommandDelegatePageProps> {
                                 <MonthYearPicker onPick={this.handleOnPickDateKam}></MonthYearPicker >
                             </div>
                             <div style={{ display: 'flex', height: '48px' }}>
-                                <UserPicker delegates={this.state.filtredDelegates} onSelect={this.handleSelectDelegate}></UserPicker>
+                                <UserPicker delegates={this.state.filtredKams} onSelect={this.handleSelectKam}></UserPicker>
                             </div>
                             <div className='table-panel' key={0}>
                                 <CommandCamTable id='command-cam-table' data={this.state.kamCommands} isLoading={this.state.loadingKamCommandsData} displayCommand={this.handleDisplayKamCommand}></CommandCamTable>

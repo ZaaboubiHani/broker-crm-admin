@@ -6,17 +6,17 @@ import { ClientType } from "../models/client.model";
 
 export default class VisitService {
 
-    async getAllVisits(date: Date, clientType: ClientType): Promise<VisitModel[]> {
+    async getAllVisits(date: Date, clientType: ClientType,superId:number): Promise<VisitModel[]> {
         const token = localStorage.getItem('token');
 
         var typeFilter: string = '';
 
         if (clientType === ClientType.wholesaler) {
-            typeFilter = '&filters[client][relatedSpeciality][domainType][id][$eq]=3'
+            typeFilter = '&filters[client][relatedSpeciality][domainType][reference][$eq]=wholesaler'
         } else {
-            typeFilter = '&filters[client][relatedSpeciality][domainType][id][$ne]=3'
+            typeFilter = '&filters[client][relatedSpeciality][domainType][reference][$ne]=wholesaler'
         }
-        var response = await axios.get(`${Globals.apiUrl}/visits?filters[createdDate][$eq]=${formatDateToYYYYMMDD(date)}${typeFilter}&populate[rapport][populate]=*&populate[client][populate]=relatedSpeciality.domainType&populate=user`,
+        var response = await axios.get(`${Globals.apiUrl}/visits?filters[user][creatorId][$eq]=${superId}&filters[createdDate][$eq]=${formatDateToYYYYMMDD(date)}${typeFilter}&populate[rapport][populate]=*&populate[client][populate]=relatedSpeciality.domainType&populate=user`,
             {
                 headers: {
                     'Authorization': `Bearer ${token}`

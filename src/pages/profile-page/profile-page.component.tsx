@@ -52,7 +52,8 @@ class ProfilePage extends Component<ProfilePageProps, ProfilePageState> {
         for (var i = 0; i < this.state.users.length; i++) {
             await this.userService.updateUser(this.state.users[i]);
         }
-        var users = await this.userService.getUsersByType(this.state.currentUser.id!);
+        var users = await this.userService.getUsersByCreator
+        (this.state.currentUser.id!,UserType.admin);
         this.setState({ users: users, loadingUsers: false });
     }
 
@@ -60,7 +61,7 @@ class ProfilePage extends Component<ProfilePageProps, ProfilePageState> {
         this.setState({ addClientDialogIsOpen: false, loadingUsers: true });
         await this.userService.addUser(user);
 
-        var users = await this.userService.getUsersByType(this.state.currentUser.id!);
+        var users = await this.userService.getUsersByCreator(this.state.currentUser.id!,UserType.admin);
         this.setState({ users: users, loadingUsers: false });
     }
 
@@ -75,7 +76,7 @@ class ProfilePage extends Component<ProfilePageProps, ProfilePageState> {
     loadProfilePageData = async () => {
         this.setState({ addClientDialogIsOpen: false, isLoading: false });
         var currentUser = await this.userService.getMe();
-        var users = await this.userService.getUsersByType(currentUser.id!);
+        var users = await this.userService.getUsersByCreator(currentUser.id!,UserType.admin);
         var wilayas = await this.wilayaService.getAllWilayas();
         this.setState({ users: users, loadingUsers: false });
         this.setState({ isLoading: false, currentUser: currentUser,wilayas:wilayas });

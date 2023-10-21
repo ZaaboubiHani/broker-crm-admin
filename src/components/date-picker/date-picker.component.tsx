@@ -41,18 +41,19 @@ const DatePicker: React.FC<DatePickerProps> = ({ onPick, initialDate }) => {
   };
 
   return (
+    <div style={{ height: '75px' }}>
+      <div style={{ height: 75, display: 'flex', alignItems: 'stretch', flexGrow: '1', }}>
+        <DayPicker onSelect={(date) => {
+          handleDaySelect(date);
+        }} initialDate={date}></DayPicker>
+        <MonthDropdown onChange={(month) => {
+          handleMonthSelect(month);
+        }} style={{ margin: '8px 0px', height: 75, }}></MonthDropdown>
+        <YearDropdown style={{ margin: '8px 0px', height: 75, }} initalYear={date.getFullYear()} onChange={(year) => {
+          handleYearSelect(year);
+        }}></YearDropdown>
 
-    <div style={{ height: 75, display: 'flex', alignItems: 'stretch' }}>
-      <DayPicker onSelect={(date) => {
-        handleDaySelect(date);
-      }} initialDate={date}></DayPicker>
-      <MonthDropdown onChange={(month) => {
-        handleMonthSelect(month);
-      }} style={{margin:'8px 0px'}}></MonthDropdown>
-      <YearDropdown style={{margin:'8px 0px'}} initalYear={date.getFullYear()} onChange={(year) => {
-        handleYearSelect(year);
-      }}></YearDropdown>
-
+      </div>
     </div>
   );
 };
