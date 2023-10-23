@@ -74,17 +74,17 @@ export default class UserService {
             });
         }
 
-        await axios.put(`${Globals.apiUrl}/users/${user.id}`,
-            {
-                data: {
-                    password: `${user.password}`,
-                    blocked: user.isBlocked,
-                }
-            }, {
-            headers: {
-                'Authorization': `Bearer ${token}`
-            }
-        });
+        // await axios.put(`${Globals.apiUrl}/users/${user.id}`,
+        //     {
+        //         data: {
+        //             password: `${user.password}`,
+        //             blocked: user.isBlocked,
+        //         }
+        //     }, {
+        //     headers: {
+        //         'Authorization': `Bearer ${token}`
+        //     }
+        // });
 
 
         return true;

@@ -52,18 +52,18 @@ const CommandPanel: React.FC<CommandPanelProps> = ({ command }) => {
             <div style={{ margin: '8px', flexGrow: '1' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'end' }}>
                     <h4 style={{ fontSize: 15, fontWeight: '400' }}> Statut: {command.isHonored ? 'honoré' : 'non honoré'}</h4>
-                    <h4 style={{ fontSize: 15, fontWeight: '400' }}> Total: {command.totalRemised?.toLocaleString('fr-DZ', { style: 'currency', currency: 'DZD' })}</h4>
                     <Button onClick={() => generatePdf(command)} variant="outlined"> <PictureAsPdfIcon />Télécharger PDF</Button>
                 </div>
-                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                    <h4 style={{ fontSize: 15, fontWeight: '400' }}> Total: {command.totalRemised?.toLocaleString('fr-DZ', { style: 'currency', currency: 'DZD' })}</h4>
                     <h4 style={{ fontSize: 15, fontWeight: '400' }}> Client: {command?.visit?.client?.name}</h4>
                     <h4 style={{ fontSize: 15, fontWeight: '400' }}> Localisation: {command?.visit?.client?.wilaya + ', ' + command?.visit?.client?.commune}</h4>
                     <h4 style={{ fontSize: 15, fontWeight: '400' }}> Téléphone: {command?.visit?.client?.phoneOne}</h4>
-                </div>
-                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                     <h4 style={{ fontSize: 15, fontWeight: '400' }}> Total des vendeurs: {command?.visit?.client?.totalSellers}</h4>
                     <h4 style={{ fontSize: 15, fontWeight: '400' }}> Total post chifa: {command?.visit?.client?.totalPostChifa}</h4>
                     <h4 style={{ fontSize: 15, fontWeight: '400' }}> Potentiel: {command?.visit?.client?.potential === 0 ? 'C' : command?.visit?.client?.potential === 1 ? 'B' : 'A'}</h4>
+                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                 </div>
 
                 <Divider component="div" style={{ margin: '8px 0px' }} />

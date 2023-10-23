@@ -10,7 +10,7 @@ export default class CommandService {
 
     async getCommandOfVisit(visitId: number): Promise<CommandModel> {
         const token = localStorage.getItem('token');
-        var response = await axios.get(`${Globals.apiUrl}/commands?filters[visit][id][$eq]=${visitId}&populate=products.product&populate=suppliers.supplier&populate=motivations&populate=visit.client`,
+        var response = await axios.get(`${Globals.apiUrl}/commands?publicationState=preview&filters[visit][id][$eq]=${visitId}&populate=products.product&populate=suppliers.supplier&populate=motivations&populate=visit.client`,
             {
                 headers: {
                     'Authorization': `Bearer ${token}`
@@ -25,7 +25,7 @@ export default class CommandService {
 
     async getAllCommandsOfDelegate(date: Date, userId: number): Promise<CommandModel[]> {
         const token = localStorage.getItem('token');
-        var response = await axios.get(`${Globals.apiUrl}/commands?filters[visit][user][id][$eq]=${userId}&filters[visit][createdDate][$containsi]=${formatDateToYYYYMM(date)}&populate=products.product&populate=suppliers.supplier&populate=motivations&populate=visit.client&populate=commandSupplier.supplier`,
+        var response = await axios.get(`${Globals.apiUrl}/commands?publicationState=preview&filters[visit][user][id][$eq]=${userId}&filters[visit][createdDate][$containsi]=${formatDateToYYYYMM(date)}&populate=products.product&populate=suppliers.supplier&populate=motivations&populate=visit.client&populate=commandSupplier.supplier`,
             {
                 headers: {
                     'Authorization': `Bearer ${token}`

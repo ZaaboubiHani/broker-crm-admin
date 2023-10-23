@@ -92,7 +92,7 @@ const ProfileTable: React.FC<ProfileTableProps> = ({ data, isLoading, wilayas}) 
                                     <TableCell sx={{ width: '15%' }} align="left">{row.username}</TableCell>
                                     <TableCell sx={{ width: '15%' }} align="left">{row.phoneOne}</TableCell>
                                     <TableCell sx={{ width: '15%' }} align="left">{row.email}</TableCell>
-                                    <TableCell sx={{ width: '10%' }} align="left">{row.type === UserType.supervisor ? 'Superviseur' : 'Kam'}</TableCell>
+                                    <TableCell sx={{ width: '10%' }} align="left">{row.type === UserType.supervisor ? 'Superviseur' :row.type === UserType.kam ? 'Kam' : 'délégué'}</TableCell>
                                     <TableCell sx={{ width: '17%' }} align="left" >
                                         <FormControl sx={{ m: 1, margin: '0px', padding: '0px' }} variant="standard">
                                             <InputLabel htmlFor="standard-adornment-password">Mot de passe</InputLabel>

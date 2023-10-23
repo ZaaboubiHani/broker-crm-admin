@@ -387,7 +387,7 @@ class ConfigPage extends Component<{}, ConfigPageProps> {
         }
         else {
             return (
-                <div className='clients-pharmacy-container' style={{ display: 'flex', flexDirection: 'column', height: '100%', alignItems: 'stretch', backgroundColor: '#eee' }}>
+                <div className='clients-pharmacy-container' style={{ display: 'flex', flexDirection: 'column', alignItems: 'stretch', backgroundColor: '#eee' }}>
                     <Box sx={{ width: '100%', height: '100%' }}>
                         <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
                             <Tabs value={this.state.index} onChange={this.handleTabChange} aria-label="basic tabs example">
@@ -724,14 +724,12 @@ class ConfigPage extends Component<{}, ConfigPageProps> {
                                                 this.state.product.superWholesalePriceUnit = parseInt(event.target.value);
                                             }} type='number' size="small" label="Super grossiste prix unitaire" variant="outlined" sx={{ backgroundColor: 'white', borderRadius: '4px', height: '40px', flexGrow: '1' }} />
                                         </div>
-                                        <div style={{ display: 'flex', margin: '8px 0px' }}>
+                                        <div style={{ display: 'flex', margin: '8px 0px 0px' }}>
                                             <TextField value={this.state.product.collision} onChange={(event) => {
                                                 this.state.product.collision = parseInt(event.target.value);
-                                            }} type='number' size="small" id="outlined-basic" label="Collisage" variant="outlined" sx={{ marginRight: '16px', backgroundColor: 'white', borderRadius: '4px', height: '40px', flexGrow: '1' }} />
+                                            }} type='number' size="small" id="outlined-basic" label="Collisage" variant="outlined" sx={{ backgroundColor: 'white', borderRadius: '4px', height: '40px', flexGrow: '1' }} />
 
-                                            <TextField value={this.state.product.superWholesalePriceUnit} onChange={(event) => {
-                                                this.state.product.superWholesalePriceUnit = parseInt(event.target.value);
-                                            }} type='number' size="small" label="Super grossiste prix unitaire" variant="outlined" sx={{ backgroundColor: 'white', borderRadius: '4px', height: '40px', flexGrow: '1' }} />
+                                          
                                         </div>
                                         <div style={{ display: 'flex', margin: '16px 0px 16px 0px' }}>
                                             <LocalizationProvider dateAdapter={AdapterDayjs}>
@@ -828,9 +826,8 @@ class ConfigPage extends Component<{}, ConfigPageProps> {
                                         <TableHead sx={{ height: '45px', display: 'flex', width: '100%' }}>
                                             <TableRow sx={{ display: 'flex', width: '100%' }}>
                                                 <TableCell sx={{ width: '25%' }} align="left">Délégué</TableCell>
-                                                <TableCell sx={{ width: '25%' }} align="left">Wilaya et commune</TableCell>
-                                                <TableCell sx={{ width: '30%' }} align="left">Objectifs de ventes</TableCell>
-                                                <TableCell sx={{ width: '30%' }} align="left">Objectifs de visites</TableCell>
+                                                <TableCell sx={{ width: '55%' }} align="left">Objectifs de ventes</TableCell>
+                                                <TableCell sx={{ width: '55%' }} align="left">Objectifs de visites</TableCell>
                                             </TableRow>
                                         </TableHead>
                                         <TableBody sx={{ flexGrow: '1', overflowY: 'auto', overflowX: 'hidden', }}>
@@ -856,14 +853,13 @@ class ConfigPage extends Component<{}, ConfigPageProps> {
                                                             sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                                                         >
                                                             <TableCell sx={{ width: '25%' }} align="left">{row.user?.username}</TableCell>
-                                                            <TableCell sx={{ width: '25%' }} align="left">{row.user?.wilaya + ', ' + row.user?.commune}</TableCell>
-                                                            <TableCell sx={{ width: '30%' }} align="left">
+                                                            <TableCell sx={{ width: '55%' }} align="left">
                                                                 <TextField value={row.totalSales} onChange={(event) => {
                                                                     row.totalSales = parseInt(event.target.value);
                                                                     this.setState({});
                                                                 }} type="number" size="small" variant="outlined" sx={{ marginRight: '16px', backgroundColor: 'white', borderRadius: '4px', height: '40px', flexGrow: '1' }} />
                                                             </TableCell>
-                                                            <TableCell sx={{ width: '30%' }} align="left">
+                                                            <TableCell sx={{ width: '55%' }} align="left">
                                                                 <TextField value={row.totalVisits} onChange={(event) => {
                                                                     row.totalVisits = parseInt(event.target.value);
                                                                     this.setState({});

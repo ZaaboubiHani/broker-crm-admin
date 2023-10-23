@@ -411,11 +411,11 @@ class StatisticsPage extends Component<{}, StatisticsPageProps> {
 
         this.state.teamVisitTaskAreaChart.series = [
             {
-                name: 'Total visites',
+                name: 'Visites réalisées',
                 data: teamVisitsData.map(e => e.numberOfVisits),
             },
             {
-                name: 'Objectifs de visites',
+                name: 'Visites programmées',
                 data: teamVisitsData.map(e => e.numberOfTasks),
             },
         ];
@@ -541,11 +541,11 @@ class StatisticsPage extends Component<{}, StatisticsPageProps> {
             ];
             this.state.teamVisitTaskAreaChart.series = [
                 {
-                    name: 'Total visites',
+                    name: 'Visites réalisées',
                     data: teamVisitsData.map(e => e.numberOfVisits),
                 },
                 {
-                    name: 'Objectifs de visites',
+                    name: 'Visites programmées',
                     data: teamVisitsData.map(e => e.numberOfTasks),
                 },
             ];
@@ -676,11 +676,11 @@ class StatisticsPage extends Component<{}, StatisticsPageProps> {
                 ];
                 this.state.teamVisitTaskAreaChart.series = [
                     {
-                        name: 'Total visites',
+                        name: 'Visites réalisées',
                         data: teamVisitsData.map(e => e.numberOfVisits),
                     },
                     {
-                        name: 'Objectifs de visites',
+                        name: 'Visites programmées',
                         data: teamVisitsData.map(e => e.numberOfTasks),
                     },
                 ];

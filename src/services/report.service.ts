@@ -9,7 +9,7 @@ export default class ReportService {
 
     async getReportOfVisit(visitId: number): Promise<ReportModel> {
         const token = localStorage.getItem('token');
-        var response = await axios.get(`${Globals.apiUrl}/rapports?filters[visit][id][$eq]=${visitId}&populate=products.product&populate=coproducts.coproduct&populate=suppliers.supplier&populate=comments.comment`,
+        var response = await axios.get(`${Globals.apiUrl}/rapports?publicationState=preview&filters[visit][id][$eq]=${visitId}&populate=products.product&populate=coproducts.coproduct&populate=suppliers.supplier&populate=comments.comment`,
             {
                 headers: {
                     'Authorization': `Bearer ${token}`
