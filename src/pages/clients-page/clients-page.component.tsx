@@ -233,7 +233,6 @@ class ClientsPage extends Component<{}, ClientsPageProps> {
         }
         else {
             return (
-
                 <div className='clients-pharmacy-container' style={{ display: 'flex', flexDirection: 'column', height: '100%', alignItems: 'stretch', backgroundColor: '#eee' }}>
                     <Box sx={{ width: '100%', height: '100%' }}>
                         <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>

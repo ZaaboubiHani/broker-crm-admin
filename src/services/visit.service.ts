@@ -79,9 +79,9 @@ export default class VisitService {
         return { visits: [], total: 0 };
     }
 
-    async getAllVisitsOfDelegate(date: Date, userId: number): Promise<VisitModel[]> {
+    async getAllVisitsOfDelegate(page: number, size: number,date: Date, userId: number): Promise<{ visits: VisitModel[], total: number}> {
         const token = localStorage.getItem('token');
-        var response = await axios.get(`${Globals.apiUrl}/visits?filters[user][id][$eq]=${userId}&filters[createdDate][$containsi]=${formatDateToYYYYMM(date)}&populate[rapport][populate]=*&populate[client][populate]=relatedSpeciality.domainType&populate=user`,
+        var response = await axios.get(`${Globals.apiUrl}/visits?filters[user][id][$eq]=${userId}&pagination[page]=${page}&pagination[pageSize]=${size}&filters[createdDate][$containsi]=${formatDateToYYYYMM(date)}&sort[0]=createdDate:desc&populate[rapport][populate]=*&populate[client][populate]=relatedSpeciality.domainType&populate=user`,
             {
                 headers: {
                     'Authorization': `Bearer ${token}`
@@ -93,9 +93,9 @@ export default class VisitService {
                 var visit = VisitModel.fromJson(response.data['data'][index]);
                 visits.push(visit);
             }
-            return visits;
+            return { visits: visits, total: response.data.meta.pagination.total };
         }
-        return [];
+        return{ visits: [], total: 0 };
     }
     async getAllVisitsOfDelegateDay(date: Date, userId: number): Promise<VisitModel[]> {
         const token = localStorage.getItem('token');

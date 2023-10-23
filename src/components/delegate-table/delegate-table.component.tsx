@@ -26,13 +26,13 @@ const DelegateTable: React.FC<DelegateTableProps> = ({ data, id, onDisplayComman
             <Table sx={{ display: 'flex', flexDirection: 'column', overflow: 'hidden', margin: '0px', width: "100%" }} size="small" aria-label="a dense table">
                 <TableHead sx={{ height: '45px', marginBottom: '16px' }}>
                     <TableRow>
-                        <TableCell style={{ width: '165px' }}>Date</TableCell>
-                        <TableCell align="left">Client</TableCell>
-                        <TableCell align="left">Specialite</TableCell>
-                        <TableCell align="left">Wilaya</TableCell>
-                        <TableCell align="left">Commune</TableCell>
-                        <TableCell align="right">Rapport</TableCell>
-                        <TableCell align="center">Bon de commande</TableCell>
+                        <TableCell style={{ width: '25%' }} align="left">Date</TableCell>
+                        <TableCell style={{ width: '50%' }} align="left">Client</TableCell>
+                        <TableCell style={{ width: '50%' }} align="left">Specialite</TableCell>
+                        <TableCell style={{ width: '50%' }} align="left">Wilaya</TableCell>
+                        <TableCell style={{ width: '50%' }} align="left">Commune</TableCell>
+                        <TableCell style={{ width: '50%' }} align="right">Rapport</TableCell>
+                        <TableCell style={{ width: '50%' }} align="right">Bon de commande</TableCell>
                     </TableRow>
                 </TableHead>
                 <TableBody sx={{ overflowY: 'auto', overflowX: 'hidden', }}>
@@ -57,10 +57,9 @@ const DelegateTable: React.FC<DelegateTableProps> = ({ data, id, onDisplayComman
                                     key={row.id!}
                                     sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                                 >
-                                    <TableCell style={{ width: '140px',  whiteSpace: 'nowrap', }}>{formatDateToYYYYMMDD(row.createdDate || new Date())}</TableCell>
+                                    <TableCell style={{ width: '250px',  whiteSpace: 'nowrap', }}>{formatDateToYYYYMMDD(row.createdDate || new Date())}</TableCell>
                                     <TableCell align="left" style={{
                                         display:'block',
-                                        width: '100px',
                                         whiteSpace: 'nowrap',
                                         overflow: 'hidden',
                                         textOverflow: 'ellipsis',

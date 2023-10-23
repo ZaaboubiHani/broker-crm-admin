@@ -11,12 +11,6 @@ import Paper from '@mui/material/Paper';
 import Button from '@mui/material/Button';
 import VisitModel from '../../models/visit.model';
 import TablePagination from '@mui/material/TablePagination';
-import { PersonAddAlt1 } from '@mui/icons-material';
-import Tabs from '@mui/material/Tabs';
-import Tab from '@mui/material/Tab';
-import Typography from '@mui/material/Typography';
-import Box from '@mui/material/Box';
-import CustomTabPanel from '../custom-tab-panel/costum-tab-panel.component';
 
 interface ClientsPharmacyTableProps {
     data: VisitModel[];

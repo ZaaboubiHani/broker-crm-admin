@@ -39,10 +39,11 @@ class UserPicker extends Component<UserPickerProps> {
                     display: 'flex',
                     flexDirection: 'row',
                     overflowX: 'auto',
-                    width:'100%',
+                    width: '100px',
                     padding: this.props.padding ?? '0 0 0 0px',
                     height: 60,
-                    
+                    alignItems: 'stretch', flexGrow: '1',
+                 
                 }}
                 ref={this._scrollController}
               className='client-picker'

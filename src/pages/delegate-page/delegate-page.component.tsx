@@ -102,7 +102,7 @@ class DelegatePage extends Component<{}, DelegatePageState> {
 
     handleOnPickDate = async (date: Date) => {
         this.setState({ loadingVisitsData: true, selectedReport: undefined });
-        var visits = await this.visitService.getAllVisitsOfDelegate(date, this.state.selectedDelegate!.id!);
+        var { visits: visits, total: total } = await this.visitService.getAllVisitsOfDelegate(1,100,date, this.state.selectedDelegate!.id!);
         var planDeTournee = await this.statisticsService.getPlanDeTournee(date, this.state.selectedDelegate!.id!);
         var couverturePortfeuille = await this.statisticsService.getCouverturePortfeuille(date, this.state.selectedDelegate!.id!);
         var moyenneVisitesParJour = await this.statisticsService.getMoyenneVisitesParJour(date, this.state.selectedDelegate!.id!);
@@ -124,7 +124,7 @@ class DelegatePage extends Component<{}, DelegatePageState> {
 
     handleSelectDelegate = async (delegate: UserModel) => {
         this.setState({ loadingVisitsData: true, selectedReport: undefined });
-        var visits = await this.visitService.getAllVisitsOfDelegate(this.state.selectedDate, delegate.id!);
+        var { visits: visits, total: total } = await this.visitService.getAllVisitsOfDelegate(1,100,this.state.selectedDate, delegate.id!);
         var planDeTournee = await this.statisticsService.getPlanDeTournee(this.state.selectedDate, delegate.id!);
         var couverturePortfeuille = await this.statisticsService.getCouverturePortfeuille(this.state.selectedDate, delegate.id!);
         var moyenneVisitesParJour = await this.statisticsService.getMoyenneVisitesParJour(this.state.selectedDate, delegate.id!);
@@ -167,7 +167,7 @@ class DelegatePage extends Component<{}, DelegatePageState> {
                 var delegates = await this.userService.getUsersByCreator(currentUser.id!, UserType.delegate);
                 if (delegates.length > 0) {
                     this.setState({ selectedDelegate: delegates[0] });
-                    var visits = await this.visitService.getAllVisitsOfDelegate(this.state.selectedDate, delegates[0].id!);
+                    var { visits: visits, total: total } = await this.visitService.getAllVisitsOfDelegate(1,100,this.state.selectedDate, delegates[0].id!);
                     var planDeTournee = await this.statisticsService.getPlanDeTournee(this.state.selectedDate, delegates[0].id!);
                     var couverturePortfeuille = await this.statisticsService.getCouverturePortfeuille(this.state.selectedDate, delegates[0].id!);
                     var moyenneVisitesParJour = await this.statisticsService.getMoyenneVisitesParJour(this.state.selectedDate, delegates[0].id!);
@@ -192,7 +192,7 @@ class DelegatePage extends Component<{}, DelegatePageState> {
                     var delegates = await this.userService.getUsersByCreator(supervisors[0].id!, UserType.delegate);
                     if (delegates.length > 0) {
                         this.setState({ selectedDelegate: delegates[0] });
-                        var visits = await this.visitService.getAllVisitsOfDelegate(this.state.selectedDate, delegates[0].id!);
+                        var { visits: visits, total: total } = await this.visitService.getAllVisitsOfDelegate(1,100,this.state.selectedDate, delegates[0].id!);
                         var planDeTournee = await this.statisticsService.getPlanDeTournee(this.state.selectedDate, delegates[0].id!);
                         var couverturePortfeuille = await this.statisticsService.getCouverturePortfeuille(this.state.selectedDate, delegates[0].id!);
                         var moyenneVisitesParJour = await this.statisticsService.getMoyenneVisitesParJour(this.state.selectedDate, delegates[0].id!);
@@ -239,7 +239,7 @@ class DelegatePage extends Component<{}, DelegatePageState> {
         var delegates = await this.userService.getUsersByCreator(supervisor.id!, UserType.delegate);
         if (delegates.length > 0) {
             this.setState({ selectedDelegate: delegates[0] });
-            var visits = await this.visitService.getAllVisitsOfDelegate(this.state.selectedDate, delegates[0].id!);
+            var { visits: visits, total: total } = await this.visitService.getAllVisitsOfDelegate(1,100,this.state.selectedDate, delegates[0].id!);
             var planDeTournee = await this.statisticsService.getPlanDeTournee(this.state.selectedDate, delegates[0].id!);
             var couverturePortfeuille = await this.statisticsService.getCouverturePortfeuille(this.state.selectedDate, delegates[0].id!);
             var moyenneVisitesParJour = await this.statisticsService.getMoyenneVisitesParJour(this.state.selectedDate, delegates[0].id!);
@@ -307,8 +307,8 @@ class DelegatePage extends Component<{}, DelegatePageState> {
                         <CircularProgressLabel colorStroke='#FC761E' direction='row' secondTitle='KPI: Realisation plan de tournee' value={this.state.planDeTournee} />
                         <CircularProgressLabel colorStroke='#CC38E0' direction='row' secondTitle='Couverture portefeuille client' value={this.state.couverturePortfeuille} />
                         <CircularProgressLabel colorStroke='#38EB5D' direction='row' secondTitle="Objectif chiffre d'affaire" value={this.state.objectifChiffreDaffaire} />
-                        <CircularProgressLabel colorStroke='#2FBCEB' direction='row' secondTitle='Objectif visites' value={this.state.objectifVisites} />
-                        <CircularProgressLabel colorStroke='#FC4630' direction='row' secondTitle='Moyen visite/jour' value={this.state.moyenneVisitesParJour} />
+                        <CircularProgressLabel colorStroke='#2FBCEB' direction='row' secondTitle='Objectif visites' value={this.state.objectifVisites*100} />
+                        <CircularProgressLabel colorStroke='#FC4630' direction='row' secondTitle='Moyen visite/jour' formatter={(val)=>val.toFixed(0)} value={this.state.moyenneVisitesParJour} />
                         <CircularProgressLabel colorStroke='#3A25E6' direction='row' secondTitle='Taux de réussite' value={this.state.successRate} />
                     </div>
                     <div style={{ display: 'flex', flexDirection: 'row', flexGrow: '1', height: 'calc(100% - 500px)' }}>

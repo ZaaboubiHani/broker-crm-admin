@@ -42,7 +42,7 @@ const DatePicker: React.FC<DatePickerProps> = ({ onPick, initialDate }) => {
 
   return (
     <div style={{ height: '75px' }}>
-      <div style={{ height: 75, display: 'flex', alignItems: 'stretch', flexGrow: '1', }}>
+      <div style={{ height: '75px', display: 'flex', alignItems: 'stretch', flexGrow: '1',  overflowY:'hidden',}}>
         <DayPicker onSelect={(date) => {
           handleDaySelect(date);
         }} initialDate={date}></DayPicker>
