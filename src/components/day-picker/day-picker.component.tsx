@@ -49,7 +49,8 @@ class DayPicker extends Component<DayPickerProps> {
                     overflowX: 'auto',
                     width: '100px',
                     flexGrow:'1',
-                    height:75,
+                    height:'75px',
+                    overflowY:'hidden',
                     padding: this.props.padding,
                 }}
                 ref={this._scrollController}

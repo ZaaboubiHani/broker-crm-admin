@@ -28,6 +28,9 @@ interface ReportPageProps {
     delegates: UserModel[];
     filtredDelegates: UserModel[];
     selectedDelegate?: UserModel;
+    totalDelegate: number;
+    sizeDelegate: number;
+    delegatePage: number;
 }
 
 const kPrincipal = '#35d9da';
@@ -47,6 +50,9 @@ class ReportPage extends Component<{}, ReportPageProps> {
             searchText: '',
             delegates: [],
             filtredDelegates: [],
+            totalDelegate: 0,
+            sizeDelegate: 5,
+            delegatePage: 1,
         }
     }
 
@@ -71,15 +77,14 @@ class ReportPage extends Component<{}, ReportPageProps> {
 
     handleSelectDelegate = async (delegate: UserModel) => {
         this.setState({ loadingVisitsData: true, reportData: undefined });
-        var visits = await this.visitService.getAllVisitsOfDelegate(this.state.selectedDate, delegate.id!);
-
-        this.setState({ selectedDelegate: delegate, visits: visits, loadingVisitsData: false, });
+        var { visits: visits, total: total } = await this.visitService.getAllVisitsOfDelegate(this.state.delegatePage, this.state.sizeDelegate, this.state.selectedDate, delegate.id!);
+        this.setState({ selectedDelegate: delegate, visits: visits, loadingVisitsData: false,totalDelegate:total  });
     }
 
     handleOnPickDate = async (date: Date) => {
         this.setState({ loadingVisitsData: true, reportData: undefined });
-        var visits = await this.visitService.getAllVisitsOfDelegate(date, this.state.selectedDelegate!.id!);
-        this.setState({ selectedDate: date, visits: visits, loadingVisitsData: false, });
+        var { visits: visits, total: total } = await this.visitService.getAllVisitsOfDelegate(this.state.delegatePage, this.state.sizeDelegate, date, this.state.selectedDelegate!.id!);
+        this.setState({ selectedDate: date, visits: visits, loadingVisitsData: false,totalDelegate:total });
     }
 
     loadRepportPageData = async () => {
@@ -88,8 +93,8 @@ class ReportPage extends Component<{}, ReportPageProps> {
             var delegates = await this.userService.getDelegateUsers();
             if (delegates.length > 0) {
                 this.setState({ selectedDelegate: delegates[0] });
-                var visits = await this.visitService.getAllVisitsOfDelegate(new Date(), delegates[0].id!);
-                this.setState({ visits: visits });
+                var { visits: visits, total: total } = await this.visitService.getAllVisitsOfDelegate(1, 5, new Date(), delegates[0].id!);
+                this.setState({ visits: visits, totalDelegate: total });
             }
             this.setState({ isLoading: false, delegates: delegates, filtredDelegates: delegates, hasData: true });
         }
@@ -98,9 +103,20 @@ class ReportPage extends Component<{}, ReportPageProps> {
     handleDisplayReport = async (visit: VisitModel) => {
         this.setState({ loadingReportData: true, reportData: undefined });
         var report = await this.reportService.getReportOfVisit(visit.id!);
-        this.setState({ loadingReportData: false, reportData: report, selectedVisit: visit });
-
+        this.setState({ loadingReportData: false, reportData: report, selectedVisit: visit, });
     };
+
+    handleDelegatePageChange = async (page: number) => {
+        this.setState({ loadingVisitsData: true, delegatePage: page, reportData: undefined });
+        var { visits: visits, total: total } = await this.visitService.getAllVisitsOfDelegate(page, this.state.sizeDelegate, this.state.selectedDate, this.state.selectedDelegate!.id!);
+        this.setState({ visits: visits, loadingVisitsData: false,totalDelegate:total });
+    }
+
+    handleDelegateRowNumChange = async (size: number) => {
+        this.setState({ loadingVisitsData: true, delegatePage: 1, sizeDelegate: size, reportData: undefined });
+        var { visits: visits, total: total } = await this.visitService.getAllVisitsOfDelegate(1, size, this.state.selectedDate, this.state.selectedDelegate!.id!);
+        this.setState({ visits: visits, loadingVisitsData: false,totalDelegate:total });
+    }
 
     render() {
         if (!this.state.hasData) {
@@ -139,7 +155,7 @@ class ReportPage extends Component<{}, ReportPageProps> {
                         <UserPicker delegates={this.state.filtredDelegates} onSelect={this.handleSelectDelegate}></UserPicker>
                     </div>
                     <div className='table-panel' key={0}>
-                        <ReportTable isLoading={this.state.loadingVisitsData} id='reporttable' displayReport={this.handleDisplayReport} data={this.state.visits}></ReportTable>
+                        <ReportTable total={this.state.totalDelegate} page={this.state.delegatePage} size={this.state.sizeDelegate} pageChange={this.handleDelegatePageChange} rowNumChange={this.handleDelegateRowNumChange} isLoading={this.state.loadingVisitsData} id='reporttable' displayReport={this.handleDisplayReport} data={this.state.visits}></ReportTable>
                         <div className='user-panel'>
                             {
                                 this.state.loadingReportData ?

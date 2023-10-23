@@ -280,7 +280,7 @@ class CommandPage extends Component<{}, CommandDelegatePageProps> {
                                 </button>
                                 <MonthYearPicker onPick={this.handleOnPickDateDelegate}></MonthYearPicker >
                             </div>
-                            <div style={{ display: 'flex', height: '48px' }}>
+                            <div style={{ display: 'flex', height: '55px' }}>
                                 <UserPicker delegates={this.state.filtredDelegates} onSelect={this.handleSelectDelegate}></UserPicker>
                             </div>
                             <div className='table-panel' key={0}>
