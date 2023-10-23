@@ -27,10 +27,10 @@ const PlanTable: React.FC<PlanTableProps> = ({ data, id, isLoading, onDisplayDet
             <Table sx={{ flexGrow: '1', display: 'flex', flexDirection: 'column', overflow: 'hidden', margin: '0px', width: "100%" }} size="small" aria-label="a dense table">
                 <TableHead sx={{ height: '45px', marginBottom: '16px', }}>
                     <TableRow >
-                        <TableCell sx={{ width: '130px'}} align='left'>Date</TableCell>
-                        <TableCell sx={{ width: '20%' }} align="center">wilayas</TableCell>
-                        <TableCell sx={{ width: '20%' }} align="center">Visites programmes</TableCell>
-                        <TableCell sx={{ width: '20%' }} align="right">visites realiser</TableCell>
+                        <TableCell sx={{ width: '230px'}} align='left'>Date</TableCell>
+                        <TableCell sx={{ width: '20%' }} align="left">wilayas</TableCell>
+                        <TableCell sx={{ width: '20%' }} align="left">Visites programmes</TableCell>
+                        <TableCell sx={{ width: '20%' }} align="left">visites realiser</TableCell>
                         <TableCell sx={{ width: '20%' }} align="right">Details</TableCell>
                     </TableRow>
                 </TableHead>
@@ -56,11 +56,10 @@ const PlanTable: React.FC<PlanTableProps> = ({ data, id, isLoading, onDisplayDet
                                     key={index}
                                     sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                                 >
-                                    <TableCell sx={{ width: '130px' }} >{formatDateToYYYYMMDD(row.date || new Date())}</TableCell>
+                                    <TableCell sx={{ width: '250px' }} >{formatDateToYYYYMMDD(row.date || new Date())}</TableCell>
                                     <TableCell sx={{ width: '20%' }} align="left">{row.tasksWilayasCommunes?.map(twc => `(${twc})`).join(' ')}</TableCell>
                                     <TableCell sx={{ width: '20%' }} align="center">{row.numTasks}</TableCell>
                                     <TableCell sx={{ width: '20%' }} align="center">{row.numVisits}</TableCell>
-
                                     <TableCell sx={{ width: '20%' }} align="right">
                                         <Button onClick={() => {
                                             onDisplayDetails(row.date || new Date());
