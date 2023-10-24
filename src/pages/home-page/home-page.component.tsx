@@ -45,6 +45,12 @@ interface HomePageState {
     currentUser: UserModel;
     supervisors: UserModel[];
     selectedSupervisor?: UserModel;
+    totalDelegate: number;
+    sizeDelegate: number;
+    delegatePage: number;
+    totalKam: number;
+    sizeKam: number;
+    kamPage: number;
 }
 
 interface HomePageProps {
@@ -72,6 +78,12 @@ class HomePage extends Component<HomePageProps, HomePageState> {
             delegateSearchText: '',
             kamSearchText: '',
             supervisors: [],
+            totalDelegate: 0,
+            sizeDelegate: 5,
+            delegatePage: 1,
+            totalKam: 0,
+            sizeKam: 5,
+            kamPage: 1,
         }
     }
 
@@ -103,14 +115,20 @@ class HomePage extends Component<HomePageProps, HomePageState> {
                 this.setState({ currentUser: currentUser });
             }
             if (currentUser.type === UserType.supervisor) {
-                var visits = await this.visitService.getAllVisits(new Date(), ClientType.pharmacy, currentUser.id!);
-                this.setState({ isLoading: false, hasData: true, delegateVisits: visits, filteredDelegateVisits: visits, });
+                var { visits: visits, total: total } = await this.visitService.getAllVisits(1, 5, new Date(), ClientType.pharmacy, currentUser.id!);
+                this.setState({
+                    isLoading: false,
+                    hasData: true,
+                    delegateVisits: visits,
+                    filteredDelegateVisits: visits,
+                    totalDelegate: total,
+                });
             } else {
                 var supervisors = await this.userService.getUsersByCreator(currentUser.id!, UserType.supervisor);
                 if (supervisors.length > 0) {
 
-                    var delegateVisits = await this.visitService.getAllVisits(new Date(), ClientType.pharmacy, supervisors[0].id!);
-                    var kamVisits = await this.visitService.getAllVisits(new Date(), ClientType.wholesaler, currentUser.id!);
+                    var { visits: delegateVisits, total: totalDelegate } = await this.visitService.getAllVisits(1, 5, new Date(), ClientType.pharmacy, supervisors[0].id!);
+                    var { visits: kamVisits, total: totalKam } = await this.visitService.getAllVisits(1, 5, new Date(), ClientType.wholesaler, currentUser.id!);
                     this.setState({
                         isLoading: false,
                         hasData: true,
@@ -119,7 +137,9 @@ class HomePage extends Component<HomePageProps, HomePageState> {
                         kamVisits: kamVisits,
                         filteredKamVisits: kamVisits,
                         selectedSupervisor: supervisors[0],
-                        supervisors: supervisors
+                        supervisors: supervisors,
+                        totalDelegate: totalDelegate,
+                        totalKam: totalKam,
                     });
                 }
             }
@@ -129,14 +149,20 @@ class HomePage extends Component<HomePageProps, HomePageState> {
 
 
     handleOnPickDate = async (date: Date) => {
-        this.setState({ loadingVisitsData: true, selectedReport: undefined });
+        this.setState({ loadingVisitsData: true, selectedReport: undefined, kamPage: 1, delegatePage: 1 });
 
         if (this.state.currentUser.type === UserType.supervisor) {
-            var visits = await this.visitService.getAllVisits(date, ClientType.pharmacy, this.state.currentUser.id!);
-            this.setState({ selectedDate: date, delegateVisits: visits, loadingVisitsData: false, filteredDelegateVisits: visits });
+            var { visits: visits, total: total } = await this.visitService.getAllVisits(1, this.state.sizeDelegate, date, ClientType.pharmacy, this.state.currentUser.id!);
+            this.setState({
+                selectedDate: date,
+                delegateVisits: visits,
+                loadingVisitsData: false,
+                filteredDelegateVisits: visits,
+                totalDelegate: total,
+            });
         } else {
-            var delegateVisits = await this.visitService.getAllVisits(date, ClientType.pharmacy, this.state.selectedSupervisor!.id!);
-            var kamVisits = await this.visitService.getAllVisits(date, ClientType.wholesaler, this.state.currentUser.id!);
+            var { visits: delegateVisits, total: totalDelegate } = await this.visitService.getAllVisits(1, this.state.sizeDelegate, date, ClientType.pharmacy, this.state.selectedSupervisor!.id!);
+            var { visits: kamVisits, total: totalKam } = await this.visitService.getAllVisits(1, this.state.sizeKam, date, ClientType.wholesaler, this.state.currentUser.id!);
             this.setState({
                 selectedDate: date,
                 delegateVisits: delegateVisits,
@@ -144,6 +170,10 @@ class HomePage extends Component<HomePageProps, HomePageState> {
                 kamVisits: kamVisits,
                 filteredKamVisits: kamVisits,
                 loadingVisitsData: false,
+                kamPage: 1,
+                delegatePage: 1,
+                totalDelegate: totalDelegate,
+                totalKam: totalKam,
             });
         }
     }
@@ -173,14 +203,16 @@ class HomePage extends Component<HomePageProps, HomePageState> {
     }
 
     handleSelectSupervisor = async (supervisor: UserModel) => {
-        this.setState({ loadingVisitsData: true, selectedReport: undefined });
-        var visits = await this.visitService.getAllVisits(this.state.selectedDate, ClientType.pharmacy, supervisor.id!);
+        this.setState({ loadingVisitsData: true, selectedReport: undefined, delegatePage: 1 });
+        var { visits: visits, total: total } = await this.visitService.getAllVisits(1, this.state.sizeDelegate, this.state.selectedDate, ClientType.pharmacy, supervisor.id!);
 
         this.setState({
             selectedSupervisor: supervisor,
             delegateVisits: visits,
             loadingVisitsData: false,
             filteredDelegateVisits: visits,
+            totalDelegate: total,
+            delegatePage: 1,
         });
     }
 
@@ -195,6 +227,83 @@ class HomePage extends Component<HomePageProps, HomePageState> {
     handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
         this.setState({ index: newValue });
     };
+
+    handleDelegatePageChange = async (page: number) => {
+        this.setState({ loadingVisitsData: true, });
+        if (this.state.currentUser.type === UserType.supervisor) {
+            var { visits: visits, total: total } = await this.visitService.getAllVisits(page, this.state.sizeDelegate, this.state.selectedDate, ClientType.pharmacy, this.state.currentUser.id!);
+            this.setState({
+                delegatePage: page,
+                delegateVisits: visits,
+                loadingVisitsData: false,
+                filteredDelegateVisits: visits,
+                totalDelegate: total
+            });
+        } else {
+            var { visits: delegateVisits, total: totalDelegate } = await this.visitService.getAllVisits(page, this.state.sizeDelegate, this.state.selectedDate, ClientType.pharmacy, this.state.selectedSupervisor!.id!);
+
+            this.setState({
+                delegatePage: page,
+                delegateVisits: delegateVisits,
+                filteredDelegateVisits: delegateVisits,
+                loadingVisitsData: false,
+                totalDelegate: totalDelegate,
+            });
+        }
+    }
+
+    handleKamPageChange = async (page: number) => {
+        this.setState({ loadingVisitsData: true, kamPage: page, });
+
+        var { visits: kamVisits, total: totalKam } = await this.visitService.getAllVisits(page, this.state.sizeDelegate, this.state.selectedDate, ClientType.wholesaler, this.state.currentUser.id!);
+        this.setState({
+            kamVisits: kamVisits,
+            filteredKamVisits: kamVisits,
+            loadingVisitsData: false,
+            kamPage: page,
+            totalKam: totalKam,
+        });
+
+    }
+
+    handleDelegateRowNumChange = async (size: number) => {
+        this.setState({ loadingVisitsData: true, delegatePage: 1, sizeDelegate: size, });
+        if (this.state.currentUser.type === UserType.supervisor) {
+            var { visits: visits, total: total } = await this.visitService.getAllVisits(1, size, this.state.selectedDate, ClientType.pharmacy, this.state.currentUser.id!);
+            this.setState({
+                delegatePage: 1,
+                sizeDelegate: size,
+                delegateVisits: visits,
+                loadingVisitsData: false,
+                filteredDelegateVisits: visits,
+                totalDelegate: total
+            });
+        } else {
+            var { visits: delegateVisits, total: totalDelegate } = await this.visitService.getAllVisits(1, size, this.state.selectedDate, ClientType.pharmacy, this.state.selectedSupervisor!.id!);
+
+            this.setState({
+                delegatePage: 1,
+                sizeDelegate: size,
+                delegateVisits: delegateVisits,
+                filteredDelegateVisits: delegateVisits,
+                loadingVisitsData: false,
+                totalDelegate: totalDelegate,
+            });
+        }
+    }
+
+    handleKamRowNumChange = async (size: number) => {
+        this.setState({ loadingVisitsData: true, delegatePage: 1, sizeDelegate: size, });
+        var { visits: kamVisits, total: totalKam } = await this.visitService.getAllVisits(1, this.state.sizeDelegate, this.state.selectedDate, ClientType.wholesaler, this.state.currentUser.id!);
+        this.setState({
+            kamVisits: kamVisits,
+            filteredKamVisits: kamVisits,
+            loadingVisitsData: false,
+            kamPage: 1,
+            sizeKam: size,
+            totalKam: totalKam,
+        });
+    }
 
     render() {
         if (!this.state.hasData) {
@@ -249,7 +358,12 @@ class HomePage extends Component<HomePageProps, HomePageState> {
                                 </div>
                                 <div className='table-panel'>
                                     <HomeTable id='hometable'
-                                    firstHeader='Délégué'
+                                        total={this.state.totalDelegate}
+                                        page={this.state.delegatePage}
+                                        size={this.state.sizeDelegate}
+                                        pageChange={this.handleDelegatePageChange}
+                                        rowNumChange={this.handleDelegateRowNumChange}
+                                        firstHeader='Délégué'
                                         isLoading={this.state.loadingVisitsData}
                                         data={this.state.filteredDelegateVisits}
                                         onDisplayReport={this.handleDisplayReport}
@@ -305,7 +419,12 @@ class HomePage extends Component<HomePageProps, HomePageState> {
                                 </div>
                                 <div className='table-panel'>
                                     <HomeTable id='hometable'
-                                    firstHeader='Kam'
+                                        firstHeader='Kam'
+                                        total={this.state.totalKam}
+                                        page={this.state.kamPage}
+                                        size={this.state.sizeKam}
+                                        pageChange={this.handleKamPageChange}
+                                        rowNumChange={this.handleKamRowNumChange}
                                         isLoading={this.state.loadingVisitsData}
                                         data={this.state.filteredKamVisits}
                                         onDisplayReport={this.handleDisplayReport}

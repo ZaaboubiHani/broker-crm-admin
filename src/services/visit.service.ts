@@ -6,7 +6,7 @@ import { ClientType } from "../models/client.model";
 
 export default class VisitService {
 
-    async getAllVisits(date: Date, clientType: ClientType,superId:number): Promise<VisitModel[]> {
+    async getAllVisits(page: number, size: number,date: Date, clientType: ClientType,superId:number): Promise<{ visits: VisitModel[], total: number }> {
         const token = localStorage.getItem('token');
 
         var typeFilter: string = '';
@@ -16,7 +16,7 @@ export default class VisitService {
         } else {
             typeFilter = '&filters[client][relatedSpeciality][domainType][reference][$ne]=wholesaler'
         }
-        var response = await axios.get(`${Globals.apiUrl}/visits?filters[user][creatorId][$eq]=${superId}&filters[createdDate][$eq]=${formatDateToYYYYMMDD(date)}${typeFilter}&populate[rapport][populate]=*&populate[client][populate]=relatedSpeciality.domainType&populate=user`,
+        var response = await axios.get(`${Globals.apiUrl}/visits?filters[user][creatorId][$eq]=${superId}&pagination[page]=${page}&pagination[pageSize]=${size}&filters[createdDate][$eq]=${formatDateToYYYYMMDD(date)}${typeFilter}&populate[rapport][populate]=*&populate[client][populate]=relatedSpeciality.domainType&populate=user`,
             {
                 headers: {
                     'Authorization': `Bearer ${token}`
@@ -29,9 +29,9 @@ export default class VisitService {
                 var visit = VisitModel.fromJson(response.data['data'][index]);
                 visits.push(visit);
             }
-            return visits;
+            return  { visits: visits, total: response.data.meta.pagination.total };
         }
-        return [];
+        return { visits: [], total: 0 };
     }
 
     async getAllVisitsMonth(date: Date): Promise<VisitModel[]> {

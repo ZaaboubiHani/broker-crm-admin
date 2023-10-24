@@ -127,11 +127,11 @@ class ClientsPage extends Component<{}, ClientsPageProps> {
         this.setState({ isLoading: true });
         if (!this.state.isLoading) {
             var currentUser = await this.userService.getMe();
-            var { visits: pharmVisits, total: totalPharm } = await this.visitService.getAllVisitsPaginated(1, 5, '', ClientType.pharmacy,currentUser.id!);
-            var { visits: docVisits, total: totalDoc } = await this.visitService.getAllVisitsPaginated(1, 5, '', ClientType.doctor,currentUser.id!);
-            var { visits: wholeVisits, total: totalWhole } = await this.visitService.getAllVisitsPaginated(1, 5, '', ClientType.wholesaler,currentUser.id!);
+            var { visits: pharmVisits, total: totalPharm } = await this.visitService.getAllVisitsPaginated(1, 5, '', ClientType.pharmacy, currentUser.id!);
+            var { visits: docVisits, total: totalDoc } = await this.visitService.getAllVisitsPaginated(1, 5, '', ClientType.doctor, currentUser.id!);
+            var { visits: wholeVisits, total: totalWhole } = await this.visitService.getAllVisitsPaginated(1, 5, '', ClientType.wholesaler, currentUser.id!);
             this.setState({
-                currentUser:currentUser,
+                currentUser: currentUser,
                 isLoading: false,
                 hasData: true,
                 pharmVisits: pharmVisits,
@@ -146,18 +146,18 @@ class ClientsPage extends Component<{}, ClientsPageProps> {
 
     handlePharmVisitsFilter = async () => {
         this.setState({ pharmReportData: undefined, pharmCommandData: undefined, pharmPage: 1, loadingVisitsData: true });
-        var { visits: pharmVisits, total: totalPharm } = await this.visitService.getAllVisitsPaginated(1, this.state.sizePharm, this.state.pharmSearchText, ClientType.pharmacy,this.state.currentUser.id!);
-        this.setState({ pharmVisits: pharmVisits, totalPharm: totalPharm, loadingVisitsData: false });
+        var { visits: pharmVisits, total: totalPharm } = await this.visitService.getAllVisitsPaginated(1, this.state.sizePharm, this.state.pharmSearchText, ClientType.pharmacy, this.state.currentUser.id!);
+        this.setState({ pharmVisits: pharmVisits, totalPharm: totalPharm, loadingVisitsData: false, pharmPage: 1, });
     }
     handleWholeVisitsFilter = async () => {
         this.setState({ wholeReportData: undefined, wholeCommandData: undefined, wholePage: 1, loadingVisitsData: true });
-        var { visits: wholeVisits, total: totalWhole } = await this.visitService.getAllVisitsPaginated(1, this.state.sizeWhole, this.state.wholeSearchText, ClientType.wholesaler,this.state.currentUser.id!);
+        var { visits: wholeVisits, total: totalWhole } = await this.visitService.getAllVisitsPaginated(1, this.state.sizeWhole, this.state.wholeSearchText, ClientType.wholesaler, this.state.currentUser.id!);
         this.setState({ wholeVisits: wholeVisits, totalWhole: totalWhole, loadingVisitsData: false });
     }
 
     handleDocVisitsFilter = async () => {
         this.setState({ docReportData: undefined, docPage: 1, loadingVisitsData: true });
-        var { visits: docVisits, total: totalDoc } = await this.visitService.getAllVisitsPaginated(1, this.state.sizeDoc, this.state.docSearchText, ClientType.doctor,this.state.currentUser.id!);
+        var { visits: docVisits, total: totalDoc } = await this.visitService.getAllVisitsPaginated(1, this.state.sizeDoc, this.state.docSearchText, ClientType.doctor, this.state.currentUser.id!);
         this.setState({ docVisits: docVisits, totalDoc: totalDoc, loadingVisitsData: false });
     }
 
@@ -175,35 +175,35 @@ class ClientsPage extends Component<{}, ClientsPageProps> {
 
     handlePharmPageChange = async (page: number) => {
         this.setState({ loadingVisitsData: true, pharmPage: page });
-        var { visits: pharmVisits, total: totalPharm } = await this.visitService.getAllVisitsPaginated(page, this.state.sizePharm, this.state.pharmSearchText, ClientType.pharmacy,this.state.currentUser.id!);
+        var { visits: pharmVisits, total: totalPharm } = await this.visitService.getAllVisitsPaginated(page, this.state.sizePharm, this.state.pharmSearchText, ClientType.pharmacy, this.state.currentUser.id!);
         this.setState({ pharmVisits: pharmVisits, totalPharm: totalPharm, loadingVisitsData: false, });
     }
     handleWholePageChange = async (page: number) => {
         this.setState({ loadingVisitsData: true, wholePage: page });
-        var { visits: wholeVisits, total: totalWhole } = await this.visitService.getAllVisitsPaginated(page, this.state.sizeWhole, this.state.wholeSearchText, ClientType.wholesaler,this.state.currentUser.id!);
+        var { visits: wholeVisits, total: totalWhole } = await this.visitService.getAllVisitsPaginated(page, this.state.sizeWhole, this.state.wholeSearchText, ClientType.wholesaler, this.state.currentUser.id!);
         this.setState({ wholeVisits: wholeVisits, totalWhole: totalWhole, loadingVisitsData: false, });
     }
 
     handleDocPageChange = async (page: number) => {
         this.setState({ loadingVisitsData: true, docPage: page });
-        var { visits: docVisits, total: totalDoc } = await this.visitService.getAllVisitsPaginated(page, this.state.sizeDoc, this.state.docSearchText, ClientType.doctor,this.state.currentUser.id!);
+        var { visits: docVisits, total: totalDoc } = await this.visitService.getAllVisitsPaginated(page, this.state.sizeDoc, this.state.docSearchText, ClientType.doctor, this.state.currentUser.id!);
         this.setState({ docVisits: docVisits, totalDoc: totalDoc, loadingVisitsData: false, });
     }
 
     handlePharmRowNumChange = async (size: number) => {
         this.setState({ loadingVisitsData: true, pharmPage: 1, sizePharm: size });
-        var { visits: pharmVisits, total: totalPharm } = await this.visitService.getAllVisitsPaginated(1, size, this.state.pharmSearchText, ClientType.pharmacy,this.state.currentUser.id!);
+        var { visits: pharmVisits, total: totalPharm } = await this.visitService.getAllVisitsPaginated(1, size, this.state.pharmSearchText, ClientType.pharmacy, this.state.currentUser.id!);
         this.setState({ pharmVisits: pharmVisits, totalPharm: totalPharm, loadingVisitsData: false, });
     }
     handleWholeRowNumChange = async (size: number) => {
         this.setState({ loadingVisitsData: true, wholePage: 1, sizeWhole: size });
-        var { visits: wholeVisits, total: totalWhole } = await this.visitService.getAllVisitsPaginated(1, size, this.state.wholeSearchText, ClientType.wholesaler,this.state.currentUser.id!);
+        var { visits: wholeVisits, total: totalWhole } = await this.visitService.getAllVisitsPaginated(1, size, this.state.wholeSearchText, ClientType.wholesaler, this.state.currentUser.id!);
         this.setState({ wholeVisits: wholeVisits, totalWhole: totalWhole, loadingVisitsData: false, });
     }
 
     handleDocRowNumChange = async (size: number) => {
         this.setState({ loadingVisitsData: true, docPage: 1, sizeDoc: size });
-        var { visits: docVisits, total: totalDoc } = await this.visitService.getAllVisitsPaginated(1, size, this.state.docSearchText, ClientType.doctor,this.state.currentUser.id!);
+        var { visits: docVisits, total: totalDoc } = await this.visitService.getAllVisitsPaginated(1, size, this.state.docSearchText, ClientType.doctor, this.state.currentUser.id!);
         this.setState({ docVisits: docVisits, totalDoc: totalDoc, loadingVisitsData: false, });
     }
 
@@ -240,12 +240,12 @@ class ClientsPage extends Component<{}, ClientsPageProps> {
                                 <Tab label="Pharmacies" />
                                 <Tab label="Médecins" />
                                 {
-                                    this.state.currentUser.type === UserType.admin?(<Tab label="Grossiste" />):null
-                                } 
+                                    this.state.currentUser.type === UserType.admin ? (<Tab label="Grossiste" />) : null
+                                }
                             </Tabs>
                         </Box>
                         <CustomTabPanel style={{ display: 'flex', flexDirection: 'row', flexGrow: '1', height: 'calc(100% - 50px)', }} value={this.state.index} index={0} >
-                            <div style={{ display: 'flex', flexDirection: 'column', flexGrow: '1', height: 'calc(100% - 40px)',  }}>
+                            <div style={{ display: 'flex', flexDirection: 'column', flexGrow: '1', height: 'calc(100% - 40px)', }}>
                                 <div style={{ display: 'flex', height: '40px', marginLeft: '8px', }}>
                                     <Form>
                                         <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
