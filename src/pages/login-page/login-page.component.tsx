@@ -34,7 +34,7 @@ const LoginPage: React.FC = () => {
     if (loginSuccess) {
       var user = await userService.getMe();
       if (user.type === UserType.admin || user.type === UserType.supervisor) {
-        navigate('/content');
+        navigate('/home');
       }
       else {
         localStorage.clear();
