@@ -10,7 +10,7 @@ export default class CommandService {
 
     async getCommandOfVisit(visitId: number): Promise<CommandModel> {
         const token = localStorage.getItem('token');
-        var response = await axios.get(`${Globals.apiUrl}/commands?publicationState=preview&filters[visit][id][$eq]=${visitId}&populate=products.product&populate=suppliers.supplier&populate=motivations&populate=visit.client`,
+        var response = await axios.get(`${Globals.apiUrl}/commands?publicationState=preview&filters[visit][id][$eq]=${visitId}&populate=products.product&populate=suppliers.supplier&populate=motivations&populate=visit.client&populate=invoice&populate=signature`,
             {
                 headers: {
                     'Authorization': `Bearer ${token}`
@@ -23,9 +23,9 @@ export default class CommandService {
         return new CommandModel();
     }
 
-    async getAllCommandsOfDelegate(date: Date, userId: number): Promise<CommandModel[]> {
+    async getAllCommandsOfDelegate(page: number, size: number, date: Date, userId: number): Promise<{ commands: CommandModel[], total: number }> {
         const token = localStorage.getItem('token');
-        var response = await axios.get(`${Globals.apiUrl}/commands?publicationState=preview&filters[visit][user][id][$eq]=${userId}&filters[visit][createdDate][$containsi]=${formatDateToYYYYMM(date)}&populate=products.product&populate=suppliers.supplier&populate=motivations&populate=visit.client&populate=commandSupplier.supplier`,
+        var response = await axios.get(`${Globals.apiUrl}/commands?publicationState=preview&filters[visit][user][id][$eq]=${userId}&pagination[page]=${page}&pagination[pageSize]=${size}&filters[visit][createdDate][$containsi]=${formatDateToYYYYMM(date)}&populate=products.product&populate=suppliers.supplier&populate=motivations&populate=visit.client&populate=commandSupplier.supplier&populate=invoice&populate=signature`,
             {
                 headers: {
                     'Authorization': `Bearer ${token}`
@@ -37,9 +37,9 @@ export default class CommandService {
                 var command = CommandModel.fromJson(response.data['data'][index]);
                 commands.push(command);
             }
-            return commands;
+            return { commands: commands, total: response.data.meta.pagination.total };
         }
-        return [];
+        return { commands: [], total: 0 };
     }
 
     async honorCommand(commandId: number, supplierId: number): Promise<boolean> {

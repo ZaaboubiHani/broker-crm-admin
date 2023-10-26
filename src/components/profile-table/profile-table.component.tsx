@@ -50,12 +50,11 @@ const ProfileTable: React.FC<ProfileTableProps> = ({ data, isLoading, wilayas })
         event.preventDefault();
     };
 
-
     return (
-        <TableContainer sx={{ flexGrow: '1', display: 'flex', flexDirection: 'column', borderRadius: '8px', margin: '8px', overflow: 'hidden', height: 'calc(100% -400px)' }} component={Paper}>
+        <TableContainer sx={{ flexGrow: '1', display: 'flex', flexDirection: 'column', borderRadius: '8px', margin: '8px', overflow: 'hidden' }} component={Paper}>
             <Table sx={{ flexGrow: '1', display: 'flex', flexDirection: 'column', overflow: 'hidden', margin: '0px', width: "100%" }} size="small" aria-label="a dense table">
-                <TableHead sx={{ flexGrow: '1', display: 'flex', height: '45px', }}>
-                    <TableRow sx={{ flexGrow: '1', width: '100%' }}>
+                <TableHead sx={{ height: '45px', marginBottom: '16px' }}>
+                    <TableRow>
                         <TableCell sx={{ width: '100px' }} align='left'>Création</TableCell>
                         <TableCell sx={{ width: '15%' }} align='left'>Nom et prénom</TableCell>
                         <TableCell sx={{ width: '15%' }} align="left">Mobile</TableCell>
@@ -86,7 +85,7 @@ const ProfileTable: React.FC<ProfileTableProps> = ({ data, isLoading, wilayas })
                             data.map((row, index) => (
                                 <TableRow
                                     key={row.id!}
-                                    sx={{ '&:last-child td, &:last-child th': { border: 0 }, flexGrow: '1', width: '100%' }}
+                                    sx={{ '&:last-child td, &:last-child th': { border: 0 }}}
                                 >
                                     <TableCell sx={{ width: '100px', whiteSpace: 'nowrap', margin: '0px' }} >{formatDateToYYYYMMDD(row.createdAt || new Date())}</TableCell>
                                     <TableCell sx={{ width: '15%' }} align="left">{row.username}</TableCell>

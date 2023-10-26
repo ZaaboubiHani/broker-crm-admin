@@ -9,7 +9,7 @@ export default class ExpenseService {
 
     async getAllExpensesOfUserByDateMoth(date: Date, userId: number): Promise<ExpenseModel[]> {
         const token = localStorage.getItem('token');
-        var response = await axios.get(`${Globals.apiUrl}/expenses-days?filters[userExpense][user][id][$eq]=${userId}&filters[createdDate][$containsi]=${formatDateToYYYYMM(date)}&filters[userExpense][userValidation][$eq]=true&populate=proofs`,
+        var response = await axios.get(`${Globals.apiUrl}/expenses-days?filters[userExpense][user][id][$eq]=${userId}&filters[createdDate][$containsi]=${formatDateToYYYYMM(date)}&filters[userExpense][userValidation][$eq]=true&populate=proofs&pagination[pageSize]=31`,
             {
                 headers: {
                     'Authorization': `Bearer ${token}`
@@ -28,7 +28,7 @@ export default class ExpenseService {
 
     async getExpensesUserByDateMoth(date: Date, userId: number): Promise<ExpenseUserModel> {
         const token = localStorage.getItem('token');
-        var response = await axios.get(`${Globals.apiUrl}/expenses-users?filters[user][id][$eq]=${userId}&filters[createdDate][$containsi]=${formatDateToYYYYMM(date)}&filters[userValidation][$eq]=true`,
+        var response = await axios.get(`${Globals.apiUrl}/expenses-users?filters[user][id][$eq]=${userId}&filters[createdDate][$containsi]=${formatDateToYYYYMM(date)}&filters[userValidation][$eq]=true&pagination[pageSize]=31`,
             {
                 headers: {
                     'Authorization': `Bearer ${token}`

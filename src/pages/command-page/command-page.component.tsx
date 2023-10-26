@@ -48,6 +48,12 @@ interface CommandDelegatePageProps {
     loadingKamCommandData?: boolean;
     index: number,
     currentUser: UserModel;
+    totalDelegate: number;
+    sizeDelegate: number;
+    delegatePage: number;
+    totalKam: number;
+    sizeKam: number;
+    kamPage: number;
 }
 
 const kPrincipal = '#35d9da';
@@ -77,6 +83,12 @@ class CommandPage extends Component<{}, CommandDelegatePageProps> {
             filtredDelegates: [],
             filtredKams: [],
             index: 0,
+            totalDelegate: 0,
+            sizeDelegate: 25,
+            delegatePage: 1,
+            totalKam: 0,
+            sizeKam: 25,
+            kamPage: 1,
         }
     }
 
@@ -120,26 +132,26 @@ class CommandPage extends Component<{}, CommandDelegatePageProps> {
     }
 
     handleSelectDelegate = async (delegate: UserModel) => {
-        this.setState({ loadingDelegateCommandsData: true, delegateCommandData: undefined });
-        var commands = await this.commandService.getAllCommandsOfDelegate(this.state.selectedDateDelegate, delegate.id!);
-        this.setState({ selectedDelegate: delegate, delegateCommands: commands, loadingDelegateCommandsData: false, });
+        this.setState({ loadingDelegateCommandsData: true, delegateCommandData: undefined, delegatePage: 1 });
+        var { commands: commands, total: total } = await this.commandService.getAllCommandsOfDelegate(1, this.state.sizeDelegate, this.state.selectedDateDelegate, delegate.id!);
+        this.setState({ selectedDelegate: delegate, delegateCommands: commands, delegatePage: 1, totalDelegate: total, loadingDelegateCommandsData: false, });
     }
     handleSelectKam = async (kam: UserModel) => {
-        this.setState({ loadingKamCommandsData: true, kamCommandData: undefined });
-        var commands = await this.commandService.getAllCommandsOfDelegate(this.state.selectedDateKam, kam.id!);
-        this.setState({ selectedKam: kam, kamCommands: commands, loadingKamCommandsData: false, });
+        this.setState({ loadingKamCommandsData: true, kamCommandData: undefined, kamPage: 1 });
+        var { commands: commands, total: total } = await this.commandService.getAllCommandsOfDelegate(1, this.state.sizeKam, this.state.selectedDateKam, kam.id!);
+        this.setState({ selectedKam: kam, kamCommands: commands, kamPage: 1, totalKam: total, loadingKamCommandsData: false, });
     }
 
     handleOnPickDateDelegate = async (date: Date) => {
-        this.setState({ loadingDelegateCommandsData: true, delegateCommandData: undefined });
-        var commands = await this.commandService.getAllCommandsOfDelegate(date, this.state.selectedDelegate!.id!);
-        this.setState({ selectedDateDelegate: date, delegateCommands: commands, loadingDelegateCommandsData: false, });
+        this.setState({ loadingDelegateCommandsData: true, delegateCommandData: undefined, delegatePage: 1 });
+        var { commands: commands, total: total } = await this.commandService.getAllCommandsOfDelegate(1, this.state.sizeDelegate, date, this.state.selectedDelegate!.id!);
+        this.setState({ selectedDateDelegate: date, delegateCommands: commands, delegatePage: 1, totalDelegate: total, loadingDelegateCommandsData: false, });
     }
 
     handleOnPickDateKam = async (date: Date) => {
-        this.setState({ loadingKamCommandsData: true, kamCommandData: undefined });
-        var commands = await this.commandService.getAllCommandsOfDelegate(date, this.state.selectedDelegate!.id!);
-        this.setState({ selectedDateKam: date, kamCommands: commands, loadingKamCommandsData: false, });
+        this.setState({ loadingKamCommandsData: true, kamCommandData: undefined, kamPage: 1 });
+        var { commands: commands, total: total } = await this.commandService.getAllCommandsOfDelegate(1, this.state.sizeKam, date, this.state.selectedKam!.id!);
+        this.setState({ selectedDateKam: date, kamCommands: commands, kamPage: 1, totalKam: total, loadingKamCommandsData: false, });
     }
 
     loadCommandPageData = async () => {
@@ -154,8 +166,8 @@ class CommandPage extends Component<{}, CommandDelegatePageProps> {
                 var delegates = await this.userService.getUsersByCreator(currentUser.id!, UserType.delegate);
                 if (delegates.length > 0) {
                     this.setState({ selectedDelegate: delegates[0] });
-                    var commands = await this.commandService.getAllCommandsOfDelegate(new Date(), delegates[0].id!);
-                    this.setState({ delegateCommands: commands });
+                    var { commands: commands, total: total } = await this.commandService.getAllCommandsOfDelegate(1, 25, new Date(), delegates[0].id!);
+                    this.setState({ delegateCommands: commands, totalDelegate: total });
                 }
                 this.setState({ currentUser: currentUser, isLoading: false, delegates: delegates, filtredDelegates: delegates, hasData: true });
                 this.setState({ isLoading: false, delegates: delegates, filtredDelegates: delegates, hasData: true });
@@ -166,8 +178,8 @@ class CommandPage extends Component<{}, CommandDelegatePageProps> {
                     var delegates = await this.userService.getUsersByCreator(supervisors[0].id!, UserType.delegate);
                     if (delegates.length > 0) {
                         this.setState({ selectedDelegate: delegates[0] });
-                        var commands = await this.commandService.getAllCommandsOfDelegate(new Date(), delegates[0].id!);
-                        this.setState({ delegateCommands: commands });
+                        var { commands: commands, total: total } = await this.commandService.getAllCommandsOfDelegate(1, 25, new Date(), delegates[0].id!);
+                        this.setState({ delegateCommands: commands, totalDelegate: total });
                     }
                     this.setState({ currentUser: currentUser, isLoading: false, delegates: delegates, filtredDelegates: delegates, hasData: true });
                     this.setState({
@@ -182,7 +194,7 @@ class CommandPage extends Component<{}, CommandDelegatePageProps> {
                 this.setState({
                     isLoading: false,
                     hasData: true,
-                    supervisors: supervisors, 
+                    supervisors: supervisors,
                     kams: kams,
                     filtredKams: kams
                 });
@@ -218,8 +230,8 @@ class CommandPage extends Component<{}, CommandDelegatePageProps> {
         var delegates = await this.userService.getUsersByCreator(supervisor.id!, UserType.delegate);
         if (delegates.length > 0) {
             this.setState({ selectedDelegate: delegates[0] });
-            var commands = await this.commandService.getAllCommandsOfDelegate(new Date(), delegates[0].id!);
-            this.setState({ delegateCommands: commands });
+            var { commands: commands, total: total } = await this.commandService.getAllCommandsOfDelegate(1, this.state.sizeDelegate, this.state.selectedDateDelegate, delegates[0].id!);
+            this.setState({ delegateCommands: commands, totalDelegate: total, delegatePage: 1 });
         }
         this.setState({ delegates: delegates, filtredDelegates: delegates, loadingDelegateCommandsData: false });
     }
@@ -228,8 +240,57 @@ class CommandPage extends Component<{}, CommandDelegatePageProps> {
         this.setState({ index: newValue });
     };
 
-    render() {
 
+    handleDelegatePageChange = async (page: number) => {
+        this.setState({ loadingDelegateCommandsData: true, });
+        var { commands: commands, total: total } = await this.commandService.getAllCommandsOfDelegate(page, this.state.sizeDelegate, this.state.selectedDateDelegate, this.state.selectedDelegate!.id!);
+        this.setState({
+            delegatePage: page,
+            delegateCommands: commands,
+            totalDelegate: total,
+            loadingDelegateCommandsData: false,
+        });
+    }
+
+    handleKamPageChange = async (page: number) => {
+        this.setState({ loadingKamCommandsData: true, });
+        var { commands: commands, total: total } = await this.commandService.getAllCommandsOfDelegate(page, this.state.sizeKam, this.state.selectedDateKam, this.state.selectedKam!.id!);
+        this.setState({
+            kamPage: page,
+            kamCommands: commands,
+            totalKam: total,
+            loadingKamCommandsData: false,
+        });
+    }
+
+
+    handleDelegateRowNumChange = async (size: number) => {
+        this.setState({ loadingDelegateCommandsData: true, delegatePage: 1, sizeDelegate: size, });
+        var { commands: commands, total: total } = await this.commandService.getAllCommandsOfDelegate(1, size, this.state.selectedDateDelegate, this.state.selectedDelegate!.id!);
+
+        this.setState({
+            delegatePage: 1,
+            sizeDelegate: size,
+            delegateCommands: commands,
+            totalDelegate: total,
+            loadingDelegateCommandsData: false,
+        });
+    }
+
+    handleKamRowNumChange = async (size: number) => {
+        this.setState({ loadingKamCommandsData: true, kamPage: 1, sizeKam: size, });
+        var { commands: commands, total: total } = await this.commandService.getAllCommandsOfDelegate(1, size, this.state.selectedDateKam, this.state.selectedKam!.id!);
+
+        this.setState({
+            kamPage: 1,
+            sizeKam: size,
+            kamCommands: commands,
+            totalKam: total,
+            loadingKamCommandsData: false,
+        });
+    }
+
+    render() {
         if (!this.state.hasData) {
             this.loadCommandPageData();
             return (
@@ -262,14 +323,14 @@ class CommandPage extends Component<{}, CommandDelegatePageProps> {
                             </Tabs>
                         </Box>
                     </Box>
-                    <CustomTabPanel style={{ display: 'flex', flexDirection: 'row', flexGrow: '1', height: 'calc(100% - 50px)',padding:'0px' }} value={this.state.index} index={0} >
+                    <CustomTabPanel style={{ display: 'flex', flexDirection: 'row', flexGrow: '1', height: 'calc(100% - 50px)', padding: '0px' }} value={this.state.index} index={0} >
                         <div style={{ display: 'flex', flexDirection: 'column', flexGrow: '1', height: 'calc(100% - 40px)' }}>
                             {
                                 this.state.currentUser.type === UserType.admin ? (<div style={{ display: 'flex' }}>
                                     <UserPicker delegates={this.state.supervisors} onSelect={this.handleSelectSupervisor}></UserPicker>
                                 </div>) : null
                             }
-                            <div  style={{ display: 'flex', height: '40px', marginLeft: '8px', marginTop: '0px' }}>
+                            <div style={{ display: 'flex', height: '40px', marginLeft: '8px', marginTop: '0px' }}>
                                 <Form>
                                     <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
                                         <Form.Control type="search" placeholder="Recherche" onChange={this.handleDelegateSearchTextChange} />
@@ -285,6 +346,11 @@ class CommandPage extends Component<{}, CommandDelegatePageProps> {
                             </div>
                             <div className='table-panel' key={0}>
                                 <CommandDelegateTable id='command-delegate-table'
+                                    total={this.state.totalDelegate}
+                                    page={this.state.delegatePage}
+                                    size={this.state.sizeDelegate}
+                                    pageChange={this.handleDelegatePageChange}
+                                    rowNumChange={this.handleDelegateRowNumChange}
                                     data={this.state.delegateCommands}
                                     isLoading={this.state.loadingDelegateCommandsData}
                                     displayCommand={this.handleDisplayDelegateCommand}

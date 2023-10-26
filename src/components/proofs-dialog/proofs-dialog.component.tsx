@@ -4,7 +4,7 @@ import Button from '@mui/material/Button';
 import DialogTitle from '@mui/material/DialogTitle';
 import Dialog from '@mui/material/Dialog';
 import DialogContent from "@mui/material/DialogContent";
-import { Card, CardActionArea, CardMedia, DialogActions, Divider } from "@mui/material";
+import { Card, CardActionArea, CardMedia, DialogActions } from "@mui/material";
 import CloseIcon from '@mui/icons-material/Close';
 import { formatDateToYYYYMMDD } from "../../functions/date-format";
 

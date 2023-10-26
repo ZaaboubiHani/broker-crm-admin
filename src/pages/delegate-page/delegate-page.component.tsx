@@ -80,7 +80,7 @@ class DelegatePage extends Component<{}, DelegatePageState> {
             objectifVisites: 0,
             successRate: 0,
             totalDelegate: 0,
-            sizeDelegate: 5,
+            sizeDelegate: 25,
             delegatePage: 1,
         }
     }
@@ -174,7 +174,7 @@ class DelegatePage extends Component<{}, DelegatePageState> {
                 var delegates = await this.userService.getUsersByCreator(currentUser.id!, UserType.delegate);
                 if (delegates.length > 0) {
                     this.setState({ selectedDelegate: delegates[0] });
-                    var { visits: visits, total: total } = await this.visitService.getAllVisitsOfDelegate(1, 5, this.state.selectedDate, delegates[0].id!);
+                    var { visits: visits, total: total } = await this.visitService.getAllVisitsOfDelegate(1, 25, this.state.selectedDate, delegates[0].id!);
                     var planDeTournee = await this.statisticsService.getPlanDeTournee(this.state.selectedDate, delegates[0].id!);
                     var couverturePortfeuille = await this.statisticsService.getCouverturePortfeuille(this.state.selectedDate, delegates[0].id!);
                     var moyenneVisitesParJour = await this.statisticsService.getMoyenneVisitesParJour(this.state.selectedDate, delegates[0].id!);
@@ -200,7 +200,7 @@ class DelegatePage extends Component<{}, DelegatePageState> {
                     var delegates = await this.userService.getUsersByCreator(supervisors[0].id!, UserType.delegate);
                     if (delegates.length > 0) {
                         this.setState({ selectedDelegate: delegates[0] });
-                        var { visits: visits, total: total } = await this.visitService.getAllVisitsOfDelegate(1, 5, this.state.selectedDate, delegates[0].id!);
+                        var { visits: visits, total: total } = await this.visitService.getAllVisitsOfDelegate(1, 25, this.state.selectedDate, delegates[0].id!);
                         var planDeTournee = await this.statisticsService.getPlanDeTournee(this.state.selectedDate, delegates[0].id!);
                         var couverturePortfeuille = await this.statisticsService.getCouverturePortfeuille(this.state.selectedDate, delegates[0].id!);
                         var moyenneVisitesParJour = await this.statisticsService.getMoyenneVisitesParJour(this.state.selectedDate, delegates[0].id!);

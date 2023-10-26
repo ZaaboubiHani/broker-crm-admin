@@ -143,7 +143,7 @@ class ExpensePage extends Component<{}, ExpensePageProps> {
                         </button>
                         <MonthYearPicker onPick={this.handleOnPickDate}></MonthYearPicker >
                     </div>
-                    <div style={{ display: 'flex', height: '48px' }}>
+                    <div style={{ display: 'flex', height: '55px' }}>
                         <UserPicker delegates={this.state.filtredDelegates} onSelect={this.handleSelectDelegate}></UserPicker>
                     </div>
                     <div style={{ width: '100%', display: 'flex', flexGrow: '1' }} >
