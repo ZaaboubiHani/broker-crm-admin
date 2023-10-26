@@ -39,6 +39,7 @@ interface PlanPageProps {
     objectifChiffreDaffaire: number;
     objectifVisites: number;
     successRate: number;
+
 }
 
 const kPrincipal = '#35d9da';
@@ -166,6 +167,7 @@ class PlanPage extends Component<{}, PlanPageProps> {
         });
         this.setState({ visitTaskDetails: tasks, loadingVisitTaskDetails: false });
     };
+    
 
     render() {
         if (this.state.isLoading) {
@@ -207,11 +209,11 @@ class PlanPage extends Component<{}, PlanPageProps> {
                         <CircularProgressLabel colorStroke='#FC761E' direction='row' secondTitle='KPI: Realisation plan de tournee' value={this.state.planDeTournee} />
                         <CircularProgressLabel colorStroke='#CC38E0' direction='row' secondTitle='Couverture portefeuille client' value={this.state.couverturePortfeuille} />
                         <CircularProgressLabel colorStroke='#38EB5D' direction='row' secondTitle="Objectif chiffre d'affaire" value={this.state.objectifChiffreDaffaire} />
-                        <CircularProgressLabel colorStroke='#2FBCEB' direction='row' secondTitle='Objectif visites' value={this.state.objectifVisites*100} />
-                        <CircularProgressLabel colorStroke='#FC4630' direction='row' secondTitle='Moyen visite/jour' formatter={(val)=>val.toFixed(0)} value={this.state.moyenneVisitesParJour} />
+                        <CircularProgressLabel colorStroke='#2FBCEB' direction='row' secondTitle='Objectif visites' value={this.state.objectifVisites * 100} />
+                        <CircularProgressLabel colorStroke='#FC4630' direction='row' secondTitle='Moyen visite/jour' formatter={(val) => val.toFixed(0)} value={this.state.moyenneVisitesParJour} />
                         <CircularProgressLabel colorStroke='#3A25E6' direction='row' secondTitle='Taux de réussite' value={this.state.successRate} />
                     </div>
-                    <div  style={{ width: '100%', display: 'flex', flexGrow: '1',height: 'calc(100% - 500px)'  }}>
+                    <div style={{ width: '100%', display: 'flex', flexGrow: '1', height: 'calc(100% - 500px)' }}>
                         <PlanTable onDisplayDetails={this.handleSelectVisitTaskDate} isLoading={this.state.loadingVisitTasksData} id='plantable' data={this.state.visitTasks}></PlanTable>
                         <div className='user-panel'>
                             <PlanPanel isLoading={this.state.loadingVisitTaskDetails} data={this.state.visitTaskDetails}></PlanPanel>

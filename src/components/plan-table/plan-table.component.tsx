@@ -12,6 +12,7 @@ import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import Button from '@mui/material/Button';
 import VisitTaskModel from '../../models/visit-task.model';
+import TablePagination from '@mui/material/TablePagination';
 
 interface PlanTableProps {
     data: VisitTaskModel[];
@@ -20,14 +21,16 @@ interface PlanTableProps {
     id?: string;
 }
 
-const PlanTable: React.FC<PlanTableProps> = ({ data, id, isLoading, onDisplayDetails }) => {
+const PlanTable: React.FC<PlanTableProps> = ({ data, id, isLoading, onDisplayDetails, }) => {
+
 
     return (
-        <TableContainer id={id} sx={{ display: 'flex', flexDirection: 'column', borderRadius: '8px', margin: '8px', overflow: 'hidden',}} component={Paper}>
+
+        <TableContainer id={id} sx={{ display: 'flex', flexDirection: 'column', borderRadius: '8px', margin: '8px', overflow: 'hidden', }} component={Paper}>
             <Table sx={{ flexGrow: '1', display: 'flex', flexDirection: 'column', overflow: 'hidden', margin: '0px', width: "100%" }} size="small" aria-label="a dense table">
                 <TableHead sx={{ height: '45px', marginBottom: '16px', }}>
                     <TableRow >
-                        <TableCell sx={{ width: '230px'}} align='left'>Date</TableCell>
+                        <TableCell sx={{ width: '230px' }} align='left'>Date</TableCell>
                         <TableCell sx={{ width: '20%' }} align="left">wilayas</TableCell>
                         <TableCell sx={{ width: '20%' }} align="left">Visites programmes</TableCell>
                         <TableCell sx={{ width: '20%' }} align="left">visites realiser</TableCell>

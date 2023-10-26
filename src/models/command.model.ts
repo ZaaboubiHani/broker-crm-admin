@@ -1,5 +1,6 @@
 import ClientModel from "./client.model";
 import CommentModel from "./comment.model";
+import FileModel from "./file.model";
 import MotivationModel from "./motivation.model";
 import ProductModel from "./product.model";
 import SupplierModel from "./supplier.model";
@@ -12,11 +13,14 @@ export default class CommandModel {
     total?: number;
     remise?: number;
     totalRemised?: number;
+    note?: string;
     visit?: VisitModel;
     products?: ProductModel[];
     motivations?: MotivationModel[];
     suppliers?: SupplierModel[];
     finalSupplier?: SupplierModel;
+    signature?: FileModel;
+    invoice?: FileModel;
 
 
     constructor(data?: CommandModel) {
@@ -31,6 +35,7 @@ export default class CommandModel {
             this.total = data.total;
             this.remise = data.remise;
             this.totalRemised = data.totalRemised;
+            this.note = data.note;
         } else {
             this.products = [];
             this.suppliers = [];
@@ -46,8 +51,16 @@ export default class CommandModel {
         command.total = json.attributes.total;
         command.remise = json.attributes.remise;
         command.totalRemised = json.attributes.totalRemised;
+        command.note = json.attributes.note;
 
-        
+        if (json?.attributes?.signature?.data) {
+            command.signature = FileModel.fromJson(json?.attributes?.signature?.data);
+        }
+
+        if (json?.attributes?.invoice?.data) {
+            command.invoice = FileModel.fromJson(json?.attributes?.invoice?.data[0]);
+        }
+
         if (json.attributes.products.data) {
             command.products = json.attributes.products.data.map((productData: any) => {
                 var product = ProductModel.fromJson(productData.attributes.product.data);
@@ -56,15 +69,15 @@ export default class CommandModel {
                 return product;
             });
         }
-        
+
         if (json.attributes.suppliers.data) {
             command.suppliers = json.attributes.suppliers.data.map((supplierData: any) => SupplierModel.fromJson(supplierData));
         }
-        
+
         if (json.attributes.motivations.data) {
             command.motivations = json.attributes.motivations.data.map((motivationData: any) => MotivationModel.fromJson(motivationData));
         }
-        
+
 
         if (json?.attributes?.visit?.data) {
             command.visit = VisitModel.fromJson(json?.attributes?.visit?.data);
@@ -73,7 +86,7 @@ export default class CommandModel {
         if (json?.attributes?.commandSupplier?.data?.attributes?.supplier?.data) {
             command.finalSupplier = SupplierModel.fromJson(json?.attributes?.commandSupplier?.data?.attributes?.supplier?.data);
         }
-        
+
         return command;
     }
 }

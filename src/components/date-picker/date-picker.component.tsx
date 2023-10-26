@@ -10,7 +10,7 @@ interface DatePickerProps {
 }
 
 const DatePicker: React.FC<DatePickerProps> = ({ onPick, initialDate }) => {
-  const [date, setDate] = useState(initialDate || new Date());
+  const [date, setDate] = useState(new Date(initialDate || new Date()) );
   const [rebuildDayTrigger, setRebuildDayTrigger] = useState(false);
 
   useEffect(() => {

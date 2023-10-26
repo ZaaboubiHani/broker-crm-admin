@@ -7,13 +7,11 @@ import HomePage from '../pages/home-page/home-page.component';
 import PlanPage from '../pages/plan-page/plan-page.component';
 import ProfilePage from '../pages/profile-page/profile-page.component';
 import LoginPage from '../pages/login-page/login-page.component';
-import Content from '../components/content/content.component';
 import ReportPage from '../pages/report-page/report-page.component';
-import { Link, useLocation } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import DelegatePage from '../pages/delegate-page/delegate-page.component';
 import CommandPage from '../pages/command-page/command-page.component';
 import ExpensePage from '../pages/expense-page/expense-page.component';
-import ClientsPharmacyPage from '../pages/clients-page/clients-page.component';
 import RevenuePage from '../pages/revenue-page/revenue-page.component';
 import StatisticsPage from '../pages/statistics-page/statistics-page.component';
 import ConfigPage from '../pages/config-page/config-page.component';
@@ -28,7 +26,6 @@ const AppRouter: React.FC = () => {
       <Routes>
         <Route path="/" Component={LoginPage} />
         <Route path="/login" Component={LoginPage} />
-        <Route path="/content" Component={Content} />
       </Routes>
       {
         location.pathname !== '/' && location.pathname !== '/login' && location.pathname !== '/content' ? (

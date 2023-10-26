@@ -121,7 +121,7 @@ class ProfilePage extends Component<ProfilePageProps, ProfilePageState> {
                             <Button onClick={this.handleSaveChanges} startIcon={<SaveIcon />} sx={{ marginLeft: '16px' }} variant="outlined">Enregistrer les modifications</Button>
                         </div>
                     </div>
-                    <div style={{ width: '100%', display: 'flex', flexGrow: '1', justifyContent: 'stretch' }}>
+                    <div style={{ width: '100%', display: 'flex', flexGrow: '1', justifyContent: 'stretch' ,height:'150px'}}>
                         {
                             this.state.loadingUsers ? <div style={{
                                 width: '100%',

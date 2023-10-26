@@ -76,9 +76,9 @@ class ClientsPage extends Component<{}, ClientsPageProps> {
             pharmPage: 1,
             docPage: 1,
             wholePage: 1,
-            sizeDoc: 5,
-            sizePharm: 5,
-            sizeWhole: 5,
+            sizeDoc: 25,
+            sizePharm: 25,
+            sizeWhole: 25,
             totalPharm: 0,
             totalDoc: 0,
             totalWhole: 0,
@@ -127,9 +127,9 @@ class ClientsPage extends Component<{}, ClientsPageProps> {
         this.setState({ isLoading: true });
         if (!this.state.isLoading) {
             var currentUser = await this.userService.getMe();
-            var { visits: pharmVisits, total: totalPharm } = await this.visitService.getAllVisitsPaginated(1, 5, '', ClientType.pharmacy, currentUser.id!);
-            var { visits: docVisits, total: totalDoc } = await this.visitService.getAllVisitsPaginated(1, 5, '', ClientType.doctor, currentUser.id!);
-            var { visits: wholeVisits, total: totalWhole } = await this.visitService.getAllVisitsPaginated(1, 5, '', ClientType.wholesaler, currentUser.id!);
+            var { visits: pharmVisits, total: totalPharm } = await this.visitService.getAllVisitsPaginated(1, 25, '', ClientType.pharmacy, currentUser.id!);
+            var { visits: docVisits, total: totalDoc } = await this.visitService.getAllVisitsPaginated(1, 25, '', ClientType.doctor, currentUser.id!);
+            var { visits: wholeVisits, total: totalWhole } = await this.visitService.getAllVisitsPaginated(1, 25, '', ClientType.wholesaler, currentUser.id!);
             this.setState({
                 currentUser: currentUser,
                 isLoading: false,

@@ -33,10 +33,6 @@ interface ReportPageProps {
     delegatePage: number;
 }
 
-const kPrincipal = '#35d9da';
-const kSecondary = '#0A2C3B';
-const kTernary = '#3D7C98';
-
 class ReportPage extends Component<{}, ReportPageProps> {
     constructor({ }) {
         super({});
@@ -51,7 +47,7 @@ class ReportPage extends Component<{}, ReportPageProps> {
             delegates: [],
             filtredDelegates: [],
             totalDelegate: 0,
-            sizeDelegate: 5,
+            sizeDelegate: 25,
             delegatePage: 1,
         }
     }
@@ -93,7 +89,7 @@ class ReportPage extends Component<{}, ReportPageProps> {
             var delegates = await this.userService.getDelegateUsers();
             if (delegates.length > 0) {
                 this.setState({ selectedDelegate: delegates[0] });
-                var { visits: visits, total: total } = await this.visitService.getAllVisitsOfDelegate(1, 5, new Date(), delegates[0].id!);
+                var { visits: visits, total: total } = await this.visitService.getAllVisitsOfDelegate(1, 25, new Date(), delegates[0].id!);
                 this.setState({ visits: visits, totalDelegate: total });
             }
             this.setState({ isLoading: false, delegates: delegates, filtredDelegates: delegates, hasData: true });

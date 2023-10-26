@@ -7,7 +7,7 @@ export default class FileModel {
     height?: number;
     url?: string;
 
-    constructor(data?:FileModel) {
+    constructor(data?: FileModel) {
         this.id = data?.id;
         this.name = data?.name;
         this.width = data?.width;
@@ -21,7 +21,7 @@ export default class FileModel {
             name: json.attributes.name,
             width: json.attributes.width,
             height: json.attributes.height,
-            url:  "https://brokermarketing.dz" + json.attributes.url,
+            url: "https://bio.brokermarketing.dz" + json.attributes.url,
 
         });
     }
