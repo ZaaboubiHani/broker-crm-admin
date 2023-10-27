@@ -151,7 +151,13 @@ class ExpensePage extends Component<{}, ExpensePageProps> {
                     </div>
                     <div style={{ display: 'flex', justifyContent: 'end' }}>
                         <h6 style={{ fontSize: '20px', marginRight: '16px' }}>
-                            Total : {this.state?.expensesUser?.total?.toLocaleString('fr-DZ', { style: 'currency', currency: 'DZD' }) ?? (0).toLocaleString('fr-DZ', { style: 'currency', currency: 'DZD' })}
+                        Total Km : {this.state.expenses.map((e)=>e.kmTotal || 0).reduce((sum, current) => sum + current, 0)}
+                        </h6>
+                        <h6 style={{ fontSize: '20px', marginRight: '16px' }}>
+                        Total nuitées :  {this.state.expenses.map((e)=>e.nightsTotal || 0).reduce((sum, current) => sum + current, 0)}
+                        </h6>
+                        <h6 style={{ fontSize: '20px', marginRight: '16px' }}>
+                        Total note de frais : {this.state?.expensesUser?.total?.toLocaleString('fr-DZ', { style: 'currency', currency: 'DZD' }) ?? (0).toLocaleString('fr-DZ', { style: 'currency', currency: 'DZD' })}
                         </h6>
                     </div>
                     <div style={{ display: 'flex', justifyContent: 'end' }}>
