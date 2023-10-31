@@ -21,25 +21,38 @@ interface ReportTableProps {
     page: number;
     size: number;
     total: number;
+    selectedId: number;
     pageChange: (page: number) => void;
     rowNumChange: (rowNum: number) => void;
 }
 
-const ReportTable: React.FC<ReportTableProps> = ({ data, id, isLoading, displayReport, total, size, page, rowNumChange, pageChange, }) => {
+const ReportTable: React.FC<ReportTableProps> = ({ data, id, isLoading, displayReport, total, selectedId, size, page, rowNumChange, pageChange, }) => {
     const [rowsPerPage, setRowsPerPage] = React.useState(size);
+
+    const [selectedRow, setSelectedRow] = React.useState(selectedId);
+
     const [pageIndex, setPageIndex] = React.useState(page - 1);
+
+    if (selectedRow !== selectedId) {
+        setSelectedRow(selectedId);
+    }
+
+    if (pageIndex !== (page - 1)) {
+        setPageIndex(page - 1);
+    }
     const handleChangePage = (event: unknown, newPage: number) => {
         setPageIndex(newPage);
         pageChange(newPage + 1);
+        setSelectedRow(-1);
     };
     const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement>) => {
         setRowsPerPage(parseInt(event.target.value, 10));
         setPageIndex(0);
+        setSelectedRow(-1);
         rowNumChange(parseInt(event.target.value, 10));
     };
-
     return (
-        <div id={id} style={{ display: 'flex', flexDirection: 'column', flexGrow: '1',marginRight:'16px'}}>
+        <div id={id} style={{ display: 'flex', flexDirection: 'column', flexGrow: '1', marginRight: '16px' }}>
             <TableContainer sx={{ flexGrow: '1', display: 'flex', flexDirection: 'column', borderRadius: '8px', margin: '8px', overflow: 'hidden' }} component={Paper}>
                 <Table sx={{ flexGrow: '1', display: 'flex', flexDirection: 'column', overflow: 'hidden', margin: '0px', width: "100%" }} size="small" aria-label="a dense table">
                     <TableHead sx={{ height: '45px', marginBottom: '16px' }}>
@@ -71,7 +84,7 @@ const ReportTable: React.FC<ReportTableProps> = ({ data, id, isLoading, displayR
                                 data.map((row) => (
                                     <TableRow
                                         key={row.id!}
-                                        sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                                        sx={{ '&:last-child td, &:last-child th': { border: 0 }, backgroundColor: selectedRow === row.id! ? 'cyan' : 'white' }}
                                     >
                                         <TableCell>{formatDateToYYYYMMDD(row.createdDate || new Date())}</TableCell>
                                         <TableCell align="left">{row.client?.name}</TableCell>

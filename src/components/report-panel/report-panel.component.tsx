@@ -7,18 +7,35 @@ import CommentIcon from '@mui/icons-material/Comment';
 import HailIcon from '@mui/icons-material/Hail';
 import FlagIcon from '@mui/icons-material/Flag';
 import EditNoteIcon from '@mui/icons-material/EditNote';
-
+import LocationOnIcon from '@mui/icons-material/LocationOn';
+import Button from '@mui/material/Button/Button';
+import CommandModel from '../../models/command.model';
 
 interface ReportPanelProps {
     report?: ReportModel;
+    location?: string;
     clientType?: ClientType;
 }
 
-const ReportPanel: React.FC<ReportPanelProps> = ({ report, clientType }) => {
+const openGoogleMaps = (location?: string) => {
+    if (location && location.length > 0) {
+        let coordinates = location.split(',');
+        const latitude = coordinates[0]; // Replace with your desired latitude
+        const longitude = coordinates[1]; // Replace with your desired longitude
+        const url = `https://www.google.com/maps?q=${latitude},${longitude}`;
+        window.open(url, '_blank');
+    }
+};
+
+const ReportPanel: React.FC<ReportPanelProps> = ({ report, clientType, location }) => {
     if (report) {
         return (
             <div style={{ margin: '16px', flexGrow: '1' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'end', marginBottom: '8px' }}>
 
+                    <Button onClick={() => openGoogleMaps(location)} variant="outlined"> <LocationOnIcon />Afficher la localisation</Button>
+                </div>
+                <Divider component="div" style={{ margin: '8px 0px' }} />
                 <h4 style={{ fontSize: 17 }}><InventoryIcon style={{ fontSize: 17 }} /> Produits:</h4>
                 {
                     report.products?.map((product) => (
@@ -26,7 +43,7 @@ const ReportPanel: React.FC<ReportPanelProps> = ({ report, clientType }) => {
                             <h6 style={{ fontSize: 15, fontWeight: '400' }}>{product.name}</h6>
                             {
                                 clientType !== ClientType.doctor ? (
-                                    <div>
+                                    <div style={{ display: 'flex', justifyContent: 'space-between', width: '66%' }}>
                                         <h6 style={{ fontSize: 15, fontWeight: '400' }}>quantité:{product.quantity}</h6>
                                         <h6 style={{ fontSize: 15, fontWeight: '400' }}>{product.rotations}/mois</h6>
                                     </div>

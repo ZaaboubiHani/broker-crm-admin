@@ -9,7 +9,7 @@ import Form from 'react-bootstrap/Form';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSearch } from '@fortawesome/free-solid-svg-icons';
 import UserPicker from '../../components/user-picker/user-picker.component';
-import UserModel from '../../models/user.model';
+import UserModel, { UserType } from '../../models/user.model';
 import VisitTaskModel from '../../models/visit-task.model';
 import UserService from '../../services/user.service';
 import { DotSpinner } from '@uiball/loaders';
@@ -25,9 +25,12 @@ interface PlanPageProps {
     selectedDate: Date;
     searchText: string;
     delegates: UserModel[];
+    supervisors: UserModel[];
+    selectedSupervisor?: UserModel;
     filtredDelegates: UserModel[];
     selectedDelegate?: UserModel;
     loadingVisitTasksData: boolean;
+    hasData: boolean;
     isLoading: boolean;
     loadingVisitTaskDetails: boolean;
     visitTasks: VisitTaskModel[];
@@ -39,7 +42,8 @@ interface PlanPageProps {
     objectifChiffreDaffaire: number;
     objectifVisites: number;
     successRate: number;
-
+    selectedIndex: number;
+    currentUser: UserModel;
 }
 
 const kPrincipal = '#35d9da';
@@ -53,9 +57,10 @@ class PlanPage extends Component<{}, PlanPageProps> {
             selectedDate: new Date(),
             searchText: '',
             delegates: [],
+            supervisors: [],
             filtredDelegates: [],
             loadingVisitTasksData: false,
-            isLoading: true,
+            isLoading: false,
             loadingVisitTaskDetails: false,
             visitTasks: [],
             visitTaskDetails: [],
@@ -65,6 +70,9 @@ class PlanPage extends Component<{}, PlanPageProps> {
             objectifChiffreDaffaire: 0,
             objectifVisites: 0,
             successRate: 0,
+            selectedIndex: -1,
+            currentUser: new UserModel(),
+            hasData: false,
         }
     }
 
@@ -77,11 +85,11 @@ class PlanPage extends Component<{}, PlanPageProps> {
     handleDelegateFilter = () => {
         if (this.state.searchText.length === 0) {
             var filtredDelegates = [...this.state.delegates];
-            this.setState({ filtredDelegates: filtredDelegates });
+            this.setState({ filtredDelegates: filtredDelegates, selectedIndex: -1 });
         }
         else {
             var filtredDelegates = this.state.delegates.filter(delegate => delegate.username!.toLowerCase().includes(this.state.searchText.toLowerCase()));
-            this.setState({ filtredDelegates: filtredDelegates });
+            this.setState({ filtredDelegates: filtredDelegates, selectedIndex: -1 });
         }
     }
 
@@ -90,7 +98,7 @@ class PlanPage extends Component<{}, PlanPageProps> {
     }
 
     handleSelectDelegate = async (delegate: UserModel) => {
-        this.setState({ loadingVisitTasksData: true, selectedVisitTaskDate: undefined, visitTaskDetails: [] });
+        this.setState({ loadingVisitTasksData: true, selectedVisitTaskDate: undefined, visitTaskDetails: [], selectedIndex: -1 });
         var visitTasks = await this.visitTaskService.getAllVisitsTasks(this.state.selectedDate, delegate.id!);
         this.setState({ selectedDelegate: delegate, visitTasks: visitTasks, loadingVisitTasksData: false });
         var planDeTournee = await this.statisticsService.getPlanDeTournee(this.state.selectedDate, delegate.id!);
@@ -112,7 +120,7 @@ class PlanPage extends Component<{}, PlanPageProps> {
     }
 
     handleOnPickDate = async (date: Date) => {
-        this.setState({ loadingVisitTasksData: true, selectedVisitTaskDate: undefined, visitTaskDetails: [] });
+        this.setState({ loadingVisitTasksData: true, selectedVisitTaskDate: undefined, visitTaskDetails: [], selectedIndex: -1 });
         var visitTasks = await this.visitTaskService.getAllVisitsTasks(date, this.state.selectedDelegate!.id!);
         this.setState({ selectedDate: date, visitTasks: visitTasks, loadingVisitTasksData: false, });
         var planDeTournee = await this.statisticsService.getPlanDeTournee(date, this.state.selectedDelegate!.id!);
@@ -133,7 +141,43 @@ class PlanPage extends Component<{}, PlanPageProps> {
     }
 
     loadPlanPageData = async () => {
-        var delegates = await this.userService.getDelegateUsers();
+        this.setState({ isLoading: true });
+        if (!this.state.isLoading) {
+            var currentUser = await this.userService.getMe();
+
+            if (currentUser != undefined) {
+                this.setState({ currentUser: currentUser });
+            }
+            if (currentUser.type === UserType.supervisor) {
+                var delegates = await this.userService.getUsersByCreator(currentUser.id!, UserType.delegate);
+                if (delegates.length > 0) {
+                    this.setState({ selectedDelegate: delegates[0] });
+                    var planDeTournee = await this.statisticsService.getPlanDeTournee(this.state.selectedDate, delegates[0].id!);
+                    var couverturePortfeuille = await this.statisticsService.getCouverturePortfeuille(this.state.selectedDate, delegates[0].id!);
+                    var moyenneVisitesParJour = await this.statisticsService.getMoyenneVisitesParJour(this.state.selectedDate, delegates[0].id!);
+                    var objectifChiffreDaffaire = await this.statisticsService.getObjectifChiffreDaffaire(this.state.selectedDate, delegates[0].id!);
+                    var objectifVisites = await this.statisticsService.getObjectifVisites(this.state.selectedDate, delegates[0].id!);
+                    var successRate = await this.statisticsService.getDelegateSuccessRateMonth(this.state.selectedDate, delegates[0].id!);
+                    var visitTasks = await this.visitTaskService.getAllVisitsTasks(new Date(), delegates[0].id!);
+                    this.setState({
+                        visitTasks: visitTasks,
+                        planDeTournee: planDeTournee,
+                        couverturePortfeuille: couverturePortfeuille,
+                        moyenneVisitesParJour: moyenneVisitesParJour,
+                        objectifChiffreDaffaire: objectifChiffreDaffaire,
+                        objectifVisites: objectifVisites,
+                        successRate: successRate,
+                    });
+                }
+                this.setState({ isLoading: false, hasData: true, delegates: delegates, filtredDelegates: delegates });
+            }
+
+        }
+    };
+
+    handleSelectSupervisor = async (supervisor: UserModel) => {
+        this.setState({ loadingVisitTaskDetails: true,delegates:[] });
+        var delegates = await this.userService.getUsersByCreator(supervisor.id!, UserType.delegate);
         if (delegates.length > 0) {
             this.setState({ selectedDelegate: delegates[0] });
             var planDeTournee = await this.statisticsService.getPlanDeTournee(this.state.selectedDate, delegates[0].id!);
@@ -153,11 +197,11 @@ class PlanPage extends Component<{}, PlanPageProps> {
                 successRate: successRate,
             });
         }
-        this.setState({ isLoading: false, delegates: delegates, filtredDelegates: delegates });
-    };
+        this.setState({ loadingVisitTaskDetails: false, delegates: delegates, filtredDelegates: delegates });
+    }
 
-    handleSelectVisitTaskDate = async (date: Date) => {
-        this.setState({ loadingVisitTaskDetails: true });
+    handleSelectVisitTaskDate = async (date: Date, index: number) => {
+        this.setState({ loadingVisitTaskDetails: true, selectedIndex: index });
         var tasks = await this.taskService.getAllTasksOfDelegate(date, this.state.selectedDelegate!.id!);
         var visits = await this.visitService.getAllVisitsOfDelegateDay(date, this.state.selectedDelegate!.id!);
         tasks.forEach((task) => {
@@ -167,10 +211,10 @@ class PlanPage extends Component<{}, PlanPageProps> {
         });
         this.setState({ visitTaskDetails: tasks, loadingVisitTaskDetails: false });
     };
-    
+
 
     render() {
-        if (this.state.isLoading) {
+        if (!this.state.hasData) {
             this.loadPlanPageData();
             return (
                 <div style={{
@@ -191,6 +235,11 @@ class PlanPage extends Component<{}, PlanPageProps> {
         else {
             return (
                 <div className='plan-container'>
+                    {
+                        this.state.currentUser.type === UserType.admin ? (<div style={{ display: 'flex' }}>
+                            <UserPicker delegates={this.state.supervisors} onSelect={this.handleSelectSupervisor}></UserPicker>
+                        </div>) : null
+                    }
                     <div className='search-bar'>
                         <Form>
                             <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
@@ -214,7 +263,7 @@ class PlanPage extends Component<{}, PlanPageProps> {
                         <CircularProgressLabel colorStroke='#3A25E6' direction='row' secondTitle='Taux de réussite' value={this.state.successRate} />
                     </div>
                     <div style={{ width: '100%', display: 'flex', flexGrow: '1', height: 'calc(100% - 500px)' }}>
-                        <PlanTable onDisplayDetails={this.handleSelectVisitTaskDate} isLoading={this.state.loadingVisitTasksData} id='plantable' data={this.state.visitTasks}></PlanTable>
+                        <PlanTable selectedId={this.state.selectedIndex} onDisplayDetails={this.handleSelectVisitTaskDate} isLoading={this.state.loadingVisitTasksData} id='plantable' data={this.state.visitTasks}></PlanTable>
                         <div className='user-panel'>
                             <PlanPanel isLoading={this.state.loadingVisitTaskDetails} data={this.state.visitTaskDetails}></PlanPanel>
                         </div>

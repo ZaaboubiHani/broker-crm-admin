@@ -23,6 +23,7 @@ interface AddClientDialogProps {
     onClose: (value: string) => void;
     onAdd: (user: UserModel) => void,
     creatorType: UserType,
+    wilayas: WilayaModel[],
 }
 
 
@@ -32,11 +33,7 @@ const AddClientDialog: React.FC<AddClientDialogProps> = (props: AddClientDialogP
 
     const [userWilayas, setUserWilayas] = React.useState<string[]>([]);
 
-    const wilayas: WilayaModel[] = [
-        { id: 2, name: "Adrar" },
-        { id: 3, name: "Alger" },
-        { id: 1, name: "Batna" },
-    ];
+    
 
     const [user, setUser] = useState<UserModel>(new UserModel({ type: creatorType === UserType.admin || creatorType === undefined ? UserType.supervisor : UserType.delegate }));
 
@@ -44,6 +41,9 @@ const AddClientDialog: React.FC<AddClientDialogProps> = (props: AddClientDialogP
 
     const handleAddUser = (event: React.MouseEvent<HTMLButtonElement>): void => {
         if (user != undefined) {
+            if(props.creatorType === UserType.supervisor){
+                user.type = UserType.delegate;
+            }
             onAdd(user);
             setUser(new UserModel({ type: creatorType === UserType.admin ? UserType.supervisor : UserType.delegate }));
             setUserWilayas([]);
@@ -65,7 +65,7 @@ const AddClientDialog: React.FC<AddClientDialogProps> = (props: AddClientDialogP
         user.wilayas = [];
 
         for (let i = 0; i < names.length; i++) {
-            var wilaya = wilayas.find((w) => w.name === names[i]);
+            var wilaya = props.wilayas.find((w) => w.name === names[i]);
             if (wilaya) {
                 user.wilayas.push(wilaya)
             }
@@ -160,7 +160,7 @@ const AddClientDialog: React.FC<AddClientDialogProps> = (props: AddClientDialogP
                                     input={<OutlinedInput label="Tag" />}
                                     renderValue={(selected) => selected.join(', ')}
                                 >
-                                    {wilayas.map((wilaya) => (
+                                    {props.wilayas.map((wilaya) => (
                                         <MenuItem key={wilaya.id} value={wilaya.name}>
                                             <Checkbox checked={userWilayas.indexOf(wilaya.name ?? '') > -1} />
                                             <ListItemText primary={wilaya.name} />

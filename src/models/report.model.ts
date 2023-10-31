@@ -11,7 +11,6 @@ export default class ReportModel {
     suppliers?: SupplierModel[];
     comments?: CommentModel[];
     objectif?: string;
-    dejaClient?: boolean;
 
 
     constructor(data?: ReportModel) {
@@ -23,7 +22,6 @@ export default class ReportModel {
             this.suppliers = data.suppliers ? [...data.suppliers] : [];
             this.comments = data.comments ? [...data.comments] : [];
             this.objectif = data.objectif;
-            this.dejaClient = data.dejaClient;
         } else {
             this.products = [];
             this.coproducts = [];
@@ -37,7 +35,6 @@ export default class ReportModel {
         report.id = json.id;
         report.note = json.attributes.note;
         report.objectif = json.attributes.objectif;
-        report.dejaClient = json.attributes.dejaClient;
         
         if (json?.attributes?.products?.data) {
             report.products = json.attributes.products.data.map((productData: any) => {

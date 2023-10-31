@@ -22,24 +22,38 @@ interface DelegateTableProps {
     page: number;
     size: number;
     total: number;
+    selectedId: number;
     pageChange: (page: number) => void;
     rowNumChange: (rowNum: number) => void;
 }
 
-const DelegateTable: React.FC<DelegateTableProps> = ({ data, id, onDisplayCommand, onDisplayReport, isLoading, total, size, page, rowNumChange, pageChange, }) => {
+const DelegateTable: React.FC<DelegateTableProps> = ({ data, id, onDisplayCommand, onDisplayReport, isLoading, selectedId, total, size, page, rowNumChange, pageChange, }) => {
     const [rowsPerPage, setRowsPerPage] = React.useState(size);
+
+    const [selectedRow, setSelectedRow] = React.useState(selectedId);
+
     const [pageIndex, setPageIndex] = React.useState(page - 1);
+
+    if (selectedRow !== selectedId) {
+        setSelectedRow(selectedId);
+    }
+
+    if (pageIndex !== (page - 1)) {
+        setPageIndex(page - 1);
+    }
     const handleChangePage = (event: unknown, newPage: number) => {
         setPageIndex(newPage);
         pageChange(newPage + 1);
+        setSelectedRow(-1);
     };
     const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement>) => {
         setRowsPerPage(parseInt(event.target.value, 10));
         setPageIndex(0);
+        setSelectedRow(-1);
         rowNumChange(parseInt(event.target.value, 10));
     };
     return (
-        <div id={id} style={{ display: 'flex', flexDirection: 'column', flexGrow: '1', marginRight: '16px', height: 'calc(100% - 1px)'  }}>
+        <div id={id} style={{ display: 'flex', flexDirection: 'column', flexGrow: '1', marginRight: '16px', height: 'calc(100% - 1px)' }}>
             <TableContainer sx={{ flexGrow: '1', display: 'flex', flexDirection: 'column', borderRadius: '8px', margin: '8px', overflow: 'hidden' }} component={Paper}>
                 <Table sx={{ display: 'flex', flexDirection: 'column', overflow: 'hidden', margin: '0px', width: "100%" }} size="small" aria-label="a dense table">
                     <TableHead sx={{ height: '45px', marginBottom: '16px' }}>
@@ -73,7 +87,7 @@ const DelegateTable: React.FC<DelegateTableProps> = ({ data, id, onDisplayComman
                                 data.map((row) => (
                                     <TableRow
                                         key={row.id!}
-                                        sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                                        sx={{ '&:last-child td, &:last-child th': { border: 0 }, backgroundColor: selectedRow === row.id! ? 'cyan' : 'white' }}
                                     >
                                         <TableCell style={{ width: '250px', whiteSpace: 'nowrap', }}>{formatDateToYYYYMMDD(row.createdDate || new Date())}</TableCell>
                                         <TableCell align="left" style={{

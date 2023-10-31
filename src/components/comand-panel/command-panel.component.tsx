@@ -60,7 +60,7 @@ const CommandPanel: React.FC<CommandPanelProps> = ({ command }) => {
     };
     if (command) {
         return (
-            <div style={{ margin: '8px', flexGrow: '1', overflowY: 'scroll', overflowX: 'hidden', paddingRight: '8px' }}>
+            <div style={{ margin: '8px', flexGrow: '1', overflowY: 'scroll', overflowX: 'hidden', paddingRight: '8px',height:'100%' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'end' }}>
                     <h4 style={{ fontSize: 15, fontWeight: '400' }}> Statut: {command.isHonored ? 'honoré' : 'non honoré'}</h4>
                     <Button onClick={() => generatePdf(command)} variant="outlined"> <PictureAsPdfIcon />Télécharger PDF</Button>

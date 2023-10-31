@@ -24,21 +24,35 @@ interface HomeTableProps {
     page: number;
     size: number;
     total: number;
+    selectedId: number;
     pageChange: (page: number) => void;
     rowNumChange: (rowNum: number) => void;
 }
 
-const HomeTable: React.FC<HomeTableProps> = ({ data, id, isLoading, firstHeader, onDisplayReport, onDisplayCommand, total, size, page, rowNumChange, pageChange, }) => {
+const HomeTable: React.FC<HomeTableProps> = ({ data, id, isLoading, firstHeader, onDisplayReport, onDisplayCommand, total, size, page, rowNumChange, pageChange, selectedId }) => {
 
     const [rowsPerPage, setRowsPerPage] = React.useState(size);
+    
+    const [selectedRow, setSelectedRow] = React.useState(selectedId);
+
     const [pageIndex, setPageIndex] = React.useState(page - 1);
+
+    if (selectedRow !== selectedId) {
+        setSelectedRow(selectedId);
+    }
+
+    if (pageIndex !== (page - 1)) {
+        setPageIndex(page - 1);
+    }
     const handleChangePage = (event: unknown, newPage: number) => {
         setPageIndex(newPage);
         pageChange(newPage + 1);
+        setSelectedRow(-1);
     };
     const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement>) => {
         setRowsPerPage(parseInt(event.target.value, 10));
         setPageIndex(0);
+        setSelectedRow(-1);
         rowNumChange(parseInt(event.target.value, 10));
     };
 
@@ -78,7 +92,7 @@ const HomeTable: React.FC<HomeTableProps> = ({ data, id, isLoading, firstHeader,
                                 data.map((row) => (
                                     <TableRow
                                         key={row.id!}
-                                        sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                                        sx={{ '&:last-child td, &:last-child th': { border: 0 }, backgroundColor: selectedRow === row.id! ? 'cyan' : 'white' }}
                                     >
                                         <TableCell align="left">{row.user?.username}</TableCell>
                                         <TableCell align="left">{row.client?.name}</TableCell>
@@ -87,11 +101,13 @@ const HomeTable: React.FC<HomeTableProps> = ({ data, id, isLoading, firstHeader,
                                         <TableCell align="left">{row.client?.commune}</TableCell>
                                         <TableCell align="left">
                                             <Button onClick={() => {
+                                                setSelectedRow(row.id!);
                                                 onDisplayReport(row);
                                             }} variant="text">Voir</Button>
                                         </TableCell>
                                         <TableCell align="left">
                                             <Button disabled={!row.hasCommand} onClick={() => {
+                                                setSelectedRow(row.id!);
                                                 onDisplayCommand(row);
                                             }} variant="text">Voir</Button>
                                         </TableCell>

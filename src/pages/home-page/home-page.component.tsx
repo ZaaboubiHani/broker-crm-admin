@@ -143,14 +143,13 @@ class HomePage extends Component<HomePageProps, HomePageState> {
                     });
                 }
             }
-            this.setState({ selectedDate: new Date() })
         }
 
     };
 
 
     handleOnPickDate = async (date: Date) => {
-        this.setState({ loadingVisitsData: true, selectedReport: undefined, kamPage: 1, delegatePage: 1 });
+        this.setState({ loadingVisitsData: true, selectedReport: undefined, kamPage: 1, delegatePage: 1, selectedVisit: undefined });
 
         if (this.state.currentUser.type === UserType.supervisor) {
             var { visits: visits, total: total } = await this.visitService.getAllVisits(1, this.state.sizeDelegate, date, ClientType.pharmacy, this.state.currentUser.id!);
@@ -180,7 +179,7 @@ class HomePage extends Component<HomePageProps, HomePageState> {
     }
 
     handleDelegateVisitsFilter = () => {
-        this.setState({ selectedReport: undefined });
+        this.setState({ selectedReport: undefined, selectedVisit: undefined, selectedCommand: undefined });
         if (this.state.delegateSearchText.length === 0) {
             var filteredVisits = [...this.state.delegateVisits];
             this.setState({ filteredDelegateVisits: filteredVisits });
@@ -192,7 +191,7 @@ class HomePage extends Component<HomePageProps, HomePageState> {
     }
 
     handleKamVisitsFilter = () => {
-        this.setState({ selectedReport: undefined });
+        this.setState({ selectedReport: undefined, selectedVisit: undefined, selectedCommand: undefined });
         if (this.state.kamSearchText.length === 0) {
             var filteredVisits = [...this.state.kamVisits];
             this.setState({ filteredKamVisits: filteredVisits });
@@ -204,7 +203,7 @@ class HomePage extends Component<HomePageProps, HomePageState> {
     }
 
     handleSelectSupervisor = async (supervisor: UserModel) => {
-        this.setState({ loadingVisitsData: true, selectedReport: undefined, delegatePage: 1 });
+        this.setState({ loadingVisitsData: true, selectedReport: undefined, selectedVisit: undefined, selectedCommand: undefined, delegatePage: 1 });
         var { visits: visits, total: total } = await this.visitService.getAllVisits(1, this.state.sizeDelegate, this.state.selectedDate, ClientType.pharmacy, supervisor.id!);
 
         this.setState({
@@ -226,13 +225,13 @@ class HomePage extends Component<HomePageProps, HomePageState> {
     }
 
     handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
-        this.setState({ index: newValue });
+        this.setState({ index: newValue, selectedReport: undefined, selectedVisit: undefined, selectedCommand: undefined });
     };
 
     handleDelegatePageChange = async (page: number) => {
-        this.setState({ loadingVisitsData: true, });
+        this.setState({ loadingVisitsData: true, selectedReport: undefined, selectedVisit: undefined, selectedCommand: undefined });
         if (this.state.currentUser.type === UserType.supervisor) {
-            var { visits: visits, total: total } = await this.visitService.getAllVisits(page, this.state.sizeDelegate,new Date(), ClientType.pharmacy, this.state.currentUser.id!);
+            var { visits: visits, total: total } = await this.visitService.getAllVisits(page, this.state.sizeDelegate, new Date(), ClientType.pharmacy, this.state.currentUser.id!);
             this.setState({
                 delegatePage: page,
                 delegateVisits: visits,
@@ -254,7 +253,7 @@ class HomePage extends Component<HomePageProps, HomePageState> {
     }
 
     handleKamPageChange = async (page: number) => {
-        this.setState({ loadingVisitsData: true, kamPage: page, });
+        this.setState({ loadingVisitsData: true, kamPage: page, selectedReport: undefined, selectedVisit: undefined, selectedCommand: undefined });
 
         var { visits: kamVisits, total: totalKam } = await this.visitService.getAllVisits(page, this.state.sizeDelegate, this.state.selectedDate, ClientType.wholesaler, this.state.currentUser.id!);
         this.setState({
@@ -268,7 +267,7 @@ class HomePage extends Component<HomePageProps, HomePageState> {
     }
 
     handleDelegateRowNumChange = async (size: number) => {
-        this.setState({ loadingVisitsData: true, delegatePage: 1, sizeDelegate: size, });
+        this.setState({ loadingVisitsData: true, delegatePage: 1, sizeDelegate: size, selectedReport: undefined, selectedVisit: undefined, selectedCommand: undefined });
         if (this.state.currentUser.type === UserType.supervisor) {
             var { visits: visits, total: total } = await this.visitService.getAllVisits(1, size, this.state.selectedDate, ClientType.pharmacy, this.state.currentUser.id!);
             this.setState({
@@ -294,7 +293,7 @@ class HomePage extends Component<HomePageProps, HomePageState> {
     }
 
     handleKamRowNumChange = async (size: number) => {
-        this.setState({ loadingVisitsData: true, delegatePage: 1, sizeDelegate: size, });
+        this.setState({ loadingVisitsData: true, delegatePage: 1, sizeDelegate: size, selectedReport: undefined, selectedVisit: undefined, selectedCommand: undefined });
         var { visits: kamVisits, total: totalKam } = await this.visitService.getAllVisits(1, this.state.sizeDelegate, this.state.selectedDate, ClientType.wholesaler, this.state.currentUser.id!);
         this.setState({
             kamVisits: kamVisits,
@@ -369,6 +368,7 @@ class HomePage extends Component<HomePageProps, HomePageState> {
                                         data={this.state.filteredDelegateVisits}
                                         onDisplayReport={this.handleDisplayReport}
                                         onDisplayCommand={this.handleDisplayCommand}
+                                        selectedId={this.state.selectedVisit?.id ?? -1}
                                     ></HomeTable>
                                     <div className='user-panel'>
                                         {
@@ -393,7 +393,7 @@ class HomePage extends Component<HomePageProps, HomePageState> {
                                                 :
                                                 this.state.showReportPanel ? (
 
-                                                    <ReportPanel report={this.state.selectedReport} clientType={this.state.selectedVisit?.client?.type}></ReportPanel>
+                                                    <ReportPanel location={this.state.selectedVisit?.visitLocation} report={this.state.selectedReport} clientType={this.state.selectedVisit?.client?.type}></ReportPanel>
                                                 ) :
                                                     (
                                                         <CommandPanel command={this.state.selectedCommand} ></CommandPanel>
@@ -430,6 +430,7 @@ class HomePage extends Component<HomePageProps, HomePageState> {
                                         data={this.state.filteredKamVisits}
                                         onDisplayReport={this.handleDisplayReport}
                                         onDisplayCommand={this.handleDisplayCommand}
+                                        selectedId={this.state.selectedVisit?.id ?? -1}
                                     ></HomeTable>
                                     <div className='user-panel'>
                                         {
@@ -454,7 +455,7 @@ class HomePage extends Component<HomePageProps, HomePageState> {
                                                 :
                                                 this.state.showReportPanel ? (
 
-                                                    <ReportPanel report={this.state.selectedReport} clientType={this.state.selectedVisit?.client?.type}></ReportPanel>
+                                                    <ReportPanel location={this.state.selectedVisit?.visitLocation} report={this.state.selectedReport} clientType={this.state.selectedVisit?.client?.type}></ReportPanel>
                                                 ) :
                                                     (
                                                         <CommandPanel command={this.state.selectedCommand} ></CommandPanel>
