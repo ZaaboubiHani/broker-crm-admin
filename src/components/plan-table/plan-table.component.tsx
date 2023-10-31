@@ -17,12 +17,18 @@ import TablePagination from '@mui/material/TablePagination';
 interface PlanTableProps {
     data: VisitTaskModel[];
     isLoading: boolean;
-    onDisplayDetails: (date: Date) => {};
+    onDisplayDetails: (date: Date,index:number) => {};
+    selectedId: number;
     id?: string;
 }
 
-const PlanTable: React.FC<PlanTableProps> = ({ data, id, isLoading, onDisplayDetails, }) => {
+const PlanTable: React.FC<PlanTableProps> = ({ data, id, isLoading, onDisplayDetails, selectedId }) => {
 
+    const [selectedRow, setSelectedRow] = React.useState(selectedId);
+
+    if (selectedRow !== selectedId) {
+        setSelectedRow(selectedId);
+    }
 
     return (
 
@@ -57,7 +63,7 @@ const PlanTable: React.FC<PlanTableProps> = ({ data, id, isLoading, onDisplayDet
                             data.map((row, index) => (
                                 <TableRow
                                     key={index}
-                                    sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                                    sx={{ '&:last-child td, &:last-child th': { border: 0 }, backgroundColor: selectedRow === index! ? 'cyan' : 'white' }}
                                 >
                                     <TableCell sx={{ width: '250px' }} >{formatDateToYYYYMMDD(row.date || new Date())}</TableCell>
                                     <TableCell sx={{ width: '20%' }} align="left">{row.tasksWilayasCommunes?.map(twc => `(${twc})`).join(' ')}</TableCell>
@@ -65,7 +71,7 @@ const PlanTable: React.FC<PlanTableProps> = ({ data, id, isLoading, onDisplayDet
                                     <TableCell sx={{ width: '20%' }} align="center">{row.numVisits}</TableCell>
                                     <TableCell sx={{ width: '20%' }} align="right">
                                         <Button onClick={() => {
-                                            onDisplayDetails(row.date || new Date());
+                                            onDisplayDetails(row.date || new Date(),index);
                                         }} variant="text">Voir</Button>
                                     </TableCell>
                                 </TableRow>

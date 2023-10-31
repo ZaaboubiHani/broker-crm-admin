@@ -282,7 +282,7 @@ class ClientsPage extends Component<{}, ClientsPageProps> {
                                                 )
                                                 :
                                                 this.state.showReportPanel ? (
-                                                    <ReportPanel report={this.state.pharmReportData} clientType={this.state.selectedVisit?.client?.type}></ReportPanel>
+                                                    <ReportPanel location={this.state.selectedVisit?.visitLocation} report={this.state.pharmReportData} clientType={this.state.selectedVisit?.client?.type}></ReportPanel>
                                                 ) :
                                                     (
                                                         <CommandPanel command={this.state.pharmCommandData} ></CommandPanel>

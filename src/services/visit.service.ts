@@ -16,7 +16,7 @@ export default class VisitService {
         } else {
             typeFilter = '&filters[client][relatedSpeciality][domainType][reference][$ne]=wholesaler'
         }
-        var response = await axios.get(`${Globals.apiUrl}/visits?filters[user][creatorId][$eq]=${superId}&pagination[page]=${page}&pagination[pageSize]=${size}&filters[createdDate][$eq]=${formatDateToYYYYMMDD(date)}${typeFilter}&populate[rapport][populate]=*&populate[client][populate]=relatedSpeciality.domainType&populate=user`,
+        var response = await axios.get(`${Globals.apiUrl}/visits?filters[user][creatorId][$eq]=${superId}&pagination[page]=${page}&pagination[pageSize]=${size}&filters[createdDate][$eq]=${formatDateToYYYYMMDD(date)}${typeFilter}&populate[rapport][populate]=*&populate[client][populate]=relatedSpeciality.domainType&populate=user&sort[0]=createdDate:desc`,
             {
                 headers: {
                     'Authorization': `Bearer ${token}`

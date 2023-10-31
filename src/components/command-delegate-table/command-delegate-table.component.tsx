@@ -26,25 +26,36 @@ interface CommandDelegateTableProps {
     isLoading?: boolean;
     page: number;
     size: number;
+    selectedId: number;
     total: number;
     pageChange: (page: number) => void;
     rowNumChange: (rowNum: number) => void;
 }
 
-const CommandDelegateTable: React.FC<CommandDelegateTableProps> = ({ data, id, isLoading, displayCommand, onHonor, total, size, page, rowNumChange, pageChange, }) => {
-    
+const CommandDelegateTable: React.FC<CommandDelegateTableProps> = ({ data, id, selectedId, isLoading, displayCommand, onHonor, total, size, page, rowNumChange, pageChange, }) => {
+
     const [rowsPerPage, setRowsPerPage] = React.useState(size);
-    
+
+    const [selectedRow, setSelectedRow] = React.useState(selectedId);
+
     const [pageIndex, setPageIndex] = React.useState(page - 1);
 
+    if (selectedRow !== selectedId) {
+        setSelectedRow(selectedId);
+    }
+
+    if (pageIndex !== (page - 1)) {
+        setPageIndex(page - 1);
+    }
     const handleChangePage = (event: unknown, newPage: number) => {
         setPageIndex(newPage);
         pageChange(newPage + 1);
+        setSelectedRow(-1);
     };
-
     const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement>) => {
         setRowsPerPage(parseInt(event.target.value, 10));
         setPageIndex(0);
+        setSelectedRow(-1);
         rowNumChange(parseInt(event.target.value, 10));
     };
 
@@ -114,7 +125,7 @@ const CommandDelegateTable: React.FC<CommandDelegateTableProps> = ({ data, id, i
                                 data.map((row, index) => (
                                     <TableRow
                                         key={row.id!}
-                                        sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                                        sx={{ '&:last-child td, &:last-child th': { border: 0 }, backgroundColor: selectedRow === row.id! ? 'cyan' : 'white' }}
                                     >
                                         <TableCell sx={{ width: '150px', whiteSpace: 'nowrap' }}>{formatDateToYYYYMMDD(row.visit?.createdDate || new Date())}</TableCell>
                                         <TableCell align="left">{row.visit?.client?.name}</TableCell>

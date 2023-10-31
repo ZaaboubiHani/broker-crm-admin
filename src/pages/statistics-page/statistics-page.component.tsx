@@ -364,7 +364,6 @@ class StatisticsPage extends Component<{}, StatisticsPageProps> {
             this.state.delegatesContributionChartPie.labels?.push(e.delegateName);
         });
 
-
         this.state.delegateSuccessRateAreaChart.series = [
             {
                 name: 'Total de bon de commandes honores',

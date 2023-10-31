@@ -76,15 +76,15 @@ const ExpenseTable: React.FC<ExpenseTableProps> = ({ data, isLoading }) => {
                                 >
                                     <TableCell sx={{ whiteSpace: 'nowrap', width: '10px' }} >{formatDateToYYYYMMDD(row.createdDate || new Date())}</TableCell>
                                     <TableCell sx={{ width: '10px' }} align="left">{row.startLocation}</TableCell>
-                                    <TableCell align="left">{row.endLocation}</TableCell>
-                                    <TableCell align="center">{row.totalVisitsDoctor}</TableCell>
-                                    <TableCell align="center">{row.totalVisitsPharmacy}</TableCell>
-                                    <TableCell align="center">{row.kmTotal}km</TableCell>
-                                    <TableCell align="left">{row.indemnityKm?.toLocaleString('fr-DZ', { style: 'currency', currency: 'DZD' })}</TableCell>
-                                    <TableCell align="center">{row.nightsTotal}</TableCell>
-                                    <TableCell align="left">{row.indemnityNights?.toLocaleString('fr-DZ', { style: 'currency', currency: 'DZD' })}</TableCell>
-                                    <TableCell align="left">{row.otherExpenses?.toLocaleString('fr-DZ', { style: 'currency', currency: 'DZD' })}</TableCell>
-                                    <TableCell align="left">{row.totalExpense?.toLocaleString('fr-DZ', { style: 'currency', currency: 'DZD' })}</TableCell>
+                                    <TableCell sx={{ width: '20%' }} align="left">{row.endLocation}</TableCell>
+                                    <TableCell sx={{ width: '20%' }} align="center">{row.totalVisitsDoctor}</TableCell>
+                                    <TableCell sx={{ width: '20%' }} align="center">{row.totalVisitsPharmacy}</TableCell>
+                                    <TableCell sx={{ width: '20%' }} align="center">{row.kmTotal}km</TableCell>
+                                    <TableCell sx={{ width: '20%' }} align="left">{row.indemnityKm?.toLocaleString('fr-DZ', { style: 'currency', currency: 'DZD' })}</TableCell>
+                                    <TableCell sx={{ width: '20%' }} align="left">{row.nightsTotal}</TableCell>
+                                    <TableCell sx={{ width: '20%' }} align="left">{row.indemnityNights?.toLocaleString('fr-DZ', { style: 'currency', currency: 'DZD' })}</TableCell>
+                                    <TableCell sx={{ width: '20%' }} align="left">{row.otherExpenses?.toLocaleString('fr-DZ', { style: 'currency', currency: 'DZD' })}</TableCell>
+                                    <TableCell sx={{ width: '20%' }} align="left">{row.totalExpense?.toLocaleString('fr-DZ', { style: 'currency', currency: 'DZD' })}</TableCell>
                                 </TableRow>
                             ))}
                 </TableBody>

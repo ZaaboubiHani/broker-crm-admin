@@ -74,17 +74,32 @@ export default class UserService {
             });
         }
 
-        // await axios.put(`${Globals.apiUrl}/users/${user.id}`,
-        //     {
-        //         data: {
-        //             password: `${user.password}`,
-        //             blocked: user.isBlocked,
-        //         }
-        //     }, {
-        //     headers: {
-        //         'Authorization': `Bearer ${token}`
-        //     }
-        // });
+        if (user.password && user.password?.length >= 8) {
+
+            await axios.put(`${Globals.apiUrl}/updateUser`,
+                {
+                    User: {
+                        id: user.id,
+                        password: `${user.password}`
+                    }
+                }, {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+        }
+
+        await axios.put(`${Globals.apiUrl}/updateUser`,
+            {
+                User: {
+                    id: user.id,
+                    isBlocked: user.isBlocked
+                }
+            }, {
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        });
 
 
         return true;
@@ -111,7 +126,7 @@ export default class UserService {
 
     async getAllUsers(): Promise<UserModel[]> {
         const token = localStorage.getItem('token');
-        //filters[relatedType][id][\$eq]=3&
+
         var response = await axios.get(`${Globals.apiUrl}/users?populate=wilayaActivity.wilayas&populate=relatedType&populate=company`,
             {
                 headers: {
@@ -130,8 +145,10 @@ export default class UserService {
         return [];
     }
 
-    async getUsersByCreator(creatorId: number, userType: UserType): Promise<UserModel[]> {
+    async getUsersByCreator(creatorId: number, userType: UserType, page?: number, size?: number): Promise<UserModel[]> {
+
         const token = localStorage.getItem('token');
+
         var typeFilter = '';
 
         switch (userType) {
@@ -152,8 +169,7 @@ export default class UserService {
                 break;
             }
         }
-
-        var response = await axios.get(`${Globals.apiUrl}/users?populate=wilayaActivity.wilayas&populate=relatedType&populate=company&filters[creatorId][\$eq]=${creatorId}${typeFilter}`,
+        var response = await axios.get(`${Globals.apiUrl}/users?populate=wilayaActivity.wilayas&populate=relatedType&populate=company${userType !== UserType.supervisor && userType !== UserType.kam ? `&filters[creatorId][\$eq]=${creatorId}` : ''}${typeFilter}${page !== undefined && size !== undefined ? `&pagination[page]=${page}&pagination[pageSize]=${size}` : '&pagination[pageSize]=100'}`,
             {
                 headers: {
                     'Authorization': `Bearer ${token}`
@@ -168,7 +184,7 @@ export default class UserService {
             }
             return users;
         }
-        return [];
+        return  [];
     }
 
     async getDelegateUsers(): Promise<UserModel[]> {
