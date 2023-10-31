@@ -231,7 +231,7 @@ class HomePage extends Component<HomePageProps, HomePageState> {
     handleDelegatePageChange = async (page: number) => {
         this.setState({ loadingVisitsData: true, selectedReport: undefined, selectedVisit: undefined, selectedCommand: undefined });
         if (this.state.currentUser.type === UserType.supervisor) {
-            var { visits: visits, total: total } = await this.visitService.getAllVisits(page, this.state.sizeDelegate, new Date(), ClientType.pharmacy, this.state.currentUser.id!);
+            var { visits: visits, total: total } = await this.visitService.getAllVisits(page, this.state.sizeDelegate, this.state.selectedDate, ClientType.pharmacy, this.state.currentUser.id!);
             this.setState({
                 delegatePage: page,
                 delegateVisits: visits,
