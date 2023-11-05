@@ -65,10 +65,13 @@ interface ConfigPageProps {
     draftedComments: CommentModel[];
     supplier: SupplierModel;
     product: ProductModel;
+    coproduct: ProductModel;
     suppliers: SupplierModel[];
     draftedSuppliers: SupplierModel[];
     products: ProductModel[];
+    coproducts: ProductModel[];
     draftedProducts: ProductModel[];
+    draftedCoProducts: ProductModel[];
     loadingSuppliersData: boolean;
     loadingProductsData: boolean;
     wilayas: WilayaModel[];
@@ -83,15 +86,19 @@ interface ConfigPageProps {
     showDeleteMotivationDialog: boolean;
     showRestoreMotivationDialog: boolean;
     showDeleteSupplierDialog: boolean;
+    showRestoreCoProductDialog: boolean;
     showRestoreSupplierDialog: boolean;
     showDeleteProductDialog: boolean;
+    loadingCoProductsData: boolean;
     showRestoreProductDialog: boolean;
+    showDeleteCoProductDialog: boolean;
     snackbarMessage: string;
     selectedSpecialityId: number;
     selectedCommentId: number;
     selectedMotivationId: number;
     selectedSupplierId: number;
     selectedProductId: number;
+    selectedCoProductId: number;
     index: number;
 }
 
@@ -118,22 +125,28 @@ class ConfigPage extends Component<{}, ConfigPageProps> {
             motivations: [],
             supplier: new SupplierModel({}),
             product: new ProductModel({}),
+            coproduct: new ProductModel({}),
             suppliers: [],
             loadingSuppliersData: false,
             loadingProductsData: false,
+            loadingCoProductsData: false,
             wilayas: [],
             products: [],
+            coproducts: [],
+            draftedCoProducts: [],
             expensesConfig: new ExpenseConfigModel({}),
             goals: [],
             showSnackbar: false,
             showDeleteSpecialityDialog: false,
             showRestoreSpecialityDialog: false,
+            showDeleteCoProductDialog: false,
             showDeleteCommentDialog: false,
             showRestoreCommentDialog: false,
             showDeleteMotivationDialog: false,
             showRestoreMotivationDialog: false,
             showDeleteSupplierDialog: false,
             showRestoreProductDialog: false,
+            showRestoreCoProductDialog: false,
             showRestoreSupplierDialog: false,
             showDeleteProductDialog: false,
             snackbarMessage: '',
@@ -142,6 +155,7 @@ class ConfigPage extends Component<{}, ConfigPageProps> {
             selectedSupplierId: 0,
             selectedSpecialityId: 0,
             selectedProductId: 0,
+            selectedCoProductId: 0,
             index: 0,
         }
     }
@@ -175,6 +189,8 @@ class ConfigPage extends Component<{}, ConfigPageProps> {
             var goals = await this.goalService.getAllGoalsOfUserByDateMoth(new Date(), currentUser.id!);
             var products = await this.productService.getAllProducts();
             var draftedProducts = await this.productService.getAllDraftedProducts();
+            var coproducts = await this.productService.getAllCoProducts();
+            var draftedCoProducts = await this.productService.getAllDraftedCoProducts();
             if (!expensesConfig) {
                 expensesConfig = await this.expenseService.createExpensesConfig();
             }
@@ -195,6 +211,8 @@ class ConfigPage extends Component<{}, ConfigPageProps> {
                 expensesConfig: expensesConfig!,
                 goals: goals,
                 products: products,
+                coproducts: coproducts,
+                draftedCoProducts: draftedCoProducts,
             });
         }
     }
@@ -312,6 +330,14 @@ class ConfigPage extends Component<{}, ConfigPageProps> {
         this.setState({ showSnackbar: true, snackbarMessage: 'Produit créé' });
     }
 
+    handleCreateCoProduct = async () => {
+        this.setState({ loadingCoProductsData: true });
+        await this.productService.createCoProduct(this.state.coproduct);
+        var coprodcts = await this.productService.getAllCoProducts();
+        this.setState({ loadingCoProductsData: false, coproducts: coprodcts, coproduct: new ProductModel({}) });
+        this.setState({ showSnackbar: true, snackbarMessage: 'Produit concurrent créé' });
+    }
+
     handleRemoveSupplier = async () => {
         this.setState({ loadingSuppliersData: true, showDeleteSupplierDialog: false });
         await this.supplierService.draftSupplier(this.state.selectedSupplierId);
@@ -320,6 +346,7 @@ class ConfigPage extends Component<{}, ConfigPageProps> {
         this.setState({ loadingSuppliersData: false, suppliers: suppliers, draftedSuppliers: draftedSuppliers });
         this.setState({ showSnackbar: true, snackbarMessage: 'Fournisseur supprimé' });
     }
+
     handleRestoreSupplier = async () => {
         this.setState({ loadingSuppliersData: true, showRestoreSupplierDialog: false });
         await this.supplierService.publishSupplier(this.state.selectedSupplierId);
@@ -334,16 +361,34 @@ class ConfigPage extends Component<{}, ConfigPageProps> {
         await this.productService.draftProduct(this.state.selectedProductId);
         var products = await this.productService.getAllProducts();
         var draftedProducts = await this.productService.getAllDraftedProducts();
-        this.setState({ loadingProductsData: false, products: products,draftedProducts:draftedProducts });
+        this.setState({ loadingProductsData: false, products: products, draftedProducts: draftedProducts });
         this.setState({ showSnackbar: true, snackbarMessage: 'Produit supprimé' });
     }
+
+    handleRemoveCoProduct = async () => {
+        this.setState({ loadingCoProductsData: true, showDeleteCoProductDialog: false });
+        await this.productService.draftCoProduct(this.state.selectedCoProductId);
+        var coproducts = await this.productService.getAllCoProducts();
+        var draftedCoProducts = await this.productService.getAllDraftedCoProducts();
+        this.setState({ loadingCoProductsData: false, coproducts: coproducts, draftedCoProducts: draftedCoProducts });
+        this.setState({ showSnackbar: true, snackbarMessage: 'Produit concurrent supprimé' });
+    }
+
     handleRestoreProduct = async () => {
         this.setState({ loadingProductsData: true, showRestoreProductDialog: false });
         await this.productService.publishProduct(this.state.selectedProductId);
         var products = await this.productService.getAllProducts();
         var draftedProducts = await this.productService.getAllDraftedProducts();
-        this.setState({ loadingProductsData: false, products: products,draftedProducts:draftedProducts });
+        this.setState({ loadingProductsData: false, products: products, draftedProducts: draftedProducts });
         this.setState({ showSnackbar: true, snackbarMessage: 'Produit restauré' });
+    }
+    handleRestoreCoProduct = async () => {
+        this.setState({ loadingCoProductsData: true, showRestoreCoProductDialog: false });
+        await this.productService.publishCoProduct(this.state.selectedCoProductId);
+        var coproducts = await this.productService.getAllCoProducts();
+        var draftedCoProducts = await this.productService.getAllDraftedCoProducts();
+        this.setState({ loadingCoProductsData: false, coproducts: coproducts, draftedCoProducts: draftedCoProducts });
+        this.setState({ showSnackbar: true, snackbarMessage: 'Produit concurrent restauré' });
     }
 
     handleSaveExpenseConfigChange = async () => {
@@ -729,7 +774,7 @@ class ConfigPage extends Component<{}, ConfigPageProps> {
                                                 this.state.product.collision = parseInt(event.target.value);
                                             }} type='number' size="small" id="outlined-basic" label="Collisage" variant="outlined" sx={{ backgroundColor: 'white', borderRadius: '4px', height: '40px', flexGrow: '1' }} />
 
-                                          
+
                                         </div>
                                         <div style={{ display: 'flex', margin: '16px 0px 16px 0px' }}>
                                             <LocalizationProvider dateAdapter={AdapterDayjs}>
@@ -782,6 +827,106 @@ class ConfigPage extends Component<{}, ConfigPageProps> {
                                                                 <TableCell sx={{ padding: '0px 16px 0px 0px' }} align="right">
                                                                     <IconButton onClick={() => {
                                                                         this.setState({ showDeleteProductDialog: true, selectedProductId: row.id! });
+                                                                    }} >
+                                                                        <DeleteIcon />
+                                                                    </IconButton>
+                                                                </TableCell>
+                                                            </TableRow>
+                                                        ))}
+                                            </TableBody>
+                                        </Table>
+                                    </div>
+                                </div>
+                                <Divider component="div" style={{ margin: '0px 16px' }} sx={{ borderBottom: 'solid grey 1px' }} />
+                                <div style={{ width: '100%', display: 'flex', maxHeight: '450px' }}>
+                                    <div style={{ width: '40%', margin: '8px 0px 8px 8px', backgroundColor: 'white', borderRadius: '4px', padding: '16px' }}>
+                                        <h4>
+                                            Configuration des produits concurrents
+                                        </h4>
+                                        <div style={{ display: 'flex', margin: '8px 0px' }}>
+                                            <TextField value={this.state.coproduct.name} onChange={(event) => {
+                                                this.state.coproduct.name = event.target.value;
+                                            }} size="small" id="outlined-basic" label="Nom de produit" variant="outlined" sx={{ marginRight: '16px', backgroundColor: 'white', borderRadius: '4px', height: '40px', flexGrow: '1' }} />
+                                            <TextField value={this.state.coproduct.ug} onChange={(event) => {
+                                                this.state.coproduct.ug = parseInt(event.target.value);
+                                            }} type='number' size="small" label="UG" variant="outlined" sx={{ backgroundColor: 'white', borderRadius: '4px', height: '40px', flexGrow: '1' }} />
+                                        </div>
+                                        <div style={{ display: 'flex', margin: '8px 0px' }}>
+                                            <TextField value={this.state.coproduct.remise} onChange={(event) => {
+                                                this.state.coproduct.remise = parseInt(event.target.value);
+                                            }} type='number' size="small" id="outlined-basic" label="Remise" variant="outlined" sx={{ marginRight: '16px', backgroundColor: 'white', borderRadius: '4px', height: '40px', flexGrow: '1' }} />
+
+                                            <TextField value={this.state.coproduct.wholesalePriceUnit} onChange={(event) => {
+                                                this.state.coproduct.wholesalePriceUnit = parseInt(event.target.value);
+                                            }} type='number' size="small" label="Grossiste prix unitaire" variant="outlined" sx={{ backgroundColor: 'white', borderRadius: '4px', height: '40px', flexGrow: '1' }} />
+                                        </div>
+                                        <div style={{ display: 'flex', margin: '8px 0px' }}>
+                                            <TextField value={this.state.coproduct.pharmacyPriceUnit} onChange={(event) => {
+                                                this.state.coproduct.pharmacyPriceUnit = parseInt(event.target.value);
+                                            }} type='number' size="small" id="outlined-basic" label="Pharmacie prix unitaire" variant="outlined" sx={{ marginRight: '16px', backgroundColor: 'white', borderRadius: '4px', height: '40px', flexGrow: '1' }} />
+
+                                            <TextField value={this.state.coproduct.superWholesalePriceUnit} onChange={(event) => {
+                                                this.state.coproduct.superWholesalePriceUnit = parseInt(event.target.value);
+                                            }} type='number' size="small" label="Super grossiste prix unitaire" variant="outlined" sx={{ backgroundColor: 'white', borderRadius: '4px', height: '40px', flexGrow: '1' }} />
+                                        </div>
+                                        <div style={{ display: 'flex', margin: '8px 0px 0px' }}>
+                                            <TextField value={this.state.coproduct.collision} onChange={(event) => {
+                                                this.state.coproduct.collision = parseInt(event.target.value);
+                                            }} type='number' size="small" id="outlined-basic" label="Collisage" variant="outlined" sx={{ backgroundColor: 'white', borderRadius: '4px', height: '40px', flexGrow: '1' }} />
+
+
+                                        </div>
+                                        <div style={{ display: 'flex', margin: '16px 0px 16px 0px' }}>
+                                            <LocalizationProvider dateAdapter={AdapterDayjs}>
+                                                <DatePicker value={this.state.coproduct.ddp} onChange={(date) => {
+                                                    this.state.coproduct.ddp = date;
+                                                }} label="DDP" />
+                                            </LocalizationProvider>
+                                            <Button onClick={() => this.handleCreateCoProduct()} startIcon={<AddIcon />} sx={{ border: 'solid grey 1px', backgroundColor: 'white', borderRadius: '4px', marginLeft: '16px' }}>
+                                                Ajouter
+                                            </Button>
+                                        </div>
+                                    </div>
+                                    <div style={{ width: '60%', display: 'flex', flexGrow: '1', padding: '8px 8px 0px 8px', marginBottom: '8px', maxHeight: '400px' }}>
+                                        <Table sx={{ flexGrow: '1', display: 'flex', flexDirection: 'column', overflow: 'hidden', margin: '0px', width: "100%", borderRadius: '4px', }} aria-label="simple table">
+                                            <TableHead sx={{ height: '45px', display: 'flex', width: '100%' }}>
+                                                <TableRow sx={{ display: 'flex', width: '100%' }}>
+                                                    <TableCell sx={{ width: '50%' }} align="left">Nom de fournisseur</TableCell>
+                                                    <TableCell sx={{ width: '50%' }} align="left">
+                                                        UG
+                                                    </TableCell>
+                                                    <TableCell sx={{ width: '50%' }} align="left">Prix grossiste</TableCell>
+                                                    <TableCell sx={{ width: '50%' }} align="right">Supprimer</TableCell>
+                                                </TableRow>
+                                            </TableHead>
+                                            <TableBody sx={{ flexGrow: '1', overflowY: 'auto', overflowX: 'hidden', }}>
+                                                {
+                                                    this.state.loadingCoProductsData ? (<div style={{
+                                                        width: '100%',
+                                                        flexGrow: '1',
+                                                        overflow: 'hidden',
+                                                        height: '100%',
+                                                        display: 'flex',
+                                                        justifyContent: 'center',
+                                                        alignItems: 'center',
+                                                    }}>
+                                                        <DotSpinner
+                                                            size={40}
+                                                            speed={0.9}
+                                                            color="black"
+                                                        />
+                                                    </div>) :
+                                                        this.state.coproducts.map((row) => (
+                                                            <TableRow
+                                                                key={row.id}
+                                                                sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                                                            >
+                                                                <TableCell sx={{ width: '32%' }} align="left">{row.name}</TableCell>
+                                                                <TableCell sx={{ width: '32%' }} align="left">{row.ug}</TableCell>
+                                                                <TableCell sx={{ width: '50%' }} align="left">{row.wholesalePriceUnit}</TableCell>
+                                                                <TableCell sx={{ padding: '0px 16px 0px 0px' }} align="right">
+                                                                    <IconButton onClick={() => {
+                                                                        this.setState({ showDeleteCoProductDialog: true, selectedCoProductId: row.id! });
                                                                     }} >
                                                                         <DeleteIcon />
                                                                     </IconButton>
@@ -898,7 +1043,12 @@ class ConfigPage extends Component<{}, ConfigPageProps> {
                                     this.setState({ showDeleteProductDialog: false });
                                 }} onYes={() => this.handleRemoveProduct()} isOpen={this.state.showDeleteProductDialog} onClose={() => {
                                     this.setState({ showDeleteProductDialog: false });
-                                }} message='Voulez-vous supprimer  ce produit?'></YesNoDialog>
+                                }} message='Voulez-vous supprimer ce produit?'></YesNoDialog>
+                                <YesNoDialog onNo={() => {
+                                    this.setState({ showDeleteCoProductDialog: false });
+                                }} onYes={() => this.handleRemoveCoProduct()} isOpen={this.state.showDeleteCoProductDialog} onClose={() => {
+                                    this.setState({ showDeleteCoProductDialog: false });
+                                }} message='Voulez-vous supprimer  ce produit concurrent?'></YesNoDialog>
 
                             </div>
                         </CustomTabPanel>
@@ -1098,9 +1248,11 @@ class ConfigPage extends Component<{}, ConfigPageProps> {
                                     </div>
                                 </div>
                                 <Divider component="div" style={{ margin: '0px 16px' }} sx={{ borderBottom: 'solid grey 1px' }} />
-                                <div style={{ width: '100%', display: 'flex', maxHeight: '450px' }}>
-
-                                    <div style={{ width: '60%', display: 'flex', flexGrow: '1', padding: '8px 8px 0px 8px', marginBottom: '8px', maxHeight: '400px' }}>
+                                <div style={{ width: '100%', display: 'flex', maxHeight: '450px', flexDirection: 'column', }}>
+                                    <h4 style={{ marginLeft: '16px' }}>
+                                        Produits
+                                    </h4>
+                                    <div style={{ display: 'flex', flexGrow: '1', padding: '0px 8px', marginBottom: '8px', maxHeight: '400px', width: '100%', }}>
                                         <Table sx={{ flexGrow: '1', display: 'flex', flexDirection: 'column', overflow: 'hidden', margin: '0px', width: "100%", borderRadius: '4px', }} aria-label="simple table">
                                             <TableHead sx={{ height: '45px', display: 'flex', width: '100%' }}>
                                                 <TableRow sx={{ display: 'flex', width: '100%' }}>
@@ -1150,6 +1302,61 @@ class ConfigPage extends Component<{}, ConfigPageProps> {
                                         </Table>
                                     </div>
                                 </div>
+                                <Divider component="div" style={{ margin: '0px 16px' }} sx={{ borderBottom: 'solid grey 1px' }} />
+                                <div style={{ width: '100%', display: 'flex', maxHeight: '450px', flexDirection: 'column' }}>
+                                    <h4 style={{ marginLeft: '16px' }}>
+                                        Produits concurrent
+                                    </h4>
+                                    <div style={{ display: 'flex', flexGrow: '1', padding: '0px 8px', marginBottom: '8px', maxHeight: '400px', width: '100%', }}>
+                                        <Table sx={{ flexGrow: '1', display: 'flex', flexDirection: 'column', overflow: 'hidden', margin: '0px', width: "100%", borderRadius: '4px', }} aria-label="simple table">
+                                            <TableHead sx={{ height: '45px', display: 'flex', width: '100%' }}>
+                                                <TableRow sx={{ display: 'flex', width: '100%' }}>
+                                                    <TableCell sx={{ width: '50%' }} align="left">Nom de fournisseur</TableCell>
+                                                    <TableCell sx={{ width: '50%' }} align="left">
+                                                        UG
+                                                    </TableCell>
+                                                    <TableCell sx={{ width: '50%' }} align="left">Prix grossiste</TableCell>
+                                                    <TableCell sx={{ width: '50%' }} align="right">Restaurer</TableCell>
+                                                </TableRow>
+                                            </TableHead>
+                                            <TableBody sx={{ flexGrow: '1', overflowY: 'auto', overflowX: 'hidden', }}>
+                                                {
+                                                    this.state.loadingCoProductsData ? (<div style={{
+                                                        width: '100%',
+                                                        flexGrow: '1',
+                                                        overflow: 'hidden',
+                                                        height: '100%',
+                                                        display: 'flex',
+                                                        justifyContent: 'center',
+                                                        alignItems: 'center',
+                                                    }}>
+                                                        <DotSpinner
+                                                            size={40}
+                                                            speed={0.9}
+                                                            color="black"
+                                                        />
+                                                    </div>) :
+                                                        this.state.draftedCoProducts.map((row) => (
+                                                            <TableRow
+                                                                key={row.id}
+                                                                sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                                                            >
+                                                                <TableCell sx={{ width: '32%' }} align="left">{row.name}</TableCell>
+                                                                <TableCell sx={{ width: '32%' }} align="left">{row.ug}</TableCell>
+                                                                <TableCell sx={{ width: '50%' }} align="left">{row.wholesalePriceUnit}</TableCell>
+                                                                <TableCell sx={{ padding: '0px 16px 0px 0px' }} align="right">
+                                                                    <IconButton onClick={() => {
+                                                                        this.setState({ showRestoreCoProductDialog: true, selectedCoProductId: row.id! });
+                                                                    }} >
+                                                                        <RestoreIcon />
+                                                                    </IconButton>
+                                                                </TableCell>
+                                                            </TableRow>
+                                                        ))}
+                                            </TableBody>
+                                        </Table>
+                                    </div>
+                                </div>
                                 <Snackbar anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }} onClose={this.handleCloseSanckbar} open={this.state.showSnackbar} autoHideDuration={3000} message={this.state.snackbarMessage} />
                                 <YesNoDialog onNo={() => {
                                     this.setState({ showRestoreSpecialityDialog: false });
@@ -1175,7 +1382,12 @@ class ConfigPage extends Component<{}, ConfigPageProps> {
                                     this.setState({ showRestoreProductDialog: false });
                                 }} onYes={() => this.handleRestoreProduct()} isOpen={this.state.showRestoreProductDialog} onClose={() => {
                                     this.setState({ showRestoreProductDialog: false });
-                                }} message='Voulez-vous restaurer  ce produit?'></YesNoDialog>
+                                }} message='Voulez-vous restaurer ce produit?'></YesNoDialog>
+                                <YesNoDialog onNo={() => {
+                                    this.setState({ showRestoreCoProductDialog: false });
+                                }} onYes={() => this.handleRestoreCoProduct()} isOpen={this.state.showRestoreCoProductDialog} onClose={() => {
+                                    this.setState({ showRestoreCoProductDialog: false });
+                                }} message='Voulez-vous restaurer ce produit concurrent?'></YesNoDialog>
                             </div>
                         </CustomTabPanel>
                     </Box>

@@ -24,6 +24,12 @@
     margin-right: 16px;
 }
 
+.clients-pharmacy-container
+#clients-doctor-table{
+    width: 60%;
+    margin-right: 16px;
+}
+
 
 .stats-panel{
     display: flex;

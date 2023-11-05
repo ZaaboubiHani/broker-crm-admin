@@ -44,13 +44,13 @@ const ClientsDoctorTable: React.FC<ClientsDoctorTableProps> = ({ total, size, pa
                 <Table sx={{ flexGrow: '1', display: 'flex', flexDirection: 'column', overflow: 'hidden', margin: '0px', width: "100%" }} size="small" aria-label="a dense table">
                     <TableHead sx={{ height: '45px', marginBottom: '16px' }}>
                         <TableRow>
-                            <TableCell sx={{ wdith: '150px' }}>Date</TableCell>
-                            <TableCell align="center">Client</TableCell>
-                            <TableCell align="right">Délégué</TableCell>
-                            <TableCell align="right">Spécialité</TableCell>
-                            <TableCell align="right">Wilaya</TableCell>
-                            <TableCell align="right">Commune</TableCell>
-                            <TableCell align="center">Rapport</TableCell>
+                            <TableCell sx={{ width: '10%', }}>Date</TableCell>
+                            <TableCell sx={{ width: '20%', }} align="left">Client</TableCell>
+                            <TableCell sx={{ width: '20%', }} align="left">Délégué</TableCell>
+                            <TableCell sx={{ width: '20%', }} align="left">Spécialité</TableCell>
+                            <TableCell sx={{ width: '20%', }} align="left">Wilaya</TableCell>
+                            <TableCell sx={{ width: '20%', }} align="left">Commune</TableCell>
+                            <TableCell sx={{ width: '10px' }} align="center">Rapport</TableCell>
                         </TableRow>
                     </TableHead>
                     <TableBody sx={{ flexGrow: '1', overflowY: 'auto', overflowX: 'hidden', }}>
@@ -75,13 +75,13 @@ const ClientsDoctorTable: React.FC<ClientsDoctorTableProps> = ({ total, size, pa
                                         key={row.id!}
                                         sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                                     >
-                                        <TableCell sx={{ wdith: '150px', whiteSpace: 'nowrap' }}>{formatDateToYYYYMMDD(row.createdDate || new Date())}</TableCell>
-                                        <TableCell align="left">{row.client?.name}</TableCell>
-                                        <TableCell align="left">{row.user?.username}</TableCell>
-                                        <TableCell align="left">{row.client?.speciality}</TableCell>
-                                        <TableCell align="left">{row.client?.wilaya}</TableCell>
-                                        <TableCell align="left">{row.client?.commune}</TableCell>
-                                        <TableCell align="center">
+                                        <TableCell sx={{ width: '10%', whiteSpace: 'nowrap' }} >{formatDateToYYYYMMDD(row.createdDate || new Date())}</TableCell>
+                                        <TableCell sx={{ width: '20%', textOverflow: 'ellipsis' }} align="left">{row.client?.name}</TableCell>
+                                        <TableCell sx={{ width: '20%', textOverflow: 'ellipsis' }} align="left">{row.user?.username}</TableCell>
+                                        <TableCell sx={{ width: '20%', textOverflow: 'ellipsis' }} align="left">{row.client?.speciality}</TableCell>
+                                        <TableCell sx={{ width: '20%', textOverflow: 'ellipsis' }} align="left">{row.client?.wilaya}</TableCell>
+                                        <TableCell sx={{ width: '2px', textOverflow: 'ellipsis' }} align="left">{row.client?.commune}</TableCell>
+                                        <TableCell sx={{ width: '150px' }} align="center">
                                             <Button onClick={() => {
                                                 displayReport(row);
                                             }} variant="text">Voir</Button>
@@ -93,7 +93,7 @@ const ClientsDoctorTable: React.FC<ClientsDoctorTableProps> = ({ total, size, pa
                 </Table>
             </TableContainer>
             <TablePagination
-                sx={{ minHeight: '50px',overflow:'hidden' }}
+                sx={{ minHeight: '50px', overflow: 'hidden' }}
                 labelRowsPerPage='Lignes par page'
                 rowsPerPageOptions={[5, 10, 25]}
                 component="div"

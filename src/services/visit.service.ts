@@ -61,7 +61,7 @@ export default class VisitService {
             textFilter = `&filters[client][fullName][$containsi]=${text}`;
         }
       
-        var response = await axios.get(`${Globals.apiUrl}/visits?populate[rapport][populate]=*&populate[client][populate]=relatedSpeciality.domainType&populate=user${textFilter}&pagination[page]=${page}&pagination[pageSize]=${size}&filters[client][relatedSpeciality][domainType][reference][$eq]=${clientType === ClientType.doctor ? 'doctor' : clientType === ClientType.pharmacy ? 'pharmacy' : 'wholesaler'}&filters[user][creatorId][$eq]=${superId}`,
+        var response = await axios.get(`${Globals.apiUrl}/visits?populate[rapport][populate]=*&populate[client][populate]=relatedSpeciality.domainType&populate=user${textFilter}&pagination[page]=${page}&pagination[pageSize]=${size}&filters[client][relatedSpeciality][domainType][reference][$eq]=${clientType === ClientType.doctor ? `doctor&filters[user][creatorId][$eq]=${superId}` : clientType === ClientType.pharmacy ?`pharmacy&filters[user][creatorId][$eq]=${superId}` : 'wholesaler'}`,
             {
                 headers: {
                     'Authorization': `Bearer ${token}`
