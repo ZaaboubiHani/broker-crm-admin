@@ -177,14 +177,15 @@ class CommandPage extends Component<{}, CommandDelegatePageProps> {
                 var supervisors = await this.userService.getUsersByCreator(currentUser.id!, UserType.supervisor);
                 var kams = await this.userService.getUsersByCreator(currentUser.id!, UserType.kam);
                 if (supervisors.length > 0) {
-                    var delegates= await this.userService.getUsersByCreator(supervisors[0].id!, UserType.delegate);
+                    var delegates = await this.userService.getUsersByCreator(supervisors[0].id!, UserType.delegate);
                     if (delegates.length > 0) {
                         this.setState({ selectedDelegate: delegates[0] });
                         var { commands: commands, total: total } = await this.commandService.getAllCommandsOfDelegate(1, 25, new Date(), delegates[0].id!);
-                        this.setState({ delegateCommands: commands, totalDelegate: total });
+                        this.setState({ delegateCommands: commands, totalDelegate: total, selectedDelegate: delegates[0], });
                     }
-                    this.setState({ currentUser: currentUser, isLoading: false, delegates: delegates, filtredDelegates: delegates, hasData: true });
+
                     this.setState({
+
                         isLoading: false,
                         delegates: delegates,
                         filtredDelegates: delegates,
@@ -193,7 +194,13 @@ class CommandPage extends Component<{}, CommandDelegatePageProps> {
                     });
 
                 }
+                if (kams.length > 0) {
+                    this.setState({ selectedKam: kams[0] });
+                    var { commands: commands, total: total } = await this.commandService.getAllCommandsOfDelegate(1, 25, new Date(), kams[0].id!);
+                    this.setState({ kamCommands: commands, totalKam: total });
+                }
                 this.setState({
+                    currentUser: currentUser,
                     isLoading: false,
                     hasData: true,
                     supervisors: supervisors,
@@ -328,7 +335,7 @@ class CommandPage extends Component<{}, CommandDelegatePageProps> {
                     <CustomTabPanel style={{ display: 'flex', flexDirection: 'row', flexGrow: '1', height: 'calc(100% - 50px)', padding: '0px' }} value={this.state.index} index={0} >
                         <div style={{ display: 'flex', flexDirection: 'column', flexGrow: '1', height: 'calc(100% - 40px)' }}>
                             {
-                                this.state.currentUser.type === UserType.admin ? (<div style={{ display: 'flex' }}>
+                                this.state.currentUser.type === UserType.admin ? (<div style={{ display: 'flex', height: '55px' }}>
                                     <UserPicker delegates={this.state.supervisors} onSelect={this.handleSelectSupervisor}></UserPicker>
                                 </div>) : null
                             }

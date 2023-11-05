@@ -10,7 +10,7 @@
 .table-panel{
     width: 100%;
     display: flex;
-    height: calc(100% - 140px);
+    height: calc(100% - 148px);
 }
 
 .report-container
@@ -23,7 +23,6 @@
     width: 50%;
     background-color: white;
     border-radius: 8px;
-    margin: 8px 0px;
 }
 
 .stats-panel{

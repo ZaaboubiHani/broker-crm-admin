@@ -125,10 +125,11 @@ class HomePage extends Component<HomePageProps, HomePageState> {
                 });
             } else {
                 var supervisors = await this.userService.getUsersByCreator(currentUser.id!, UserType.supervisor);
+
                 if (supervisors.length > 0) {
+                    var { visits: kamVisits, total: totalKam } = await this.visitService.getAllVisits(1, 25, new Date(), ClientType.wholesaler, currentUser.id!);
 
                     var { visits: delegateVisits, total: totalDelegate } = await this.visitService.getAllVisits(1, 25, new Date(), ClientType.pharmacy, supervisors[0].id!);
-                    var { visits: kamVisits, total: totalKam } = await this.visitService.getAllVisits(1, 25, new Date(), ClientType.wholesaler, currentUser.id!);
                     this.setState({
                         isLoading: false,
                         hasData: true,
@@ -140,8 +141,10 @@ class HomePage extends Component<HomePageProps, HomePageState> {
                         supervisors: supervisors,
                         totalDelegate: totalDelegate,
                         totalKam: totalKam,
+
                     });
                 }
+
             }
         }
 
@@ -340,7 +343,7 @@ class HomePage extends Component<HomePageProps, HomePageState> {
                         <CustomTabPanel style={{ display: 'flex', flexDirection: 'row', flexGrow: '1', height: 'calc(100% - 50px)', width: '100%' }} value={this.state.index} index={0} >
                             <div style={{ display: 'flex', flexDirection: 'column', flexGrow: '1', height: 'calc(100% - 40px)', width: '100%', }}>
                                 {
-                                    this.state.currentUser.type === UserType.admin ? (<div style={{ display: 'flex' }}>
+                                    this.state.currentUser.type === UserType.admin ? (<div style={{ display: 'flex', height: '55px' }}>
                                         <UserPicker delegates={this.state.supervisors} onSelect={this.handleSelectSupervisor}></UserPicker>
                                     </div>) : null
                                 }

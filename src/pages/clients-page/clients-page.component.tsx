@@ -22,6 +22,7 @@ import Tab from '@mui/material/Tab';
 import ClientsDoctorTable from '../../components/clients-doctor-table/clients-doctor-table.component';
 import { ClientType } from '../../models/client.model';
 import UserModel, { UserType } from '../../models/user.model';
+import UserPicker from '../../components/user-picker/user-picker.component';
 
 interface ClientsPageProps {
     selectedDate: Date;
@@ -53,6 +54,8 @@ interface ClientsPageProps {
     totalWhole: number;
     index: number;
     currentUser: UserModel;
+    supervisors: UserModel[];
+    selectedSupervisor?: UserModel;
 }
 
 
@@ -83,7 +86,7 @@ class ClientsPage extends Component<{}, ClientsPageProps> {
             totalDoc: 0,
             totalWhole: 0,
             index: 0,
-
+            supervisors: [],
         }
     }
 
@@ -127,20 +130,40 @@ class ClientsPage extends Component<{}, ClientsPageProps> {
         this.setState({ isLoading: true });
         if (!this.state.isLoading) {
             var currentUser = await this.userService.getMe();
-            var { visits: pharmVisits, total: totalPharm } = await this.visitService.getAllVisitsPaginated(1, 25, '', ClientType.pharmacy, currentUser.id!);
-            var { visits: docVisits, total: totalDoc } = await this.visitService.getAllVisitsPaginated(1, 25, '', ClientType.doctor, currentUser.id!);
-            var { visits: wholeVisits, total: totalWhole } = await this.visitService.getAllVisitsPaginated(1, 25, '', ClientType.wholesaler, currentUser.id!);
-            this.setState({
-                currentUser: currentUser,
-                isLoading: false,
-                hasData: true,
-                pharmVisits: pharmVisits,
-                totalPharm: totalPharm,
-                docVisits: docVisits,
-                totalDoc: totalDoc,
-                wholeVisits: wholeVisits,
-                totalWhole: totalWhole,
-            });
+            if (currentUser.type === UserType.supervisor) {
+                var { visits: pharmVisits, total: totalPharm } = await this.visitService.getAllVisitsPaginated(1, 25, '', ClientType.pharmacy, currentUser.id!);
+                var { visits: docVisits, total: totalDoc } = await this.visitService.getAllVisitsPaginated(1, 25, '', ClientType.doctor, currentUser.id!);
+                this.setState({
+                    currentUser: currentUser,
+                    isLoading: false,
+                    hasData: true,
+                    pharmVisits: pharmVisits,
+                    totalPharm: totalPharm,
+                    docVisits: docVisits,
+                    totalDoc: totalDoc,
+                });
+            } else {
+                var supervisors = await this.userService.getUsersByCreator(currentUser.id!, UserType.supervisor);
+
+                if (supervisors.length > 0) {
+                    var { visits: pharmVisits, total: totalPharm } = await this.visitService.getAllVisitsPaginated(1, 25, '', ClientType.pharmacy, supervisors[0].id!);
+                    var { visits: docVisits, total: totalDoc } = await this.visitService.getAllVisitsPaginated(1, 25, '', ClientType.doctor, supervisors[0].id!);
+                    var { visits: wholeVisits, total: totalWhole } = await this.visitService.getAllVisitsPaginated(1, 25, '', ClientType.wholesaler, currentUser.id!);
+                    this.setState({
+                        supervisors: supervisors,
+                        selectedSupervisor: supervisors[0],
+                        currentUser: currentUser,
+                        isLoading: false,
+                        hasData: true,
+                        pharmVisits: pharmVisits,
+                        totalPharm: totalPharm,
+                        docVisits: docVisits,
+                        totalDoc: totalDoc,
+                        wholeVisits: wholeVisits,
+                        totalWhole: totalWhole,
+                    });
+                }
+            }
         }
     };
 
@@ -211,6 +234,21 @@ class ClientsPage extends Component<{}, ClientsPageProps> {
         this.setState({ index: newValue });
     };
 
+    handleSelectSupervisor = async (supervisor: UserModel) => {
+        this.setState({ loadingVisitsData: true, docPage: 1, pharmPage: 1, selectedSupervisor: supervisor });
+        var { visits: pharmVisits, total: totalPharm } = await this.visitService.getAllVisitsPaginated(1, 25, '', ClientType.pharmacy, supervisor!.id!);
+        var { visits: docVisits, total: totalDoc } = await this.visitService.getAllVisitsPaginated(1, 25, '', ClientType.doctor, supervisor!.id!);
+        this.setState({
+            selectedSupervisor: supervisor,
+            isLoading: false,
+            hasData: true,
+            pharmVisits: pharmVisits,
+            totalPharm: totalPharm,
+            docVisits: docVisits,
+            totalDoc: totalDoc,
+        });
+    }
+
     render() {
 
         if (!this.state.hasData) {
@@ -244,8 +282,13 @@ class ClientsPage extends Component<{}, ClientsPageProps> {
                                 }
                             </Tabs>
                         </Box>
-                        <CustomTabPanel style={{ display: 'flex', flexDirection: 'row', flexGrow: '1', height: 'calc(100% - 50px)', }} value={this.state.index} index={0} >
+                        <CustomTabPanel style={{ display: 'flex', flexDirection: 'row', flexGrow: '1', height: `calc(100% - ${this.state.currentUser.type !== UserType.supervisor ? '105' : '50'}px)`, }} value={this.state.index} index={0} >
                             <div style={{ display: 'flex', flexDirection: 'column', flexGrow: '1', height: 'calc(100% - 40px)', }}>
+                                {
+                                    this.state.currentUser.type === UserType.admin ? (<div style={{ display: 'flex' }}>
+                                        <UserPicker delegates={this.state.supervisors} onSelect={this.handleSelectSupervisor}></UserPicker>
+                                    </div>) : null
+                                }
                                 <div style={{ display: 'flex', height: '40px', marginLeft: '8px', }}>
                                     <Form>
                                         <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
@@ -292,8 +335,13 @@ class ClientsPage extends Component<{}, ClientsPageProps> {
                                 </div>
                             </div>
                         </CustomTabPanel>
-                        <CustomTabPanel style={{ display: 'flex', flexDirection: 'row', flexGrow: '1', height: 'calc(100% - 50px)' }} value={this.state.index} index={1} >
+                        <CustomTabPanel style={{ display: 'flex', flexDirection: 'row', flexGrow: '1', height: `calc(100% - ${this.state.currentUser.type !== UserType.supervisor ? '105' : '50'}px)` }} value={this.state.index} index={1} >
                             <div style={{ display: 'flex', flexDirection: 'column', flexGrow: '1', height: 'calc(100% - 48px)' }}>
+                                {
+                                    this.state.currentUser.type === UserType.admin ? (<div style={{ display: 'flex' }}>
+                                        <UserPicker delegates={this.state.supervisors} onSelect={this.handleSelectSupervisor}></UserPicker>
+                                    </div>) : null
+                                }
                                 <div style={{ display: 'flex', height: '40px', marginLeft: '8px', }}>
                                     <Form>
                                         <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
@@ -305,8 +353,20 @@ class ClientsPage extends Component<{}, ClientsPageProps> {
                                     </button>
                                 </div>
                                 <div style={{ width: '100%', display: 'flex', flexDirection: 'row', flexGrow: '1', height: 'calc(100% - 48px)' }}>
-                                    <ClientsDoctorTable total={this.state.totalDoc} page={this.state.docPage} size={this.state.sizeDoc} pageChange={this.handleDocPageChange} rowNumChange={this.handleDocRowNumChange} data={this.state.docVisits} isLoading={this.state.loadingVisitsData} displayReport={this.handleDisplayDocReport}></ClientsDoctorTable>
-                                    <div style={{ backgroundColor: 'white', borderRadius: '8px', margin: '8px 0px', width: '40%' }}>
+
+                                    <ClientsDoctorTable
+                                        id='clients-doctor-table'
+                                        total={this.state.totalDoc}
+                                        page={this.state.docPage}
+                                        size={this.state.sizeDoc}
+                                        pageChange={this.handleDocPageChange}
+                                        rowNumChange={this.handleDocRowNumChange}
+                                        data={this.state.docVisits}
+                                        isLoading={this.state.loadingVisitsData}
+                                        displayReport={this.handleDisplayDocReport}
+                                    ></ClientsDoctorTable>
+
+                                    <div style={{ backgroundColor: 'white', borderRadius: '8px', margin: '8px 0px', width: '50%' }}>
                                         {
                                             this.state.loadingReportData ?
                                                 (<div style={{

@@ -171,12 +171,46 @@ class PlanPage extends Component<{}, PlanPageProps> {
                 }
                 this.setState({ isLoading: false, hasData: true, delegates: delegates, filtredDelegates: delegates });
             }
+            else {
+                var supervisors = await this.userService.getUsersByCreator(currentUser.id!, UserType.supervisor);
+
+                if (supervisors.length > 0) {
+                    var delegates = await this.userService.getUsersByCreator(supervisors[0].id!, UserType.delegate);
+                    if (delegates.length > 0) {
+                        this.setState({ selectedDelegate: delegates[0] });
+                        var planDeTournee = await this.statisticsService.getPlanDeTournee(this.state.selectedDate, delegates[0].id!);
+                        var couverturePortfeuille = await this.statisticsService.getCouverturePortfeuille(this.state.selectedDate, delegates[0].id!);
+                        var moyenneVisitesParJour = await this.statisticsService.getMoyenneVisitesParJour(this.state.selectedDate, delegates[0].id!);
+                        var objectifChiffreDaffaire = await this.statisticsService.getObjectifChiffreDaffaire(this.state.selectedDate, delegates[0].id!);
+                        var objectifVisites = await this.statisticsService.getObjectifVisites(this.state.selectedDate, delegates[0].id!);
+                        var successRate = await this.statisticsService.getDelegateSuccessRateMonth(this.state.selectedDate, delegates[0].id!);
+                        var visitTasks = await this.visitTaskService.getAllVisitsTasks(new Date(), delegates[0].id!);
+                        this.setState({
+                            visitTasks: visitTasks,
+                            planDeTournee: planDeTournee,
+                            couverturePortfeuille: couverturePortfeuille,
+                            moyenneVisitesParJour: moyenneVisitesParJour,
+                            objectifChiffreDaffaire: objectifChiffreDaffaire,
+                            objectifVisites: objectifVisites,
+                            successRate: successRate,
+                        });
+                    }
+                    this.setState({
+                        isLoading: false,
+                        hasData: true,
+                        delegates: delegates,
+                        filtredDelegates: delegates,
+                        supervisors: supervisors,
+                        selectedSupervisor: supervisors[0],
+                    });
+                }
+            }
 
         }
     };
 
     handleSelectSupervisor = async (supervisor: UserModel) => {
-        this.setState({ loadingVisitTaskDetails: true,delegates:[] });
+        this.setState({ loadingVisitTaskDetails: true, delegates: [],selectedSupervisor:supervisor });
         var delegates = await this.userService.getUsersByCreator(supervisor.id!, UserType.delegate);
         if (delegates.length > 0) {
             this.setState({ selectedDelegate: delegates[0] });
@@ -236,11 +270,11 @@ class PlanPage extends Component<{}, PlanPageProps> {
             return (
                 <div className='plan-container'>
                     {
-                        this.state.currentUser.type === UserType.admin ? (<div style={{ display: 'flex' }}>
+                        this.state.currentUser.type === UserType.admin ? (<div style={{ display: 'flex',height:'50px' }}>
                             <UserPicker delegates={this.state.supervisors} onSelect={this.handleSelectSupervisor}></UserPicker>
                         </div>) : null
                     }
-                    <div className='search-bar'>
+                    <div className='search-bar' >
                         <Form>
                             <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
                                 <Form.Control type="search" placeholder="Recherche" onChange={this.handleSearchTextChange} />

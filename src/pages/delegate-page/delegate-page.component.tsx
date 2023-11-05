@@ -307,7 +307,7 @@ class DelegatePage extends Component<{}, DelegatePageState> {
                 <div className='delegate-container' style={{ height: '100vh' }}>
 
                     {
-                        this.state.currentUser.type === UserType.admin ? (<div style={{ display: 'flex' }}>
+                        this.state.currentUser.type === UserType.admin ? (<div style={{ display: 'flex', height: '55px' }}>
                             <UserPicker delegates={this.state.supervisors} onSelect={this.handleSelectSupervisor}></UserPicker>
                         </div>) : null
                     }
