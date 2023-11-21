@@ -25,6 +25,7 @@ import Box from '@mui/material/Box';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 
+
 interface HomePageState {
     selectedDate: Date;
     selectedReport?: ReportModel;
@@ -56,6 +57,7 @@ interface HomePageState {
 interface HomePageProps {
 
 }
+
 
 
 class HomePage extends Component<HomePageProps, HomePageState> {
@@ -231,22 +233,24 @@ class HomePage extends Component<HomePageProps, HomePageState> {
         this.setState({ index: newValue, selectedReport: undefined, selectedVisit: undefined, selectedCommand: undefined });
     };
 
-    handleDelegatePageChange = async (page: number) => {
+    handleDelegatePageChange = async (page: number, size: number) => {
         this.setState({ loadingVisitsData: true, selectedReport: undefined, selectedVisit: undefined, selectedCommand: undefined });
         if (this.state.currentUser.type === UserType.supervisor) {
-            var { visits: visits, total: total } = await this.visitService.getAllVisits(page, this.state.sizeDelegate, this.state.selectedDate, ClientType.pharmacy, this.state.currentUser.id!);
+            var { visits: visits, total: total } = await this.visitService.getAllVisits(page, size, this.state.selectedDate, ClientType.pharmacy, this.state.currentUser.id!);
             this.setState({
                 delegatePage: page,
+                sizeDelegate: size,
                 delegateVisits: visits,
                 loadingVisitsData: false,
                 filteredDelegateVisits: visits,
                 totalDelegate: total
             });
         } else {
-            var { visits: delegateVisits, total: totalDelegate } = await this.visitService.getAllVisits(page, this.state.sizeDelegate, this.state.selectedDate, ClientType.pharmacy, this.state.selectedSupervisor!.id!);
+            var { visits: delegateVisits, total: totalDelegate } = await this.visitService.getAllVisits(page, size, this.state.selectedDate, ClientType.pharmacy, this.state.selectedSupervisor!.id!);
 
             this.setState({
                 delegatePage: page,
+                sizeDelegate: size,
                 delegateVisits: delegateVisits,
                 filteredDelegateVisits: delegateVisits,
                 loadingVisitsData: false,
@@ -255,12 +259,13 @@ class HomePage extends Component<HomePageProps, HomePageState> {
         }
     }
 
-    handleKamPageChange = async (page: number) => {
+    handleKamPageChange = async (page: number,size:number) => {
         this.setState({ loadingVisitsData: true, kamPage: page, selectedReport: undefined, selectedVisit: undefined, selectedCommand: undefined });
 
-        var { visits: kamVisits, total: totalKam } = await this.visitService.getAllVisits(page, this.state.sizeDelegate, this.state.selectedDate, ClientType.wholesaler, this.state.currentUser.id!);
+        var { visits: kamVisits, total: totalKam } = await this.visitService.getAllVisits(page, size, this.state.selectedDate, ClientType.wholesaler, this.state.currentUser.id!);
         this.setState({
             kamVisits: kamVisits,
+            sizeKam:size,
             filteredKamVisits: kamVisits,
             loadingVisitsData: false,
             kamPage: page,
@@ -348,7 +353,7 @@ class HomePage extends Component<HomePageProps, HomePageState> {
                                     </div>) : null
                                 }
                                 <DatePickerBar onPick={this.handleOnPickDate} initialDate={this.state.selectedDate}></DatePickerBar>
-                                <div className='search-bar' style={{ marginBottom: '8px' }}>
+                                {/* <div className='search-bar' style={{ marginBottom: '8px' }}>
                                     <TextField
                                         label='Recherche par nom de délégué'
                                         size="small"
@@ -358,20 +363,19 @@ class HomePage extends Component<HomePageProps, HomePageState> {
                                     <Button onClick={this.handleDelegateVisitsFilter} variant='outlined' sx={{ border: 'solid grey 1px', backgroundColor: 'white', borderRadius: '4px', height: '40px', }}>
                                         <FontAwesomeIcon icon={faSearch} style={{ color: 'black' }} />
                                     </Button>
-                                </div>
+                                </div> */}
                                 <div className='table-panel'>
                                     <HomeTable id='hometable'
                                         total={this.state.totalDelegate}
                                         page={this.state.delegatePage}
                                         size={this.state.sizeDelegate}
                                         pageChange={this.handleDelegatePageChange}
-                                        rowNumChange={this.handleDelegateRowNumChange}
+                                        //rowNumChange={this.handleDelegateRowNumChange}
                                         firstHeader='Délégué'
                                         isLoading={this.state.loadingVisitsData}
                                         data={this.state.filteredDelegateVisits}
                                         onDisplayReport={this.handleDisplayReport}
                                         onDisplayCommand={this.handleDisplayCommand}
-                                        selectedId={this.state.selectedVisit?.id ?? -1}
                                     ></HomeTable>
                                     <div className='user-panel'>
                                         {
@@ -410,7 +414,7 @@ class HomePage extends Component<HomePageProps, HomePageState> {
                         <CustomTabPanel style={{ display: 'flex', flexDirection: 'row', flexGrow: '1', height: 'calc(100% - 50px)', width: '100%' }} value={this.state.index} index={1} >
                             <div style={{ display: 'flex', flexDirection: 'column', flexGrow: '1', height: 'calc(100% - 40px)', width: '100%', }}>
                                 <DatePickerBar onPick={this.handleOnPickDate} initialDate={this.state.selectedDate}></DatePickerBar>
-                                <div className='search-bar' style={{ marginBottom: '8px' }}>
+                                {/* <div className='search-bar' style={{ marginBottom: '8px' }}>
                                     <TextField
                                         label='Recherche par nom de kam'
                                         size="small"
@@ -420,7 +424,7 @@ class HomePage extends Component<HomePageProps, HomePageState> {
                                     <Button onClick={this.handleKamVisitsFilter} variant='outlined' sx={{ border: 'solid grey 1px', backgroundColor: 'white', borderRadius: '4px', height: '40px', }}>
                                         <FontAwesomeIcon icon={faSearch} style={{ color: 'black' }} />
                                     </Button>
-                                </div>
+                                </div> */}
                                 <div className='table-panel'>
                                     <HomeTable id='hometable'
                                         firstHeader='Kam'
@@ -428,12 +432,11 @@ class HomePage extends Component<HomePageProps, HomePageState> {
                                         page={this.state.kamPage}
                                         size={this.state.sizeKam}
                                         pageChange={this.handleKamPageChange}
-                                        rowNumChange={this.handleKamRowNumChange}
+                                        // rowNumChange={this.handleKamRowNumChange}
                                         isLoading={this.state.loadingVisitsData}
                                         data={this.state.filteredKamVisits}
                                         onDisplayReport={this.handleDisplayReport}
                                         onDisplayCommand={this.handleDisplayCommand}
-                                        selectedId={this.state.selectedVisit?.id ?? -1}
                                     ></HomeTable>
                                     <div className='user-panel'>
                                         {
