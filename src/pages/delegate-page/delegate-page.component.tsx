@@ -271,10 +271,10 @@ class DelegatePage extends Component<{}, DelegatePageState> {
         this.setState({ isLoading: false, delegates: delegates, filtredDelegates: delegates, hasData: true });
     }
 
-    handleDelegatePageChange = async (page: number) => {
+    handleDelegatePageChange = async (page: number,size:number) => {
         this.setState({ loadingVisitsData: true, delegatePage: page, selectedReport: undefined, selectedCommand: undefined, selectedVisit: undefined });
-        var { visits: visits, total: total } = await this.visitService.getAllVisitsOfDelegate(page, this.state.sizeDelegate, this.state.selectedDate, this.state.selectedDelegate!.id!);
-        this.setState({ visits: visits, loadingVisitsData: false, totalDelegate: total });
+        var { visits: visits, total: total } = await this.visitService.getAllVisitsOfDelegate(page, size, this.state.selectedDate, this.state.selectedDelegate!.id!);
+        this.setState({ visits: visits, loadingVisitsData: false, totalDelegate: total,sizeDelegate:size });
     }
 
     handleDelegateRowNumChange = async (size: number) => {
@@ -341,12 +341,12 @@ class DelegatePage extends Component<{}, DelegatePageState> {
                             page={this.state.delegatePage}
                             size={this.state.sizeDelegate}
                             pageChange={this.handleDelegatePageChange}
-                            rowNumChange={this.handleDelegateRowNumChange}
+                            // rowNumChange={this.handleDelegateRowNumChange}
                             isLoading={this.state.loadingVisitsData}
                             data={this.state.visits}
                             onDisplayCommand={this.handleDisplayCommand}
                             onDisplayReport={this.handleDisplayReport}
-                            selectedId={this.state.selectedVisit?.id ?? -1}
+                            // selectedId={this.state.selectedVisit?.id ?? -1}
                         ></DelegateTable>
                         <div className='user-panel'>
                             {
