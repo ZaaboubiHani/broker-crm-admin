@@ -110,6 +110,7 @@ const DelegateTable: React.FC<DelegateTableProps> = ({ data, id, onDisplayComman
                                     speciality: row.client?.speciality,
                                     wilaya: row.client?.wilaya,
                                     commune: row.client?.commune,
+                                    hasCommand: row.hasCommand,
                                 };
                             })]}
                         columns={columns}
