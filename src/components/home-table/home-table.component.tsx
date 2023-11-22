@@ -99,6 +99,7 @@ const HomeTable: React.FC<HomeTableProps> = ({ data, id, isLoading, firstHeader,
                     />
                 </div>) :
                     (<DataGrid
+                    
                         rows={
                             [...Array.from({ length: rowsPerPage * pageIndex }, (_, index) => {
                                 return { id: index };
@@ -110,6 +111,7 @@ const HomeTable: React.FC<HomeTableProps> = ({ data, id, isLoading, firstHeader,
                                     speciality: row.client?.speciality,
                                     wilaya: row.client?.wilaya,
                                     commune: row.client?.commune,
+                                    hasCommand: row.hasCommand,
                                 };
                             })]}
                         columns={columns}
@@ -130,6 +132,7 @@ const HomeTable: React.FC<HomeTableProps> = ({ data, id, isLoading, firstHeader,
                         }}
                         pageSizeOptions={[5, 10, 25,50,100]}
                         checkboxSelection={false}
+                        
                     />)}
             {/* <TableContainer sx={{ flexGrow: '1', display: 'flex', flexDirection: 'column', borderRadius: '8px', margin: '8px', overflow: 'hidden' }} component={Paper}>
 
