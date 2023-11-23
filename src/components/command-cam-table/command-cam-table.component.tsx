@@ -12,6 +12,7 @@ import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import Button from '@mui/material/Button';
 import TablePagination from '@mui/material/TablePagination';
+import { DataGrid, GridColDef, GridValueGetterParams } from '@mui/x-data-grid';
 
 interface CommandCamTableProps {
     data: CommandModel[];
@@ -21,41 +22,98 @@ interface CommandCamTableProps {
     page: number;
     size: number;
     total: number;
-    selectedId: number;
-    pageChange: (page: number) => void;
-    rowNumChange: (rowNum: number) => void;
+    pageChange: (page: number, size: number) => void;
 }
 
-const CommandCamTable: React.FC<CommandCamTableProps> = ({ data, id, isLoading, displayCommand, total, size, page, rowNumChange, pageChange, selectedId }) => {
+const CommandCamTable: React.FC<CommandCamTableProps> = ({ data, id, isLoading, displayCommand, total, size, page, pageChange, }) => {
 
     const [rowsPerPage, setRowsPerPage] = React.useState(size);
 
-    const [selectedRow, setSelectedRow] = React.useState(selectedId);
 
     const [pageIndex, setPageIndex] = React.useState(page - 1);
 
-    if (selectedRow !== selectedId) {
-        setSelectedRow(selectedId);
-    }
 
     if (pageIndex !== (page - 1)) {
         setPageIndex(page - 1);
     }
-    const handleChangePage = (event: unknown, newPage: number) => {
-        setPageIndex(newPage);
-        pageChange(newPage + 1);
-        setSelectedRow(-1);
-    };
-    const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setRowsPerPage(parseInt(event.target.value, 10));
-        setPageIndex(0);
-        setSelectedRow(-1);
-        rowNumChange(parseInt(event.target.value, 10));
-    };
+
+    const columns: GridColDef[] = [
+
+        {
+            field: 'date', headerName: 'Date', width: 150, valueFormatter(params) {
+                return formatDateToYYYYMMDD(params.value);
+            },
+        },
+        { field: 'client', headerName: 'Client', width: 150 },
+        { field: 'wilaya', headerName: 'Wilaya', width: 150 },
+        { field: 'commune', headerName: 'Commune', width: 150, },
+        { field: 'amount', headerName: 'Montant', width: 150, },
+        {
+            field: 'details', headerName: 'Details', width: 80,
+            renderCell(params) {
+                return (<Button onClick={() => {
+                    displayCommand(params.row.command);
+                }} variant="text">Voir</Button>);
+            },
+        },
+    ];
 
     return (
         <div id={id} style={{ display: 'flex', flexDirection: 'column', flexGrow: '1', marginRight: '16px' }}>
-            <TableContainer sx={{ flexGrow: '1', display: 'flex', flexDirection: 'column', borderRadius: '8px', margin: '8px', overflow: 'hidden' }} component={Paper}>
+
+            {
+                isLoading ? (<div style={{
+                    width: '100%',
+                    flexGrow: '1',
+                    overflow: 'hidden',
+                    height: '100%',
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                }}>
+                    <DotSpinner
+                        size={40}
+                        speed={0.9}
+                        color="black"
+                    />
+                </div>) :
+                    (<DataGrid
+
+                        rows={
+                            [...Array.from({ length: rowsPerPage * pageIndex }, (_, index) => {
+                                return { id: index };
+                            }), ...data.map((row) => {
+                                return {
+                                    id: row.id,
+                                    date: row.visit?.createdDate || new Date(),
+                                    client: row.visit?.client?.name,
+                                    amount: row.totalRemised?.toLocaleString('fr-DZ', { style: 'currency', currency: 'DZD' }),
+                                    wilaya: row.visit?.client?.wilaya,
+                                    commune: row.visit?.client?.commune,
+                                    command: row,
+                                };
+                            })]}
+                        columns={columns}
+                        rowCount={total}
+                        onPaginationModelChange={(model) => {
+                            setPageIndex(model.page);
+                            pageChange(model.page + 1, model.pageSize);
+                            setRowsPerPage(model.pageSize);
+
+                        }}
+                        initialState={{
+                            pagination: {
+                                paginationModel: {
+                                    pageSize: rowsPerPage,
+                                    page: pageIndex,
+                                },
+                            },
+                        }}
+                        pageSizeOptions={[5, 10, 25, 50, 100]}
+                        checkboxSelection={false}
+
+                    />)}
+            {/* <TableContainer sx={{ flexGrow: '1', display: 'flex', flexDirection: 'column', borderRadius: '8px', margin: '8px', overflow: 'hidden' }} component={Paper}>
                 <Table sx={{ flexGrow: '1', display: 'flex', flexDirection: 'column', overflow: 'hidden', margin: '0px', width: "100%" }} size="small" aria-label="a dense table">
                     <TableHead sx={{ height: '45px', marginBottom: '16px' }}>
                         <TableRow>
@@ -118,7 +176,7 @@ const CommandCamTable: React.FC<CommandCamTableProps> = ({ data, id, isLoading, 
                 page={pageIndex}
                 onPageChange={handleChangePage}
                 onRowsPerPageChange={handleChangeRowsPerPage}
-            />
+            /> */}
         </div>
     );
 };

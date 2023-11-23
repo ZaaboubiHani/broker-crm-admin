@@ -196,21 +196,21 @@ class ClientsPage extends Component<{}, ClientsPageProps> {
         this.setState({ wholeSearchText: event.target.value });
     }
 
-    handlePharmPageChange = async (page: number) => {
-        this.setState({ loadingVisitsData: true, pharmPage: page });
-        var { visits: pharmVisits, total: totalPharm } = await this.visitService.getAllVisitsPaginated(page, this.state.sizePharm, this.state.pharmSearchText, ClientType.pharmacy, this.state.currentUser.id!);
-        this.setState({ pharmVisits: pharmVisits, totalPharm: totalPharm, loadingVisitsData: false, });
+    handlePharmPageChange = async (page: number, size: number) => {
+        this.setState({ loadingVisitsData: true, pharmPage: page, sizePharm: size });
+        var { visits: pharmVisits, total: totalPharm } = await this.visitService.getAllVisitsPaginated(page, size, this.state.pharmSearchText, ClientType.pharmacy, this.state.currentUser.id!);
+        this.setState({ pharmVisits: pharmVisits, totalPharm: totalPharm, loadingVisitsData: false, sizePharm: size });
     }
-    handleWholePageChange = async (page: number) => {
-        this.setState({ loadingVisitsData: true, wholePage: page });
-        var { visits: wholeVisits, total: totalWhole } = await this.visitService.getAllVisitsPaginated(page, this.state.sizeWhole, this.state.wholeSearchText, ClientType.wholesaler, this.state.currentUser.id!);
-        this.setState({ wholeVisits: wholeVisits, totalWhole: totalWhole, loadingVisitsData: false, });
+    handleWholePageChange = async (page: number, size: number) => {
+        this.setState({ loadingVisitsData: true, wholePage: page, sizeWhole: size });
+        var { visits: wholeVisits, total: totalWhole } = await this.visitService.getAllVisitsPaginated(page, size, this.state.wholeSearchText, ClientType.wholesaler, this.state.currentUser.id!);
+        this.setState({ wholeVisits: wholeVisits, totalWhole: totalWhole, loadingVisitsData: false, sizeWhole:size});
     }
 
-    handleDocPageChange = async (page: number) => {
-        this.setState({ loadingVisitsData: true, docPage: page });
-        var { visits: docVisits, total: totalDoc } = await this.visitService.getAllVisitsPaginated(page, this.state.sizeDoc, this.state.docSearchText, ClientType.doctor, this.state.currentUser.id!);
-        this.setState({ docVisits: docVisits, totalDoc: totalDoc, loadingVisitsData: false, });
+    handleDocPageChange = async (page: number, size: number) => {
+        this.setState({ loadingVisitsData: true, docPage: page, sizeDoc: size });
+        var { visits: docVisits, total: totalDoc } = await this.visitService.getAllVisitsPaginated(page, size, this.state.docSearchText, ClientType.doctor, this.state.currentUser.id!);
+        this.setState({ docVisits: docVisits, totalDoc: totalDoc, loadingVisitsData: false, sizeDoc: size });
     }
 
     handlePharmRowNumChange = async (size: number) => {
@@ -301,7 +301,17 @@ class ClientsPage extends Component<{}, ClientsPageProps> {
 
                                 </div>
                                 <div style={{ width: '100%', display: 'flex', flexDirection: 'row', flexGrow: '1', height: 'calc(100% - 40px)', }}>
-                                    <ClientsPharmacyTable total={this.state.totalPharm} page={this.state.pharmPage} size={this.state.sizePharm} pageChange={this.handlePharmPageChange} rowNumChange={this.handlePharmRowNumChange} id='clients-pharmacy-table' data={this.state.pharmVisits} isLoading={this.state.loadingVisitsData} displayCommand={this.handleDisplayPharmCommand} displayReport={this.handleDisplayPharmReport}></ClientsPharmacyTable>
+                                    <ClientsPharmacyTable
+                                        total={this.state.totalPharm}
+                                        page={this.state.pharmPage}
+                                        size={this.state.sizePharm}
+                                        pageChange={this.handlePharmPageChange}
+                                        id='clients-pharmacy-table'
+                                        data={this.state.pharmVisits}
+                                        isLoading={this.state.loadingVisitsData}
+                                        displayCommand={this.handleDisplayPharmCommand}
+                                        displayReport={this.handleDisplayPharmReport}
+                                    ></ClientsPharmacyTable>
                                     <div style={{ backgroundColor: 'white', borderRadius: '8px', margin: '8px 0px', width: '40%' }}>
                                         {
                                             this.state.loadingReportData ?
@@ -360,7 +370,6 @@ class ClientsPage extends Component<{}, ClientsPageProps> {
                                         page={this.state.docPage}
                                         size={this.state.sizeDoc}
                                         pageChange={this.handleDocPageChange}
-                                        rowNumChange={this.handleDocRowNumChange}
                                         data={this.state.docVisits}
                                         isLoading={this.state.loadingVisitsData}
                                         displayReport={this.handleDisplayDocReport}
@@ -410,7 +419,17 @@ class ClientsPage extends Component<{}, ClientsPageProps> {
 
                                 </div>
                                 <div style={{ width: '100%', display: 'flex', flexDirection: 'row', flexGrow: '1', height: 'calc(100% - 40px)' }}>
-                                    <ClientsPharmacyTable total={this.state.totalWhole} page={this.state.wholePage} size={this.state.sizeWhole} pageChange={this.handleWholePageChange} rowNumChange={this.handleWholeRowNumChange} id='clients-pharmacy-table' data={this.state.wholeVisits} isLoading={this.state.loadingVisitsData} displayCommand={this.handleDisplayWholeCommand} displayReport={this.handleDisplayWholeReport}></ClientsPharmacyTable>
+                                    <ClientsPharmacyTable
+                                        total={this.state.totalWhole}
+                                        page={this.state.wholePage}
+                                        size={this.state.sizeWhole}
+                                        pageChange={this.handleWholePageChange}
+                                        id='clients-pharmacy-table'
+                                        data={this.state.wholeVisits}
+                                        isLoading={this.state.loadingVisitsData}
+                                        displayCommand={this.handleDisplayWholeCommand}
+                                        displayReport={this.handleDisplayWholeReport}
+                                    ></ClientsPharmacyTable>
                                     <div style={{ backgroundColor: 'white', borderRadius: '8px', margin: '8px 0px', width: '40%' }}>
                                         {
                                             this.state.loadingReportData ?
