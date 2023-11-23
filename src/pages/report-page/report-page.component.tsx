@@ -192,16 +192,16 @@ class ReportPage extends Component<{}, ReportPageProps> {
         this.setState({ loadingReportData: false, reportData: report, selectedVisit: visit, });
     };
 
-    handleDelegatePageChange = async (page: number) => {
-        this.setState({ loadingVisitsData: true, delegatePage: page, reportData: undefined, selectedVisit: undefined, });
-        var { visits: visits, total: total } = await this.visitService.getAllVisitsOfDelegate(page, this.state.sizeDelegate, this.state.selectedDate, this.state.selectedDelegate!.id!);
-        this.setState({ delegateVisits: visits, loadingVisitsData: false, totalDelegate: total });
+    handleDelegatePageChange = async (page: number, size: number) => {
+        this.setState({ loadingVisitsData: true, delegatePage: page, reportData: undefined, selectedVisit: undefined, sizeDelegate: size });
+        var { visits: visits, total: total } = await this.visitService.getAllVisitsOfDelegate(page, size, this.state.selectedDate, this.state.selectedDelegate!.id!);
+        this.setState({ delegateVisits: visits, loadingVisitsData: false, totalDelegate: total, sizeDelegate: size });
     }
 
-    handleKamPageChange = async (page: number) => {
-        this.setState({ loadingVisitsData: true, kamPage: page, reportData: undefined, selectedVisit: undefined, });
-        var { visits: visits, total: total } = await this.visitService.getAllVisitsOfDelegate(page, this.state.sizeKam, this.state.selectedDate, this.state.selectedKam!.id!);
-        this.setState({ kamVisits: visits, loadingVisitsData: false, totalKam: total });
+    handleKamPageChange = async (page: number,size:number) => {
+        this.setState({ loadingVisitsData: true, kamPage: page, reportData: undefined, selectedVisit: undefined,sizeKam:size });
+        var { visits: visits, total: total } = await this.visitService.getAllVisitsOfDelegate(page, size, this.state.selectedDate, this.state.selectedKam!.id!);
+        this.setState({ kamVisits: visits, loadingVisitsData: false, totalKam: total,sizeKam:size });
     }
 
     handleDelegateRowNumChange = async (size: number) => {
@@ -304,14 +304,13 @@ class ReportPage extends Component<{}, ReportPageProps> {
                                         page={this.state.delegatePage}
                                         size={this.state.sizeDelegate}
                                         pageChange={this.handleDelegatePageChange}
-                                        rowNumChange={this.handleDelegateRowNumChange}
                                         isLoading={this.state.loadingVisitsData}
                                         id='reporttable'
                                         displayReport={this.handleDisplayReport}
                                         data={this.state.delegateVisits}
                                         selectedId={this.state.selectedVisit?.id ?? -1}
                                     ></ReportTable>
-                                    <div style={{ backgroundColor: 'white', width: '50%'}}>
+                                    <div style={{ backgroundColor: 'white', width: '50%' }}>
                                         {
                                             this.state.loadingReportData ?
                                                 (<div style={{
@@ -366,7 +365,6 @@ class ReportPage extends Component<{}, ReportPageProps> {
                                         page={this.state.kamPage}
                                         size={this.state.sizeKam}
                                         pageChange={this.handleKamPageChange}
-                                        rowNumChange={this.handleKamRowNumChange}
                                         isLoading={this.state.loadingVisitsData}
                                         id='reporttable'
                                         displayReport={this.handleDisplayReport}

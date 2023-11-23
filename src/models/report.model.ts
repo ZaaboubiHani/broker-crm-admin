@@ -11,6 +11,7 @@ export default class ReportModel {
     suppliers?: SupplierModel[];
     comments?: CommentModel[];
     objectif?: string;
+    createdAt?: Date;
 
 
     constructor(data?: ReportModel) {
@@ -22,6 +23,7 @@ export default class ReportModel {
             this.suppliers = data.suppliers ? [...data.suppliers] : [];
             this.comments = data.comments ? [...data.comments] : [];
             this.objectif = data.objectif;
+            this.createdAt = data.createdAt;
         } else {
             this.products = [];
             this.coproducts = [];
@@ -35,6 +37,8 @@ export default class ReportModel {
         report.id = json.id;
         report.note = json.attributes.note;
         report.objectif = json.attributes.objectif;
+        const timestamp = Date.parse(json.attributes.createdAt);
+        report.createdAt = new Date(timestamp);
         
         if (json?.attributes?.products?.data) {
             report.products = json.attributes.products.data.map((productData: any) => {

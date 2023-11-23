@@ -297,7 +297,7 @@ class PlanPage extends Component<{}, PlanPageProps> {
                         <CircularProgressLabel colorStroke='#3A25E6' direction='row' secondTitle='Taux de réussite' value={this.state.successRate} />
                     </div>
                     <div style={{ width: '100%', display: 'flex', flexGrow: '1', height: 'calc(100% - 500px)' }}>
-                        <PlanTable selectedId={this.state.selectedIndex} onDisplayDetails={this.handleSelectVisitTaskDate} isLoading={this.state.loadingVisitTasksData} id='plantable' data={this.state.visitTasks}></PlanTable>
+                        <PlanTable onDisplayDetails={this.handleSelectVisitTaskDate} isLoading={this.state.loadingVisitTasksData} id='plantable' data={this.state.visitTasks}></PlanTable>
                         <div className='user-panel'>
                             <PlanPanel isLoading={this.state.loadingVisitTaskDetails} data={this.state.visitTaskDetails}></PlanPanel>
                         </div>

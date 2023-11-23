@@ -10,7 +10,7 @@ import EditNoteIcon from '@mui/icons-material/EditNote';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
 import Button from '@mui/material/Button/Button';
 import CommandModel from '../../models/command.model';
-
+import { formatDateToYYYYMMDD ,formatTime} from '../../functions/date-format';
 interface ReportPanelProps {
     report?: ReportModel;
     location?: string;
@@ -20,20 +20,24 @@ interface ReportPanelProps {
 const openGoogleMaps = (location?: string) => {
     if (location && location.length > 0) {
         let coordinates = location.split(',');
-        const latitude = coordinates[0]; // Replace with your desired latitude
-        const longitude = coordinates[1]; // Replace with your desired longitude
+        const latitude = coordinates[0]; 
+        const longitude = coordinates[1]; 
         const url = `https://www.google.com/maps?q=${latitude},${longitude}`;
         window.open(url, '_blank');
     }
 };
+
 
 const ReportPanel: React.FC<ReportPanelProps> = ({ report, clientType, location }) => {
     if (report) {
         return (
             <div style={{ margin: '16px', flexGrow: '1' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'end', marginBottom: '8px' }}>
-
                     <Button onClick={() => openGoogleMaps(location)} variant="outlined"> <LocationOnIcon />Afficher la localisation</Button>
+                </div>
+                <div>
+                    <h6>Date: {formatDateToYYYYMMDD(report.createdAt!)}</h6>
+                    <h6>Temp: {formatTime(report.createdAt!)}</h6>
                 </div>
                 <Divider component="div" style={{ margin: '8px 0px' }} />
                 <h4 style={{ fontSize: 17 }}><InventoryIcon style={{ fontSize: 17 }} /> Produits:</h4>

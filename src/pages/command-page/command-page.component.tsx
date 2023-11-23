@@ -250,25 +250,27 @@ class CommandPage extends Component<{}, CommandDelegatePageProps> {
     };
 
 
-    handleDelegatePageChange = async (page: number) => {
-        this.setState({ loadingDelegateCommandsData: true, delegateCommandData: undefined });
-        var { commands: commands, total: total } = await this.commandService.getAllCommandsOfDelegate(page, this.state.sizeDelegate, this.state.selectedDateDelegate, this.state.selectedDelegate!.id!);
+    handleDelegatePageChange = async (page: number,size:number) => {
+        this.setState({ loadingDelegateCommandsData: true, delegateCommandData: undefined, sizeDelegate:size});
+        var { commands: commands, total: total } = await this.commandService.getAllCommandsOfDelegate(page, size, this.state.selectedDateDelegate, this.state.selectedDelegate!.id!);
         this.setState({
             delegatePage: page,
             delegateCommands: commands,
             totalDelegate: total,
             loadingDelegateCommandsData: false,
+            sizeDelegate:size,
         });
     }
 
-    handleKamPageChange = async (page: number) => {
-        this.setState({ loadingKamCommandsData: true, kamCommandData: undefined });
-        var { commands: commands, total: total } = await this.commandService.getAllCommandsOfDelegate(page, this.state.sizeKam, this.state.selectedDateKam, this.state.selectedKam!.id!);
+    handleKamPageChange = async (page: number,size:number) => {
+        this.setState({ loadingKamCommandsData: true, kamCommandData: undefined,sizeKam:size });
+        var { commands: commands, total: total } = await this.commandService.getAllCommandsOfDelegate(page, size, this.state.selectedDateKam, this.state.selectedKam!.id!);
         this.setState({
             kamPage: page,
             kamCommands: commands,
             totalKam: total,
             loadingKamCommandsData: false,
+            sizeKam:size,
         });
     }
 
@@ -359,12 +361,10 @@ class CommandPage extends Component<{}, CommandDelegatePageProps> {
                                     page={this.state.delegatePage}
                                     size={this.state.sizeDelegate}
                                     pageChange={this.handleDelegatePageChange}
-                                    rowNumChange={this.handleDelegateRowNumChange}
                                     data={this.state.delegateCommands}
                                     isLoading={this.state.loadingDelegateCommandsData}
                                     displayCommand={this.handleDisplayDelegateCommand}
                                     onHonor={this.handleHonorDelegateCommand}
-                                    selectedId={this.state.delegateCommandData?.id ?? -1}
                                 ></CommandDelegateTable>
                                 <div className='user-panel'>
                                     {
@@ -419,11 +419,9 @@ class CommandPage extends Component<{}, CommandDelegatePageProps> {
                                     page={this.state.kamPage}
                                     size={this.state.sizeKam}
                                     pageChange={this.handleKamPageChange}
-                                    rowNumChange={this.handleKamRowNumChange}
                                     data={this.state.kamCommands}
                                     isLoading={this.state.loadingKamCommandsData}
                                     displayCommand={this.handleDisplayKamCommand}
-                                    selectedId={this.state.kamCommandData?.id ?? -1}
                                 ></CommandCamTable>
                                 <div className='user-panel'>
                                     {

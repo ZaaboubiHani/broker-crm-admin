@@ -414,17 +414,7 @@ class HomePage extends Component<HomePageProps, HomePageState> {
                         <CustomTabPanel style={{ display: 'flex', flexDirection: 'row', flexGrow: '1', height: 'calc(100% - 50px)', width: '100%' }} value={this.state.index} index={1} >
                             <div style={{ display: 'flex', flexDirection: 'column', flexGrow: '1', height: 'calc(100% - 40px)', width: '100%', }}>
                                 <DatePickerBar onPick={this.handleOnPickDate} initialDate={this.state.selectedDate}></DatePickerBar>
-                                {/* <div className='search-bar' style={{ marginBottom: '8px' }}>
-                                    <TextField
-                                        label='Recherche par nom de kam'
-                                        size="small"
-                                        onChange={this.handleKamSearchTextChange}
-                                        sx={{ width: '300px', marginRight: '8px', backgroundColor: 'white', borderRadius: '4px', height: '40px', }}
-                                    />
-                                    <Button onClick={this.handleKamVisitsFilter} variant='outlined' sx={{ border: 'solid grey 1px', backgroundColor: 'white', borderRadius: '4px', height: '40px', }}>
-                                        <FontAwesomeIcon icon={faSearch} style={{ color: 'black' }} />
-                                    </Button>
-                                </div> */}
+                               
                                 <div className='table-panel'>
                                     <HomeTable id='hometable'
                                         firstHeader='Kam'
@@ -432,7 +422,6 @@ class HomePage extends Component<HomePageProps, HomePageState> {
                                         page={this.state.kamPage}
                                         size={this.state.sizeKam}
                                         pageChange={this.handleKamPageChange}
-                                        // rowNumChange={this.handleKamRowNumChange}
                                         isLoading={this.state.loadingVisitsData}
                                         data={this.state.filteredKamVisits}
                                         onDisplayReport={this.handleDisplayReport}

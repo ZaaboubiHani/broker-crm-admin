@@ -11,36 +11,105 @@ import Paper from '@mui/material/Paper';
 import Button from '@mui/material/Button';
 import VisitModel from '../../models/visit.model';
 import TablePagination from '@mui/material/TablePagination';
+import { DataGrid, GridColDef, GridValueGetterParams } from '@mui/x-data-grid';
 
 interface ClientsDoctorTableProps {
     data: VisitModel[];
     displayReport: (visit: VisitModel) => {};
     id?: string;
-    pageChange: (page: number) => void;
-    rowNumChange: (rowNum: number) => void;
+    pageChange: (page: number, size: number) => void;
     page: number;
     size: number;
     total: number;
     isLoading: boolean;
 }
 
-const ClientsDoctorTable: React.FC<ClientsDoctorTableProps> = ({ total, size, page, rowNumChange, pageChange, data, id, isLoading, displayReport }) => {
+const ClientsDoctorTable: React.FC<ClientsDoctorTableProps> = ({ total, size, page, pageChange, data, id, isLoading, displayReport }) => {
 
     const [rowsPerPage, setRowsPerPage] = React.useState(size);
     const [pageIndex, setPageIndex] = React.useState(page - 1);
-    const handleChangePage = (event: unknown, newPage: number) => {
-        setPageIndex(newPage);
-        pageChange(newPage + 1);
-    };
-    const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setRowsPerPage(parseInt(event.target.value, 10));
-        setPageIndex(0);
-        rowNumChange(parseInt(event.target.value, 10));
-    };
+
+    if (pageIndex !== (page - 1)) {
+        setPageIndex(page - 1);
+    }
+
+    
+    const columns: GridColDef[] = [
+        {
+            field: 'date', headerName: 'Date', width: 150, valueFormatter(params) {
+                return formatDateToYYYYMMDD(params.value);
+            },
+        },
+        { field: 'client', headerName: 'Client', width: 150 },
+        { field: 'delegate', headerName: 'Délégué', width: 150 },
+        { field: 'speciality', headerName: 'Spécialité', width: 150 },
+        { field: 'wilaya', headerName: 'Wilaya', width: 150 },
+        { field: 'commune', headerName: 'Commune', width: 150, },
+        {
+            field: 'report', headerName: 'Rapport', width: 80,
+            renderCell(params) {
+                return (<Button onClick={() => {
+                    displayReport(params.row);
+                }} variant="text">Voir</Button>);
+            },
+        },
+    ];
 
     return (
         <div id={id} style={{ display: 'flex', flexDirection: 'column', flexGrow: '1', marginRight: '16px' }}>
-            <TableContainer sx={{ flexGrow: '1', display: 'flex', flexDirection: 'column', borderRadius: '8px', margin: '8px', overflow: 'hidden', height: 'calc(100% -400px)' }} component={Paper}>
+              {
+                isLoading ? (<div style={{
+                    width: '100%',
+                    flexGrow: '1',
+                    overflow: 'hidden',
+                    height: '100%',
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                }}>
+                    <DotSpinner
+                        size={40}
+                        speed={0.9}
+                        color="black"
+                    />
+                </div>) :
+                    (<DataGrid
+                    
+                        rows={
+                            [...Array.from({ length: rowsPerPage * pageIndex }, (_, index) => {
+                                return { id: index };
+                            }), ...data.map((row) => {
+                                return {
+                                    id: row.id,
+                                    date:row.createdDate || new Date(),
+                                    client: row.client?.name,
+                                    delegate: row.user?.username,
+                                    speciality: row.client?.speciality,
+                                    wilaya: row.client?.wilaya,
+                                    commune: row.client?.commune,
+                                };
+                            })]}
+                        columns={columns}
+                        rowCount={total}
+                        onPaginationModelChange={(model) => {
+                            setPageIndex(model.page);
+                            pageChange(model.page + 1, model.pageSize);
+                            setRowsPerPage(model.pageSize);
+
+                        }}
+                        initialState={{
+                            pagination: {
+                                paginationModel: {
+                                    pageSize: rowsPerPage,
+                                    page: pageIndex,
+                                },
+                            },
+                        }}
+                        pageSizeOptions={[5, 10, 25,50,100]}
+                        checkboxSelection={false}
+                        
+                    />)}
+            {/* <TableContainer sx={{ flexGrow: '1', display: 'flex', flexDirection: 'column', borderRadius: '8px', margin: '8px', overflow: 'hidden', height: 'calc(100% -400px)' }} component={Paper}>
                 <Table sx={{ flexGrow: '1', display: 'flex', flexDirection: 'column', overflow: 'hidden', margin: '0px', width: "100%" }} size="small" aria-label="a dense table">
                     <TableHead sx={{ height: '45px', marginBottom: '16px' }}>
                         <TableRow>
@@ -102,7 +171,7 @@ const ClientsDoctorTable: React.FC<ClientsDoctorTableProps> = ({ total, size, pa
                 page={pageIndex}
                 onPageChange={handleChangePage}
                 onRowsPerPageChange={handleChangeRowsPerPage}
-            />
+            /> */}
         </div>
     );
 };

@@ -10,13 +10,15 @@ export default class VisitService {
         const token = localStorage.getItem('token');
 
         var typeFilter: string = '';
+        var creatorFilter: string = '';
 
         if (clientType === ClientType.wholesaler) {
             typeFilter = '&filters[client][relatedSpeciality][domainType][reference][$eq]=wholesaler'
         } else {
             typeFilter = '&filters[client][relatedSpeciality][domainType][reference][$ne]=wholesaler'
+            creatorFilter = `filters[user][creatorId][$eq]=${superId}&`;
         }
-        var response = await axios.get(`${Globals.apiUrl}/visits?filters[user][creatorId][$eq]=${superId}&pagination[page]=${page}&pagination[pageSize]=${size}&filters[createdDate][$eq]=${formatDateToYYYYMMDD(date)}${typeFilter}&populate[rapport][populate]=*&populate[client][populate]=relatedSpeciality.domainType&populate=user&sort[0]=createdDate:desc`,
+        var response = await axios.get(`${Globals.apiUrl}/visits?${creatorFilter}pagination[page]=${page}&pagination[pageSize]=${size}&filters[createdDate][$eq]=${formatDateToYYYYMMDD(date)}${typeFilter}&populate[rapport][populate]=*&populate[client][populate]=relatedSpeciality.domainType&populate=user&sort[0]=createdDate:desc`,
             {
                 headers: {
                     'Authorization': `Bearer ${token}`

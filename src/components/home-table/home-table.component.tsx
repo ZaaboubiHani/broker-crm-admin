@@ -17,7 +17,6 @@ interface HomeTableProps {
     size: number;
     total: number;
     pageChange: (page: number, size: number) => void;
-    // rowNumChange: (rowNum: number) => void;
 }
 
 const HomeTable: React.FC<HomeTableProps> = ({ data, id, isLoading, firstHeader, onDisplayReport, onDisplayCommand, total, size, page, pageChange, }) => {
@@ -33,22 +32,7 @@ const HomeTable: React.FC<HomeTableProps> = ({ data, id, isLoading, firstHeader,
         setPageIndex(page - 1);
     }
 
-    // const handleChangePage = (newPage: number) => {
-    //     setPageIndex(newPage);
-    //     pageChange(newPage + 1);
-
-    // };
-    // const handleChangeRowsPerPage = (row: number) => {
-    //     setRowsPerPage(row);
-    //     setPageIndex(0);
-    //     rowNumChange(row);
-    // };
-    // const handleChangeRowsPerPage = (row:number) => {
-    //     setRowsPerPage(parseInt(event.target.value, 10));
-    //     setPageIndex(0);
-    //     setSelectedRow(-1);
-    //     rowNumChange(parseInt(event.target.value, 10));
-    // };
+   
     const columns: GridColDef[] = [
 
         { field: 'username', headerName: firstHeader, width: 150 },
