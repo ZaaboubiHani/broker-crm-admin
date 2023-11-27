@@ -54,15 +54,12 @@ interface HomePageState {
     kamPage: number;
 }
 
-interface HomePageProps {
-
-}
 
 
 
-class HomePage extends Component<HomePageProps, HomePageState> {
+class HomePage extends Component<{}, HomePageState> {
 
-    constructor(props: HomePageProps) {
+    constructor(props: {}) {
         super(props);
         this.state = {
             currentUser: new UserModel(),
@@ -98,7 +95,6 @@ class HomePage extends Component<HomePageProps, HomePageState> {
         this.setState({ loadingReportData: true, selectedReport: undefined, showReportPanel: true });
         var report = await this.reportService.getReportOfVisit(visit.id!);
         this.setState({ loadingReportData: false, selectedReport: report, selectedVisit: visit, showReportPanel: true });
-
     };
 
     handleDisplayCommand = async (visit: VisitModel) => {
@@ -116,6 +112,7 @@ class HomePage extends Component<HomePageProps, HomePageState> {
             if (currentUser != undefined) {
                 this.setState({ currentUser: currentUser });
             }
+
             if (currentUser.type === UserType.supervisor) {
                 var { visits: visits, total: total } = await this.visitService.getAllVisits(1, 25, new Date(), ClientType.pharmacy, currentUser.id!);
                 this.setState({
@@ -274,45 +271,6 @@ class HomePage extends Component<HomePageProps, HomePageState> {
 
     }
 
-    handleDelegateRowNumChange = async (size: number) => {
-        this.setState({ loadingVisitsData: true, delegatePage: 1, sizeDelegate: size, selectedReport: undefined, selectedVisit: undefined, selectedCommand: undefined });
-        if (this.state.currentUser.type === UserType.supervisor) {
-            var { visits: visits, total: total } = await this.visitService.getAllVisits(1, size, this.state.selectedDate, ClientType.pharmacy, this.state.currentUser.id!);
-            this.setState({
-                delegatePage: 1,
-                sizeDelegate: size,
-                delegateVisits: visits,
-                loadingVisitsData: false,
-                filteredDelegateVisits: visits,
-                totalDelegate: total
-            });
-        } else {
-            var { visits: delegateVisits, total: totalDelegate } = await this.visitService.getAllVisits(1, size, this.state.selectedDate, ClientType.pharmacy, this.state.selectedSupervisor!.id!);
-
-            this.setState({
-                delegatePage: 1,
-                sizeDelegate: size,
-                delegateVisits: delegateVisits,
-                filteredDelegateVisits: delegateVisits,
-                loadingVisitsData: false,
-                totalDelegate: totalDelegate,
-            });
-        }
-    }
-
-    handleKamRowNumChange = async (size: number) => {
-        this.setState({ loadingVisitsData: true, delegatePage: 1, sizeDelegate: size, selectedReport: undefined, selectedVisit: undefined, selectedCommand: undefined });
-        var { visits: kamVisits, total: totalKam } = await this.visitService.getAllVisits(1, this.state.sizeDelegate, this.state.selectedDate, ClientType.wholesaler, this.state.currentUser.id!);
-        this.setState({
-            kamVisits: kamVisits,
-            filteredKamVisits: kamVisits,
-            loadingVisitsData: false,
-            kamPage: 1,
-            sizeKam: size,
-            totalKam: totalKam,
-        });
-    }
-
     render() {
         if (!this.state.hasData) {
             this.loadHomePageData();
@@ -353,24 +311,13 @@ class HomePage extends Component<HomePageProps, HomePageState> {
                                     </div>) : null
                                 }
                                 <DatePickerBar onPick={this.handleOnPickDate} initialDate={this.state.selectedDate}></DatePickerBar>
-                                {/* <div className='search-bar' style={{ marginBottom: '8px' }}>
-                                    <TextField
-                                        label='Recherche par nom de délégué'
-                                        size="small"
-                                        onChange={this.handleDelegateSearchTextChange}
-                                        sx={{ width: '300px', marginRight: '8px', backgroundColor: 'white', borderRadius: '4px', height: '40px', }}
-                                    />
-                                    <Button onClick={this.handleDelegateVisitsFilter} variant='outlined' sx={{ border: 'solid grey 1px', backgroundColor: 'white', borderRadius: '4px', height: '40px', }}>
-                                        <FontAwesomeIcon icon={faSearch} style={{ color: 'black' }} />
-                                    </Button>
-                                </div> */}
+                               
                                 <div className='table-panel'>
                                     <HomeTable id='hometable'
                                         total={this.state.totalDelegate}
                                         page={this.state.delegatePage}
                                         size={this.state.sizeDelegate}
                                         pageChange={this.handleDelegatePageChange}
-                                        //rowNumChange={this.handleDelegateRowNumChange}
                                         firstHeader='Délégué'
                                         isLoading={this.state.loadingVisitsData}
                                         data={this.state.filteredDelegateVisits}

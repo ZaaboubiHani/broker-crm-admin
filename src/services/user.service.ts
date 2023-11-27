@@ -169,7 +169,8 @@ export default class UserService {
                 break;
             }
         }
-        var response = await axios.get(`${Globals.apiUrl}/users?populate=wilayaActivity.wilayas&populate=relatedType&populate=company${userType !== UserType.supervisor && userType !== UserType.kam ? `&filters[creatorId][\$eq]=${creatorId}` : ''}${typeFilter}${page !== undefined && size !== undefined ? `&pagination[page]=${page}&pagination[pageSize]=${size}` : '&pagination[pageSize]=100'}`,
+
+        var response = await axios.get(`${Globals.apiUrl}/users?populate=wilayaActivity.wilayas&populate=relatedType&populate=company${userType !== UserType.supervisor && userType !== UserType.kam && userType !== UserType.delegate ? `&filters[creatorId][\$eq]=${creatorId}` : ''}${typeFilter}${page !== undefined && size !== undefined ? `&pagination[page]=${page}&pagination[pageSize]=${size}` : '&pagination[pageSize]=100'}`,
             {
                 headers: {
                     'Authorization': `Bearer ${token}`

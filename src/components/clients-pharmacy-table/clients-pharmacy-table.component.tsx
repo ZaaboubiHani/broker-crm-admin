@@ -95,6 +95,7 @@ const ClientsPharmacyTable: React.FC<ClientsPharmacyTableProps> = ({ total, size
                                     delegate: row.user?.username,
                                     wilaya: row.client?.wilaya,
                                     commune: row.client?.commune,
+                                    visitLocation: row.visitLocation,
                                 };
                             })]}
                         columns={columns}
