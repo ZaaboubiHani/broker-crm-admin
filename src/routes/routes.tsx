@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { Routes, Route } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Sidebar from '../components/sidebar/sidebar.component';
 import HomePage from '../pages/home-page/home-page.component';
@@ -31,7 +31,7 @@ const AppRouter: React.FC = () => {
         location.pathname !== '/' && location.pathname !== '/login' && location.pathname !== '/content' ? (
           <div style={{ width: '100%', height: '100vh', margin: '0px', padding: '0px' }}>
             <div style={{ width: '100%', height: '100vh', display: 'flex', flexDirection: 'row', flexWrap: 'nowrap' }}>
-              <div style={{ width: '200px' }}>
+              <div>
                 <Sidebar />
               </div>
               <div style={{ flexGrow: '1', width: '100%', overflow: 'auto', height: '100%' }}>

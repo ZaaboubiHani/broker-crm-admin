@@ -21,13 +21,13 @@
 }
 
 #hometable{
-    width: 50%;
+    width: 70%;
     margin-left: 8px;
     margin-bottom: 8px;
 }
 
 .user-panel{
-    width: 40%;
+    width: 30%;
     background-color: white;
     flex-grow: 1;
     border-radius: 4px;
