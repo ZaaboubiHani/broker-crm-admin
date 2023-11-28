@@ -1,17 +1,9 @@
 import React from 'react';
 import { formatDateToYYYYMMDD } from '../../functions/date-format';
 import { DotSpinner } from '@uiball/loaders';
-import Table from '@mui/material/Table';
-import TableBody from '@mui/material/TableBody';
-import TableCell from '@mui/material/TableCell';
-import TableContainer from '@mui/material/TableContainer';
-import TableHead from '@mui/material/TableHead';
-import TableRow from '@mui/material/TableRow';
-import Paper from '@mui/material/Paper';
 import Button from '@mui/material/Button';
 import VisitModel from '../../models/visit.model';
-import TablePagination from '@mui/material/TablePagination';
-import { DataGrid, GridColDef, GridValueGetterParams } from '@mui/x-data-grid';
+import { DataGrid, GridColDef } from '@mui/x-data-grid';
 
 interface ClientsDoctorTableProps {
     data: VisitModel[];
@@ -33,7 +25,6 @@ const ClientsDoctorTable: React.FC<ClientsDoctorTableProps> = ({ total, size, pa
         setPageIndex(page - 1);
     }
 
-    
     const columns: GridColDef[] = [
         {
             field: 'date', headerName: 'Date', width: 150, valueFormatter(params) {
@@ -87,6 +78,7 @@ const ClientsDoctorTable: React.FC<ClientsDoctorTableProps> = ({ total, size, pa
                                     speciality: row.client?.speciality,
                                     wilaya: row.client?.wilaya,
                                     commune: row.client?.commune,
+                                    visitLocation: row.visitLocation,
                                 };
                             })]}
                         columns={columns}

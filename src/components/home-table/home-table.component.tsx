@@ -96,6 +96,7 @@ const HomeTable: React.FC<HomeTableProps> = ({ data, id, isLoading, firstHeader,
                                     wilaya: row.client?.wilaya,
                                     commune: row.client?.commune,
                                     hasCommand: row.hasCommand,
+                                    visitLocation: row.visitLocation,
                                 };
                             })]}
                         columns={columns}
