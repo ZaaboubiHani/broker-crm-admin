@@ -84,15 +84,14 @@ const CommandDelegateTable: React.FC<CommandDelegateTableProps> = ({ data, id, i
         { field: 'commune', headerName: 'Commune', width: 150, },
         { field: 'amount', headerName: 'Montant', width: 150, },
         {
-            field: 'supplier', headerName: 'Fournisseur', width: 150,
+            field: 'supplier', headerName: 'Fournisseur', width: 200,
             renderCell(params) {
                 return (<FormControl fullWidth>
-                    <InputLabel id="demo-simple-select-label">Fournisseur</InputLabel>
+                    
                     <Select
-                        labelId="demo-simple-select-label"
+                       
                         id="demo-simple-select"
                         value={params.row.finalSupplier?.id}
-                        label="Fournisseur"
                         onChange={(event) => {
                             params.row.finalSupplier = params.row.suppliers?.find((s: any) => s.id === event.target.value);
                             data[params.row.index].finalSupplier = data[params.row.index].suppliers?.find((s: any) => s.id === event.target.value);

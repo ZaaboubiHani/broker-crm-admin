@@ -1,77 +1,133 @@
 
 import React, { useState, useEffect } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { AiOutlineHome, AiOutlineLineChart, AiOutlineSchedule, AiOutlineShoppingCart, AiOutlineUnorderedList, AiOutlineUser } from 'react-icons/ai';
-import { LiaUsersSolid } from 'react-icons/lia';
-import { HiOutlineCash, HiOutlineUserGroup } from 'react-icons/hi';
-import { HiOutlineClipboardDocument } from 'react-icons/hi2';
-import { LuPackage2 } from 'react-icons/lu';
-import { TfiBriefcase } from 'react-icons/tfi';
-import Dropdown from '../drop-down/drop-down.component';
-import Expander from '../expander/expander.component';
 import { Nav, NavDropdown, Navbar } from 'react-bootstrap';
 import '../sidebar/sidebar.style.css';
+import HomeIcon from '@mui/icons-material/Home';
+import BusinessCenterIcon from '@mui/icons-material/BusinessCenter';
+import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
+import EventNoteIcon from '@mui/icons-material/EventNote';
+import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
+import Diversity3Icon from '@mui/icons-material/Diversity3';
+import PaidIcon from '@mui/icons-material/Paid';
+import CreditCardIcon from '@mui/icons-material/CreditCard';
+import InsertChartIcon from '@mui/icons-material/InsertChart';
+import TuneIcon from '@mui/icons-material/Tune';
+import AssignmentIndIcon from '@mui/icons-material/AssignmentInd';
 import { Link, useLocation } from 'react-router-dom';
+import Button from '@mui/material/Button/Button';
+import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
+import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 
-interface SidebarProps {
-}
-
-const Sidebar: React.FC<SidebarProps> = () => {
-  const commandata = window.localStorage.getItem('command');
-  const clientdata = window.localStorage.getItem('client');
-
-  const [commandOpened, setCommandOpened] = useState(commandata !== null ? JSON.parse(commandata) : false);
-  const [clientOpened, setClientOpened] = useState(clientdata !== null ? JSON.parse(clientdata) : false);
+const Sidebar: React.FC = () => {
 
 
-  const handleCommandToggle = () => {
-    window.localStorage.setItem('command', JSON.stringify(!commandOpened));
-    setCommandOpened(!commandOpened);
+  const [isOpen, setIsOpen] = useState<Boolean>(localStorage.getItem('sidebarOpen') === 'true');
+
+  const toggleDrawer = () => {
+    setIsOpen(!isOpen);
+    localStorage.setItem('sidebarOpen',String(!isOpen));
   };
 
-  const handleClientToggle = () => {
-    window.localStorage.setItem('client', JSON.stringify(!clientOpened));
-    setClientOpened(!clientOpened);
-  };
   const location = useLocation();
 
   return (
 
-    <Nav className="flex-column side-menu" >
-      <div style={{ overflowY: 'auto', overflowX: 'hidden', height: '100vh', width: '200px' }}>
-        <img src="/broker_title.png" height='60px' style={{ margin: '0px 8px' }} alt="" />
-        <Nav.Link className={location.pathname === '/home' ? 'active' : ''} href="/home">
-          Acceuil
+    <Nav style={{
+      overflowY: 'auto',
+      overflowX: 'hidden',
+      height: '100vh',
+      width: isOpen ? '220px' : '58px',
+      whiteSpace: 'nowrap',
+      transition: 'width 0.5s ease',
+      backgroundColor: 'rgb(0, 182, 182)',
+      borderRadius: '0px 8px 8px 0px'
+    }}>
+
+      <div >
+        <Button style={{
+          display: 'block', position:
+            'absolute', left: isOpen ? '200px' : '38px',
+          bottom: "20px",
+          backgroundColor: 'white',
+          width: '10px',
+          minWidth:'10px',
+          height: '40px',
+          zIndex: '99',
+          transition: 'all 0.5s ease',
+        }}
+          onClick={toggleDrawer}
+          variant="contained">
+          <ArrowBackIosNewIcon style={{ width: '30px', left: '0px', top: '8px', position: 'absolute', color: 'rgb(0, 182, 182)', transition: 'opacity 0.5s ease', opacity: isOpen ? '1' : '0', }} />
+          <ArrowForwardIosIcon style={{ width: '30px', left: '0px', top: '8px', position: 'absolute', color: 'rgb(0, 182, 182)', transition: 'opacity 0.5s ease', opacity: isOpen ? '0' : '1', }} />
+        </Button>
+        <img src='/logo.png' style={{ margin: '0px 8px', height: '50px', transition: 'opacity 0.5s ease', opacity: isOpen ? '0' : '1', }} alt="" />
+        <img src="/broker_title.png" height='60px' style={{ margin: '0px 8px', left: '0px', position: 'absolute', transition: 'opacity 0.5s ease', opacity: isOpen ? '1' : '0', }} alt="" />
+        <Nav.Link style={{ display: 'flex' }} className={location.pathname === '/home' ? 'active' : ''} href="/home">
+          <HomeIcon style={{ color: 'white', width: '30px', height: '30px', marginRight: '8px' }} />
+          <p style={{ color: 'white', transition: 'opacity 0.5s ease', opacity: isOpen ? '1' : '0', }}>
+            Acceuil
+          </p>
         </Nav.Link>
-        <Nav.Link className={location.pathname === '/delegate' ? 'active' : ''} href="/delegate">
-          Délégués
+        <Nav.Link style={{ display: 'flex' }} className={location.pathname === '/delegate' ? 'active' : ''} href="/delegate">
+          <BusinessCenterIcon style={{ color: 'white', width: '30px', height: '30px', marginRight: '8px' }} />
+          <p style={{ color: 'white', transition: 'opacity 0.5s ease', opacity: isOpen ? '1' : '0', }}>
+            Délégués
+          </p>
         </Nav.Link>
-        <Nav.Link className={location.pathname === '/plan' ? 'active' : ''} href="/plan">
-          Plan de tournée
+        <Nav.Link style={{ display: 'flex' }} className={location.pathname === '/plan' ? 'active' : ''} href="/plan">
+          <CalendarMonthIcon style={{ color: 'white', width: '30px', height: '30px', marginRight: '8px' }} />
+          <p style={{ color: 'white', transition: 'opacity 0.5s ease', opacity: isOpen ? '1' : '0', }}>
+            Plan de tournée
+          </p>
         </Nav.Link>
-        <Nav.Link className={location.pathname === '/report' ? 'active' : ''} href="/report">
-          Rapports des visites
+        <Nav.Link style={{ display: 'flex' }} className={location.pathname === '/report' ? 'active' : ''} href="/report">
+          <EventNoteIcon style={{ color: 'white', width: '30px', height: '30px', marginRight: '8px' }} />
+          <p style={{ color: 'white', transition: 'opacity 0.5s ease', opacity: isOpen ? '1' : '0', }}>
+            Rapports des visites
+          </p>
         </Nav.Link>
-        <Nav.Link className={location.pathname === '/command' ? 'active' : ''} href="/command">
-        Bons de commandes
+        <Nav.Link style={{ display: 'flex' }} className={location.pathname === '/command' ? 'active' : ''} href="/command">
+          <ShoppingCartIcon style={{ color: 'white', width: '30px', height: '30px', marginRight: '8px' }} />
+          <p style={{ color: 'white', transition: 'opacity 0.5s ease', opacity: isOpen ? '1' : '0', }}>
+            Bons de commandes
+          </p>
         </Nav.Link>
-        <Nav.Link className={location.pathname === '/expense' ? 'active' : ''} href="/expense">
-          Notes des frais
+        <Nav.Link style={{ display: 'flex' }} className={location.pathname === '/expense' ? 'active' : ''} href="/expense">
+          <PaidIcon style={{ color: 'white', width: '30px', height: '30px', marginRight: '8px' }} />
+          <p style={{ color: 'white', transition: 'opacity 0.5s ease', opacity: isOpen ? '1' : '0', }}>
+            Notes des frais
+          </p>
         </Nav.Link>
-        <Nav.Link className={location.pathname === '/clients' ? 'active' : ''} href="/clients">
-          Clients
+        <Nav.Link style={{ display: 'flex' }} className={location.pathname === '/clients' ? 'active' : ''} href="/clients">
+          <Diversity3Icon style={{ color: 'white', width: '30px', height: '30px', marginRight: '8px' }} />
+          <p style={{ color: 'white', transition: 'opacity 0.5s ease', opacity: isOpen ? '1' : '0', }}>
+            Clients
+          </p>
         </Nav.Link>
-        <Nav.Link className={location.pathname === '/revenue' ? 'active' : ''} href="/revenue">
-          Chiffre d'affaire
+        <Nav.Link style={{ display: 'flex' }} className={location.pathname === '/revenue' ? 'active' : ''} href="/revenue">
+          <CreditCardIcon style={{ color: 'white', width: '30px', height: '30px', marginRight: '8px' }} />
+          <p style={{ color: 'white', transition: 'opacity 0.5s ease', opacity: isOpen ? '1' : '0', }}>
+            Chiffre d'affaire
+          </p>
         </Nav.Link>
-        <Nav.Link className={location.pathname === '/statistics' ? 'active' : ''} href="/statistics">
-          Statistiques
+        <Nav.Link style={{ display: 'flex' }} className={location.pathname === '/statistics' ? 'active' : ''} href="/statistics">
+          <InsertChartIcon style={{ color: 'white', width: '30px', height: '30px', marginRight: '8px' }} />
+          <p style={{ color: 'white', transition: 'opacity 0.5s ease', opacity: isOpen ? '1' : '0', }}>
+            Statistiques
+          </p>
         </Nav.Link>
-        <Nav.Link className={location.pathname === '/config' ? 'active' : ''} href="/config">
-          Listes prédéfinies
+        <Nav.Link style={{ display: 'flex' }} className={location.pathname === '/config' ? 'active' : ''} href="/config">
+          <TuneIcon style={{ color: 'white', width: '30px', height: '30px', marginRight: '8px' }} />
+          <p style={{ color: 'white', transition: 'opacity 0.5s ease', opacity: isOpen ? '1' : '0', }}>
+            Listes prédéfinies
+          </p>
         </Nav.Link>
-        <Nav.Link className={location.pathname === '/profile' ? 'active' : ''} href="/profile">
-          Profil
+        <Nav.Link style={{ display: 'flex' }} className={location.pathname === '/profile' ? 'active' : ''} href="/profile">
+          <AssignmentIndIcon style={{ color: 'white', width: '30px', height: '30px', marginRight: '8px' }} />
+          <p style={{ color: 'white', transition: 'opacity 0.5s ease', opacity: isOpen ? '1' : '0', }}>
+            Profil
+          </p>
         </Nav.Link>
       </div>
     </Nav>
