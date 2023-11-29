@@ -164,18 +164,23 @@ export default class UserService {
                 typeFilter = `&filters[relatedType][reference][$eq]=cam`;
                 break;
             }
+            case UserType.admin: {
+                typeFilter = `&filters[relatedType][reference][$ne]=admin`;
+                break;
+            }
             default: {
                 typeFilter = '';
                 break;
             }
         }
 
-        var response = await axios.get(`${Globals.apiUrl}/users?populate=wilayaActivity.wilayas&populate=relatedType&populate=company${userType !== UserType.supervisor && userType !== UserType.kam && userType !== UserType.delegate ? `&filters[creatorId][\$eq]=${creatorId}` : ''}${typeFilter}${page !== undefined && size !== undefined ? `&pagination[page]=${page}&pagination[pageSize]=${size}` : '&pagination[pageSize]=100'}`,
+        var response = await axios.get(`${Globals.apiUrl}/users?populate=wilayaActivity.wilayas&populate=relatedType&populate=company${userType === UserType.delegate ? `&filters[creatorId][\$eq]=${creatorId}` : ''}${typeFilter}${page !== undefined && size !== undefined ? `&pagination[page]=${page}&pagination[pageSize]=${size}` : ''}`,
             {
                 headers: {
                     'Authorization': `Bearer ${token}`
                 }
             });
+            
         if (response.status == 200) {
             var users: UserModel[] = [];
             for (let index = 0; index < response.data.length; index++) {

@@ -87,9 +87,7 @@ const CommandDelegateTable: React.FC<CommandDelegateTableProps> = ({ data, id, i
             field: 'supplier', headerName: 'Fournisseur', width: 200,
             renderCell(params) {
                 return (<FormControl fullWidth>
-                    
                     <Select
-                       
                         id="demo-simple-select"
                         value={params.row.finalSupplier?.id}
                         onChange={(event) => {
@@ -106,7 +104,6 @@ const CommandDelegateTable: React.FC<CommandDelegateTableProps> = ({ data, id, i
                                 {supplier.name}
                             </MenuItem>
                         ))}
-
                     </Select>
                 </FormControl>);
             },

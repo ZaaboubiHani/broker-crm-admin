@@ -10,7 +10,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSearch } from '@fortawesome/free-solid-svg-icons';
 import UserPicker from '../../components/user-picker/user-picker.component';
 import UserService from '../../services/user.service';
-import UserModel from '../../models/user.model';
+import UserModel, { UserType } from '../../models/user.model';
 import ExpenseModel from '../../models/expense.model';
 import ExpenseService from '../../services/expense.service';
 import { DotSpinner } from '@uiball/loaders';
@@ -27,11 +27,15 @@ interface ExpensePageProps {
     hasData: boolean;
     searchText: string;
     delegates: UserModel[];
+    supervisors: UserModel[];
+    kams: UserModel[];
     filtredDelegates: UserModel[];
     selectedDelegate?: UserModel;
+    selectedSupervisor?: UserModel;
     loadingExpensesData: boolean;
     expenses: ExpenseModel[];
     expensesUser: ExpenseUserModel;
+    currentUser: UserModel;
 }
 
 
@@ -39,11 +43,14 @@ class ExpensePage extends Component<{}, ExpensePageProps> {
     constructor({ }) {
         super({});
         this.state = {
+            currentUser: new UserModel(),
             selectedDate: new Date(),
             isLoading: false,
             hasData: false,
             searchText: '',
             delegates: [],
+            supervisors: [],
+            kams: [],
             filtredDelegates: [],
             loadingExpensesData: false,
             proofsDialogIsOpen: false,
@@ -77,6 +84,21 @@ class ExpensePage extends Component<{}, ExpensePageProps> {
         this.setState({ selectedDelegate: delegate, expenses: expenses, loadingExpensesData: false, expensesUser: expensesUser });
     }
 
+    handleSelectSupervisor = async (supervisor: UserModel) => {
+        this.setState({ loadingExpensesData: true, delegates: [] });
+        var delegates = await this.userService.getUsersByCreator(supervisor.id!, UserType.delegate);
+        if (delegates.length > 0) {
+            this.setState({ selectedDelegate: delegates[0], selectedSupervisor: supervisor });
+            var expenses = await this.expenseService.getAllExpensesOfUserByDateMoth(this.state.selectedDate, delegates[0].id!);
+            var expensesUser = await this.expenseService.getExpensesUserByDateMoth(this.state.selectedDate, delegates[0].id!);
+            this.setState({ expenses: expenses, expensesUser: expensesUser });
+        }
+        else {
+            this.setState({ expenses: [], });
+        }
+        this.setState({ loadingExpensesData: false, });
+    }
+
     handleOnPickDate = async (date: Date) => {
         this.setState({ loadingExpensesData: true, });
         var expenses = await this.expenseService.getAllExpensesOfUserByDateMoth(date, this.state.selectedDelegate!.id!);
@@ -94,14 +116,37 @@ class ExpensePage extends Component<{}, ExpensePageProps> {
     loadExpensePageData = async () => {
         this.setState({ isLoading: true });
         if (!this.state.isLoading) {
-            var delegates = await this.userService.getDelegateUsers();
-            if (delegates.length > 0) {
-                this.setState({ selectedDelegate: delegates[0] });
-                var expenses = await this.expenseService.getAllExpensesOfUserByDateMoth(new Date(), delegates[0].id!);
-                var expensesUser = await this.expenseService.getExpensesUserByDateMoth(new Date(), delegates[0].id!);
-                this.setState({ expenses: expenses, expensesUser: expensesUser });
+            var currentUser = await this.userService.getMe();
+
+            if (currentUser != undefined) {
+                this.setState({ currentUser: currentUser });
             }
-            this.setState({ isLoading: false, delegates: delegates, filtredDelegates: delegates, hasData: true });
+
+            if (currentUser.type === UserType.supervisor) {
+                var delegates = await this.userService.getUsersByCreator(currentUser.id!, UserType.delegate);
+                if (delegates.length > 0) {
+                    this.setState({ selectedDelegate: delegates[0] });
+                    var expenses = await this.expenseService.getAllExpensesOfUserByDateMoth(new Date(), delegates[0].id!);
+                    var expensesUser = await this.expenseService.getExpensesUserByDateMoth(new Date(), delegates[0].id!);
+                    this.setState({ expenses: expenses, expensesUser: expensesUser });
+                }
+                this.setState({ isLoading: false, delegates: delegates, filtredDelegates: delegates, hasData: true });
+            } else {
+                var supervisors = await this.userService.getUsersByCreator(currentUser.id!, UserType.supervisor);
+                this.setState({supervisors: supervisors});
+                if (supervisors.length > 0) {
+                    var delegates = await this.userService.getUsersByCreator(supervisors[0].id!, UserType.delegate);
+                    if (delegates.length > 0) {
+                        this.setState({ selectedDelegate: delegates[0], selectedSupervisor: supervisors[0] });
+                        var expenses = await this.expenseService.getAllExpensesOfUserByDateMoth(new Date(), delegates[0].id!);
+                        var expensesUser = await this.expenseService.getExpensesUserByDateMoth(new Date(), delegates[0].id!);
+                        this.setState({ expenses: expenses, expensesUser: expensesUser });
+                    }
+                    this.setState({ isLoading: false, delegates: delegates, filtredDelegates: delegates, hasData: true });
+                }
+            }
+
+
         }
     }
 
@@ -143,21 +188,28 @@ class ExpensePage extends Component<{}, ExpensePageProps> {
                         </button>
                         <MonthYearPicker onPick={this.handleOnPickDate}></MonthYearPicker >
                     </div>
+                    {
+                        this.state.currentUser.type === UserType.admin ? (<div style={{ display: 'flex', height: '55px' }}>
+                            <UserPicker delegates={this.state.supervisors} onSelect={this.handleSelectSupervisor}></UserPicker>
+                        </div>) : null
+                    }
                     <div style={{ display: 'flex', height: '55px' }}>
                         <UserPicker delegates={this.state.filtredDelegates} onSelect={this.handleSelectDelegate}></UserPicker>
                     </div>
-                    <div style={{ width: '100%', display: 'flex', flexGrow: '1' }} >
+                    <div style={{ width: '100%', display: 'flex', flexGrow: '1', height:  this.state.currentUser.type === UserType.admin ? 'calc(100% - 240px)' : 'calc(100% - 180px)' }} >
+
+
                         <ExpenseTable data={this.state.expenses} isLoading={this.state.loadingExpensesData}></ExpenseTable>
                     </div>
                     <div style={{ display: 'flex', justifyContent: 'end' }}>
                         <h6 style={{ fontSize: '20px', marginRight: '16px' }}>
-                        Total Km : {this.state.expenses.map((e)=>e.kmTotal || 0).reduce((sum, current) => sum + current, 0)}
+                            Total Km : {this.state.expenses.map((e) => e.kmTotal || 0).reduce((sum, current) => sum + current, 0)}
                         </h6>
                         <h6 style={{ fontSize: '20px', marginRight: '16px' }}>
-                        Total nuitées :  {this.state.expenses.map((e)=>e.nightsTotal || 0).reduce((sum, current) => sum + current, 0)}
+                            Total nuitées :  {this.state.expenses.map((e) => e.nightsTotal || 0).reduce((sum, current) => sum + current, 0)}
                         </h6>
                         <h6 style={{ fontSize: '20px', marginRight: '16px' }}>
-                        Total note de frais : {this.state?.expensesUser?.total?.toLocaleString('fr-DZ', { style: 'currency', currency: 'DZD' }) ?? (0).toLocaleString('fr-DZ', { style: 'currency', currency: 'DZD' })}
+                            Total note de frais : {this.state?.expensesUser?.total?.toLocaleString('fr-DZ', { style: 'currency', currency: 'DZD' }) ?? (0).toLocaleString('fr-DZ', { style: 'currency', currency: 'DZD' })}
                         </h6>
                     </div>
                     <div style={{ display: 'flex', justifyContent: 'end' }}>

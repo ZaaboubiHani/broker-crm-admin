@@ -139,7 +139,7 @@ class ReportPage extends Component<{}, ReportPageProps> {
             }
 
             if (currentUser.type === UserType.supervisor) {
-                var delegates = await this.userService.getDelegateUsers();
+                var delegates = await this.userService.getUsersByCreator(currentUser.id!, UserType.delegate);
                 if (delegates.length > 0) {
                     this.setState({ selectedDelegate: delegates[0] });
                     var { visits: visits, total: total } = await this.visitService.getAllVisitsOfDelegate(1, 25, new Date(), delegates[0].id!);
@@ -310,7 +310,7 @@ class ReportPage extends Component<{}, ReportPageProps> {
                                         data={this.state.delegateVisits}
                                         selectedId={this.state.selectedVisit?.id ?? -1}
                                     ></ReportTable>
-                                    <div style={{ backgroundColor: 'white', width: '50%' }}>
+                                    <div style={{ backgroundColor: 'white', width: '30%' }}>
                                         {
                                             this.state.loadingReportData ?
                                                 (<div style={{
