@@ -312,7 +312,7 @@ class ClientsPage extends Component<{}, ClientsPageProps> {
                                         displayCommand={this.handleDisplayPharmCommand}
                                         displayReport={this.handleDisplayPharmReport}
                                     ></ClientsPharmacyTable>
-                                    <div style={{ backgroundColor: 'white', borderRadius: '8px', margin: '8px 0px', width: '40%' }}>
+                                    <div style={{ backgroundColor: 'white', borderRadius: '8px', margin: '8px 0px', width: '30%' }}>
                                         {
                                             this.state.loadingReportData ?
                                                 (<div style={{
@@ -375,7 +375,7 @@ class ClientsPage extends Component<{}, ClientsPageProps> {
                                         displayReport={this.handleDisplayDocReport}
                                     ></ClientsDoctorTable>
 
-                                    <div style={{ backgroundColor: 'white', borderRadius: '8px', margin: '8px 0px', width: '50%' }}>
+                                    <div style={{ backgroundColor: 'white', borderRadius: '8px', margin: '8px 0px', width: '30%' }}>
                                         {
                                             this.state.loadingReportData ?
                                                 (<div style={{

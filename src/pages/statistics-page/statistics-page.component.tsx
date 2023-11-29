@@ -6,7 +6,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSearch } from '@fortawesome/free-solid-svg-icons';
 import UserPicker from '../../components/user-picker/user-picker.component';
 import UserService from '../../services/user.service';
-import UserModel from '../../models/user.model';
+import UserModel, { UserType } from '../../models/user.model';
 import { DotSpinner } from '@uiball/loaders';
 import ReactApexChart from 'react-apexcharts';
 import { ApexOptions } from 'apexcharts';
@@ -47,7 +47,7 @@ class StatisticsPage extends Component<{}, StatisticsPageProps> {
     constructor({ }) {
         super({});
         this.state = {
-            currentUser:new UserModel(),
+            currentUser: new UserModel(),
             selectedDate: new Date(),
             isLoading: false,
             hasData: false,
@@ -599,7 +599,13 @@ class StatisticsPage extends Component<{}, StatisticsPageProps> {
         this.setState({ isLoading: true });
 
         if (!this.state.isLoading) {
-            var delegates = await this.userService.getDelegateUsers();
+            var currentUser = await this.userService.getMe();
+
+            if (currentUser != undefined) {
+                this.setState({ currentUser: currentUser });
+            }
+
+            var delegates = await this.userService.getUsersByCreator(currentUser.id!, UserType.delegate);
             var currentUser = await this.userService.getMe();
             if (delegates.length > 0) {
                 this.setState({ selectedDelegate: delegates[0] });

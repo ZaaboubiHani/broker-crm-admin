@@ -95,7 +95,7 @@ class ProfilePage extends Component<ProfilePageProps, ProfilePageState> {
         this.setState({ isLoading: true });
         if (!this.state.isLoading) {
             var currentUser = await this.userService.getMe();
-            var users = await this.userService.getUsersByCreator(currentUser.id!, UserType.admin, 1, 25);
+            var users = await this.userService.getUsersByCreator(currentUser.id!, UserType.admin);
             var wilayas = await this.wilayaService.getAllWilayasFromServer();
             this.setState({ users: users, loadingUsers: false, });
             this.setState({ isLoading: false, currentUser: currentUser, wilayas: wilayas, hasData: true });

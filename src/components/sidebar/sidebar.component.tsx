@@ -40,7 +40,7 @@ const Sidebar: React.FC = () => {
       width: isOpen ? '220px' : '58px',
       whiteSpace: 'nowrap',
       transition: 'width 0.5s ease',
-      backgroundColor: 'rgb(0, 182, 182)',
+      backgroundColor: 'teal',
       borderRadius: '0px 8px 8px 0px'
     }}>
 
@@ -63,67 +63,67 @@ const Sidebar: React.FC = () => {
         </Button>
         <img src='/logo.png' style={{ margin: '0px 8px', height: '50px', transition: 'opacity 0.5s ease', opacity: isOpen ? '0' : '1', }} alt="" />
         <img src="/broker_title.png" height='60px' style={{ margin: '0px 8px', left: '0px', position: 'absolute', transition: 'opacity 0.5s ease', opacity: isOpen ? '1' : '0', }} alt="" />
-        <Nav.Link style={{ display: 'flex' }} className={location.pathname === '/home' ? 'active' : ''} href="/home">
+        <Nav.Link  style={{ display: 'flex', }} href="/home">
           <HomeIcon style={{ color: 'white', width: '30px', height: '30px', marginRight: '8px' }} />
           <p style={{ color: 'white', transition: 'opacity 0.5s ease', opacity: isOpen ? '1' : '0', }}>
             Acceuil
           </p>
         </Nav.Link>
-        <Nav.Link style={{ display: 'flex' }} className={location.pathname === '/delegate' ? 'active' : ''} href="/delegate">
+        <Nav.Link style={{ display: 'flex' }} href="/delegate">
           <BusinessCenterIcon style={{ color: 'white', width: '30px', height: '30px', marginRight: '8px' }} />
           <p style={{ color: 'white', transition: 'opacity 0.5s ease', opacity: isOpen ? '1' : '0', }}>
             Délégués
           </p>
         </Nav.Link>
-        <Nav.Link style={{ display: 'flex' }} className={location.pathname === '/plan' ? 'active' : ''} href="/plan">
+        <Nav.Link style={{ display: 'flex' }} href="/plan">
           <CalendarMonthIcon style={{ color: 'white', width: '30px', height: '30px', marginRight: '8px' }} />
           <p style={{ color: 'white', transition: 'opacity 0.5s ease', opacity: isOpen ? '1' : '0', }}>
             Plan de tournée
           </p>
         </Nav.Link>
-        <Nav.Link style={{ display: 'flex' }} className={location.pathname === '/report' ? 'active' : ''} href="/report">
+        <Nav.Link style={{ display: 'flex' }} href="/report">
           <EventNoteIcon style={{ color: 'white', width: '30px', height: '30px', marginRight: '8px' }} />
           <p style={{ color: 'white', transition: 'opacity 0.5s ease', opacity: isOpen ? '1' : '0', }}>
             Rapports des visites
           </p>
         </Nav.Link>
-        <Nav.Link style={{ display: 'flex' }} className={location.pathname === '/command' ? 'active' : ''} href="/command">
+        <Nav.Link style={{ display: 'flex' }} href="/command">
           <ShoppingCartIcon style={{ color: 'white', width: '30px', height: '30px', marginRight: '8px' }} />
           <p style={{ color: 'white', transition: 'opacity 0.5s ease', opacity: isOpen ? '1' : '0', }}>
             Bons de commandes
           </p>
         </Nav.Link>
-        <Nav.Link style={{ display: 'flex' }} className={location.pathname === '/expense' ? 'active' : ''} href="/expense">
+        <Nav.Link style={{ display: 'flex' }} href="/expense">
           <PaidIcon style={{ color: 'white', width: '30px', height: '30px', marginRight: '8px' }} />
           <p style={{ color: 'white', transition: 'opacity 0.5s ease', opacity: isOpen ? '1' : '0', }}>
             Notes des frais
           </p>
         </Nav.Link>
-        <Nav.Link style={{ display: 'flex' }} className={location.pathname === '/clients' ? 'active' : ''} href="/clients">
+        <Nav.Link style={{ display: 'flex' }} href="/clients">
           <Diversity3Icon style={{ color: 'white', width: '30px', height: '30px', marginRight: '8px' }} />
           <p style={{ color: 'white', transition: 'opacity 0.5s ease', opacity: isOpen ? '1' : '0', }}>
             Clients
           </p>
         </Nav.Link>
-        <Nav.Link style={{ display: 'flex' }} className={location.pathname === '/revenue' ? 'active' : ''} href="/revenue">
+        <Nav.Link style={{ display: 'flex' }} href="/revenue">
           <CreditCardIcon style={{ color: 'white', width: '30px', height: '30px', marginRight: '8px' }} />
           <p style={{ color: 'white', transition: 'opacity 0.5s ease', opacity: isOpen ? '1' : '0', }}>
             Chiffre d'affaire
           </p>
         </Nav.Link>
-        <Nav.Link style={{ display: 'flex' }} className={location.pathname === '/statistics' ? 'active' : ''} href="/statistics">
+        <Nav.Link style={{ display: 'flex' }} href="/statistics">
           <InsertChartIcon style={{ color: 'white', width: '30px', height: '30px', marginRight: '8px' }} />
           <p style={{ color: 'white', transition: 'opacity 0.5s ease', opacity: isOpen ? '1' : '0', }}>
             Statistiques
           </p>
         </Nav.Link>
-        <Nav.Link style={{ display: 'flex' }} className={location.pathname === '/config' ? 'active' : ''} href="/config">
+        <Nav.Link style={{ display: 'flex' }} href="/config">
           <TuneIcon style={{ color: 'white', width: '30px', height: '30px', marginRight: '8px' }} />
           <p style={{ color: 'white', transition: 'opacity 0.5s ease', opacity: isOpen ? '1' : '0', }}>
             Listes prédéfinies
           </p>
         </Nav.Link>
-        <Nav.Link style={{ display: 'flex' }} className={location.pathname === '/profile' ? 'active' : ''} href="/profile">
+        <Nav.Link style={{ display: 'flex' }} href="/profile">
           <AssignmentIndIcon style={{ color: 'white', width: '30px', height: '30px', marginRight: '8px' }} />
           <p style={{ color: 'white', transition: 'opacity 0.5s ease', opacity: isOpen ? '1' : '0', }}>
             Profil
