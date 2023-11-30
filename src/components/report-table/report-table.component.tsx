@@ -51,8 +51,7 @@ const ReportTable: React.FC<ReportTableProps> = ({ data, id, isLoading, displayR
         },
         { field: 'client', headerName: 'Client', width: 150 },
         { field: 'speciality', headerName: 'Spécialité', width: 150, },
-        { field: 'wilaya', headerName: 'Wilaya', width: 150 },
-        { field: 'commune', headerName: 'Commune', width: 150, },
+        { field: 'location', headerName: 'Localisation', minWidth: 150, maxWidth: 200 },
         {
             field: 'details', headerName: 'Details', width: 80,
 
@@ -97,8 +96,7 @@ const ReportTable: React.FC<ReportTableProps> = ({ data, id, isLoading, displayR
                                     date: row.createdDate || new Date(),
                                     client: row.client?.name,
                                     speciality: row.client?.speciality,
-                                    wilaya: row.client?.wilaya,
-                                    commune: row.client?.commune,
+                                    location: `${row.client?.wilaya}, ${row.client?.commune}`,
                                 };
                             })]}
                         columns={columns}

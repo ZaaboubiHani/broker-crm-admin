@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import './home-table.style.css';
 import VisitModel from '../../models/visit.model';
 import { DotSpinner } from '@uiball/loaders'
@@ -21,6 +21,7 @@ interface HomeTableProps {
 
 const HomeTable: React.FC<HomeTableProps> = ({ data, id, isLoading, firstHeader, onDisplayReport, onDisplayCommand, total, size, page, pageChange, }) => {
 
+
     const [rowsPerPage, setRowsPerPage] = React.useState(size);
 
 
@@ -32,14 +33,13 @@ const HomeTable: React.FC<HomeTableProps> = ({ data, id, isLoading, firstHeader,
         setPageIndex(page - 1);
     }
 
-   
+
     const columns: GridColDef[] = [
 
         { field: 'username', headerName: firstHeader, width: 150 },
         { field: 'client', headerName: 'Client', width: 150 },
-        { field: 'speciality', headerName: 'Spécialité', width: 150 },
-        { field: 'wilaya', headerName: 'Wilaya', width: 150 },
-        { field: 'commune', headerName: 'Commune', width: 150, },
+        { field: 'speciality', headerName: 'Spécialité', minWidth: 150, maxWidth: 200 },
+        { field: 'location', headerName: 'Localisation', minWidth: 150, maxWidth: 200 },
         {
             field: 'report', headerName: 'Rapport', width: 80,
 
@@ -54,7 +54,7 @@ const HomeTable: React.FC<HomeTableProps> = ({ data, id, isLoading, firstHeader,
             field: 'command', headerName: 'Bon de commande', width: 80,
 
             renderCell(params) {
-                return ( <Button disabled={!params.row.hasCommand} onClick={() => {
+                return (<Button disabled={!params.row.hasCommand} onClick={() => {
                     onDisplayCommand(params.row);
                 }} variant="text">Voir</Button>);
             },
@@ -65,7 +65,7 @@ const HomeTable: React.FC<HomeTableProps> = ({ data, id, isLoading, firstHeader,
     ];
 
     return (
-        <div id={id} style={{ display: 'flex', flexDirection: 'column', flexGrow: '1',}}>
+        <div id={id} style={{ display: 'flex', flexDirection: 'column', flexGrow: '1', }}>
             {
                 isLoading ? (<div style={{
                     width: '100%',
@@ -83,18 +83,18 @@ const HomeTable: React.FC<HomeTableProps> = ({ data, id, isLoading, firstHeader,
                     />
                 </div>) :
                     (<DataGrid
-                    
+
                         rows={
                             [...Array.from({ length: rowsPerPage * pageIndex }, (_, index) => {
                                 return { id: index };
                             }), ...data.map((row) => {
+
                                 return {
                                     id: row.id,
                                     username: row.user?.username,
                                     client: row.client?.name,
                                     speciality: row.client?.speciality,
-                                    wilaya: row.client?.wilaya,
-                                    commune: row.client?.commune,
+                                    location: `${row.client?.wilaya}, ${row.client?.commune}`,
                                     hasCommand: row.hasCommand,
                                     visitLocation: row.visitLocation,
                                 };
@@ -115,9 +115,9 @@ const HomeTable: React.FC<HomeTableProps> = ({ data, id, isLoading, firstHeader,
                                 },
                             },
                         }}
-                        pageSizeOptions={[5, 10, 25,50,100]}
+                        pageSizeOptions={[5, 10, 25, 50, 100]}
                         checkboxSelection={false}
-                        
+
                     />)}
             {/* <TableContainer sx={{ flexGrow: '1', display: 'flex', flexDirection: 'column', borderRadius: '8px', margin: '8px', overflow: 'hidden' }} component={Paper}>
 

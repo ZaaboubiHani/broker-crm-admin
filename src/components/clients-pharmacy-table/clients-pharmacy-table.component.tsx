@@ -17,7 +17,7 @@ interface ClientsPharmacyTableProps {
     data: VisitModel[];
     displayCommand: (visit: VisitModel) => {};
     displayReport: (visit: VisitModel) => {};
-    pageChange: (page: number,size:number) => void;
+    pageChange: (page: number, size: number) => void;
     id?: string;
     page: number;
     size: number;
@@ -33,7 +33,7 @@ const ClientsPharmacyTable: React.FC<ClientsPharmacyTableProps> = ({ total, size
         setPageIndex(page - 1);
     }
 
-    
+
     const columns: GridColDef[] = [
         {
             field: 'date', headerName: 'Date', width: 150, valueFormatter(params) {
@@ -42,8 +42,7 @@ const ClientsPharmacyTable: React.FC<ClientsPharmacyTableProps> = ({ total, size
         },
         { field: 'client', headerName: 'Client', width: 150 },
         { field: 'delegate', headerName: 'Délégué', width: 150 },
-        { field: 'wilaya', headerName: 'Wilaya', width: 150 },
-        { field: 'commune', headerName: 'Commune', width: 150, },
+        { field: 'location', headerName: 'Localisation', minWidth: 150, maxWidth: 200 },
         {
             field: 'report', headerName: 'Rapport', width: 80,
             renderCell(params) {
@@ -55,7 +54,7 @@ const ClientsPharmacyTable: React.FC<ClientsPharmacyTableProps> = ({ total, size
         {
             field: 'command', headerName: 'Bon de commande', width: 80,
             renderCell(params) {
-                return (<Button onClick={() => {
+                return (<Button disabled={!params.row.hasCommand} onClick={() => {
                     displayCommand(params.row);
                 }} variant="text">Voir</Button>);
             },
@@ -65,7 +64,7 @@ const ClientsPharmacyTable: React.FC<ClientsPharmacyTableProps> = ({ total, size
 
     return (
 
-        <div id={id} style={{ display: 'flex', flexDirection: 'column', flexGrow: '1',}}>
+        <div id={id} style={{ display: 'flex', flexDirection: 'column', flexGrow: '1', }}>
             {
                 isLoading ? (<div style={{
                     width: '100%',
@@ -83,19 +82,19 @@ const ClientsPharmacyTable: React.FC<ClientsPharmacyTableProps> = ({ total, size
                     />
                 </div>) :
                     (<DataGrid
-                    
+
                         rows={
                             [...Array.from({ length: rowsPerPage * pageIndex }, (_, index) => {
                                 return { id: index };
                             }), ...data.map((row) => {
                                 return {
                                     id: row.id,
-                                    date:row.createdDate || new Date(),
+                                    date: row.createdDate || new Date(),
                                     client: row.client?.name,
                                     delegate: row.user?.username,
-                                    wilaya: row.client?.wilaya,
-                                    commune: row.client?.commune,
+                                    location: `${row.client?.wilaya}, ${row.client?.commune}`,
                                     visitLocation: row.visitLocation,
+                                    hasCommand: row.hasCommand,
                                 };
                             })]}
                         columns={columns}
@@ -114,9 +113,9 @@ const ClientsPharmacyTable: React.FC<ClientsPharmacyTableProps> = ({ total, size
                                 },
                             },
                         }}
-                        pageSizeOptions={[5, 10, 25,50,100]}
+                        pageSizeOptions={[5, 10, 25, 50, 100]}
                         checkboxSelection={false}
-                        
+
                     />)}
             {/* <TableContainer sx={{ flexGrow: '1', display: 'flex', flexDirection: 'column', borderRadius: '8px', margin: '8px', overflow: 'hidden' }} component={Paper}>
                 <Table sx={{ flexGrow: '1', display: 'flex', flexDirection: 'column', overflow: 'hidden', margin: '0px', width: "100%" }} size="small" aria-label="a dense table">

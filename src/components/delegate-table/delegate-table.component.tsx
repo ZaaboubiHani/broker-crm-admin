@@ -54,8 +54,7 @@ const DelegateTable: React.FC<DelegateTableProps> = ({ data, id, onDisplayComman
         { field: 'date', headerName: 'Date', width: 150 },
         { field: 'client', headerName: 'Client', width: 150 },
         { field: 'speciality', headerName: 'Spécialité', width: 150 },
-        { field: 'wilaya', headerName: 'Wilaya', width: 150 },
-        { field: 'commune', headerName: 'Commune', width: 150, },
+        { field: 'location', headerName: 'Localisation', minWidth: 150, maxWidth: 200 },
         {
             field: 'report', headerName: 'Rapport', width: 80,
 
@@ -108,8 +107,7 @@ const DelegateTable: React.FC<DelegateTableProps> = ({ data, id, onDisplayComman
                                     date: formatDateToYYYYMMDD(row.createdDate || new Date()),
                                     client: row.client?.name,
                                     speciality: row.client?.speciality,
-                                    wilaya: row.client?.wilaya,
-                                    commune: row.client?.commune,
+                                    location: `${row.client?.wilaya}, ${row.client?.commune}`,
                                     hasCommand: row.hasCommand,
                                     visitLocation: row.visitLocation,
                                 };
