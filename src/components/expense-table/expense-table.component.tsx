@@ -36,13 +36,16 @@ export interface ExpenseTableProps {
 
 
 const ExpenseTable: React.FC<ExpenseTableProps> = ({ data, isLoading }) => {
-   const columns: GridColDef[] = [
+    const columns: GridColDef[] = [
         {
             field: 'date', headerName: 'Date', width: 150, valueFormatter(params) {
                 return formatDateToYYYYMMDD(params.value);
             },
         },
-        { field: 'startLocation', headerName: 'Localité départ', width: 150 },
+        {
+            field: 'startLocation', headerName: 'Localité départ', width: 150,
+          
+        },
         { field: 'endLocation', headerName: 'Localité arrivé', width: 150, },
         { field: 'totalVisitsDoctor', headerName: 'Total contact médcins', width: 150 },
         { field: 'totalVisitsPharmacy', headerName: 'Total contact pharmacies', width: 150, },
@@ -71,48 +74,48 @@ const ExpenseTable: React.FC<ExpenseTableProps> = ({ data, isLoading }) => {
     ];
 
     return (
-        <div style={{  flexGrow: '1', display: 'flex', overflow: 'hidden',height:'100%' }}>
-        {
-            isLoading ? (<div style={{
-                width: '100%',
-                flexGrow: '1',
-                overflow: 'hidden',
-                height: '100%',
-                display: 'flex',
-                justifyContent: 'center',
-                alignItems: 'center',
-            }}>
-                <DotSpinner
-                    size={40}
-                    speed={0.9}
-                    color="black"
-                />
-            </div>) :
-                (<DataGrid
-                    rows={
-                        [ ...data.map((row,index) => {
-                            return {
-                                id: index,
-                                date: row.createdDate || new Date(),
-                                startLocation: row.startLocation,
-                                endLocation: row.endLocation,
-                                totalVisitsDoctor: row.totalVisitsDoctor,
-                                totalVisitsPharmacy: row.totalVisitsPharmacy,
-                                kmTotal: row.kmTotal,
-                                indemnityKm: row.indemnityKm,
-                                nightsTotal: row.nightsTotal,
-                                indemnityNights: row.indemnityNights,
-                                otherExpenses: row.otherExpenses,
-                                totalExpense: row.totalExpense,
-                            };
-                        })]}
-                    columns={columns}
-                    hideFooterSelectedRowCount={true}
-                    hideFooterPagination={true}
-                    checkboxSelection={false}
+        <div style={{ flexGrow: '1', display: 'flex', overflow: 'hidden', height: '100%' }}>
+            {
+                isLoading ? (<div style={{
+                    width: '100%',
+                    flexGrow: '1',
+                    overflow: 'hidden',
+                    height: '100%',
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                }}>
+                    <DotSpinner
+                        size={40}
+                        speed={0.9}
+                        color="black"
+                    />
+                </div>) :
+                    (<DataGrid
+                        rows={
+                            [...data.map((row, index) => {
+                                return {
+                                    id: index,
+                                    date: row.createdDate || new Date(),
+                                    startLocation: `${row.startWilaya}, ${row.startCommun}`,
+                                    endLocation: `${row.endWilaya}, ${row.endCommun}`,
+                                    totalVisitsDoctor: row.totalVisitsDoctor,
+                                    totalVisitsPharmacy: row.totalVisitsPharmacy,
+                                    kmTotal: row.kmTotal,
+                                    indemnityKm: row.indemnityKm,
+                                    nightsTotal: row.nightsTotal,
+                                    indemnityNights: row.indemnityNights,
+                                    otherExpenses: row.otherExpenses,
+                                    totalExpense: row.totalExpense,
+                                };
+                            })]}
+                        columns={columns}
+                        hideFooterSelectedRowCount={true}
+                        hideFooterPagination={true}
+                        checkboxSelection={false}
 
-                />)}
-    </div>
+                    />)}
+        </div>
         // <TableContainer sx={{ flexGrow: '1', display: 'flex', flexDirection: 'column', borderRadius: '8px', margin: '8px', overflow: 'hidden', }} component={Paper}>
         //     <Table sx={{ flexGrow: '1', display: 'flex', flexDirection: 'column', overflow: 'hidden', margin: '0px', width: "100%" }} size="small" aria-label="a dense table">
         //         <TableHead sx={{ display: 'flex', justifyContent: 'stretch', alignItems: 'stretch', height: '65px', width: "100%" }}>

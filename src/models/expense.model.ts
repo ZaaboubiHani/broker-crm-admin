@@ -3,8 +3,10 @@ import FileModel from "./file.model";
 export default class ExpenseModel {
     id?: number;
     reference?: string;
-    startLocation?: string;
-    endLocation?: string;
+    startWilaya?: string;
+    endWilaya?: string;
+    startCommun?: string;
+    endCommun?: string;
     totalVisitsDoctor?: number;
     totalVisitsPharmacy?: number;
     totalVisitsWholesaler?: number;
@@ -20,8 +22,10 @@ export default class ExpenseModel {
     constructor(data?: ExpenseModel) {
         this.id = data?.id;
         this.reference = data?.reference;
-        this.startLocation = data?.startLocation;
-        this.endLocation = data?.endLocation;
+        this.startWilaya = data?.startWilaya;
+        this.endWilaya = data?.endWilaya;
+        this.startCommun = data?.startCommun;
+        this.endCommun = data?.endCommun;
         this.totalVisitsDoctor = data?.totalVisitsDoctor;
         this.totalVisitsPharmacy = data?.totalVisitsPharmacy;
         this.totalVisitsWholesaler = data?.totalVisitsWholesaler;
@@ -43,8 +47,10 @@ export default class ExpenseModel {
         return new ExpenseModel({
             id: json.id,
             reference: json.attributes.reference,
-            startLocation: json.attributes.startLocation,
-            endLocation: json.attributes.endLocation,
+            startWilaya: json.attributes.startWilaya,
+            endWilaya: json.attributes.endWilaya,
+            startCommun: json.attributes.startCommun,
+            endCommun: json.attributes.endCommun,
             totalVisitsDoctor: json.attributes.totalVisitsDoctor,
             totalVisitsPharmacy: json.attributes.totalVisitsPharmacy,
             totalVisitsWholesaler: json.attributes.totalVisitsWholesaler,

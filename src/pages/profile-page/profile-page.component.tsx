@@ -72,7 +72,6 @@ class ProfilePage extends Component<ProfilePageProps, ProfilePageState> {
             var users = await this.userService.getUsersByCreator(this.state.currentUser.id!, UserType.admin);
             this.setState({ users: users, loadingUsers: false, });
         }
-
     }
 
     handleAddUser = async (user: User) => {

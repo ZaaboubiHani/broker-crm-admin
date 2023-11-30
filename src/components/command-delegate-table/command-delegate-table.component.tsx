@@ -80,8 +80,7 @@ const CommandDelegateTable: React.FC<CommandDelegateTableProps> = ({ data, id, i
             },
         },
         { field: 'client', headerName: 'Client', width: 150 },
-        { field: 'wilaya', headerName: 'Wilaya', width: 150 },
-        { field: 'commune', headerName: 'Commune', width: 150, },
+        { field: 'location', headerName: 'Localisation', minWidth: 150, maxWidth: 200 },
         { field: 'amount', headerName: 'Montant', width: 150, },
         {
             field: 'supplier', headerName: 'Fournisseur', width: 200,
@@ -156,8 +155,8 @@ const CommandDelegateTable: React.FC<CommandDelegateTableProps> = ({ data, id, i
                                     date: row.visit?.createdDate || new Date(),
                                     client: row.visit?.client?.name,
                                     amount: row.totalRemised?.toLocaleString('fr-DZ', { style: 'currency', currency: 'DZD' }),
-                                    wilaya: row.visit?.client?.wilaya,
-                                    commune: row.visit?.client?.commune,
+                                    location: `${row.visit?.client?.wilaya}, ${row.visit?.client?.commune}`,
+                                  
                                     command: row,
                                     finalSupplier: row.finalSupplier,
                                     suppliers: row.suppliers,

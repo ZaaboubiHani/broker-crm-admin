@@ -34,8 +34,7 @@ const ClientsDoctorTable: React.FC<ClientsDoctorTableProps> = ({ total, size, pa
         { field: 'client', headerName: 'Client', width: 150 },
         { field: 'delegate', headerName: 'Délégué', width: 150 },
         { field: 'speciality', headerName: 'Spécialité', width: 150 },
-        { field: 'wilaya', headerName: 'Wilaya', width: 150 },
-        { field: 'commune', headerName: 'Commune', width: 150, },
+        { field: 'location', headerName: 'Localisation', minWidth: 150, maxWidth: 200 },
         {
             field: 'report', headerName: 'Rapport', width: 80,
             renderCell(params) {
@@ -48,7 +47,7 @@ const ClientsDoctorTable: React.FC<ClientsDoctorTableProps> = ({ total, size, pa
 
     return (
         <div id={id} style={{ display: 'flex', flexDirection: 'column', flexGrow: '1', marginRight: '16px' }}>
-              {
+            {
                 isLoading ? (<div style={{
                     width: '100%',
                     flexGrow: '1',
@@ -65,19 +64,18 @@ const ClientsDoctorTable: React.FC<ClientsDoctorTableProps> = ({ total, size, pa
                     />
                 </div>) :
                     (<DataGrid
-                    
+
                         rows={
                             [...Array.from({ length: rowsPerPage * pageIndex }, (_, index) => {
                                 return { id: index };
                             }), ...data.map((row) => {
                                 return {
                                     id: row.id,
-                                    date:row.createdDate || new Date(),
+                                    date: row.createdDate || new Date(),
                                     client: row.client?.name,
                                     delegate: row.user?.username,
                                     speciality: row.client?.speciality,
-                                    wilaya: row.client?.wilaya,
-                                    commune: row.client?.commune,
+                                    location: `${row.client?.wilaya}, ${row.client?.commune}`,
                                     visitLocation: row.visitLocation,
                                 };
                             })]}
@@ -97,9 +95,9 @@ const ClientsDoctorTable: React.FC<ClientsDoctorTableProps> = ({ total, size, pa
                                 },
                             },
                         }}
-                        pageSizeOptions={[5, 10, 25,50,100]}
+                        pageSizeOptions={[5, 10, 25, 50, 100]}
                         checkboxSelection={false}
-                        
+
                     />)}
             {/* <TableContainer sx={{ flexGrow: '1', display: 'flex', flexDirection: 'column', borderRadius: '8px', margin: '8px', overflow: 'hidden', height: 'calc(100% -400px)' }} component={Paper}>
                 <Table sx={{ flexGrow: '1', display: 'flex', flexDirection: 'column', overflow: 'hidden', margin: '0px', width: "100%" }} size="small" aria-label="a dense table">
