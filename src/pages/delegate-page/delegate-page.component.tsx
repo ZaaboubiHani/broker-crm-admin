@@ -123,7 +123,8 @@ class DelegatePage extends Component<{}, DelegatePageState> {
             objectifVisites: objectifVisites,
             successRate: successRate,
             loadingVisitsData: false,
-
+            delegatePage: 1,
+            totalDelegate : total,
         });
     }
 
