@@ -27,7 +27,8 @@ const LoginPage: React.FC = () => {
   var authService = new AuthService();
   var userService = new UserService();
 
-  const handleLogin = async () => {
+  const handleLogin = async (event: any) => {
+    event.preventDefault();
     setIsLogging(true);
     var loginSuccess = await authService.login(identifier, password);
 
@@ -55,6 +56,13 @@ const LoginPage: React.FC = () => {
     setShowSnackbar(false);
   };
 
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    event.preventDefault();
+    if (event.key === 'Enter') {
+      handleLogin(event);
+    }
+  };
+
   return (
     <div className='login-container'>
       <div className='login-border'>
@@ -65,7 +73,10 @@ const LoginPage: React.FC = () => {
               <Form.Label>Entrez votre nom d'utilisateur ou email:</Form.Label>
               <Form.Control placeholder="name@example.com" onChange={(event) => {
                 setIdentifier(event.target.value);
-              }} />
+              }} 
+              onKeyDown={handleKeyDown}
+              
+              />
             </div>
             <div style={{ display: 'flex', justifyItems: 'space-between', alignItems: "flex-end" }}>
               <div style={{ flexGrow: '1' }}>
@@ -77,6 +88,8 @@ const LoginPage: React.FC = () => {
                   onChange={(event) => {
                     setPassword(event.target.value);
                   }}
+                  onKeyDown={handleKeyDown}
+                  autoFocus={true}
                 />
               </div>
               <button onClick={(event) => {
@@ -86,9 +99,9 @@ const LoginPage: React.FC = () => {
                 <FontAwesomeIcon icon={showPassword ? faEye : faEyeSlash} style={{ color: 'black' }} />
               </button>
             </div>
+            <Button variant="primary" onClick={handleLogin} style={{ backgroundColor: 'teal' }}>Connecter</Button>
           </Form.Group>
         </Form>
-        <Button variant="primary" onClick={handleLogin} style={{ backgroundColor: 'teal' }}>Connecter</Button>
       </div>
       <div style={{
         width: '80px',
