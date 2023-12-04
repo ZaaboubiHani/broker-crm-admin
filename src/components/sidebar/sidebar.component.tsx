@@ -75,7 +75,7 @@ const Sidebar: React.FC = () => {
             Délégués
           </p>
         </Nav.Link>
-        <Nav.Link style={{ display: 'flex' }} href="/plan">
+        <Nav.Link style={{ display: 'flex',}} href="/plan">
           <CalendarMonthIcon style={{ color: 'white', width: '30px', height: '30px', marginRight: '8px' }} />
           <p style={{ color: 'white', transition: 'opacity 0.5s ease', opacity: isOpen ? '1' : '0', }}>
             Plan de tournée

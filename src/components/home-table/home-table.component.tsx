@@ -21,13 +21,9 @@ interface HomeTableProps {
 
 const HomeTable: React.FC<HomeTableProps> = ({ data, id, isLoading, firstHeader, onDisplayReport, onDisplayCommand, total, size, page, pageChange, }) => {
 
-
     const [rowsPerPage, setRowsPerPage] = React.useState(size);
-
-
+    
     const [pageIndex, setPageIndex] = React.useState(page - 1);
-
-
 
     if (pageIndex !== (page - 1)) {
         setPageIndex(page - 1);
@@ -35,33 +31,40 @@ const HomeTable: React.FC<HomeTableProps> = ({ data, id, isLoading, firstHeader,
 
 
     const columns: GridColDef[] = [
-
-        { field: 'username', headerName: firstHeader, width: 150 },
-        { field: 'client', headerName: 'Client', width: 150 },
-        { field: 'speciality', headerName: 'Spécialité', minWidth: 150, maxWidth: 200 },
-        { field: 'location', headerName: 'Localisation', minWidth: 150, maxWidth: 200 },
+        {
+            field: 'username', headerName: firstHeader, width: 150,
+            filterable: false,
+        },
+        {
+            field: 'client', headerName: 'Client', width: 150,
+            filterable: false,
+        },
+        {
+            field: 'speciality', headerName: 'Spécialité', width: 200,
+            filterable: false,
+        },
+        {
+            field: 'location', headerName: 'Localisation', width: 200,
+            filterable: false,
+        },
         {
             field: 'report', headerName: 'Rapport', width: 80,
-
+            filterable: false,
             renderCell(params) {
                 return (<Button onClick={() => {
                     onDisplayReport(params.row);
                 }} variant="text">Voir</Button>);
             },
-
         },
         {
             field: 'command', headerName: 'Bon de commande', width: 80,
-
+            filterable: false,
             renderCell(params) {
                 return (<Button disabled={!params.row.hasCommand} onClick={() => {
                     onDisplayCommand(params.row);
                 }} variant="text">Voir</Button>);
             },
-
         },
-
-
     ];
 
     return (
@@ -88,7 +91,6 @@ const HomeTable: React.FC<HomeTableProps> = ({ data, id, isLoading, firstHeader,
                             [...Array.from({ length: rowsPerPage * pageIndex }, (_, index) => {
                                 return { id: index };
                             }), ...data.map((row) => {
-
                                 return {
                                     id: row.id,
                                     username: row.user?.username,
@@ -105,7 +107,6 @@ const HomeTable: React.FC<HomeTableProps> = ({ data, id, isLoading, firstHeader,
                             setPageIndex(model.page);
                             pageChange(model.page + 1, model.pageSize);
                             setRowsPerPage(model.pageSize);
-
                         }}
                         initialState={{
                             pagination: {
@@ -117,7 +118,6 @@ const HomeTable: React.FC<HomeTableProps> = ({ data, id, isLoading, firstHeader,
                         }}
                         pageSizeOptions={[5, 10, 25, 50, 100]}
                         checkboxSelection={false}
-
                     />)}
             {/* <TableContainer sx={{ flexGrow: '1', display: 'flex', flexDirection: 'column', borderRadius: '8px', margin: '8px', overflow: 'hidden' }} component={Paper}>
 

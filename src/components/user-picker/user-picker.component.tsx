@@ -43,25 +43,24 @@ class UserPicker extends Component<UserPickerProps> {
                     padding: this.props.padding ?? '0 0 0 0px',
                     height: 60,
                     alignItems: 'stretch', flexGrow: '1',
-                 
+
                 }}
                 ref={this._scrollController}
-              className='client-picker'
+                className='client-picker'
             >
                 {
                     Array.from({ length: this.props.delegates.length }, (_, index) => {
-
                         return (
                             <UserContainer
                                 key={index}
                                 isSelected={this._selectedIndex === index}
-                                name = {this.props.delegates[index].username!}
-
-
+                                name={this.props.delegates[index].username!}
                                 onPressed={() => {
-                                    this._selectedIndex = index;
-                                    this.props.onSelect(this.props.delegates[index]);
-                                    this.forceUpdate();
+                                    if (!(this._selectedIndex === index)) {
+                                        this._selectedIndex = index;
+                                        this.props.onSelect(this.props.delegates[index]);
+                                        this.forceUpdate();
+                                    }
                                 }}
                             />
                         );

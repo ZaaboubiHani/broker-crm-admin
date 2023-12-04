@@ -29,9 +29,6 @@ interface ProfilePageState {
     hasData: boolean;
     snackbarMessage: string;
     addClientDialogIsOpen: boolean,
-    totalUser: number,
-    sizeUser: number,
-    userPage: number,
 }
 
 
@@ -49,10 +46,7 @@ class ProfilePage extends Component<ProfilePageProps, ProfilePageState> {
             users: [],
             wilayas: [],
             loadingUsers: true,
-            addClientDialogIsOpen: false,
-            totalUser: 0,
-            sizeUser: 25,
-            userPage: 1,
+            addClientDialogIsOpen: false
         };
     }
 
@@ -69,16 +63,16 @@ class ProfilePage extends Component<ProfilePageProps, ProfilePageState> {
                 await this.userService.updateUser(this.state.users[i]);
             }
             this.setState({ showSnackbar: true, snackbarMessage: 'Données enregistrées' });
-            var users = await this.userService.getUsersByCreator(this.state.currentUser.id!, UserType.admin);
-            this.setState({ users: users, loadingUsers: false, });
+            var users = await this.userService.getUsersByCreator(this.state.currentUser.id!, UserType.admin,);
+            this.setState({ users: users, loadingUsers: false });
         }
     }
 
     handleAddUser = async (user: User) => {
-        this.setState({ addClientDialogIsOpen: false, loadingUsers: true });
+        this.setState({ addClientDialogIsOpen: false, loadingUsers: true, });
         await this.userService.addUser(user);
 
-        var users = await this.userService.getUsersByCreator(this.state.currentUser.id!, UserType.admin);
+        var users = await this.userService.getUsersByCreator(this.state.currentUser.id!, UserType.admin,);
         this.setState({ users: users, loadingUsers: false, });
     }
 
@@ -94,9 +88,9 @@ class ProfilePage extends Component<ProfilePageProps, ProfilePageState> {
         this.setState({ isLoading: true });
         if (!this.state.isLoading) {
             var currentUser = await this.userService.getMe();
-            var users = await this.userService.getUsersByCreator(currentUser.id!, UserType.admin);
+            var users = await this.userService.getUsersByCreator(currentUser.id!, UserType.admin,);
             var wilayas = await this.wilayaService.getAllWilayasFromServer();
-            this.setState({ users: users, loadingUsers: false, });
+            this.setState({ users: users, loadingUsers: false,});
             this.setState({ isLoading: false, currentUser: currentUser, wilayas: wilayas, hasData: true });
         }
     }
@@ -104,18 +98,6 @@ class ProfilePage extends Component<ProfilePageProps, ProfilePageState> {
     handleCloseSanckbar = (event: React.SyntheticEvent | Event, reason?: string) => {
         this.setState({ showSnackbar: false });
     };
-
-    handleUserPageChange = async (page: number) => {
-        this.setState({ loadingUsers: true, userPage: page });
-        var users = await this.userService.getUsersByCreator(this.state.currentUser.id!, UserType.admin, page, this.state.sizeUser);
-        this.setState({ users: users, loadingUsers: false, userPage: page, });
-    }
-
-    handleUserRowNumChange = async (size: number) => {
-        this.setState({ loadingUsers: true, userPage: 1, sizeUser: size });
-        var users = await this.userService.getUsersByCreator(this.state.currentUser.id!, UserType.admin, 1, size);
-        this.setState({ users: users, loadingUsers: false, userPage: 1, sizeUser: size, });
-    }
 
     render() {
         if (!this.state.hasData) {
@@ -175,11 +157,7 @@ class ProfilePage extends Component<ProfilePageProps, ProfilePageState> {
                                     isLoading={false}
                                     data={this.state.users}
                                     wilayas={this.state.wilayas}
-                                    total={this.state.totalUser}
-                                    page={this.state.userPage}
-                                    size={this.state.sizeUser}
-                                    pageChange={this.handleUserPageChange}
-                                    rowNumChange={this.handleUserRowNumChange}
+                                   
                                 />}
                     </div>
                     <AddClientDialog
