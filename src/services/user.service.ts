@@ -145,7 +145,7 @@ export default class UserService {
         return [];
     }
 
-    async getUsersByCreator(creatorId: number, userType: UserType, page?: number, size?: number): Promise<UserModel[]> {
+    async getUsersByCreator(creatorId: number, userType: UserType): Promise<UserModel[]> {
 
         const token = localStorage.getItem('token');
 
@@ -174,7 +174,7 @@ export default class UserService {
             }
         }
 
-        var response = await axios.get(`${Globals.apiUrl}/users?populate=wilayaActivity.wilayas&populate=relatedType&populate=company${userType === UserType.delegate ? `&filters[creatorId][\$eq]=${creatorId}` : ''}${typeFilter}${page !== undefined && size !== undefined ? `&pagination[page]=${page}&pagination[pageSize]=${size}` : ''}`,
+        var response = await axios.get(`${Globals.apiUrl}/users?populate=wilayaActivity.wilayas&populate=relatedType&populate=company${userType === UserType.delegate ? `&filters[creatorId][\$eq]=${creatorId}` : ''}${typeFilter}`,
             {
                 headers: {
                     'Authorization': `Bearer ${token}`
@@ -190,28 +190,10 @@ export default class UserService {
             }
             return users;
         }
-        return  [];
-    }
-
-    async getDelegateUsers(): Promise<UserModel[]> {
-        const token = localStorage.getItem('token');
-        var response = await axios.get(`${Globals.apiUrl}/users?filters[relatedType][id]=3&populate=*`,
-            {
-                headers: {
-                    'Authorization': `Bearer ${token}`
-                }
-            });
-
-        if (response.status == 200) {
-            var users: UserModel[] = [];
-            for (let index = 0; index < response.data.length; index++) {
-                var user = UserModel.fromJson(response.data[index]);
-                users.push(user);
-            }
-            return users;
-        }
         return [];
     }
+
+   
 
     async getMe(): Promise<UserModel> {
         const token = localStorage.getItem('token');

@@ -25,44 +25,21 @@ import { Visibility, VisibilityOff } from '@mui/icons-material';
 import Input from '@mui/material/Input';
 import WilayaModel from '../../models/wilaya.model';
 import TablePagination from '@mui/material/TablePagination';
+import { DataGrid, GridColDef, GridValueGetterParams } from '@mui/x-data-grid';
 
 export interface ProfileTableProps {
     data: UserModel[];
     isLoading: boolean;
-    wilayas: WilayaModel[];
-    page: number;
-    size: number;
-    total: number;
-    pageChange: (page: number) => void;
-    rowNumChange: (rowNum: number) => void;
+    wilayas: WilayaModel[]
 }
 
-const ProfileTable: React.FC<ProfileTableProps> = ({ data, isLoading, wilayas, total, size, page, rowNumChange, pageChange, }) => {
-    const [rowsPerPage, setRowsPerPage] = React.useState(size);
-
-
-    const [pageIndex, setPageIndex] = React.useState(page - 1);
+const ProfileTable: React.FC<ProfileTableProps> = ({ data, isLoading, wilayas, }) => {
+   
 
 
 
-    if (pageIndex !== (page - 1)) {
-        setPageIndex(page - 1);
-    }
-    const handleChangePage = (event: unknown, newPage: number) => {
-        setPageIndex(newPage);
-        pageChange(newPage + 1);
-    };
-    const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setRowsPerPage(parseInt(event.target.value, 10));
-        setPageIndex(0);
-        rowNumChange(parseInt(event.target.value, 10));
-    };
-
-
-
+    
     const [stateTrigger, setStateTrigger] = React.useState<boolean>(false);
-
-
 
     const handleChange = (value: string[], index: number) => {
         data[index].wilayas = [...wilayas.filter(w => value.includes(w.name!.toLowerCase()))];
@@ -81,9 +58,91 @@ const ProfileTable: React.FC<ProfileTableProps> = ({ data, isLoading, wilayas, t
         event.preventDefault();
     };
 
+    const columns: GridColDef[] = [
+        { field: 'date', headerName: 'Création', width: 150 },
+        { field: 'username', headerName: 'Nom et prénom', width: 150 },
+        { field: 'phone', headerName: 'Mobile', width: 200 },
+        { field: 'email', headerName: 'E-mail', width: 200 },
+        { field: 'type', headerName: 'Type',  width: 100 },
+        { field: 'password', headerName: 'Mot de passe', width: 150, 
+           
+
+            renderCell(params) {
+                return (<FormControl sx={{ m: 1, margin: '0px', padding: '0px' }} variant="standard">
+                <InputLabel htmlFor="standard-adornment-password">Mot de passe</InputLabel>
+                <Input
+                    id="standard-adornment-password"
+                    type={showPassword[params.row.index] ? 'text' : 'password'}
+
+                    onChange={(event) => {
+                        params.row.password = event.target.value;
+                        setStateTrigger(!stateTrigger);
+                    }}
+                    endAdornment={
+                        <InputAdornment position="end">
+                            <IconButton
+                                aria-label="toggle password visibility"
+                                onClick={()=>handleClickShowPassword(params.row.index)}
+                                onMouseDown={handleMouseDownPassword}
+                            >
+                                {showPassword[params.row.index] ? <VisibilityOff /> : <Visibility />}
+                            </IconButton>
+                        </InputAdornment>
+                    }
+                />
+            </FormControl>);
+            },
+
+        }, 
+        { field: 'wilayat', headerName: 'Wilayat', width: 150 },
+        { field: 'isBlocked', headerName: 'Blocage', width: 150 },
+       
+    ];
+
     return (
         <div style={{ display: 'flex', flexDirection: 'column', flexGrow: '1', marginRight: '16px' }}>
-            <TableContainer sx={{ flexGrow: '1', display: 'flex', flexDirection: 'column', borderRadius: '8px', margin: '8px', overflow: 'hidden' }} component={Paper}>
+            {
+                isLoading ? (<div style={{
+                    width: '100%',
+                    flexGrow: '1',
+                    overflow: 'hidden',
+                    height: '100%',
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                }}>
+                    <DotSpinner
+                        size={40}
+                        speed={0.9}
+                        color="black"
+                    />
+                </div>) :
+                    (<DataGrid
+
+                        rows={
+                            [ ...data.map((row,index) => {
+
+                                return {
+                                    id: row.id,
+                                    index:index,
+                                    date: formatDateToYYYYMMDD(row.createdAt || new Date()),
+                                    username: row.username,
+                                    phone: row.phoneOne,
+                                    password: row.password,
+                                    email: row.email,
+                                    type: row.type === UserType.supervisor ? 'Superviseur' : row.type === UserType.kam ? 'Kam' : 'délégué',
+                                    isBlocked: row.isBlocked,
+                                };
+                            })]}
+                        columns={columns}
+                        hideFooterPagination={true}
+                        hideFooter={true}
+                       
+                        pageSizeOptions={[5, 10, 25, 50, 100]}
+                        checkboxSelection={false}
+
+                    />)}
+            {/* <TableContainer sx={{ flexGrow: '1', display: 'flex', flexDirection: 'column', borderRadius: '8px', margin: '8px', overflow: 'hidden' }} component={Paper}>
                 <Table sx={{ flexGrow: '1', display: 'flex', flexDirection: 'column', overflow: 'hidden', margin: '0px', width: "100%" }} size="small" aria-label="a dense table">
                     <TableHead sx={{ height: '45px', marginBottom: '16px' }}>
                         <TableRow>
@@ -207,7 +266,7 @@ const ProfileTable: React.FC<ProfileTableProps> = ({ data, isLoading, wilayas, t
                 page={pageIndex}
                 onPageChange={handleChangePage}
                 onRowsPerPageChange={handleChangeRowsPerPage}
-            />
+            /> */}
         </div>
     );
 };

@@ -29,41 +29,40 @@ interface ReportTableProps {
 const ReportTable: React.FC<ReportTableProps> = ({ data, id, isLoading, displayReport, total, selectedId, size, page, pageChange, }) => {
     const [rowsPerPage, setRowsPerPage] = React.useState(size);
 
-    const [selectedRow, setSelectedRow] = React.useState(selectedId);
-
     const [pageIndex, setPageIndex] = React.useState(page - 1);
-
-    if (selectedRow !== selectedId) {
-        setSelectedRow(selectedId);
-    }
 
     if (pageIndex !== (page - 1)) {
         setPageIndex(page - 1);
     }
 
     const columns: GridColDef[] = [
-
-
         {
             field: 'date', headerName: 'Date', width: 150, valueFormatter(params) {
                 return formatDateToYYYYMMDD(params.value);
             },
+            filterable: false,
         },
-        { field: 'client', headerName: 'Client', width: 150 },
-        { field: 'speciality', headerName: 'Spécialité', width: 150, },
-        { field: 'location', headerName: 'Localisation', minWidth: 150, maxWidth: 200 },
+        {
+            field: 'client', headerName: 'Client', width: 150,
+            filterable: false,
+        },
+        {
+            field: 'speciality', headerName: 'Spécialité', width: 150,
+            filterable: false,
+        },
+        {
+            field: 'location', headerName: 'Localisation', width: 200,
+            filterable: false,
+        },
         {
             field: 'details', headerName: 'Details', width: 80,
-
             renderCell(params) {
                 return (<Button onClick={() => {
                     displayReport(params.row);
                 }} variant="text">Voir</Button>);
             },
-
+            filterable: false,
         },
-
-
     ];
 
     return (
@@ -85,9 +84,7 @@ const ReportTable: React.FC<ReportTableProps> = ({ data, id, isLoading, displayR
                     />
                 </div>) :
                     (<DataGrid
-
                         rows={
-
                             [...Array.from({ length: rowsPerPage * pageIndex }, (_, index) => {
                                 return { id: index };
                             }), ...data.map((row) => {
@@ -105,7 +102,6 @@ const ReportTable: React.FC<ReportTableProps> = ({ data, id, isLoading, displayR
                             setPageIndex(model.page);
                             pageChange(model.page + 1, model.pageSize);
                             setRowsPerPage(model.pageSize);
-
                         }}
                         initialState={{
                             pagination: {
@@ -117,7 +113,6 @@ const ReportTable: React.FC<ReportTableProps> = ({ data, id, isLoading, displayR
                         }}
                         pageSizeOptions={[5, 10, 25, 50, 100]}
                         checkboxSelection={false}
-
                     />)}
             {/* <TableContainer sx={{ flexGrow: '1', display: 'flex', flexDirection: 'column', borderRadius: '8px', margin: '8px', overflow: 'hidden' }} component={Paper}>
                 <Table sx={{ flexGrow: '1', display: 'flex', flexDirection: 'column', overflow: 'hidden', margin: '0px', width: "100%" }} size="small" aria-label="a dense table">

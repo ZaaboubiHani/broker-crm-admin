@@ -17,6 +17,10 @@ import { DotSpinner } from '@uiball/loaders';
 import ExpenseUserModel from '../../models/expense-user.model';
 import { Button as MuiButton } from '@mui/material';
 import ProofsDialog from '../../components/proofs-dialog/proofs-dialog.component';
+import CustomTabPanel from '../../components/custom-tab-panel/costum-tab-panel.component';
+import Box from '@mui/material/Box';
+import Tabs from '@mui/material/Tabs';
+import Tab from '@mui/material/Tab';
 
 
 
@@ -25,22 +29,27 @@ interface ExpensePageProps {
     isLoading: boolean;
     proofsDialogIsOpen: boolean;
     hasData: boolean;
+    index: number;
     searchText: string;
     delegates: UserModel[];
     supervisors: UserModel[];
     kams: UserModel[];
-    filtredDelegates: UserModel[];
+    filteredKams: UserModel[];
+    filteredDelegates: UserModel[];
     selectedDelegate?: UserModel;
+    selectedKam?: UserModel;
     selectedSupervisor?: UserModel;
     loadingExpensesData: boolean;
-    expenses: ExpenseModel[];
-    expensesUser: ExpenseUserModel;
+    delegteExpenses: ExpenseModel[];
+    delegteExpensesUser: ExpenseUserModel;
+    kamExpenses: ExpenseModel[];
+    kamExpensesUser: ExpenseUserModel;
     currentUser: UserModel;
 }
 
 
 class ExpensePage extends Component<{}, ExpensePageProps> {
-    constructor({ }) {
+    constructor({}) {
         super({});
         this.state = {
             currentUser: new UserModel(),
@@ -51,11 +60,15 @@ class ExpensePage extends Component<{}, ExpensePageProps> {
             delegates: [],
             supervisors: [],
             kams: [],
-            filtredDelegates: [],
+            filteredKams: [],
+            filteredDelegates: [],
             loadingExpensesData: false,
             proofsDialogIsOpen: false,
-            expenses: [],
-            expensesUser: new ExpenseUserModel({}),
+            delegteExpenses: [],
+            delegteExpensesUser: new ExpenseUserModel({}),
+            kamExpenses: [],
+            kamExpensesUser: new ExpenseUserModel({}),
+            index: 0,
         }
     }
 
@@ -64,12 +77,22 @@ class ExpensePage extends Component<{}, ExpensePageProps> {
 
     handleDelegateFilter = () => {
         if (this.state.searchText.length === 0) {
-            var filtredDelegates = [...this.state.delegates];
-            this.setState({ filtredDelegates: filtredDelegates });
+            var filteredDelegates = [...this.state.delegates];
+            this.setState({ filteredDelegates: filteredDelegates });
         }
         else {
-            var filtredDelegates = this.state.delegates.filter(delegate => delegate.username!.toLowerCase().includes(this.state.searchText.toLowerCase()));
-            this.setState({ filtredDelegates: filtredDelegates });
+            var filteredDelegates = this.state.delegates.filter(delegate => delegate.username!.toLowerCase().includes(this.state.searchText.toLowerCase()));
+            this.setState({ filteredDelegates: filteredDelegates });
+        }
+    }
+    handleKamFilter = () => {
+        if (this.state.searchText.length === 0) {
+            var filteredKams = [...this.state.kams];
+            this.setState({ filteredKams: filteredKams });
+        }
+        else {
+            var filteredKams = this.state.delegates.filter(delegate => delegate.username!.toLowerCase().includes(this.state.searchText.toLowerCase()));
+            this.setState({ filteredKams: filteredKams });
         }
     }
 
@@ -79,9 +102,16 @@ class ExpensePage extends Component<{}, ExpensePageProps> {
 
     handleSelectDelegate = async (delegate: UserModel) => {
         this.setState({ loadingExpensesData: true, });
-        var expenses = await this.expenseService.getAllExpensesOfUserByDateMoth(this.state.selectedDate, delegate.id!);
-        var expensesUser = await this.expenseService.getExpensesUserByDateMoth(this.state.selectedDate, delegate.id!);
-        this.setState({ selectedDelegate: delegate, expenses: expenses, loadingExpensesData: false, expensesUser: expensesUser });
+        var delegteExpenses = await this.expenseService.getAllExpensesOfUserByDateMoth(this.state.selectedDate, delegate.id!);
+        var delegteExpensesUser = await this.expenseService.getExpensesUserByDateMoth(this.state.selectedDate, delegate.id!);
+        this.setState({ selectedDelegate: delegate, delegteExpenses: delegteExpenses, loadingExpensesData: false, delegteExpensesUser: delegteExpensesUser });
+    }
+
+    handleSelectKam = async (kam: UserModel) => {
+        this.setState({ loadingExpensesData: true, });
+        var kamExpenses = await this.expenseService.getAllExpensesOfUserByDateMoth(this.state.selectedDate, kam.id!);
+        var kamExpensesUser = await this.expenseService.getExpensesUserByDateMoth(this.state.selectedDate, kam.id!);
+        this.setState({ selectedKam: kam, kamExpenses: kamExpenses, loadingExpensesData: false, kamExpensesUser: kamExpensesUser });
     }
 
     handleSelectSupervisor = async (supervisor: UserModel) => {
@@ -89,28 +119,29 @@ class ExpensePage extends Component<{}, ExpensePageProps> {
         var delegates = await this.userService.getUsersByCreator(supervisor.id!, UserType.delegate);
         if (delegates.length > 0) {
             this.setState({ selectedDelegate: delegates[0], selectedSupervisor: supervisor });
-            var expenses = await this.expenseService.getAllExpensesOfUserByDateMoth(this.state.selectedDate, delegates[0].id!);
-            var expensesUser = await this.expenseService.getExpensesUserByDateMoth(this.state.selectedDate, delegates[0].id!);
-            this.setState({ expenses: expenses, expensesUser: expensesUser });
+            var delegteExpenses = await this.expenseService.getAllExpensesOfUserByDateMoth(this.state.selectedDate, delegates[0].id!);
+            var delegteExpensesUser = await this.expenseService.getExpensesUserByDateMoth(this.state.selectedDate, delegates[0].id!);
+            this.setState({ delegteExpenses: delegteExpenses, delegteExpensesUser: delegteExpensesUser });
         }
         else {
-            this.setState({ expenses: [], });
+            this.setState({ delegteExpenses: [], });
         }
         this.setState({ loadingExpensesData: false, });
     }
 
     handleOnPickDate = async (date: Date) => {
         this.setState({ loadingExpensesData: true, });
-        var expenses = await this.expenseService.getAllExpensesOfUserByDateMoth(date, this.state.selectedDelegate!.id!);
-        var expensesUser = await this.expenseService.getExpensesUserByDateMoth(date, this.state.selectedDelegate!.id!);
-        this.setState({ selectedDate: date, expenses: expenses, loadingExpensesData: false, expensesUser: expensesUser });
+        var delegteExpenses = await this.expenseService.getAllExpensesOfUserByDateMoth(date, this.state.selectedDelegate!.id!);
+        var delegteExpensesUser = await this.expenseService.getExpensesUserByDateMoth(date, this.state.selectedDelegate!.id!);
+        var kamExpenses = await this.expenseService.getAllExpensesOfUserByDateMoth(date, this.state.selectedKam!.id!);
+        var kamExpensesUser = await this.expenseService.getExpensesUserByDateMoth(date, this.state.selectedKam!.id!);
+        this.setState({ selectedDate: date,kamExpenses:kamExpenses,kamExpensesUser:kamExpensesUser, delegteExpenses: delegteExpenses, loadingExpensesData: false, delegteExpensesUser: delegteExpensesUser });
     }
 
     handleValidateExpensesUser = async () => {
-        if (this.state.expensesUser?.id) {
-            await this.expenseService.validateExpensesUser(this.state.expensesUser!.id!);
+        if (this.state.delegteExpensesUser?.id) {
+            await this.expenseService.validateExpensesUser(this.state.delegteExpensesUser!.id!);
         }
-
     }
 
     loadExpensePageData = async () => {
@@ -126,27 +157,32 @@ class ExpensePage extends Component<{}, ExpensePageProps> {
                 var delegates = await this.userService.getUsersByCreator(currentUser.id!, UserType.delegate);
                 if (delegates.length > 0) {
                     this.setState({ selectedDelegate: delegates[0] });
-                    var expenses = await this.expenseService.getAllExpensesOfUserByDateMoth(new Date(), delegates[0].id!);
-                    var expensesUser = await this.expenseService.getExpensesUserByDateMoth(new Date(), delegates[0].id!);
-                    this.setState({ expenses: expenses, expensesUser: expensesUser });
+                    var delegteExpenses = await this.expenseService.getAllExpensesOfUserByDateMoth(new Date(), delegates[0].id!);
+                    var delegteExpensesUser = await this.expenseService.getExpensesUserByDateMoth(new Date(), delegates[0].id!);
+                    this.setState({ delegteExpenses: delegteExpenses, delegteExpensesUser: delegteExpensesUser });
                 }
-                this.setState({ isLoading: false, delegates: delegates, filtredDelegates: delegates, hasData: true });
+                this.setState({ isLoading: false, delegates: delegates, filteredDelegates: delegates, hasData: true });
             } else {
                 var supervisors = await this.userService.getUsersByCreator(currentUser.id!, UserType.supervisor);
-                this.setState({supervisors: supervisors});
+                var kams = await this.userService.getUsersByCreator(currentUser.id!, UserType.kam);
+                this.setState({ supervisors: supervisors, kams: kams,filteredKams:kams });
+                if (kams.length > 0) {
+                    this.setState({ selectedKam: kams[0], });
+                    var kamExpenses = await this.expenseService.getAllExpensesOfUserByDateMoth(new Date(), kams[0].id!);
+                    var kamExpensesUser = await this.expenseService.getExpensesUserByDateMoth(new Date(), kams[0].id!);
+                    this.setState({ kamExpenses: kamExpenses, kamExpensesUser: kamExpensesUser });
+                }
                 if (supervisors.length > 0) {
                     var delegates = await this.userService.getUsersByCreator(supervisors[0].id!, UserType.delegate);
                     if (delegates.length > 0) {
                         this.setState({ selectedDelegate: delegates[0], selectedSupervisor: supervisors[0] });
-                        var expenses = await this.expenseService.getAllExpensesOfUserByDateMoth(new Date(), delegates[0].id!);
-                        var expensesUser = await this.expenseService.getExpensesUserByDateMoth(new Date(), delegates[0].id!);
-                        this.setState({ expenses: expenses, expensesUser: expensesUser });
+                        var delegteExpenses = await this.expenseService.getAllExpensesOfUserByDateMoth(new Date(), delegates[0].id!);
+                        var delegteExpensesUser = await this.expenseService.getExpensesUserByDateMoth(new Date(), delegates[0].id!);
+                        this.setState({ delegteExpenses: delegteExpenses, delegteExpensesUser: delegteExpensesUser });
                     }
-                    this.setState({ isLoading: false, delegates: delegates, filtredDelegates: delegates, hasData: true });
+                    this.setState({ isLoading: false, delegates: delegates, filteredDelegates: delegates, hasData: true });
                 }
             }
-
-
         }
     }
 
@@ -154,6 +190,9 @@ class ExpensePage extends Component<{}, ExpensePageProps> {
         this.setState({ proofsDialogIsOpen: false });
     }
 
+    handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
+        this.setState({ index: newValue, });
+    };
 
     render() {
         if (!this.state.hasData) {
@@ -176,57 +215,120 @@ class ExpensePage extends Component<{}, ExpensePageProps> {
         }
         else {
             return (
-                <div className='expense-container'>
-                    <div className='search-bar'>
-                        <Form>
-                            <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
-                                <Form.Control type="search" placeholder="Recherche" onChange={this.handleSearchTextChange} />
-                            </Form.Group>
-                        </Form>
-                        <button onClick={this.handleDelegateFilter} className="btn btn-primary" style={{ backgroundColor: '#fff', border: '#ddd solid 1px', height: '38px' }}>
-                            <FontAwesomeIcon icon={faSearch} style={{ color: 'black' }} />
-                        </button>
-                        <MonthYearPicker onPick={this.handleOnPickDate}></MonthYearPicker >
-                    </div>
-                    {
-                        this.state.currentUser.type === UserType.admin ? (<div style={{ display: 'flex', height: '55px' }}>
-                            <UserPicker delegates={this.state.supervisors} onSelect={this.handleSelectSupervisor}></UserPicker>
-                        </div>) : null
-                    }
-                    <div style={{ display: 'flex', height: '55px' }}>
-                        <UserPicker delegates={this.state.filtredDelegates} onSelect={this.handleSelectDelegate}></UserPicker>
-                    </div>
-                    <div style={{ width: '100%', display: 'flex', flexGrow: '1', height:  this.state.currentUser.type === UserType.admin ? 'calc(100% - 240px)' : 'calc(100% - 180px)' }} >
-
-
-                        <ExpenseTable data={this.state.expenses} isLoading={this.state.loadingExpensesData}></ExpenseTable>
-                    </div>
-                    <div style={{ display: 'flex', justifyContent: 'end' }}>
-                        <h6 style={{ fontSize: '20px', marginRight: '16px' }}>
-                            Total Km : {this.state.expenses.map((e) => e.kmTotal || 0).reduce((sum, current) => sum + current, 0)}
-                        </h6>
-                        <h6 style={{ fontSize: '20px', marginRight: '16px' }}>
-                            Total nuitées :  {this.state.expenses.map((e) => e.nightsTotal || 0).reduce((sum, current) => sum + current, 0)}
-                        </h6>
-                        <h6 style={{ fontSize: '20px', marginRight: '16px' }}>
-                            Total note de frais : {this.state?.expensesUser?.total?.toLocaleString('fr-DZ', { style: 'currency', currency: 'DZD' }) ?? (0).toLocaleString('fr-DZ', { style: 'currency', currency: 'DZD' })}
-                        </h6>
-                    </div>
-                    <div style={{ display: 'flex', justifyContent: 'end' }}>
-                        <MuiButton variant="outlined" disableElevation sx={{ marginRight: '16px', marginBottom: '16px' }} onClick={() => {
-                            this.setState({ proofsDialogIsOpen: true });
-                        }}>
-                            Consulter piece jointes
-                        </MuiButton>
-                        <MuiButton variant="contained" disableElevation sx={{ marginBottom: '16px' }} onClick={this.handleValidateExpensesUser}>
-                            Valider la note de frais
-                        </MuiButton>
-                    </div>
-                    <ProofsDialog data={this.state.expenses.map<{ date: Date, urls: string[] }>((ex) => {
-                        var link: { date: Date, urls: string[] } = { date: ex.createdDate!, urls: ex.proofs!.map(p => p.url ?? '') };
-                        return link;
-                    })} isOpen={this.state.proofsDialogIsOpen} onClose={this.handleCloseProofsDialog} ></ProofsDialog>
-
+                <div style={{ display: 'flex', flexDirection: 'column', height: '100%', width: '100%', backgroundColor: '#eee' }}>
+                    <Box sx={{ width: '100%', height: '100%' }}>
+                        <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+                            <Tabs value={this.state.index} onChange={this.handleTabChange} aria-label="basic tabs example">
+                                <Tab label="Superviseurs" />
+                                {
+                                    this.state.currentUser.type === UserType.admin ? (<Tab label="Kams" />) : null
+                                }
+                            </Tabs>
+                        </Box>
+                        <CustomTabPanel style={{ display: 'flex', flexDirection: 'row', flexGrow: '1', height: 'calc(100% - 50px)', width: '100%' }} value={this.state.index} index={0} >
+                            <div style={{ display: 'flex', flexDirection: 'column', flexGrow: '1', height: 'calc(100% - 40px)', width: '100%', }}>
+                                <div className='search-bar'>
+                                    <Form>
+                                        <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
+                                            <Form.Control type="search" placeholder="Recherche" onChange={this.handleSearchTextChange} />
+                                        </Form.Group>
+                                    </Form>
+                                    <button onClick={this.handleDelegateFilter} className="btn btn-primary" style={{ backgroundColor: '#fff', border: '#ddd solid 1px', height: '38px' }}>
+                                        <FontAwesomeIcon icon={faSearch} style={{ color: 'black' }} />
+                                    </button>
+                                    <MonthYearPicker onPick={this.handleOnPickDate}></MonthYearPicker >
+                                </div>
+                                {
+                                    this.state.currentUser.type === UserType.admin ? (<div style={{ display: 'flex', height: '55px' }}>
+                                        <UserPicker delegates={this.state.supervisors} onSelect={this.handleSelectSupervisor}></UserPicker>
+                                    </div>) : null
+                                }
+                                <div style={{ display: 'flex', height: '55px' }}>
+                                    <UserPicker delegates={this.state.filteredDelegates} onSelect={this.handleSelectDelegate}></UserPicker>
+                                </div>
+                                <div style={{ width: '100%', marginTop: '5px', display: 'flex', flexGrow: '1', height: this.state.currentUser.type === UserType.admin ? 'calc(100% - 240px)' : 'calc(100% - 180px)' }} >
+                                    <ExpenseTable data={this.state.delegteExpenses} isLoading={this.state.loadingExpensesData}></ExpenseTable>
+                                </div>
+                                <div style={{ display: 'flex', justifyContent: 'space-evenly' }}>
+                                    <h6 style={{ fontSize: '16px', marginRight: '16px' }}>
+                                        Total Km : {this.state.delegteExpenses.map((e) => e.kmTotal || 0).reduce((sum, current) => sum + current, 0)}
+                                    </h6>
+                                    <h6 style={{ fontSize: '16px', marginRight: '16px' }}>
+                                        Total nuitées :  {this.state.delegteExpenses.map((e) => e.nightsTotal || 0).reduce((sum, current) => sum + current, 0)}
+                                    </h6>
+                                    <h6 style={{ fontSize: '16px', marginRight: '16px' }}>
+                                        Total autre frais : {this.state?.delegteExpenses.map((e) => e.kmTotal || 0).reduce((sum, current) => sum + current, 0).toLocaleString('fr-DZ', { style: 'currency', currency: 'DZD' }) ?? (0).toLocaleString('fr-DZ', { style: 'currency', currency: 'DZD' })}
+                                    </h6>
+                                    <h6 style={{ fontSize: '16px', marginRight: '16px' }}>
+                                        Total note de frais : {this.state?.delegteExpensesUser?.total?.toLocaleString('fr-DZ', { style: 'currency', currency: 'DZD' }) ?? (0).toLocaleString('fr-DZ', { style: 'currency', currency: 'DZD' })}
+                                    </h6>
+                                </div>
+                                <div style={{ display: 'flex', justifyContent: 'end' }}>
+                                    <MuiButton variant="outlined" disableElevation sx={{ marginRight: '16px', marginBottom: '16px' }} onClick={() => {
+                                        this.setState({ proofsDialogIsOpen: true });
+                                    }}>
+                                        Consulter piece jointes
+                                    </MuiButton>
+                                    <MuiButton variant="contained" disableElevation sx={{ marginBottom: '16px' }} onClick={this.handleValidateExpensesUser}>
+                                        Valider la note de frais
+                                    </MuiButton>
+                                </div>
+                                <ProofsDialog data={this.state.delegteExpenses.map<{ date: Date, urls: string[] }>((ex) => {
+                                    var link: { date: Date, urls: string[] } = { date: ex.createdDate!, urls: ex.proofs!.map(p => p.url ?? '') };
+                                    return link;
+                                })} isOpen={this.state.proofsDialogIsOpen} onClose={this.handleCloseProofsDialog} ></ProofsDialog>
+                            </div>
+                        </CustomTabPanel>
+                        <CustomTabPanel style={{ display: 'flex', flexDirection: 'row', flexGrow: '1', height: 'calc(100% - 50px)', width: '100%' }} value={this.state.index} index={1} >
+                            <div style={{ display: 'flex', flexDirection: 'column', flexGrow: '1', height: 'calc(100% - 40px)', width: '100%', }}>
+                                <div className='search-bar'>
+                                    <Form>
+                                        <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
+                                            <Form.Control type="search" placeholder="Recherche" onChange={this.handleSearchTextChange} />
+                                        </Form.Group>
+                                    </Form>
+                                    <button onClick={this.handleKamFilter} className="btn btn-primary" style={{ backgroundColor: '#fff', border: '#ddd solid 1px', height: '38px' }}>
+                                        <FontAwesomeIcon icon={faSearch} style={{ color: 'black' }} />
+                                    </button>
+                                    <MonthYearPicker onPick={this.handleOnPickDate}></MonthYearPicker >
+                                </div>
+                                <div style={{ display: 'flex', height: '55px' }}>
+                                    <UserPicker delegates={this.state.filteredKams} onSelect={this.handleSelectKam}></UserPicker>
+                                </div>
+                                <div style={{ width: '100%', marginTop: '5px', display: 'flex', flexGrow: '1', height: this.state.currentUser.type === UserType.admin ? 'calc(100% - 240px)' : 'calc(100% - 180px)' }} >
+                                    <ExpenseTable data={this.state.kamExpenses} isLoading={this.state.loadingExpensesData}></ExpenseTable>
+                                </div>
+                                <div style={{ display: 'flex', justifyContent:'space-evenly' }}>
+                                    <h6 style={{ fontSize: '16px', marginRight: '16px' }}>
+                                        Total Km : {this.state.kamExpenses.map((e) => e.kmTotal || 0).reduce((sum, current) => sum + current, 0)}
+                                    </h6>
+                                    <h6 style={{ fontSize: '16px', marginRight: '16px' }}>
+                                        Total nuitées :  {this.state.kamExpenses.map((e) => e.nightsTotal || 0).reduce((sum, current) => sum + current, 0)}
+                                    </h6>
+                                    <h6 style={{ fontSize: '16px', marginRight: '16px' }}>
+                                        Total autre frais : {this.state?.kamExpenses.map((e) => e.kmTotal || 0).reduce((sum, current) => sum + current, 0).toLocaleString('fr-DZ', { style: 'currency', currency: 'DZD' }) ?? (0).toLocaleString('fr-DZ', { style: 'currency', currency: 'DZD' })}
+                                    </h6>
+                                    <h6 style={{ fontSize: '16px', marginRight: '16px' }}>
+                                        Total note de frais : {this.state?.kamExpensesUser?.total?.toLocaleString('fr-DZ', { style: 'currency', currency: 'DZD' }) ?? (0).toLocaleString('fr-DZ', { style: 'currency', currency: 'DZD' })}
+                                    </h6>
+                                </div>
+                                <div style={{ display: 'flex', justifyContent: 'end' }}>
+                                    <MuiButton variant="outlined" disableElevation sx={{ marginRight: '16px', marginBottom: '16px' }} onClick={() => {
+                                        this.setState({ proofsDialogIsOpen: true });
+                                    }}>
+                                        Consulter piece jointes
+                                    </MuiButton>
+                                    <MuiButton variant="contained" disableElevation sx={{ marginBottom: '16px' }} onClick={this.handleValidateExpensesUser}>
+                                        Valider la note de frais
+                                    </MuiButton>
+                                </div>
+                                <ProofsDialog data={this.state.kamExpenses.map<{ date: Date, urls: string[] }>((ex) => {
+                                    var link: { date: Date, urls: string[] } = { date: ex.createdDate!, urls: ex.proofs!.map(p => p.url ?? '') };
+                                    return link;
+                                })} isOpen={this.state.proofsDialogIsOpen} onClose={this.handleCloseProofsDialog} ></ProofsDialog>
+                            </div>
+                        </CustomTabPanel>
+                    </Box>
                 </div>
             );
         }
