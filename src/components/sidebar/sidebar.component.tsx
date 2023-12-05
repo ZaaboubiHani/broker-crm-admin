@@ -26,7 +26,7 @@ const Sidebar: React.FC = () => {
 
   const toggleDrawer = () => {
     setIsOpen(!isOpen);
-    localStorage.setItem('sidebarOpen',String(!isOpen));
+    localStorage.setItem('sidebarOpen', String(!isOpen));
   };
 
   const location = useLocation();
@@ -51,7 +51,7 @@ const Sidebar: React.FC = () => {
           bottom: "20px",
           backgroundColor: 'white',
           width: '10px',
-          minWidth:'10px',
+          minWidth: '10px',
           height: '40px',
           zIndex: '99',
           transition: 'all 0.5s ease',
@@ -61,9 +61,23 @@ const Sidebar: React.FC = () => {
           <ArrowBackIosNewIcon style={{ width: '30px', left: '0px', top: '8px', position: 'absolute', color: 'rgb(0, 182, 182)', transition: 'opacity 0.5s ease', opacity: isOpen ? '1' : '0', }} />
           <ArrowForwardIosIcon style={{ width: '30px', left: '0px', top: '8px', position: 'absolute', color: 'rgb(0, 182, 182)', transition: 'opacity 0.5s ease', opacity: isOpen ? '0' : '1', }} />
         </Button>
-        <img src='/logo.png' style={{ margin: '0px 8px', height: '50px', transition: 'opacity 0.5s ease', opacity: isOpen ? '0' : '1', }} alt="" />
-        <img src="/broker_title.png" height='60px' style={{ margin: '0px 8px', left: '0px', position: 'absolute', transition: 'opacity 0.5s ease', opacity: isOpen ? '1' : '0', }} alt="" />
-        <Nav.Link  style={{ display: 'flex', }} href="/home">
+        <img src='/images/broker_logo_white.png'
+          style={{
+            margin: '0px 8px 40px 8px ',
+            height: '50px',
+            transition: 'opacity 0.5s ease',
+            opacity: isOpen ? '0' : '1',
+          }} alt="" />
+        <img src="/images/broker_title.png"
+          height='60px'
+          style={{
+            margin: '0px 8px 40px 8px ',
+            left: '0px',
+            position: 'absolute',
+            transition: 'opacity 0.5s ease',
+            opacity: isOpen ? '1' : '0',
+          }} alt="" />
+        <Nav.Link style={{ display: 'flex', }} href="/home">
           <HomeIcon style={{ color: 'white', width: '30px', height: '30px', marginRight: '8px' }} />
           <p style={{ color: 'white', transition: 'opacity 0.5s ease', opacity: isOpen ? '1' : '0', }}>
             Acceuil
@@ -75,7 +89,7 @@ const Sidebar: React.FC = () => {
             Délégués
           </p>
         </Nav.Link>
-        <Nav.Link style={{ display: 'flex',}} href="/plan">
+        <Nav.Link style={{ display: 'flex', }} href="/plan">
           <CalendarMonthIcon style={{ color: 'white', width: '30px', height: '30px', marginRight: '8px' }} />
           <p style={{ color: 'white', transition: 'opacity 0.5s ease', opacity: isOpen ? '1' : '0', }}>
             Plan de tournée

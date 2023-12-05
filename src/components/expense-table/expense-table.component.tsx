@@ -78,7 +78,7 @@ const ExpenseTable: React.FC<ExpenseTableProps> = ({ data, isLoading }) => {
             filterable: false,
         },
         {
-            field: 'otherExpenses', headerName: 'c', width: 150, valueFormatter(params) {
+            field: 'otherExpenses', headerName: 'autre frais', width: 150, valueFormatter(params) {
                 return params.value.toLocaleString('fr-DZ', { style: 'currency', currency: 'DZD' });
             },
             filterable: false,
@@ -116,8 +116,8 @@ const ExpenseTable: React.FC<ExpenseTableProps> = ({ data, isLoading }) => {
                                 return {
                                     id: index,
                                     date: row.createdDate || new Date(),
-                                    startLocation: `${row.startWilaya}, ${row.startCommun}`,
-                                    endLocation: `${row.endWilaya}, ${row.endCommun}`,
+                                    startLocation: `${row.startWilaya ?? ''}, ${row.startCommun ?? ''}`,
+                                    endLocation: `${row.endWilaya ?? ''}, ${row.endCommun ?? ''}`,
                                     totalVisitsDoctor: row.totalVisitsDoctor,
                                     totalVisitsPharmacy: row.totalVisitsPharmacy,
                                     kmTotal: row.kmTotal,

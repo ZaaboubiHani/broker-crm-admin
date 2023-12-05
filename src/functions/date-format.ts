@@ -6,6 +6,18 @@ export function formatDateToYYYYMMDD(date: Date): string {
   return `${year}-${month}-${day}`;
 }
 
+export function calculateDaysBetweenDates(date1: Date | null | undefined, date2: Date | null | undefined): number {
+  if (date1 && date2) {
+
+    const timeDifference = Math.abs(date2.getTime() - date1.getTime());
+
+    const daysDifference = Math.ceil(timeDifference / (1000 * 3600 * 24));
+
+    return daysDifference;
+  }
+  return 0;
+}
+
 export function formatDateToYYYYMM(date: Date): string {
   const year = date.getFullYear();
   const month = String(date.getMonth() + 1).padStart(2, '0');

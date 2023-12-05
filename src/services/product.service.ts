@@ -96,6 +96,7 @@ export default class ProductService {
                     superGrossistPriceUnit: product.superWholesalePriceUnit,
                     collisage: product.collision,
                     DDP: product.ddp,
+                    PPA: product.ppa,
                 }
             },
             {

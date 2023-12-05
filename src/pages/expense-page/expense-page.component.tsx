@@ -1,9 +1,7 @@
 import React, { Component } from 'react';
 import '../expense-page/expense-page.style.css';
 import MonthYearPicker from '../../components/month-year-picker/month-year-picker.component';
-import SearchBar from '../../components/search-bar/search-bar.component';
 import ExpenseTable from '../../components/expense-table/expense-table.component';
-import Button from 'react-bootstrap/Button';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Form from 'react-bootstrap/esm/Form';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -17,6 +15,7 @@ import { DotSpinner } from '@uiball/loaders';
 import ExpenseUserModel from '../../models/expense-user.model';
 import { Button as MuiButton } from '@mui/material';
 import ProofsDialog from '../../components/proofs-dialog/proofs-dialog.component';
+import ExpenseStatsDialog from '../../components/expense-stats-dialog/expense-stats-dialog.component';
 import CustomTabPanel from '../../components/custom-tab-panel/costum-tab-panel.component';
 import Box from '@mui/material/Box';
 import Tabs from '@mui/material/Tabs';
@@ -28,6 +27,7 @@ interface ExpensePageProps {
     selectedDate: Date;
     isLoading: boolean;
     proofsDialogIsOpen: boolean;
+    expenseStatsDialogIsOpen: boolean;
     hasData: boolean;
     index: number;
     searchText: string;
@@ -49,7 +49,7 @@ interface ExpensePageProps {
 
 
 class ExpensePage extends Component<{}, ExpensePageProps> {
-    constructor({}) {
+    constructor({ }) {
         super({});
         this.state = {
             currentUser: new UserModel(),
@@ -64,6 +64,7 @@ class ExpensePage extends Component<{}, ExpensePageProps> {
             filteredDelegates: [],
             loadingExpensesData: false,
             proofsDialogIsOpen: false,
+            expenseStatsDialogIsOpen: false,
             delegteExpenses: [],
             delegteExpensesUser: new ExpenseUserModel({}),
             kamExpenses: [],
@@ -85,6 +86,7 @@ class ExpensePage extends Component<{}, ExpensePageProps> {
             this.setState({ filteredDelegates: filteredDelegates });
         }
     }
+
     handleKamFilter = () => {
         if (this.state.searchText.length === 0) {
             var filteredKams = [...this.state.kams];
@@ -135,7 +137,7 @@ class ExpensePage extends Component<{}, ExpensePageProps> {
         var delegteExpensesUser = await this.expenseService.getExpensesUserByDateMoth(date, this.state.selectedDelegate!.id!);
         var kamExpenses = await this.expenseService.getAllExpensesOfUserByDateMoth(date, this.state.selectedKam!.id!);
         var kamExpensesUser = await this.expenseService.getExpensesUserByDateMoth(date, this.state.selectedKam!.id!);
-        this.setState({ selectedDate: date,kamExpenses:kamExpenses,kamExpensesUser:kamExpensesUser, delegteExpenses: delegteExpenses, loadingExpensesData: false, delegteExpensesUser: delegteExpensesUser });
+        this.setState({ selectedDate: date, kamExpenses: kamExpenses, kamExpensesUser: kamExpensesUser, delegteExpenses: delegteExpenses, loadingExpensesData: false, delegteExpensesUser: delegteExpensesUser });
     }
 
     handleValidateExpensesUser = async () => {
@@ -165,7 +167,7 @@ class ExpensePage extends Component<{}, ExpensePageProps> {
             } else {
                 var supervisors = await this.userService.getUsersByCreator(currentUser.id!, UserType.supervisor);
                 var kams = await this.userService.getUsersByCreator(currentUser.id!, UserType.kam);
-                this.setState({ supervisors: supervisors, kams: kams,filteredKams:kams });
+                this.setState({ supervisors: supervisors, kams: kams, filteredKams: kams });
                 if (kams.length > 0) {
                     this.setState({ selectedKam: kams[0], });
                     var kamExpenses = await this.expenseService.getAllExpensesOfUserByDateMoth(new Date(), kams[0].id!);
@@ -188,6 +190,10 @@ class ExpensePage extends Component<{}, ExpensePageProps> {
 
     handleCloseProofsDialog = () => {
         this.setState({ proofsDialogIsOpen: false });
+    }
+
+    handleCloseExpenseStatsDialog = () => {
+        this.setState({ expenseStatsDialogIsOpen: false });
     }
 
     handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
@@ -251,13 +257,18 @@ class ExpensePage extends Component<{}, ExpensePageProps> {
                                 </div>
                                 <div style={{ display: 'flex', justifyContent: 'space-evenly' }}>
                                     <h6 style={{ fontSize: '16px', marginRight: '16px' }}>
+                                        état: {!this.state.delegteExpensesUser.userValidation && !this.state.delegteExpensesUser.userValidation ? 'En attente' :
+                                            this.state.delegteExpensesUser.userValidation && !this.state.delegteExpensesUser.userValidation ? 'Envoyée' : 'Approuvée'
+                                        }
+                                    </h6>
+                                    <h6 style={{ fontSize: '16px', marginRight: '16px' }}>
                                         Total Km : {this.state.delegteExpenses.map((e) => e.kmTotal || 0).reduce((sum, current) => sum + current, 0)}
                                     </h6>
                                     <h6 style={{ fontSize: '16px', marginRight: '16px' }}>
                                         Total nuitées :  {this.state.delegteExpenses.map((e) => e.nightsTotal || 0).reduce((sum, current) => sum + current, 0)}
                                     </h6>
                                     <h6 style={{ fontSize: '16px', marginRight: '16px' }}>
-                                        Total autre frais : {this.state?.delegteExpenses.map((e) => e.kmTotal || 0).reduce((sum, current) => sum + current, 0).toLocaleString('fr-DZ', { style: 'currency', currency: 'DZD' }) ?? (0).toLocaleString('fr-DZ', { style: 'currency', currency: 'DZD' })}
+                                        Total autre frais : {this.state?.delegteExpenses.map((e) => e.otherExpenses || 0).reduce((sum, current) => sum + current, 0).toLocaleString('fr-DZ', { style: 'currency', currency: 'DZD' }) ?? (0).toLocaleString('fr-DZ', { style: 'currency', currency: 'DZD' })}
                                     </h6>
                                     <h6 style={{ fontSize: '16px', marginRight: '16px' }}>
                                         Total note de frais : {this.state?.delegteExpensesUser?.total?.toLocaleString('fr-DZ', { style: 'currency', currency: 'DZD' }) ?? (0).toLocaleString('fr-DZ', { style: 'currency', currency: 'DZD' })}
@@ -265,11 +276,16 @@ class ExpensePage extends Component<{}, ExpensePageProps> {
                                 </div>
                                 <div style={{ display: 'flex', justifyContent: 'end' }}>
                                     <MuiButton variant="outlined" disableElevation sx={{ marginRight: '16px', marginBottom: '16px' }} onClick={() => {
+                                        this.setState({ expenseStatsDialogIsOpen: true });
+                                    }}>
+                                        Ouvrir statistiques manuelles
+                                    </MuiButton>
+                                    <MuiButton variant="outlined" disableElevation sx={{ marginRight: '16px', marginBottom: '16px' }} onClick={() => {
                                         this.setState({ proofsDialogIsOpen: true });
                                     }}>
                                         Consulter piece jointes
                                     </MuiButton>
-                                    <MuiButton variant="contained" disableElevation sx={{ marginBottom: '16px' }} onClick={this.handleValidateExpensesUser}>
+                                    <MuiButton disabled={!this.state.delegteExpensesUser.userValidation && !this.state.delegteExpensesUser.userValidation} variant="contained" disableElevation sx={{ marginBottom: '16px' }} onClick={this.handleValidateExpensesUser}>
                                         Valider la note de frais
                                     </MuiButton>
                                 </div>
@@ -277,6 +293,7 @@ class ExpensePage extends Component<{}, ExpensePageProps> {
                                     var link: { date: Date, urls: string[] } = { date: ex.createdDate!, urls: ex.proofs!.map(p => p.url ?? '') };
                                     return link;
                                 })} isOpen={this.state.proofsDialogIsOpen} onClose={this.handleCloseProofsDialog} ></ProofsDialog>
+                                <ExpenseStatsDialog userId={this.state.selectedDelegate?.id} isOpen={this.state.expenseStatsDialogIsOpen} onClose={this.handleCloseExpenseStatsDialog} ></ExpenseStatsDialog>
                             </div>
                         </CustomTabPanel>
                         <CustomTabPanel style={{ display: 'flex', flexDirection: 'row', flexGrow: '1', height: 'calc(100% - 50px)', width: '100%' }} value={this.state.index} index={1} >
@@ -298,7 +315,12 @@ class ExpensePage extends Component<{}, ExpensePageProps> {
                                 <div style={{ width: '100%', marginTop: '5px', display: 'flex', flexGrow: '1', height: this.state.currentUser.type === UserType.admin ? 'calc(100% - 240px)' : 'calc(100% - 180px)' }} >
                                     <ExpenseTable data={this.state.kamExpenses} isLoading={this.state.loadingExpensesData}></ExpenseTable>
                                 </div>
-                                <div style={{ display: 'flex', justifyContent:'space-evenly' }}>
+                                <div style={{ display: 'flex', justifyContent: 'space-evenly' }}>
+                                    <h6 style={{ fontSize: '16px', marginRight: '16px' }}>
+                                        état: {!this.state.kamExpensesUser.userValidation && !this.state.kamExpensesUser.userValidation ? 'En attente' :
+                                            this.state.kamExpensesUser.userValidation && !this.state.kamExpensesUser.userValidation ? 'Envoyée' : 'Approuvée'
+                                        }
+                                    </h6>
                                     <h6 style={{ fontSize: '16px', marginRight: '16px' }}>
                                         Total Km : {this.state.kamExpenses.map((e) => e.kmTotal || 0).reduce((sum, current) => sum + current, 0)}
                                     </h6>
@@ -306,7 +328,7 @@ class ExpensePage extends Component<{}, ExpensePageProps> {
                                         Total nuitées :  {this.state.kamExpenses.map((e) => e.nightsTotal || 0).reduce((sum, current) => sum + current, 0)}
                                     </h6>
                                     <h6 style={{ fontSize: '16px', marginRight: '16px' }}>
-                                        Total autre frais : {this.state?.kamExpenses.map((e) => e.kmTotal || 0).reduce((sum, current) => sum + current, 0).toLocaleString('fr-DZ', { style: 'currency', currency: 'DZD' }) ?? (0).toLocaleString('fr-DZ', { style: 'currency', currency: 'DZD' })}
+                                        Total autre frais : {this.state?.kamExpenses.map((e) => e.otherExpenses || 0).reduce((sum, current) => sum + current, 0).toLocaleString('fr-DZ', { style: 'currency', currency: 'DZD' }) ?? (0).toLocaleString('fr-DZ', { style: 'currency', currency: 'DZD' })}
                                     </h6>
                                     <h6 style={{ fontSize: '16px', marginRight: '16px' }}>
                                         Total note de frais : {this.state?.kamExpensesUser?.total?.toLocaleString('fr-DZ', { style: 'currency', currency: 'DZD' }) ?? (0).toLocaleString('fr-DZ', { style: 'currency', currency: 'DZD' })}
@@ -314,11 +336,16 @@ class ExpensePage extends Component<{}, ExpensePageProps> {
                                 </div>
                                 <div style={{ display: 'flex', justifyContent: 'end' }}>
                                     <MuiButton variant="outlined" disableElevation sx={{ marginRight: '16px', marginBottom: '16px' }} onClick={() => {
+                                        this.setState({ expenseStatsDialogIsOpen: true });
+                                    }}>
+                                        Ouvrir statistiques manuelles
+                                    </MuiButton>
+                                    <MuiButton variant="outlined" disableElevation sx={{ marginRight: '16px', marginBottom: '16px' }} onClick={() => {
                                         this.setState({ proofsDialogIsOpen: true });
                                     }}>
                                         Consulter piece jointes
                                     </MuiButton>
-                                    <MuiButton variant="contained" disableElevation sx={{ marginBottom: '16px' }} onClick={this.handleValidateExpensesUser}>
+                                    <MuiButton disabled={!this.state.kamExpensesUser.userValidation && !this.state.kamExpensesUser.userValidation} variant="contained" disableElevation sx={{ marginBottom: '16px' }} onClick={this.handleValidateExpensesUser}>
                                         Valider la note de frais
                                     </MuiButton>
                                 </div>
@@ -326,6 +353,7 @@ class ExpensePage extends Component<{}, ExpensePageProps> {
                                     var link: { date: Date, urls: string[] } = { date: ex.createdDate!, urls: ex.proofs!.map(p => p.url ?? '') };
                                     return link;
                                 })} isOpen={this.state.proofsDialogIsOpen} onClose={this.handleCloseProofsDialog} ></ProofsDialog>
+                                <ExpenseStatsDialog userId={this.state.selectedKam?.id} isOpen={this.state.expenseStatsDialogIsOpen} onClose={this.handleCloseExpenseStatsDialog} ></ExpenseStatsDialog>
                             </div>
                         </CustomTabPanel>
                     </Box>
