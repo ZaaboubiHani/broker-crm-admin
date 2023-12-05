@@ -46,6 +46,7 @@ import Tab from '@mui/material/Tab';
 import Box from '@mui/material/Box';
 import CustomTabPanel from '../../components/custom-tab-panel/costum-tab-panel.component';
 import RestoreIcon from '@mui/icons-material/Restore';
+import { NumericFormat, NumericFormatProps } from 'react-number-format';
 
 interface ConfigPageProps {
     currentUser: UserModel;
@@ -101,6 +102,35 @@ interface ConfigPageProps {
     selectedCoProductId: number;
     index: number;
 }
+
+interface CustomProps {
+    onChange: (event: { target: { name: string; value: string } }) => void;
+    name: string;
+}
+
+const NumericFormatCustom = React.forwardRef<NumericFormatProps, CustomProps>(
+    function NumericFormatCustom(props, ref) {
+        const { onChange, ...other } = props;
+
+        return (
+            <NumericFormat
+                {...other}
+                getInputRef={ref}
+                onValueChange={(values: any) => {
+                    onChange({
+                        target: {
+                            name: props.name,
+                            value: values.value,
+                        },
+                    });
+                }}
+                thousandSeparator
+                valueIsNumericString
+                prefix="DA "
+            />
+        );
+    },
+);
 
 class ConfigPage extends Component<{}, ConfigPageProps> {
     constructor({ }) {
@@ -748,38 +778,55 @@ class ConfigPage extends Component<{}, ConfigPageProps> {
                                                 this.state.product.name = event.target.value;
                                             }} size="small" id="outlined-basic" label="Nom de produit" variant="outlined" sx={{ marginRight: '16px', backgroundColor: 'white', borderRadius: '4px', height: '40px', flexGrow: '1' }} />
                                             <TextField value={this.state.product.ug} onChange={(event) => {
-                                                this.state.product.ug = parseInt(event.target.value);
+                                                this.state.product.ug = Number(event.target.value) ?? 0.0;
                                             }} type='number' size="small" label="UG" variant="outlined" sx={{ backgroundColor: 'white', borderRadius: '4px', height: '40px', flexGrow: '1' }} />
                                         </div>
                                         <div style={{ display: 'flex', margin: '8px 0px' }}>
                                             <TextField value={this.state.product.remise} onChange={(event) => {
-                                                this.state.product.remise = parseInt(event.target.value);
+                                                this.state.product.remise = Number(event.target.value) ?? 0.0;
                                             }} type='number' size="small" id="outlined-basic" label="Remise" variant="outlined" sx={{ marginRight: '16px', backgroundColor: 'white', borderRadius: '4px', height: '40px', flexGrow: '1' }} />
 
                                             <TextField value={this.state.product.wholesalePriceUnit} onChange={(event) => {
-                                                this.state.product.wholesalePriceUnit = parseInt(event.target.value);
-                                            }} type='number' size="small" label="Grossiste prix unitaire" variant="outlined" sx={{ backgroundColor: 'white', borderRadius: '4px', height: '40px', flexGrow: '1' }} />
+                                                this.state.product.wholesalePriceUnit = Number(event.target.value) ?? 0;
+                                            }}
+                                                InputProps={{
+                                                    inputComponent: NumericFormatCustom as any,
+                                                }}
+                                                size="small" label="Grossiste prix unitaire" variant="outlined" sx={{ backgroundColor: 'white', borderRadius: '4px', height: '40px', flexGrow: '1' }} />
                                         </div>
                                         <div style={{ display: 'flex', margin: '8px 0px' }}>
                                             <TextField value={this.state.product.pharmacyPriceUnit} onChange={(event) => {
-                                                this.state.product.pharmacyPriceUnit = parseInt(event.target.value);
-                                            }} type='number' size="small" id="outlined-basic" label="Pharmacie prix unitaire" variant="outlined" sx={{ marginRight: '16px', backgroundColor: 'white', borderRadius: '4px', height: '40px', flexGrow: '1' }} />
+                                                this.state.product.pharmacyPriceUnit = Number(event.target.value) ?? 0;
+                                            }}
+                                                InputProps={{
+                                                    inputComponent: NumericFormatCustom as any,
+                                                }}
+                                                size="small" id="outlined-basic" label="Pharmacie prix unitaire" variant="outlined" sx={{ marginRight: '16px', backgroundColor: 'white', borderRadius: '4px', height: '40px', flexGrow: '1' }} />
 
                                             <TextField value={this.state.product.superWholesalePriceUnit} onChange={(event) => {
-                                                this.state.product.superWholesalePriceUnit = parseInt(event.target.value);
-                                            }} type='number' size="small" label="Super grossiste prix unitaire" variant="outlined" sx={{ backgroundColor: 'white', borderRadius: '4px', height: '40px', flexGrow: '1' }} />
+                                                this.state.product.superWholesalePriceUnit = Number(event.target.value) ?? 0;
+                                            }}
+                                                InputProps={{
+                                                    inputComponent: NumericFormatCustom as any,
+                                                }}
+                                                size="small" label="Super grossiste prix unitaire" variant="outlined" sx={{ backgroundColor: 'white', borderRadius: '4px', height: '40px', flexGrow: '1' }} />
                                         </div>
                                         <div style={{ display: 'flex', margin: '8px 0px 0px' }}>
                                             <TextField value={this.state.product.collision} onChange={(event) => {
-                                                this.state.product.collision = parseInt(event.target.value);
-                                            }} type='number' size="small" id="outlined-basic" label="Collisage" variant="outlined" sx={{ backgroundColor: 'white', borderRadius: '4px', height: '40px', flexGrow: '1' }} />
-
-
+                                                this.state.product.collision = Number(event.target.value) ?? 0;
+                                            }} type='number' size="small" id="outlined-basic" label="Collisage" variant="outlined" sx={{ marginRight: '16px', backgroundColor: 'white', borderRadius: '4px', height: '40px', flexGrow: '1' }} />
+                                            <TextField value={this.state.product.collision} onChange={(event) => {
+                                                this.state.product.ppa = Number(event.target.value) ?? 0.0;
+                                            }}
+                                                InputProps={{
+                                                    inputComponent: NumericFormatCustom as any,
+                                                }}
+                                                size="small" id="outlined-basic" label="PPA" variant="outlined" sx={{ backgroundColor: 'white', borderRadius: '4px', height: '40px', flexGrow: '1' }} />
                                         </div>
                                         <div style={{ display: 'flex', margin: '16px 0px 16px 0px' }}>
                                             <LocalizationProvider dateAdapter={AdapterDayjs}>
                                                 <DatePicker value={this.state.product.ddp} onChange={(date) => {
-                                                    this.state.product.ddp = date;
+                                                    this.state.product.ddp = new Date(date!.toString());
                                                 }} label="DDP" />
                                             </LocalizationProvider>
                                             <Button onClick={() => this.handleCreateProduct()} startIcon={<AddIcon />} sx={{ border: 'solid grey 1px', backgroundColor: 'white', borderRadius: '4px', marginLeft: '16px' }}>
@@ -792,9 +839,7 @@ class ConfigPage extends Component<{}, ConfigPageProps> {
                                             <TableHead sx={{ height: '45px', display: 'flex', width: '100%' }}>
                                                 <TableRow sx={{ display: 'flex', width: '100%' }}>
                                                     <TableCell sx={{ width: '50%' }} align="left">Nom de fournisseur</TableCell>
-                                                    <TableCell sx={{ width: '50%' }} align="left">
-                                                        UG
-                                                    </TableCell>
+                                                    <TableCell sx={{ width: '50%' }} align="left"> UG </TableCell>
                                                     <TableCell sx={{ width: '50%' }} align="left">Prix grossiste</TableCell>
                                                     <TableCell sx={{ width: '50%' }} align="right">Supprimer</TableCell>
                                                 </TableRow>
@@ -857,17 +902,27 @@ class ConfigPage extends Component<{}, ConfigPageProps> {
                                             }} type='number' size="small" id="outlined-basic" label="Remise" variant="outlined" sx={{ marginRight: '16px', backgroundColor: 'white', borderRadius: '4px', height: '40px', flexGrow: '1' }} />
 
                                             <TextField value={this.state.coproduct.wholesalePriceUnit} onChange={(event) => {
-                                                this.state.coproduct.wholesalePriceUnit = parseInt(event.target.value);
-                                            }} type='number' size="small" label="Grossiste prix unitaire" variant="outlined" sx={{ backgroundColor: 'white', borderRadius: '4px', height: '40px', flexGrow: '1' }} />
+                                                this.state.coproduct.wholesalePriceUnit = Number(event.target.value) ?? 0.0;
+                                            }}
+                                                InputProps={{
+                                                    inputComponent: NumericFormatCustom as any,
+                                                }}
+                                                size="small" label="Grossiste prix unitaire" variant="outlined" sx={{ backgroundColor: 'white', borderRadius: '4px', height: '40px', flexGrow: '1' }} />
                                         </div>
                                         <div style={{ display: 'flex', margin: '8px 0px' }}>
                                             <TextField value={this.state.coproduct.pharmacyPriceUnit} onChange={(event) => {
-                                                this.state.coproduct.pharmacyPriceUnit = parseInt(event.target.value);
-                                            }} type='number' size="small" id="outlined-basic" label="Pharmacie prix unitaire" variant="outlined" sx={{ marginRight: '16px', backgroundColor: 'white', borderRadius: '4px', height: '40px', flexGrow: '1' }} />
+                                                this.state.coproduct.pharmacyPriceUnit = Number(event.target.value) ?? 0.0;
+                                            }}
+                                                InputProps={{
+                                                    inputComponent: NumericFormatCustom as any,
+                                                }} size="small" id="outlined-basic" label="Pharmacie prix unitaire" variant="outlined" sx={{ marginRight: '16px', backgroundColor: 'white', borderRadius: '4px', height: '40px', flexGrow: '1' }} />
 
                                             <TextField value={this.state.coproduct.superWholesalePriceUnit} onChange={(event) => {
-                                                this.state.coproduct.superWholesalePriceUnit = parseInt(event.target.value);
-                                            }} type='number' size="small" label="Super grossiste prix unitaire" variant="outlined" sx={{ backgroundColor: 'white', borderRadius: '4px', height: '40px', flexGrow: '1' }} />
+                                                this.state.coproduct.superWholesalePriceUnit = Number(event.target.value) ?? 0.0;
+                                            }}
+                                                InputProps={{
+                                                    inputComponent: NumericFormatCustom as any,
+                                                }} size="small" label="Super grossiste prix unitaire" variant="outlined" sx={{ backgroundColor: 'white', borderRadius: '4px', height: '40px', flexGrow: '1' }} />
                                         </div>
                                         <div style={{ display: 'flex', margin: '8px 0px 0px' }}>
                                             <TextField value={this.state.coproduct.collision} onChange={(event) => {
@@ -949,13 +1004,21 @@ class ConfigPage extends Component<{}, ConfigPageProps> {
                                                     </h4>
                                                     <div style={{ display: 'flex', marginTop: '8px' }}>
                                                         <TextField value={this.state.expensesConfig.nightPrice} onChange={(event) => {
-                                                            this.state.expensesConfig.nightPrice = parseInt(event.target.value);
+                                                            this.state.expensesConfig.nightPrice = Number(event.target.value) ?? 0.0;
                                                             this.setState({ expensesConfig: this.state.expensesConfig });
-                                                        }} type="number" size="small" id="outlined-basic" label="Prix de nuit" variant="outlined" sx={{ marginRight: '16px', backgroundColor: 'white', borderRadius: '4px', height: '40px', flexGrow: '1' }} />
+                                                        }}
+                                                            InputProps={{
+                                                                inputComponent: NumericFormatCustom as any,
+                                                            }}
+                                                            size="small" id="outlined-basic" label="Prix de nuit" variant="outlined" sx={{ marginRight: '16px', backgroundColor: 'white', borderRadius: '4px', height: '40px', flexGrow: '1' }} />
                                                         <TextField value={this.state.expensesConfig.kmPrice} onChange={(event) => {
-                                                            this.state.expensesConfig.kmPrice = parseInt(event.target.value);
+                                                            this.state.expensesConfig.kmPrice = Number(event.target.value) ?? 0.0;
                                                             this.setState({ expensesConfig: this.state.expensesConfig });
-                                                        }} type="number" size="small" id="outlined-basic" label="km Prix" variant="outlined" sx={{ marginRight: '16px', backgroundColor: 'white', borderRadius: '4px', height: '40px', flexGrow: '1' }} />
+                                                        }}
+                                                            InputProps={{
+                                                                inputComponent: NumericFormatCustom as any,
+                                                            }}
+                                                            size="small" id="outlined-basic" label="km Prix" variant="outlined" sx={{ marginRight: '16px', backgroundColor: 'white', borderRadius: '4px', height: '40px', flexGrow: '1' }} />
                                                         <Button onClick={() => this.handleSaveExpenseConfigChange()} startIcon={<SaveIcon />} sx={{ border: 'solid grey 1px', backgroundColor: 'white', borderRadius: '4px', height: '40px', }}>
                                                             enregistrer les modifications
                                                         </Button>
@@ -1008,8 +1071,16 @@ class ConfigPage extends Component<{}, ConfigPageProps> {
                                                                 <TextField value={row.totalVisits} onChange={(event) => {
                                                                     row.totalVisits = parseInt(event.target.value);
                                                                     this.setState({});
-                                                                }} type="number" size="small" variant="outlined" sx={{ marginRight: '16px', backgroundColor: 'white', borderRadius: '4px', height: '40px', flexGrow: '1' }} />
+                                                                }}
+                                                                    name="numberformat"
+                                                                    id="formatted-numberformat-input"
+                                                                    type="number"
+                                                                    size="small"
+                                                                    variant="outlined"
+                                                                    sx={{ marginRight: '16px', backgroundColor: 'white', borderRadius: '4px', height: '40px', flexGrow: '1' }} />
                                                             </TableCell>
+
+
                                                         </TableRow>
                                                     ))}
                                         </TableBody>
@@ -1312,9 +1383,7 @@ class ConfigPage extends Component<{}, ConfigPageProps> {
                                             <TableHead sx={{ height: '45px', display: 'flex', width: '100%' }}>
                                                 <TableRow sx={{ display: 'flex', width: '100%' }}>
                                                     <TableCell sx={{ width: '50%' }} align="left">Nom de fournisseur</TableCell>
-                                                    <TableCell sx={{ width: '50%' }} align="left">
-                                                        UG
-                                                    </TableCell>
+                                                    <TableCell sx={{ width: '50%' }} align="left">  UG </TableCell>
                                                     <TableCell sx={{ width: '50%' }} align="left">Prix grossiste</TableCell>
                                                     <TableCell sx={{ width: '50%' }} align="right">Restaurer</TableCell>
                                                 </TableRow>

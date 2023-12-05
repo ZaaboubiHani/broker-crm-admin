@@ -44,12 +44,13 @@ export default class ExpenseModel {
         if (json?.attributes?.proofs?.data) {
             proofs = json?.attributes?.proofs?.data.map((invoice: any) => FileModel.fromJson(invoice));
         }
+
         return new ExpenseModel({
             id: json.id,
             reference: json.attributes.reference,
-            startWilaya: json.attributes.startWilaya,
-            endWilaya: json.attributes.endWilaya,
-            startCommun: json.attributes.startCommun,
+            startWilaya: json.attributes.startWilaya ,
+            endWilaya: json.attributes.endWilaya ,
+            startCommun: json.attributes.startCommun ,
             endCommun: json.attributes.endCommun,
             totalVisitsDoctor: json.attributes.totalVisitsDoctor,
             totalVisitsPharmacy: json.attributes.totalVisitsPharmacy,

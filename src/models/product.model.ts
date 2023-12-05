@@ -4,6 +4,7 @@ export default class ProductModel {
   name?: string;
   ug?: number;
   remise?: number;
+  ppa?: number;
   pharmacyPriceUnit?: number;
   wholesalePriceUnit?: number;
   superWholesalePriceUnit?: number;
@@ -17,6 +18,7 @@ export default class ProductModel {
     name?: string;
     ug?: number;
     remise?: number;
+    ppa?: number;
     pharmacyPriceUnit?: number;
     wholesalePriceUnit?: number;
     superWholesalePriceUnit?: number;
@@ -28,6 +30,7 @@ export default class ProductModel {
     this.id = params.id;
     this.name = params.name;
     this.remise = params.remise;
+    this.ppa = params.ppa;
     this.ug = params.ug;
     this.pharmacyPriceUnit = params.pharmacyPriceUnit;
     this.superWholesalePriceUnit = params.superWholesalePriceUnit;
@@ -46,6 +49,7 @@ export default class ProductModel {
       name: json.attributes.name,
       ug: json.attributes.ug,
       remise: json.attributes.remise,
+      ppa: json.attributes.ppa,
       pharmacyPriceUnit:
         json.attributes.pharmacyPriceUnit,
       wholesalePriceUnit:
