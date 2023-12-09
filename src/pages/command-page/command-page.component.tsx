@@ -366,7 +366,13 @@ class CommandPage extends Component<{}, CommandDelegatePageProps> {
                                     displayCommand={this.handleDisplayDelegateCommand}
                                     onHonor={this.handleHonorDelegateCommand}
                                 ></CommandDelegateTable>
-                                <div className='user-panel'>
+                                <div  style={{
+                                            width: '30%',
+                                            backgroundColor: 'rgba(255,255,255,0.5)',
+                                            margin: '0px 0px 8px',
+                                            borderRadius: '4px',
+                                            border: '1px solid rgba(127,127,127,0.2)'
+                                        }}>
                                     {
                                         this.state.loadingDelegateCommandData ?
                                             (<div style={{

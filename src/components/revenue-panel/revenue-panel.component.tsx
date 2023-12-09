@@ -30,7 +30,7 @@ const RevenuePanel: React.FC<RevenuePanelProps> = ({ showData, total, totalHonor
                 </div>
                 <Divider component="div" style={{ margin: '8px 0px' }} />
                 <h6 style={{ fontSize: 15, fontWeight: '600' }}>vente par produit:</h6>
-                <TableContainer sx={{ flexGrow: '1', display: 'flex', flexDirection: 'column', borderRadius: '8px', margin: '8px', overflow: 'hidden' }} component={Paper}>
+                <TableContainer sx={{ flexGrow: '1', display: 'flex', flexDirection: 'column', borderRadius: '8px', margin: '8px', overflow: 'hidden', border: '1px solid teal' }} component={Paper}>
                     <Table sx={{ flexGrow: '1', display: 'flex', flexDirection: 'column', overflow: 'hidden', margin: '0px', width: "100%" }} size="small" aria-label="a dense table">
                         <TableHead sx={{ height: '45px', marginBottom: '16px' }}>
                             <TableRow>
@@ -60,7 +60,7 @@ const RevenuePanel: React.FC<RevenuePanelProps> = ({ showData, total, totalHonor
                 </TableContainer>
                 <Divider component="div" style={{ margin: '8px 0px' }} />
                 <h6 style={{ fontSize: 15, fontWeight: '600' }}>vente par wilaya:</h6>
-                <TableContainer sx={{ flexGrow: '1', display: 'flex', flexDirection: 'column', borderRadius: '8px', margin: '8px', overflow: 'hidden' }} component={Paper}>
+                <TableContainer sx={{ flexGrow: '1', display: 'flex', flexDirection: 'column', borderRadius: '8px', margin: '8px', overflow: 'hidden', border: '1px solid teal' }} component={Paper}>
                     <Table sx={{ flexGrow: '1', display: 'flex', flexDirection: 'column', overflow: 'hidden', margin: '0px', width: "100%" }} size="small" aria-label="a dense table">
                         <TableHead sx={{ height: '45px', marginBottom: '16px' }}>
                             <TableRow>

@@ -10,6 +10,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSearch } from '@fortawesome/free-solid-svg-icons';
 import UserPicker from '../../components/user-picker/user-picker.component';
 import UserModel, { UserType } from '../../models/user.model';
+import ReportModel from '../../models/report.model';
 import VisitTaskModel from '../../models/visit-task.model';
 import UserService from '../../services/user.service';
 import { DotSpinner } from '@uiball/loaders';
@@ -18,8 +19,12 @@ import PlanPanel from '../../components/plan-panel/plan-panel.component';
 import VisitTaskService from '../../services/visit-task.service';
 import TaskService from '../../services/task.service';
 import VisitService from '../../services/visit.service';
+import ReportService from '../../services/report.service';
 import TaskModel from '../../models/task.model';
 import CircularProgressLabel from '../../components/circular-progress-label/circular-progress-label.component';
+import ReportPanel from '../../components/report-panel/report-panel.component';
+import VisitModel from '@/src/models/visit.model';
+import UserDropdown from '../../components/user-dropdown/user-dropdown';
 
 interface PlanPageProps {
     selectedDate: Date;
@@ -27,11 +32,12 @@ interface PlanPageProps {
     delegates: UserModel[];
     supervisors: UserModel[];
     selectedSupervisor?: UserModel;
-    filtredDelegates: UserModel[];
+    delegateReport?: ReportModel;
+    delegateVisit?: VisitModel;
     selectedDelegate?: UserModel;
     loadingVisitTasksData: boolean;
-    hasData: boolean;
     isLoading: boolean;
+    loadingReport: boolean;
     loadingVisitTaskDetails: boolean;
     visitTasks: VisitTaskModel[];
     visitTaskDetails: TaskModel[];
@@ -58,9 +64,8 @@ class PlanPage extends Component<{}, PlanPageProps> {
             searchText: '',
             delegates: [],
             supervisors: [],
-            filtredDelegates: [],
             loadingVisitTasksData: false,
-            isLoading: false,
+            isLoading: true,
             loadingVisitTaskDetails: false,
             visitTasks: [],
             visitTaskDetails: [],
@@ -72,7 +77,7 @@ class PlanPage extends Component<{}, PlanPageProps> {
             successRate: 0,
             selectedIndex: -1,
             currentUser: new UserModel(),
-            hasData: false,
+            loadingReport: false,
         }
     }
 
@@ -81,21 +86,17 @@ class PlanPage extends Component<{}, PlanPageProps> {
     visitTaskService = new VisitTaskService();
     taskService = new TaskService();
     visitService = new VisitService();
+    reportService = new ReportService();
 
-    handleDelegateFilter = () => {
-        if (this.state.searchText.length === 0) {
-            var filtredDelegates = [...this.state.delegates];
-            this.setState({ filtredDelegates: filtredDelegates, selectedIndex: -1 });
-        }
-        else {
-            var filtredDelegates = this.state.delegates.filter(delegate => delegate.username!.toLowerCase().includes(this.state.searchText.toLowerCase()));
-            this.setState({ filtredDelegates: filtredDelegates, selectedIndex: -1 });
-        }
+    handleDisplayReport = async (clientId: number, date: Date, visit: VisitModel) => {
+        this.setState({ loadingReport: true });
+        let report = await this.reportService.getReportOfClient(clientId, date);
+        this.setState({ loadingReport: false, delegateReport: report, delegateVisit: visit });
+    }
+    handleBackReportPanel = () => {
+        this.setState({ loadingReport: false, delegateReport: undefined, delegateVisit: undefined });
     }
 
-    handleSearchTextChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        this.setState({ searchText: event.target.value });
-    }
 
     handleSelectDelegate = async (delegate: UserModel) => {
         this.setState({ loadingVisitTasksData: true, selectedVisitTaskDate: undefined, visitTaskDetails: [], selectedIndex: -1 });
@@ -120,109 +121,18 @@ class PlanPage extends Component<{}, PlanPageProps> {
     }
 
     handleOnPickDate = async (date: Date) => {
-        this.setState({ loadingVisitTasksData: true, selectedVisitTaskDate: undefined, visitTaskDetails: [], selectedIndex: -1 });
-        var visitTasks = await this.visitTaskService.getAllVisitsTasks(date, this.state.selectedDelegate!.id!);
-        this.setState({ selectedDate: date, visitTasks: visitTasks, loadingVisitTasksData: false, });
-        var planDeTournee = await this.statisticsService.getPlanDeTournee(date, this.state.selectedDelegate!.id!);
-        var couverturePortfeuille = await this.statisticsService.getCouverturePortfeuille(date, this.state.selectedDelegate!.id!);
-        var moyenneVisitesParJour = await this.statisticsService.getMoyenneVisitesParJour(date, this.state.selectedDelegate!.id!);
-        var objectifChiffreDaffaire = await this.statisticsService.getObjectifChiffreDaffaire(date, this.state.selectedDelegate!.id!);
-        var objectifVisites = await this.statisticsService.getObjectifVisites(date, this.state.selectedDelegate!.id!);
-        var successRate = await this.statisticsService.getDelegateSuccessRateMonth(date, this.state.selectedDelegate!.id!);
-        this.setState({
-            selectedDate: date,
-            planDeTournee: planDeTournee,
-            couverturePortfeuille: couverturePortfeuille,
-            moyenneVisitesParJour: moyenneVisitesParJour,
-            objectifChiffreDaffaire: objectifChiffreDaffaire,
-            objectifVisites: objectifVisites,
-            successRate: successRate,
-        });
-    }
-
-    loadPlanPageData = async () => {
-        this.setState({ isLoading: true });
-        if (!this.state.isLoading) {
-            var currentUser = await this.userService.getMe();
-
-            if (currentUser != undefined) {
-                this.setState({ currentUser: currentUser });
-            }
-            if (currentUser.type === UserType.supervisor) {
-                var delegates = await this.userService.getUsersByCreator(currentUser.id!, UserType.delegate);
-                if (delegates.length > 0) {
-                    this.setState({ selectedDelegate: delegates[0] });
-                    var planDeTournee = await this.statisticsService.getPlanDeTournee(this.state.selectedDate, delegates[0].id!);
-                    var couverturePortfeuille = await this.statisticsService.getCouverturePortfeuille(this.state.selectedDate, delegates[0].id!);
-                    var moyenneVisitesParJour = await this.statisticsService.getMoyenneVisitesParJour(this.state.selectedDate, delegates[0].id!);
-                    var objectifChiffreDaffaire = await this.statisticsService.getObjectifChiffreDaffaire(this.state.selectedDate, delegates[0].id!);
-                    var objectifVisites = await this.statisticsService.getObjectifVisites(this.state.selectedDate, delegates[0].id!);
-                    var successRate = await this.statisticsService.getDelegateSuccessRateMonth(this.state.selectedDate, delegates[0].id!);
-                    var visitTasks = await this.visitTaskService.getAllVisitsTasks(new Date(), delegates[0].id!);
-                    this.setState({
-                        visitTasks: visitTasks,
-                        planDeTournee: planDeTournee,
-                        couverturePortfeuille: couverturePortfeuille,
-                        moyenneVisitesParJour: moyenneVisitesParJour,
-                        objectifChiffreDaffaire: objectifChiffreDaffaire,
-                        objectifVisites: objectifVisites,
-                        successRate: successRate,
-                    });
-                }
-                this.setState({ isLoading: false, hasData: true, delegates: delegates, filtredDelegates: delegates });
-            }
-            else {
-                var supervisors = await this.userService.getUsersByCreator(currentUser.id!, UserType.supervisor);
-
-                if (supervisors.length > 0) {
-                    var delegates = await this.userService.getUsersByCreator(supervisors[0].id!, UserType.delegate);
-                    if (delegates.length > 0) {
-                        this.setState({ selectedDelegate: delegates[0] });
-                        var planDeTournee = await this.statisticsService.getPlanDeTournee(this.state.selectedDate, delegates[0].id!);
-                        var couverturePortfeuille = await this.statisticsService.getCouverturePortfeuille(this.state.selectedDate, delegates[0].id!);
-                        var moyenneVisitesParJour = await this.statisticsService.getMoyenneVisitesParJour(this.state.selectedDate, delegates[0].id!);
-                        var objectifChiffreDaffaire = await this.statisticsService.getObjectifChiffreDaffaire(this.state.selectedDate, delegates[0].id!);
-                        var objectifVisites = await this.statisticsService.getObjectifVisites(this.state.selectedDate, delegates[0].id!);
-                        var successRate = await this.statisticsService.getDelegateSuccessRateMonth(this.state.selectedDate, delegates[0].id!);
-                        var visitTasks = await this.visitTaskService.getAllVisitsTasks(new Date(), delegates[0].id!);
-                        this.setState({
-                            visitTasks: visitTasks,
-                            planDeTournee: planDeTournee,
-                            couverturePortfeuille: couverturePortfeuille,
-                            moyenneVisitesParJour: moyenneVisitesParJour,
-                            objectifChiffreDaffaire: objectifChiffreDaffaire,
-                            objectifVisites: objectifVisites,
-                            successRate: successRate,
-                        });
-                    }
-                    this.setState({
-                        isLoading: false,
-                        hasData: true,
-                        delegates: delegates,
-                        filtredDelegates: delegates,
-                        supervisors: supervisors,
-                        selectedSupervisor: supervisors[0],
-                    });
-                }
-            }
-
-        }
-    };
-
-    handleSelectSupervisor = async (supervisor: UserModel) => {
-        this.setState({ loadingVisitTaskDetails: true, delegates: [],selectedSupervisor:supervisor });
-        var delegates = await this.userService.getUsersByCreator(supervisor.id!, UserType.delegate);
-        if (delegates.length > 0) {
-            this.setState({ selectedDelegate: delegates[0] });
-            var planDeTournee = await this.statisticsService.getPlanDeTournee(this.state.selectedDate, delegates[0].id!);
-            var couverturePortfeuille = await this.statisticsService.getCouverturePortfeuille(this.state.selectedDate, delegates[0].id!);
-            var moyenneVisitesParJour = await this.statisticsService.getMoyenneVisitesParJour(this.state.selectedDate, delegates[0].id!);
-            var objectifChiffreDaffaire = await this.statisticsService.getObjectifChiffreDaffaire(this.state.selectedDate, delegates[0].id!);
-            var objectifVisites = await this.statisticsService.getObjectifVisites(this.state.selectedDate, delegates[0].id!);
-            var successRate = await this.statisticsService.getDelegateSuccessRateMonth(this.state.selectedDate, delegates[0].id!);
-            var visitTasks = await this.visitTaskService.getAllVisitsTasks(new Date(), delegates[0].id!);
+        if (this.state.selectedDelegate) {
+            this.setState({ loadingVisitTasksData: true, selectedVisitTaskDate: undefined, visitTaskDetails: [], selectedIndex: -1 });
+            var visitTasks = await this.visitTaskService.getAllVisitsTasks(date, this.state.selectedDelegate!.id!);
+            var planDeTournee = await this.statisticsService.getPlanDeTournee(date, this.state.selectedDelegate!.id!);
+            var couverturePortfeuille = await this.statisticsService.getCouverturePortfeuille(date, this.state.selectedDelegate!.id!);
+            var moyenneVisitesParJour = await this.statisticsService.getMoyenneVisitesParJour(date, this.state.selectedDelegate!.id!);
+            var objectifChiffreDaffaire = await this.statisticsService.getObjectifChiffreDaffaire(date, this.state.selectedDelegate!.id!);
+            var objectifVisites = await this.statisticsService.getObjectifVisites(date, this.state.selectedDelegate!.id!);
+            var successRate = await this.statisticsService.getDelegateSuccessRateMonth(date, this.state.selectedDelegate!.id!);
+            this.setState({ selectedDate: date, visitTasks: visitTasks, loadingVisitTasksData: false, });
             this.setState({
-                visitTasks: visitTasks,
+                selectedDate: date,
                 planDeTournee: planDeTournee,
                 couverturePortfeuille: couverturePortfeuille,
                 moyenneVisitesParJour: moyenneVisitesParJour,
@@ -231,7 +141,45 @@ class PlanPage extends Component<{}, PlanPageProps> {
                 successRate: successRate,
             });
         }
-        this.setState({ loadingVisitTaskDetails: false, delegates: delegates, filtredDelegates: delegates });
+    }
+
+    loadPlanPageData = async () => {
+
+        var currentUser = await this.userService.getMe();
+
+        if (currentUser != undefined) {
+            this.setState({ currentUser: currentUser });
+        }
+        if (currentUser.type === UserType.supervisor) {
+            var delegates = await this.userService.getUsersByCreator(currentUser.id!, UserType.delegate);
+
+            this.setState({ isLoading: false, delegates: delegates, });
+        }
+        else {
+            var supervisors = await this.userService.getUsersByCreator(currentUser.id!, UserType.supervisor);
+            this.setState({
+                isLoading: false,
+
+                supervisors: supervisors,
+            });
+        }
+
+
+    };
+
+    handleSelectSupervisor = async (supervisor: UserModel) => {
+        this.setState({ delegates: [], selectedSupervisor: supervisor });
+        var delegates = await this.userService.getUsersByCreator(supervisor.id!, UserType.delegate);
+        this.setState({
+            planDeTournee: 0,
+            couverturePortfeuille: 0,
+            moyenneVisitesParJour: 0,
+            objectifChiffreDaffaire: 0,
+            objectifVisites: 0,
+            successRate: 0,
+            visitTasks:[],
+        });
+        this.setState({  delegates: delegates, });
     }
 
     handleSelectVisitTaskDate = async (date: Date, index: number) => {
@@ -241,14 +189,17 @@ class PlanPage extends Component<{}, PlanPageProps> {
         tasks.forEach((task) => {
             if (visits.some(v => v.client?.id === task.client?.id)) {
                 task.isDone = true;
+                task.visit = visits.find((v) => v.client?.id === task.client?.id);
             }
         });
         this.setState({ visitTaskDetails: tasks, loadingVisitTaskDetails: false });
     };
-
+    componentDidMount(): void {
+        this.loadPlanPageData();
+    }
 
     render() {
-        if (!this.state.hasData) {
+        if (this.state.isLoading) {
             this.loadPlanPageData();
             return (
                 <div style={{
@@ -269,26 +220,34 @@ class PlanPage extends Component<{}, PlanPageProps> {
         else {
             return (
                 <div className='plan-container'>
-                    {
-                        this.state.currentUser.type === UserType.admin ? (<div style={{ display: 'flex',height:'50px' }}>
-                            <UserPicker delegates={this.state.supervisors} onSelect={this.handleSelectSupervisor}></UserPicker>
-                        </div>) : null
-                    }
-                    <div className='search-bar' >
-                        <Form>
-                            <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
-                                <Form.Control type="search" placeholder="Recherche" onChange={this.handleSearchTextChange} />
-                            </Form.Group>
-                        </Form>
-                        <button onClick={this.handleDelegateFilter} className="btn btn-primary" style={{ backgroundColor: '#fff', border: '#ddd solid 1px', height: '38px' }}>
-                            <FontAwesomeIcon icon={faSearch} style={{ color: 'black' }} />
-                        </button>
+                    <div style={{ display: 'flex', justifyContent: 'stretch', flexGrow: '1', marginTop: '16px' }}>
+
+                        {
+                            this.state.currentUser.type === UserType.admin ?
+                                (<div style={{
+                                    height: '50px',
+                                    width: '150px',
+                                    marginLeft: '16px'
+                                }}>
+                                    <UserDropdown
+                                        users={this.state.supervisors}
+                                        selectedUser={this.state.selectedSupervisor}
+                                        onSelectUser={this.handleSelectSupervisor}
+                                        label='Superviseur'
+                                    />
+                                </div>) : null
+                        }
+                        <div style={{ height: '50px', width: '150px', margin: '0px 8px' }}>
+                            <UserDropdown
+                                users={this.state.delegates}
+                                selectedUser={this.state.selectedDelegate}
+                                onSelectUser={this.handleSelectDelegate}
+                                label='Délégué'
+                            />
+                        </div>
                         <MonthYearPicker onPick={this.handleOnPickDate}></MonthYearPicker >
                     </div>
-                    <div style={{ display: 'flex', }}>
-                        <UserPicker delegates={this.state.filtredDelegates} onSelect={this.handleSelectDelegate}></UserPicker>
-                    </div>
-                    <div className='stats-panel' style={{ margin: '0px 8px', paddingLeft: '16px', backgroundColor: 'white' }}>
+                    <div className='stats-panel' style={{ margin: '0px 8px 8px 16px', paddingLeft: '16px', backgroundColor: 'white' }}>
                         <CircularProgressLabel colorStroke='#FC761E' direction='row' secondTitle='KPI: Realisation plan de tournee' value={this.state.planDeTournee} />
                         <CircularProgressLabel colorStroke='#CC38E0' direction='row' secondTitle='Couverture portefeuille client' value={this.state.couverturePortfeuille} />
                         <CircularProgressLabel colorStroke='#38EB5D' direction='row' secondTitle="Objectif chiffre d'affaire" value={this.state.objectifChiffreDaffaire} />
@@ -296,10 +255,53 @@ class PlanPage extends Component<{}, PlanPageProps> {
                         <CircularProgressLabel colorStroke='#FC4630' direction='row' secondTitle='Moyen visite/jour' formatter={(val) => val.toFixed(0)} value={this.state.moyenneVisitesParJour} />
                         <CircularProgressLabel colorStroke='#3A25E6' direction='row' secondTitle='Taux de réussite' value={this.state.successRate} />
                     </div>
-                    <div style={{ width: '100%', display: 'flex', flexGrow: '1', height: 'calc(100% - 500px)' }}>
+                    <div style={{
+                        width: '100%',
+                        flexGrow: '1',
+                        display: 'flex',
+                        height: 'calc(100% - 220px)',
+                       
+                    }}>
                         <PlanTable onDisplayDetails={this.handleSelectVisitTaskDate} isLoading={this.state.loadingVisitTasksData} id='plantable' data={this.state.visitTasks}></PlanTable>
-                        <div className='user-panel'>
-                            <PlanPanel isLoading={this.state.loadingVisitTaskDetails} data={this.state.visitTaskDetails}></PlanPanel>
+                        <div style={{
+                            width: '30%',
+                            backgroundColor: 'rgba(255,255,255,0.5)',
+                            margin: '0px 0px 8px',
+                            borderRadius: '4px',
+                            flexGrow: '1',
+                            display: 'flex',
+                            border: '1px solid rgba(127,127,127,0.2)'
+                        }}>
+                            {
+                                this.state.loadingReport ?
+                                    (<div style={{
+                                        width: '100%',
+                                        overflow: 'hidden',
+                                        flexGrow: '1',
+                                        display: 'flex',
+                                        flexDirection: 'column',
+                                        justifyContent: 'center',
+                                        alignItems: 'center',
+                                        marginTop:'8px',
+                                        transition: 'all 300ms ease'
+                                    }}>
+                                        <DotSpinner
+                                            size={40}
+                                            speed={0.9}
+                                            color="black"
+                                        />
+                                    </div>
+                                    )
+                                    :
+                                    this.state.delegateReport ? (
+
+                                        <ReportPanel onBackClick={this.handleBackReportPanel} showBackButton={true} location={this.state.delegateVisit?.visitLocation} report={this.state.delegateReport} clientType={this.state.delegateVisit?.client?.type}></ReportPanel>
+                                    ) :
+                                        (
+                                            <PlanPanel onTaskClick={this.handleDisplayReport} isLoading={this.state.loadingVisitTaskDetails} data={this.state.visitTaskDetails}></PlanPanel>
+
+                                        )
+                            }
                         </div>
                     </div>
                 </div>

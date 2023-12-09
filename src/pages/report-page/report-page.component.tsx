@@ -18,11 +18,11 @@ import CustomTabPanel from '../../components/custom-tab-panel/costum-tab-panel.c
 import Box from '@mui/material/Box';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
+import UserDropdown from '../../components/user-dropdown/user-dropdown';
 
 interface ReportPageProps {
     selectedDate: Date;
     isLoading: boolean;
-    hasData: boolean;
     loadingVisitsData: boolean;
     loadingReportData: boolean;
     delegateSearchText: string;
@@ -32,10 +32,8 @@ interface ReportPageProps {
     delegateVisits: VisitModel[];
     kamVisits: VisitModel[];
     delegates: UserModel[];
-    filtredDelegates: UserModel[];
     supervisors: UserModel[];
     kams: UserModel[];
-    filtredKams: UserModel[];
     selectedDelegate?: UserModel;
     selectedSupervisor?: UserModel;
     selectedKam?: UserModel;
@@ -54,8 +52,7 @@ class ReportPage extends Component<{}, ReportPageProps> {
         super({});
         this.state = {
             selectedDate: new Date(),
-            isLoading: false,
-            hasData: false,
+            isLoading: true,
             loadingVisitsData: false,
             loadingReportData: false,
             delegateVisits: [],
@@ -65,8 +62,6 @@ class ReportPage extends Component<{}, ReportPageProps> {
             delegates: [],
             supervisors: [],
             kams: [],
-            filtredDelegates: [],
-            filtredKams: [],
             totalDelegate: 0,
             sizeDelegate: 25,
             delegatePage: 1,
@@ -82,28 +77,6 @@ class ReportPage extends Component<{}, ReportPageProps> {
     visitService = new VisitService();
     reportService = new ReportService();
 
-    handleDelegateFilter = () => {
-        if (this.state.delegateSearchText.length === 0) {
-            var filtredDelegates = [...this.state.delegates];
-            this.setState({ filtredDelegates: filtredDelegates, selectedVisit: undefined, });
-        }
-        else {
-            var filtredDelegates = this.state.delegates.filter(delegate => delegate.username!.toLowerCase().includes(this.state.delegateSearchText.toLowerCase()));
-            this.setState({ filtredDelegates: filtredDelegates, selectedVisit: undefined, });
-        }
-    }
-
-    handleKamFilter = () => {
-        if (this.state.kamSearchText.length === 0) {
-            var filtredDelegates = [...this.state.delegates];
-            this.setState({ filtredDelegates: filtredDelegates, selectedVisit: undefined, });
-        }
-        else {
-            var filtredDelegates = this.state.delegates.filter(delegate => delegate.username!.toLowerCase().includes(this.state.kamSearchText.toLowerCase()));
-            this.setState({ filtredDelegates: filtredDelegates, selectedVisit: undefined, });
-        }
-    }
-
     handleSelectDelegate = async (delegate: UserModel) => {
         this.setState({ loadingVisitsData: true, reportData: undefined, selectedVisit: undefined, });
         var { visits: visits, total: total } = await this.visitService.getAllVisitsOfDelegate(this.state.delegatePage, this.state.sizeDelegate, this.state.selectedDate, delegate.id!);
@@ -118,71 +91,53 @@ class ReportPage extends Component<{}, ReportPageProps> {
 
     handleOnPickDate = async (date: Date) => {
         this.setState({ loadingVisitsData: true, reportData: undefined, selectedVisit: undefined, });
-        var { visits: delegateVisits, total: delegateTotal } = await this.visitService.getAllVisitsOfDelegate(this.state.delegatePage, this.state.sizeDelegate, date, this.state.selectedDelegate!.id!);
-        var { visits: kamVisits, total: kamTotal } = await this.visitService.getAllVisitsOfDelegate(this.state.kamPage, this.state.sizeKam, date, this.state.selectedKam!.id!);
+        if (this.state.selectedDelegate) {
+            var { visits: delegateVisits, total: delegateTotal } = await this.visitService.getAllVisitsOfDelegate(this.state.delegatePage, this.state.sizeDelegate, date, this.state.selectedDelegate!.id!);
+            this.setState({
+                delegateVisits: delegateVisits,
+                totalDelegate: delegateTotal,
+            });
+        }
+        if (this.state.selectedKam) {
+            var { visits: kamVisits, total: kamTotal } = await this.visitService.getAllVisitsOfDelegate(this.state.kamPage, this.state.sizeKam, date, this.state.selectedKam!.id!);
+            this.setState({
+                kamVisits: kamVisits,
+                totalKam: kamTotal,
+            });
+        }
         this.setState({
             selectedDate: date,
-            delegateVisits: delegateVisits,
-            kamVisits: kamVisits,
             loadingVisitsData: false,
-            totalDelegate: delegateTotal,
-            totalKam: kamTotal,
         });
     }
 
     loadRepportPageData = async () => {
-        this.setState({ isLoading: true });
-        if (!this.state.isLoading) {
-            var currentUser = await this.userService.getMe();
-            if (currentUser != undefined) {
-                this.setState({ currentUser: currentUser });
-            }
 
-            if (currentUser.type === UserType.supervisor) {
-                var delegates = await this.userService.getUsersByCreator(currentUser.id!, UserType.delegate);
-                if (delegates.length > 0) {
-                    this.setState({ selectedDelegate: delegates[0] });
-                    var { visits: visits, total: total } = await this.visitService.getAllVisitsOfDelegate(1, 25, new Date(), delegates[0].id!);
-                    this.setState({ delegateVisits: visits, totalDelegate: total });
-                }
-                this.setState({ isLoading: false, delegates: delegates, filtredDelegates: delegates, hasData: true });
-            }
-            else {
-                var supervisors = await this.userService.getUsersByCreator(currentUser.id!, UserType.supervisor);
-                var kams = await this.userService.getUsersByCreator(currentUser.id!, UserType.kam);
-                if (supervisors.length > 0) {
-                    var delegates = await this.userService.getUsersByCreator(supervisors[0].id!, UserType.delegate);
-                    if (delegates.length > 0) {
-                        this.setState({ selectedDelegate: delegates[0] });
-                        var { visits: visits, total: total } = await this.visitService.getAllVisitsOfDelegate(1, 25, new Date(), delegates[0].id!);
-                        this.setState({ delegateVisits: visits, totalDelegate: total, selectedDelegate: delegates[0] });
-                    }
-                    this.setState({
-                        isLoading: false,
-                        delegates: delegates,
-                        filtredDelegates: delegates,
-                        hasData: true,
-                        selectedSupervisor: supervisors[0]
-                    });
+        var currentUser = await this.userService.getMe();
+        if (currentUser != undefined) {
+            this.setState({ currentUser: currentUser });
+        }
 
-                }
-                if (kams.length > 0) {
-                    var { visits: visits, total: total } = await this.visitService.getAllVisitsOfDelegate(1, 25, new Date(), kams[0].id!);
-                    this.setState({ kamVisits: visits, totalKam: total, selectedKam: kams[0] });
-                }
-                this.setState({
-                    supervisors: supervisors,
-                    kams: kams,
-                    filtredKams: kams
-                });
-            }
+        if (currentUser.type === UserType.supervisor) {
+            var delegates = await this.userService.getUsersByCreator(currentUser.id!, UserType.delegate);
+
+            this.setState({ delegates: delegates, });
+        }
+        else {
+            var supervisors = await this.userService.getUsersByCreator(currentUser.id!, UserType.supervisor);
+            var kams = await this.userService.getUsersByCreator(currentUser.id!, UserType.kam);
 
             this.setState({
-                currentUser: currentUser,
-                isLoading: false,
-                hasData: true,
+                supervisors: supervisors,
+                kams: kams,
             });
         }
+
+        this.setState({
+            currentUser: currentUser,
+            isLoading: false,
+        });
+
     }
 
 
@@ -198,10 +153,10 @@ class ReportPage extends Component<{}, ReportPageProps> {
         this.setState({ delegateVisits: visits, loadingVisitsData: false, totalDelegate: total, sizeDelegate: size });
     }
 
-    handleKamPageChange = async (page: number,size:number) => {
-        this.setState({ loadingVisitsData: true, kamPage: page, reportData: undefined, selectedVisit: undefined,sizeKam:size });
+    handleKamPageChange = async (page: number, size: number) => {
+        this.setState({ loadingVisitsData: true, kamPage: page, reportData: undefined, selectedVisit: undefined, sizeKam: size });
         var { visits: visits, total: total } = await this.visitService.getAllVisitsOfDelegate(page, size, this.state.selectedDate, this.state.selectedKam!.id!);
-        this.setState({ kamVisits: visits, loadingVisitsData: false, totalKam: total,sizeKam:size });
+        this.setState({ kamVisits: visits, loadingVisitsData: false, totalKam: total, sizeKam: size });
     }
 
     handleDelegateRowNumChange = async (size: number) => {
@@ -216,17 +171,12 @@ class ReportPage extends Component<{}, ReportPageProps> {
     }
 
     handleSelectSupervisor = async (supervisor: UserModel) => {
-        this.setState({ loadingVisitsData: true, delegatePage: 1, delegates: [], filtredDelegates: [], totalDelegate: 0 });
+        this.setState({ delegatePage: 1, delegates: [], totalDelegate: 0 });
         var delegates = await this.userService.getUsersByCreator(supervisor!.id!, UserType.delegate);
-        if (delegates.length > 0) {
-            this.setState({ selectedDelegate: delegates[0] });
-            var { visits: visits, total: total } = await this.visitService.getAllVisitsOfDelegate(1, 25, new Date(), delegates[0].id!);
-            this.setState({ delegateVisits: visits, totalDelegate: total });
-        }
+
         this.setState({
             selectedSupervisor: supervisor,
             delegates: delegates,
-            filtredDelegates: delegates,
         });
     }
 
@@ -234,17 +184,13 @@ class ReportPage extends Component<{}, ReportPageProps> {
         this.setState({ index: newValue, selectedVisit: undefined, reportData: undefined });
     };
 
-    handleDelegateSearchTextChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        this.setState({ delegateSearchText: event.target.value });
-    }
 
-    handleKamSearchTextChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        this.setState({ delegateSearchText: event.target.value });
+    componentDidMount(): void {
+        this.loadRepportPageData();
     }
-
 
     render() {
-        if (!this.state.hasData) {
+        if (this.state.isLoading) {
             this.loadRepportPageData();
             return (
                 <div style={{
@@ -272,33 +218,43 @@ class ReportPage extends Component<{}, ReportPageProps> {
                                 {
                                     this.state.currentUser.type === UserType.admin ? (<Tab label="Kam" />) : null
                                 }
-
                             </Tabs>
                         </Box>
                     </Box>
                     <CustomTabPanel style={{ display: 'flex', flexDirection: 'row', flexGrow: '1', height: 'calc(100% - 55px)', padding: '0px' }} value={this.state.index} index={0} >
                         <div style={{ display: 'flex', flexDirection: 'column', flexGrow: '1', height: 'calc(100% - 45px)' }}>
                             <div className='report-container'>
-                                {
-                                    this.state.currentUser.type === UserType.admin ? (<div style={{ display: 'flex', height: '55px' }}>
-                                        <UserPicker delegates={this.state.supervisors} onSelect={this.handleSelectSupervisor}></UserPicker>
-                                    </div>) : null
-                                }
-                                <div className='search-bar'>
-                                    <Form>
-                                        <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
-                                            <Form.Control type="search" placeholder="Recherche" onChange={this.handleDelegateSearchTextChange} />
-                                        </Form.Group>
-                                    </Form>
-                                    <button onClick={this.handleDelegateFilter} className="btn btn-primary" style={{ backgroundColor: '#fff', border: '#ddd solid 1px', height: '38px' }}>
-                                        <FontAwesomeIcon icon={faSearch} style={{ color: 'black' }} />
-                                    </button>
-                                    <MonthYearPicker initialDate={this.state.selectedDate} onPick={this.handleOnPickDate}></MonthYearPicker >
+                                <div style={{ display: 'flex', justifyContent: 'stretch', flexGrow: '1', marginTop: '16px' }}>
+                                    {this.state.currentUser.type === UserType.admin ?
+                                        (<div style={{
+                                            height: '50px',
+                                            width: '150px',
+                                            margin: '0px 8px'
+                                        }}>
+                                            <UserDropdown
+                                                users={this.state.supervisors}
+                                                selectedUser={this.state.selectedSupervisor}
+                                                onSelectUser={this.handleSelectSupervisor}
+                                                label='Superviseur'
+                                            />
+                                        </div>) : null
+                                    }
+                                    <div style={{ height: '50px', width: '150px', marginRight: '8px' }}>
+                                        <UserDropdown
+                                            users={this.state.delegates}
+                                            selectedUser={this.state.selectedDelegate}
+                                            onSelectUser={this.handleSelectDelegate}
+                                            label='Délégué'
+                                        />
+                                    </div>
+                                    <MonthYearPicker onPick={this.handleOnPickDate}></MonthYearPicker >
                                 </div>
-                                <div style={{ display: 'flex' }}>
-                                    <UserPicker delegates={this.state.filtredDelegates} onSelect={this.handleSelectDelegate}></UserPicker>
-                                </div>
-                                <div className='table-panel' >
+                                <div style={{
+                                    width: '100%',
+                                    flexGrow: '1',
+                                    display: 'flex',
+                                    height: '100%'
+                                }} >
                                     <ReportTable
                                         total={this.state.totalDelegate}
                                         page={this.state.delegatePage}
@@ -310,7 +266,13 @@ class ReportPage extends Component<{}, ReportPageProps> {
                                         data={this.state.delegateVisits}
                                         selectedId={this.state.selectedVisit?.id ?? -1}
                                     ></ReportTable>
-                                    <div style={{ backgroundColor: 'white', width: '30%' }}>
+                                    <div style={{
+                                        width: '40%',
+                                        backgroundColor: 'rgba(255,255,255,0.5)',
+                                        margin: '0px 0px 8px',
+                                        borderRadius: '4px',
+                                        border: '1px solid rgba(127,127,127,0.2)'
+                                    }}>
                                         {
                                             this.state.loadingReportData ?
                                                 (<div style={{
@@ -342,24 +304,24 @@ class ReportPage extends Component<{}, ReportPageProps> {
                     </CustomTabPanel>
                     <CustomTabPanel style={{ display: 'flex', flexDirection: 'row', flexGrow: '1', height: 'calc(100% - 55px)' }} value={this.state.index} index={1} >
                         <div style={{ display: 'flex', flexDirection: 'column', flexGrow: '1', height: 'calc(100% - 45px)' }}>
-
                             <div className='report-container'>
-
-                                <div className='search-bar'>
-                                    <Form>
-                                        <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
-                                            <Form.Control type="search" placeholder="Recherche" onChange={this.handleKamSearchTextChange} />
-                                        </Form.Group>
-                                    </Form>
-                                    <button onClick={this.handleKamFilter} className="btn btn-primary" style={{ backgroundColor: '#fff', border: '#ddd solid 1px', height: '38px' }}>
-                                        <FontAwesomeIcon icon={faSearch} style={{ color: 'black' }} />
-                                    </button>
-                                    <MonthYearPicker initialDate={this.state.selectedDate} onPick={this.handleOnPickDate}></MonthYearPicker >
+                                <div style={{ display: 'flex', justifyContent: 'stretch', flexGrow: '1', marginTop: '16px' }}>
+                                    <div style={{ height: '50px', width: '150px', margin: '0px 8px' }}>
+                                        <UserDropdown
+                                            users={this.state.kams}
+                                            selectedUser={this.state.selectedKam}
+                                            onSelectUser={this.handleSelectKam}
+                                            label='Kam'
+                                        />
+                                    </div>
+                                    <MonthYearPicker onPick={this.handleOnPickDate}></MonthYearPicker >
                                 </div>
-                                <div style={{ display: 'flex' }}>
-                                    <UserPicker delegates={this.state.filtredKams} onSelect={this.handleSelectKam}></UserPicker>
-                                </div>
-                                <div className='table-panel' key={0}>
+                                <div style={{
+                                    width: '100%',
+                                    flexGrow: '1',
+                                    display: 'flex',
+                                    height: '100%'
+                                }} key={0}>
                                     <ReportTable
                                         total={this.state.totalKam}
                                         page={this.state.kamPage}
@@ -371,7 +333,13 @@ class ReportPage extends Component<{}, ReportPageProps> {
                                         data={this.state.kamVisits}
                                         selectedId={this.state.selectedVisit?.id ?? -1}
                                     ></ReportTable>
-                                    <div style={{ backgroundColor: 'white', width: '50%', }}>
+                                    <div style={{
+                                        width: '40%',
+                                        backgroundColor: 'rgba(255,255,255,0.5)',
+                                        margin: '0px 0px 8px',
+                                        borderRadius: '4px',
+                                        border: '1px solid rgba(127,127,127,0.2)'
+                                    }}>
                                         {
                                             this.state.loadingReportData ?
                                                 (<div style={{

@@ -13,12 +13,16 @@ import RevenueTable from '../../components/revenue-table/revenue-table.component
 import StatisticsService from '../../services/statics.service';
 import RevenuePanel from '../../components/revenue-panel/revenue-panel.component';
 import CircularProgressLabel from '../../components/circular-progress-label/circular-progress-label.component';
-import UserModel from '../../models/user.model';
+import UserModel, { UserType } from '../../models/user.model';
+import InputLabel from '@mui/material/InputLabel';
+import MenuItem from '@mui/material/MenuItem';
+import FormControl from '@mui/material/FormControl';
+import Select, { SelectChangeEvent } from '@mui/material/Select';
+import UserDropdown from '../../components/user-dropdown/user-dropdown';
 
 interface RevenuePageProps {
     currentUser: UserModel;
     selectedDate: Date;
-    hasData: boolean;
     isLoading: boolean;
     searchText: string;
     loadingRevenuesData: boolean;
@@ -27,6 +31,8 @@ interface RevenuePageProps {
     filteredRevenues: RevenueModel[];
     totalTeamRevenue: number;
     totalTeamRevenueHonored: number;
+    supervisors: UserModel[];
+    selectedSupervisor?: UserModel;
     totalTeamRevenueNotHonored: number;
     delegateWilayasRevenue: { wilaya: string, total: number, percentage: number }[];
     delegateProductsRevenue: { product: string, quantity: number, total: number, percentage: number }[];
@@ -42,8 +48,7 @@ class RevenuePage extends Component<{}, RevenuePageProps> {
         this.state = {
             currentUser: new UserModel(),
             selectedDate: new Date(),
-            hasData: false,
-            isLoading: false,
+            isLoading: true,
             searchText: '',
             revenues: [],
             filteredRevenues: [],
@@ -58,6 +63,7 @@ class RevenuePage extends Component<{}, RevenuePageProps> {
             delegateProductsRevenue: [],
             delegateWilayasRevenue: [],
             showDetails: false,
+            supervisors: [],
         }
     }
 
@@ -80,13 +86,11 @@ class RevenuePage extends Component<{}, RevenuePageProps> {
     };
 
     loadRevenuePageData = async () => {
-        this.setState({ isLoading: true });
-        if (!this.state.isLoading) {
-            var currentUser = await this.userService.getMe();
-
-            if (currentUser != undefined) {
-                this.setState({ currentUser: currentUser });
-            }
+        var currentUser = await this.userService.getMe();
+        if (currentUser != undefined) {
+            this.setState({ currentUser: currentUser });
+        }
+        if (currentUser.type === UserType.supervisor) {
             var revenues = await this.revenueService.getAllRevenuesMonth(new Date(), currentUser.id!);
             var totalTeamRevenue = await this.statisticsService.getTotalTeamRevenue(new Date(), currentUser.id!);
             var totalTeamRevenueHonored = await this.statisticsService.getTotalTeamRevenue(new Date(), currentUser.id!, true);
@@ -98,18 +102,54 @@ class RevenuePage extends Component<{}, RevenuePageProps> {
                 totalTeamRevenueHonored: totalTeamRevenueHonored,
                 totalTeamRevenueNotHonored: totalTeamRevenueNotHonored,
                 isLoading: false,
-                hasData: true,
+            });
+        } else {
+            var supervisors = await this.userService.getUsersByCreator(currentUser.id!, UserType.supervisor);
+            this.setState({
+                supervisors: supervisors,
+                isLoading: false,
             });
         }
+
+
     };
 
     handleOnPickDate = async (date: Date) => {
         this.setState({ loadingRevenuesData: true, showDetails: false });
-        var revenues = await this.revenueService.getAllRevenuesMonth(date,this.state.currentUser.id!);
-        var totalTeamRevenue = await this.statisticsService.getTotalTeamRevenue(date,this.state.currentUser.id!);
-        var totalTeamRevenueHonored = await this.statisticsService.getTotalTeamRevenue(date,this.state.currentUser.id!, true);
-        var totalTeamRevenueNotHonored = await this.statisticsService.getTotalTeamRevenue(date,this.state.currentUser.id!, false);
-        this.setState({ selectedDate: date, revenues: revenues, loadingRevenuesData: false, filteredRevenues: revenues, totalTeamRevenue: totalTeamRevenue, totalTeamRevenueHonored: totalTeamRevenueHonored, totalTeamRevenueNotHonored: totalTeamRevenueNotHonored });
+        if (this.state.currentUser.type === UserType.supervisor) {
+            var revenues = await this.revenueService.getAllRevenuesMonth(date, this.state.currentUser.id!);
+            var totalTeamRevenue = await this.statisticsService.getTotalTeamRevenue(date, this.state.currentUser.id!);
+            var totalTeamRevenueHonored = await this.statisticsService.getTotalTeamRevenue(date, this.state.currentUser.id!, true);
+            var totalTeamRevenueNotHonored = await this.statisticsService.getTotalTeamRevenue(date, this.state.currentUser.id!, false);
+            this.setState({
+                selectedDate: date,
+                revenues: revenues,
+                loadingRevenuesData: false,
+                filteredRevenues: revenues,
+                totalTeamRevenue: totalTeamRevenue,
+                totalTeamRevenueHonored: totalTeamRevenueHonored,
+                totalTeamRevenueNotHonored: totalTeamRevenueNotHonored
+            });
+        } else {
+            if (this.state.selectedSupervisor) {
+                var revenues = await this.revenueService.getAllRevenuesMonth(date, this.state.selectedSupervisor.id!);
+                var totalTeamRevenue = await this.statisticsService.getTotalTeamRevenue(date, this.state.selectedSupervisor.id!);
+                var totalTeamRevenueHonored = await this.statisticsService.getTotalTeamRevenue(date, this.state.selectedSupervisor.id!, true);
+                var totalTeamRevenueNotHonored = await this.statisticsService.getTotalTeamRevenue(date, this.state.selectedSupervisor.id!, false);
+                this.setState({
+                    selectedDate: date,
+                    revenues: revenues,
+                    loadingRevenuesData: false,
+                    totalTeamRevenue: totalTeamRevenue,
+                    filteredRevenues: revenues,
+                    totalTeamRevenueHonored: totalTeamRevenueHonored,
+                    totalTeamRevenueNotHonored: totalTeamRevenueNotHonored
+                });
+            }
+            this.setState({
+                loadingRevenuesData: false,
+            });
+        }
     }
 
     handleRevenuesFilter = () => {
@@ -128,10 +168,30 @@ class RevenuePage extends Component<{}, RevenuePageProps> {
         this.setState({ searchText: event.target.value });
     }
 
+    handleSelectSupervisor = async (supervisor: UserModel) => {
+        this.setState({ selectedSupervisor: supervisor, loadingRevenuesData: true, showDetails: false });
+        var revenues = await this.revenueService.getAllRevenuesMonth(this.state.selectedDate, supervisor.id!);
+        var totalTeamRevenue = await this.statisticsService.getTotalTeamRevenue(this.state.selectedDate, supervisor.id!);
+        var totalTeamRevenueHonored = await this.statisticsService.getTotalTeamRevenue(this.state.selectedDate, supervisor.id!, true);
+        var totalTeamRevenueNotHonored = await this.statisticsService.getTotalTeamRevenue(this.state.selectedDate, supervisor.id!, false);
+        this.setState({
+            revenues: revenues,
+            loadingRevenuesData: false,
+            filteredRevenues: revenues,
+            totalTeamRevenue: totalTeamRevenue,
+            totalTeamRevenueHonored: totalTeamRevenueHonored,
+            totalTeamRevenueNotHonored: totalTeamRevenueNotHonored
+        });
+    }
+
+
+    componentDidMount() {
+        this.loadRevenuePageData();
+    }
+
     render() {
 
-        if (!this.state.hasData) {
-            this.loadRevenuePageData();
+        if (this.state.isLoading) {
             return (
                 <div style={{
                     width: '100%',
@@ -157,10 +217,23 @@ class RevenuePage extends Component<{}, RevenuePageProps> {
                                 <Form.Control type="search" placeholder="Recherche" onChange={this.handleSearchTextChange} />
                             </Form.Group>
                         </Form>
-                        <button onClick={this.handleRevenuesFilter} className="btn btn-primary" style={{ backgroundColor: '#fff', border: '#ddd solid 1px', height: '38px', margin: '0px 0px 0px 8px' }}>
+                        <button onClick={this.handleRevenuesFilter} style={{ backgroundColor: '#fff', border: '#ddd solid 1px', height: '38px', margin: '0px 0px 0px 8px' }}>
                             <FontAwesomeIcon icon={faSearch} style={{ color: 'black' }} />
                         </button>
                         <MonthYearPicker onPick={this.handleOnPickDate}></MonthYearPicker >
+                        {
+                            this.state.currentUser.type === UserType.admin ? (
+                                <div style={{marginLeft:'8px'}}>
+                                    <UserDropdown
+                                        users={this.state.supervisors}
+                                        selectedUser={this.state.selectedSupervisor}
+                                        onSelectUser={this.handleSelectSupervisor}
+                                        label='Superviseur'
+                                    />
+                                </div>
+
+                            ) : null
+                        }
                     </div>
                     <div style={{ margin: '0px 8px', display: 'flex', justifyContent: 'space-between', padding: '4px', backgroundColor: 'white', borderRadius: '8px' }}>
                         <CircularProgressLabel
@@ -182,13 +255,14 @@ class RevenuePage extends Component<{}, RevenuePageProps> {
                             firstTitle={this.state.totalTeamRevenueNotHonored?.toLocaleString('fr-DZ', { style: 'currency', currency: 'DZD' })}
                             value={this.state.totalTeamRevenue !== 0 ? this.state.totalTeamRevenueNotHonored / this.state.totalTeamRevenue * 100 : 0} />
                     </div>
-                    <div style={{ width: '100%', display: 'flex', flexGrow: '1' }}>
+                    <div style={{ width: '100%', display: 'flex', flexGrow: '1', height: 'calc(100% - 500px)' }}>
                         <RevenueTable id='revenue-table' data={this.state.filteredRevenues} isLoading={this.state.loadingRevenuesData} displayDetails={this.handleDisplayDetails}></RevenueTable>
-                        <div className='user-panel'>
+                        <div style={{ width: '40%', backgroundColor: 'rgba(255,255,255,0.5)', margin: '8px 0px', borderRadius: '8px' }}>
                             {
                                 this.state.loadingRevenueData ?
                                     (<div style={{
                                         width: '100%',
+                                        height: '100%',
                                         overflow: 'hidden',
                                         flexGrow: '1',
                                         display: 'flex',

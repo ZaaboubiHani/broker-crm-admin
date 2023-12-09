@@ -165,7 +165,7 @@ export default class UserService {
                 break;
             }
             case UserType.admin: {
-                typeFilter = `&filters[relatedType][reference][$ne]=admin`;
+                typeFilter = `&filters[$and][0][relatedType][reference][$ne]=admin&filters[$and][1][relatedType][reference][$ne]=delegate`;
                 break;
             }
             default: {
@@ -180,7 +180,7 @@ export default class UserService {
                     'Authorization': `Bearer ${token}`
                 }
             });
-            
+
         if (response.status == 200) {
             var users: UserModel[] = [];
             for (let index = 0; index < response.data.length; index++) {
@@ -193,7 +193,7 @@ export default class UserService {
         return [];
     }
 
-   
+
 
     async getMe(): Promise<UserModel> {
         const token = localStorage.getItem('token');
