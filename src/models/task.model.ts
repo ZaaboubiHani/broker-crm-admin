@@ -2,6 +2,7 @@ import ClientModel from "./client.model";
 import CommandModel from "./command.model";
 import ReportModel from "./report.model";
 import UserModel from "./user.model";
+import VisitModel from "./visit.model";
 
 class TaskDone{
     isDone:boolean = false;
@@ -13,6 +14,7 @@ export default class TaskModel extends TaskDone{
     visitDate?: Date;
     client?: ClientModel;
     delegate?: UserModel;
+    visit?: VisitModel;
 
     constructor(params: {
         id?: number,

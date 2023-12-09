@@ -34,11 +34,7 @@ export interface ProfileTableProps {
 }
 
 const ProfileTable: React.FC<ProfileTableProps> = ({ data, isLoading, wilayas, }) => {
-   
 
-
-
-    
     const [stateTrigger, setStateTrigger] = React.useState<boolean>(false);
 
     const handleChange = (value: string[], index: number) => {
@@ -49,7 +45,7 @@ const ProfileTable: React.FC<ProfileTableProps> = ({ data, isLoading, wilayas, }
 
     const [showPassword, setShowPassword] = React.useState(Array(10).fill(false));
 
-    const handleClickShowPassword = (index:number) => {
+    const handleClickShowPassword = (index: number) => {
         showPassword[index] = !showPassword[index];
         setShowPassword([...showPassword]);
     };
@@ -59,48 +55,88 @@ const ProfileTable: React.FC<ProfileTableProps> = ({ data, isLoading, wilayas, }
     };
 
     const columns: GridColDef[] = [
-        { field: 'date', headerName: 'Création', width: 150 },
+        { field: 'date', headerName: 'Création', width: 100 },
         { field: 'username', headerName: 'Nom et prénom', width: 150 },
-        { field: 'phone', headerName: 'Mobile', width: 200 },
+        { field: 'phone', headerName: 'Mobile', width: 150 },
         { field: 'email', headerName: 'E-mail', width: 200 },
-        { field: 'type', headerName: 'Type',  width: 100 },
-        { field: 'password', headerName: 'Mot de passe', width: 150, 
-           
+        { field: 'type', headerName: 'Type', width: 100 },
+        {
+            field: 'password', headerName: 'Mot de passe', width: 200,
+
 
             renderCell(params) {
                 return (<FormControl sx={{ m: 1, margin: '0px', padding: '0px' }} variant="standard">
-                <InputLabel htmlFor="standard-adornment-password">Mot de passe</InputLabel>
-                <Input
-                    id="standard-adornment-password"
-                    type={showPassword[params.row.index] ? 'text' : 'password'}
+                    <InputLabel htmlFor="standard-adornment-password">Mot de passe</InputLabel>
+                    <Input
+                        id="standard-adornment-password"
+                        type={showPassword[params.row.index] ? 'text' : 'password'}
 
-                    onChange={(event) => {
-                        params.row.password = event.target.value;
-                        setStateTrigger(!stateTrigger);
-                    }}
-                    endAdornment={
-                        <InputAdornment position="end">
-                            <IconButton
-                                aria-label="toggle password visibility"
-                                onClick={()=>handleClickShowPassword(params.row.index)}
-                                onMouseDown={handleMouseDownPassword}
-                            >
-                                {showPassword[params.row.index] ? <VisibilityOff /> : <Visibility />}
-                            </IconButton>
-                        </InputAdornment>
-                    }
-                />
-            </FormControl>);
+                        onChange={(event) => {
+                            params.row.password = event.target.value;
+                            setStateTrigger(!stateTrigger);
+                        }}
+                        endAdornment={
+                            <InputAdornment position="end">
+                                <IconButton
+                                    aria-label="toggle password visibility"
+                                    onClick={() => handleClickShowPassword(params.row.index)}
+                                    onMouseDown={handleMouseDownPassword}
+                                >
+                                    {showPassword[params.row.index] ? <VisibilityOff /> : <Visibility />}
+                                </IconButton>
+                            </InputAdornment>
+                        }
+                    />
+                </FormControl>);
             },
 
-        }, 
-        { field: 'wilayat', headerName: 'Wilayat', width: 150 },
-        { field: 'isBlocked', headerName: 'Blocage', width: 150 },
-       
+        },
+        {
+            field: 'wilayat', headerName: 'Wilayat', width: 250,
+
+            renderCell(params) {
+                return params.row.type === 'Superviseur' ? (
+                    <div style={{ width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'end', height: '60px', margin: '0px', padding: '0px' }}>
+                        <p style={{ fontSize: '17px', fontWeight: '500' }}>
+                            Accès total
+                        </p>
+                    </div>
+                ) : (
+                    <FormControl sx={{ m: 1, width: 200, margin: '0px', padding: '0px' }} size="small">
+                        <InputLabel >Wilayat</InputLabel>
+                        <Select
+
+                            multiple
+                            value={(params.row.wilayas as any[]).map<string>((w: any) => w.name?.toLowerCase() ?? '')}
+                            onChange={(event) => handleChange((event.target.value as string[]), params.row.index)}
+                            input={<OutlinedInput />}
+                            renderValue={(selected) => selected.map((e: any) => e.charAt(0).toUpperCase() + e.slice(1)).join(',')}
+                        >
+                            {wilayas.map((wilaya) => (
+                                <MenuItem key={wilaya.id} value={wilaya.name?.toLowerCase()}>
+                                    <Checkbox checked={params.row.wilayas?.some((w: any) => w.name?.toLowerCase() === wilaya.name?.toLowerCase())} />
+                                    <ListItemText primary={wilaya.name} />
+                                </MenuItem>
+                            ))}
+                        </Select>
+                    </FormControl>
+                );
+            },
+        },
+        {
+            field: 'isBlocked', headerName: 'Blocage', width: 100,
+            renderCell(params) {
+                return (<Switch onChange={() => {
+                    params.row.isBlocked = !params.row.isBlocked;
+                    setStateTrigger(!stateTrigger);
+                }} checked={params.row.isBlocked} />);
+            }
+        },
+
     ];
 
     return (
-        <div style={{ display: 'flex', flexDirection: 'column', flexGrow: '1', marginRight: '16px' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', flexGrow: '1', margin: '16px' }}>
             {
                 isLoading ? (<div style={{
                     width: '100%',
@@ -120,25 +156,24 @@ const ProfileTable: React.FC<ProfileTableProps> = ({ data, isLoading, wilayas, }
                     (<DataGrid
 
                         rows={
-                            [ ...data.map((row,index) => {
+                            [...data.map((row, index) => {
 
                                 return {
                                     id: row.id,
-                                    index:index,
+                                    index: index,
                                     date: formatDateToYYYYMMDD(row.createdAt || new Date()),
                                     username: row.username,
+                                    wilayas: row.wilayas,
                                     phone: row.phoneOne,
                                     password: row.password,
                                     email: row.email,
-                                    type: row.type === UserType.supervisor ? 'Superviseur' : row.type === UserType.kam ? 'Kam' : 'délégué',
+                                    type: row.type === UserType.supervisor ? 'Superviseur' : row.type === UserType.kam ? 'Kam' : 'Délégué',
                                     isBlocked: row.isBlocked,
                                 };
                             })]}
                         columns={columns}
                         hideFooterPagination={true}
                         hideFooter={true}
-                       
-                        pageSizeOptions={[5, 10, 25, 50, 100]}
                         checkboxSelection={false}
 
                     />)}

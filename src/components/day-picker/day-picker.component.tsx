@@ -11,13 +11,13 @@ class DayPicker extends Component<DayPickerProps> {
     _selectedIndex: number = 0;
     _scrollController: React.RefObject<HTMLDivElement> = React.createRef();
     now: Date = new Date();
-    dates : Date[] = [];
+    dates: Date[] = [];
     constructor(props: DayPickerProps) {
         super(props);
         this.now = this.props.initialDate
         this._selectedIndex = this.now.getDate() - 1;
         this._scrollController = React.createRef();
-        this.dates= [];
+        this.dates = [];
     }
 
     componentDidMount() {
@@ -29,6 +29,7 @@ class DayPicker extends Component<DayPickerProps> {
             this._scrollController.current.scrollLeft = scrollOffset;
         }
     }
+
 
     render() {
         const currentDate: Date = this.props.initialDate;
@@ -43,18 +44,32 @@ class DayPicker extends Component<DayPickerProps> {
         return (
 
             <div
+
                 style={{
                     display: 'flex',
                     flexDirection: 'row',
                     overflowX: 'auto',
                     width: '100px',
-                    flexGrow:'1',
-                    height:'75px',
-                    overflowY:'hidden',
+                    flexGrow: '1',
+                    height: '70px',
+                    overflowY: 'hidden',
                     padding: this.props.padding,
+                    transition: 'all 300ms ease',
                 }}
                 ref={this._scrollController}
                 className='day-picker'
+                onWheel={(event) => {
+                    if (this._scrollController.current) {
+                        this._scrollController.current.scrollLeft += event.deltaY;
+                        this._scrollController.current.classList.add('smooth-scrolling');
+                        setTimeout(() => {
+                            if (this._scrollController.current) {
+                                this._scrollController.current.classList.remove('smooth-scrolling');
+                            }
+                        }, 300);
+                    }
+                }}
+
             >
                 {
                     Array.from({ length: numberOfDaysInCurrentMonth }, (_, index) => {

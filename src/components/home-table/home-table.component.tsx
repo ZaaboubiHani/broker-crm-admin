@@ -22,7 +22,7 @@ interface HomeTableProps {
 const HomeTable: React.FC<HomeTableProps> = ({ data, id, isLoading, firstHeader, onDisplayReport, onDisplayCommand, total, size, page, pageChange, }) => {
 
     const [rowsPerPage, setRowsPerPage] = React.useState(size);
-    
+
     const [pageIndex, setPageIndex] = React.useState(page - 1);
 
     if (pageIndex !== (page - 1)) {
@@ -36,11 +36,11 @@ const HomeTable: React.FC<HomeTableProps> = ({ data, id, isLoading, firstHeader,
             filterable: false,
         },
         {
-            field: 'client', headerName: 'Client', width: 150,
+            field: 'client', headerName: 'Client', width: 170,
             filterable: false,
         },
         {
-            field: 'speciality', headerName: 'Spécialité', width: 200,
+            field: 'speciality', headerName: 'Spécialité', width: 130,
             filterable: false,
         },
         {
@@ -57,7 +57,8 @@ const HomeTable: React.FC<HomeTableProps> = ({ data, id, isLoading, firstHeader,
             },
         },
         {
-            field: 'command', headerName: 'Bon de commande', width: 80,
+            field: 'command', headerName: 'Bon de commande', width: 150,
+            align: 'center',
             filterable: false,
             renderCell(params) {
                 return (<Button disabled={!params.row.hasCommand} onClick={() => {
@@ -68,7 +69,15 @@ const HomeTable: React.FC<HomeTableProps> = ({ data, id, isLoading, firstHeader,
     ];
 
     return (
-        <div id={id} style={{ display: 'flex', flexDirection: 'column', flexGrow: '1', }}>
+        <div id={id}
+            style={{
+                display: 'flex',
+                flexDirection: 'column',
+                flexGrow: '1',
+                margin: '0px 8px 8px 8px',
+                borderRadius: '8px',
+                backgroundColor: 'rgba(255,255,255,0.5)'
+            }}>
             {
                 isLoading ? (<div style={{
                     width: '100%',
@@ -86,7 +95,6 @@ const HomeTable: React.FC<HomeTableProps> = ({ data, id, isLoading, firstHeader,
                     />
                 </div>) :
                     (<DataGrid
-
                         rows={
                             [...Array.from({ length: rowsPerPage * pageIndex }, (_, index) => {
                                 return { id: index };
@@ -101,6 +109,7 @@ const HomeTable: React.FC<HomeTableProps> = ({ data, id, isLoading, firstHeader,
                                     visitLocation: row.visitLocation,
                                 };
                             })]}
+
                         columns={columns}
                         rowCount={total}
                         onPaginationModelChange={(model) => {

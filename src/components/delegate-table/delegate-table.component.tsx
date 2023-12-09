@@ -23,17 +23,17 @@ interface DelegateTableProps {
     page: number;
     size: number;
     total: number;
-    pageChange: (page: number,size:number) => void;
+    pageChange: (page: number, size: number) => void;
     // rowNumChange: (rowNum: number) => void;
 }
 
-const DelegateTable: React.FC<DelegateTableProps> = ({ data, id, onDisplayCommand, onDisplayReport, isLoading,  total, size, page,  pageChange, }) => {
+const DelegateTable: React.FC<DelegateTableProps> = ({ data, id, onDisplayCommand, onDisplayReport, isLoading, total, size, page, pageChange, }) => {
     const [rowsPerPage, setRowsPerPage] = React.useState(size);
 
 
     const [pageIndex, setPageIndex] = React.useState(page - 1);
 
-   
+
 
     if (pageIndex !== (page - 1)) {
         setPageIndex(page - 1);
@@ -51,10 +51,10 @@ const DelegateTable: React.FC<DelegateTableProps> = ({ data, id, onDisplayComman
     // };
     const columns: GridColDef[] = [
 
-        { field: 'date', headerName: 'Date', width: 150 },
-        { field: 'client', headerName: 'Client', width: 150 },
-        { field: 'speciality', headerName: 'Spécialité', width: 150 },
-        { field: 'location', headerName: 'Localisation', minWidth: 150, maxWidth: 200 },
+        { field: 'date', headerName: 'Date', width: 100 },
+        { field: 'client', headerName: 'Client', width: 200 },
+        { field: 'speciality', headerName: 'Spécialité', width: 130 },
+        { field: 'location', headerName: 'Localisation', width: 200 },
         {
             field: 'report', headerName: 'Rapport', width: 80,
 
@@ -66,10 +66,12 @@ const DelegateTable: React.FC<DelegateTableProps> = ({ data, id, onDisplayComman
 
         },
         {
-            field: 'command', headerName: 'Bon de commande', width: 80,
-
+            field: 'command',
+            headerName: 'Bon de commande',
+            width: 150,
+            align: 'center',
             renderCell(params) {
-                return ( <Button disabled={!params.row.hasCommand} onClick={() => {
+                return (<Button disabled={!params.row.hasCommand} onClick={() => {
                     onDisplayCommand(params.row);
                 }} variant="text">Voir</Button>);
             },
@@ -79,8 +81,15 @@ const DelegateTable: React.FC<DelegateTableProps> = ({ data, id, onDisplayComman
 
     ];
     return (
-        <div id={id} style={{ display: 'flex', flexDirection: 'column', flexGrow: '1', marginRight: '16px', height: 'calc(100% - 1px)' }}>
-            
+        <div id={id} style={{
+            display: 'flex',
+            flexDirection: 'column',
+            flexGrow: '1',
+            margin: '0px 8px 8px 8px',
+            borderRadius: '8px',
+            backgroundColor: 'rgba(255,255,255,0.5)'
+        }}>
+
             {
                 isLoading ? (<div style={{
                     width: '100%',
@@ -128,7 +137,7 @@ const DelegateTable: React.FC<DelegateTableProps> = ({ data, id, onDisplayComman
                                 },
                             },
                         }}
-                        pageSizeOptions={[5, 10, 25,50,100]}
+                        pageSizeOptions={[5, 10, 25, 50, 100]}
                         checkboxSelection={false}
                     />)}
             {/* <TableContainer sx={{ flexGrow: '1', display: 'flex', flexDirection: 'column', borderRadius: '8px', margin: '8px', overflow: 'hidden' }} component={Paper}>

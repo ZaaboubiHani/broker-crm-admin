@@ -24,6 +24,7 @@ import CustomTabPanel from '../../components/custom-tab-panel/costum-tab-panel.c
 import Box from '@mui/material/Box';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
+import UserDropdown from '../../components/user-dropdown/user-dropdown';
 
 
 interface HomePageState {
@@ -32,7 +33,6 @@ interface HomePageState {
     selectedCommand?: CommandModel;
     selectedVisit?: VisitModel;
     isLoading: boolean;
-    hasData: boolean;
     loadingVisitsData: boolean;
     loadingReportData: boolean;
     showReportPanel: boolean;
@@ -65,7 +65,7 @@ class HomePage extends Component<{}, HomePageState> {
             currentUser: new UserModel(),
             index: 0,
             selectedDate: new Date(),
-            isLoading: false,
+            isLoading: true,
             loadingVisitsData: false,
             loadingReportData: false,
             delegateVisits: [],
@@ -73,7 +73,6 @@ class HomePage extends Component<{}, HomePageState> {
             kamVisits: [],
             filteredKamVisits: [],
             showReportPanel: true,
-            hasData: false,
             delegateSearchText: '',
             kamSearchText: '',
             supervisors: [],
@@ -104,51 +103,52 @@ class HomePage extends Component<{}, HomePageState> {
     };
 
     loadHomePageData = async () => {
-        this.setState({ isLoading: true });
-        if (!this.state.isLoading) {
 
-            var currentUser = await this.userService.getMe();
+        var currentUser = await this.userService.getMe();
 
-            if (currentUser != undefined) {
-                this.setState({ currentUser: currentUser });
-            }
-
-            if (currentUser.type === UserType.supervisor) {
-                var { visits: visits, total: total } = await this.visitService.getAllVisits(1, 25, new Date(), ClientType.pharmacy, currentUser.id!);
-                this.setState({
-                    isLoading: false,
-                    hasData: true,
-                    delegateVisits: visits,
-                    filteredDelegateVisits: visits,
-                    totalDelegate: total,
-                });
-            } else {
-                var supervisors = await this.userService.getUsersByCreator(currentUser.id!, UserType.supervisor);
-
-                if (supervisors.length > 0) {
-                    var { visits: kamVisits, total: totalKam } = await this.visitService.getAllVisits(1, 25, new Date(), ClientType.wholesaler, currentUser.id!);
-
-                    var { visits: delegateVisits, total: totalDelegate } = await this.visitService.getAllVisits(1, 25, new Date(), ClientType.pharmacy, supervisors[0].id!);
-                    this.setState({
-                        isLoading: false,
-                        hasData: true,
-                        delegateVisits: delegateVisits,
-                        filteredDelegateVisits: delegateVisits,
-                        kamVisits: kamVisits,
-                        filteredKamVisits: kamVisits,
-                        selectedSupervisor: supervisors[0],
-                        supervisors: supervisors,
-                        totalDelegate: totalDelegate,
-                        totalKam: totalKam,
-
-                    });
-                }
-
-            }
+        if (currentUser != undefined) {
+            this.setState({ currentUser: currentUser });
         }
 
+        if (currentUser.type === UserType.supervisor) {
+            // var { visits: visits, total: total } = await this.visitService.getAllVisits(1, 25, new Date(), ClientType.pharmacy, currentUser.id!);
+            // this.setState({
+            //     isLoading: false,
+            //     delegateVisits: visits,
+            //     filteredDelegateVisits: visits,
+            //     totalDelegate: total,
+            // });
+        } else {
+            var supervisors = await this.userService.getUsersByCreator(currentUser.id!, UserType.supervisor);
+            this.setState({
+                supervisors: supervisors,
+            });
+            // if (supervisors.length > 0) {
+            //     var { visits: kamVisits, total: totalKam } = await this.visitService.getAllVisits(1, 25, new Date(), ClientType.wholesaler, currentUser.id!);
+
+            //     var { visits: delegateVisits, total: totalDelegate } = await this.visitService.getAllVisits(1, 25, new Date(), ClientType.pharmacy, supervisors[0].id!);
+            //     this.setState({
+            //         isLoading: false,
+            //         delegateVisits: delegateVisits,
+            //         filteredDelegateVisits: delegateVisits,
+            //         kamVisits: kamVisits,
+            //         filteredKamVisits: kamVisits,
+            //         selectedSupervisor: supervisors[0],
+            //         supervisors: supervisors,
+            //         totalDelegate: totalDelegate,
+            //         totalKam: totalKam,
+            //     });
+            // }
+        }
+
+        this.setState({
+            isLoading: false,
+        });
     };
 
+    componentDidMount(): void {
+        this.loadHomePageData();
+    }
 
     handleOnPickDate = async (date: Date) => {
         this.setState({ loadingVisitsData: true, selectedReport: undefined, kamPage: 1, delegatePage: 1, selectedVisit: undefined });
@@ -163,18 +163,22 @@ class HomePage extends Component<{}, HomePageState> {
                 totalDelegate: total,
             });
         } else {
-            var { visits: delegateVisits, total: totalDelegate } = await this.visitService.getAllVisits(1, this.state.sizeDelegate, date, ClientType.pharmacy, this.state.selectedSupervisor!.id!);
+            if (this.state.selectedSupervisor) {
+                var { visits: delegateVisits, total: totalDelegate } = await this.visitService.getAllVisits(1, this.state.sizeDelegate, date, ClientType.pharmacy, this.state.selectedSupervisor!.id!);
+                this.setState({
+                    delegateVisits: delegateVisits,
+                    filteredDelegateVisits: delegateVisits,
+                    totalDelegate: totalDelegate,
+                });
+            }
             var { visits: kamVisits, total: totalKam } = await this.visitService.getAllVisits(1, this.state.sizeKam, date, ClientType.wholesaler, this.state.currentUser.id!);
             this.setState({
                 selectedDate: date,
-                delegateVisits: delegateVisits,
-                filteredDelegateVisits: delegateVisits,
                 kamVisits: kamVisits,
                 filteredKamVisits: kamVisits,
                 loadingVisitsData: false,
                 kamPage: 1,
                 delegatePage: 1,
-                totalDelegate: totalDelegate,
                 totalKam: totalKam,
             });
         }
@@ -256,13 +260,13 @@ class HomePage extends Component<{}, HomePageState> {
         }
     }
 
-    handleKamPageChange = async (page: number,size:number) => {
+    handleKamPageChange = async (page: number, size: number) => {
         this.setState({ loadingVisitsData: true, kamPage: page, selectedReport: undefined, selectedVisit: undefined, selectedCommand: undefined });
 
         var { visits: kamVisits, total: totalKam } = await this.visitService.getAllVisits(page, size, this.state.selectedDate, ClientType.wholesaler, this.state.currentUser.id!);
         this.setState({
             kamVisits: kamVisits,
-            sizeKam:size,
+            sizeKam: size,
             filteredKamVisits: kamVisits,
             loadingVisitsData: false,
             kamPage: page,
@@ -272,8 +276,7 @@ class HomePage extends Component<{}, HomePageState> {
     }
 
     render() {
-        if (!this.state.hasData) {
-            this.loadHomePageData();
+        if (this.state.isLoading) {
             return (
                 <div style={{
                     width: '100%',
@@ -304,15 +307,39 @@ class HomePage extends Component<{}, HomePageState> {
                             </Tabs>
                         </Box>
                         <CustomTabPanel style={{ display: 'flex', flexDirection: 'row', flexGrow: '1', height: 'calc(100% - 50px)', width: '100%' }} value={this.state.index} index={0} >
-                            <div style={{ display: 'flex', flexDirection: 'column', flexGrow: '1', height: 'calc(100% - 40px)', width: '100%', }}>
-                                {
-                                    this.state.currentUser.type === UserType.admin ? (<div style={{ display: 'flex', height: '55px' }}>
-                                        <UserPicker delegates={this.state.supervisors} onSelect={this.handleSelectSupervisor}></UserPicker>
-                                    </div>) : null
-                                }
-                                <DatePickerBar onPick={this.handleOnPickDate} initialDate={this.state.selectedDate}></DatePickerBar>
-                               
-                                <div className='table-panel'>
+                            <div style={{
+                                display: 'flex',
+                                justifyContent: 'stretch',
+                                alignItems: 'stretch',
+                                flexDirection: 'column',
+                                flexGrow: '1',
+                                height: 'calc(100% - 40px)',
+                                width: '100%',
+                            }}>
+
+                                <div style={{ display: 'flex', justifyContent: 'stretch', flexGrow: '1', marginTop: '8px' }}>
+                                    {
+                                        this.state.currentUser.type === UserType.admin ? (<div style={{ height: '50px', width: '150px', marginRight: '8px' }}>
+                                            <UserDropdown
+                                                users={this.state.supervisors}
+                                                selectedUser={this.state.selectedSupervisor}
+                                                onSelectUser={this.handleSelectSupervisor}
+                                                label='Superviseur'
+                                            />
+                                        </div>) : null
+                                    }
+
+                                    <div style={{ width: '100%' }}>
+                                        <DatePickerBar onPick={this.handleOnPickDate} initialDate={this.state.selectedDate}></DatePickerBar>
+                                    </div>
+                                </div>
+
+                                <div style={{
+                                    width: '100%',
+                                    flexGrow: '1',
+                                    display: 'flex',
+                                    height: 'calc(100% - 100px)'
+                                }}>
                                     <HomeTable id='hometable'
                                         total={this.state.totalDelegate}
                                         page={this.state.delegatePage}
@@ -324,11 +351,19 @@ class HomePage extends Component<{}, HomePageState> {
                                         onDisplayReport={this.handleDisplayReport}
                                         onDisplayCommand={this.handleDisplayCommand}
                                     ></HomeTable>
-                                    <div className='user-panel'>
+                                    <div
+                                        style={{
+                                            width: '30%',
+                                            backgroundColor: 'rgba(255,255,255,0.5)',
+                                            margin: '0px 0px 8px',
+                                            borderRadius: '4px',
+                                            border: '1px solid rgba(127,127,127,0.2)'
+                                        }}>
                                         {
                                             this.state.loadingReportData ?
                                                 (<div style={{
                                                     width: '100%',
+                                                    height: '100%',
                                                     overflow: 'hidden',
                                                     flexGrow: '1',
                                                     display: 'flex',
@@ -361,7 +396,7 @@ class HomePage extends Component<{}, HomePageState> {
                         <CustomTabPanel style={{ display: 'flex', flexDirection: 'row', flexGrow: '1', height: 'calc(100% - 50px)', width: '100%' }} value={this.state.index} index={1} >
                             <div style={{ display: 'flex', flexDirection: 'column', flexGrow: '1', height: 'calc(100% - 40px)', width: '100%', }}>
                                 <DatePickerBar onPick={this.handleOnPickDate} initialDate={this.state.selectedDate}></DatePickerBar>
-                               
+
                                 <div className='table-panel'>
                                     <HomeTable id='hometable'
                                         firstHeader='Kam'
@@ -374,11 +409,18 @@ class HomePage extends Component<{}, HomePageState> {
                                         onDisplayReport={this.handleDisplayReport}
                                         onDisplayCommand={this.handleDisplayCommand}
                                     ></HomeTable>
-                                    <div className='user-panel'>
+                                    <div style={{
+                                        width: '30%',
+                                        backgroundColor: 'rgba(255,255,255,0.5)',
+                                        margin: '0px 0px 8px',
+                                        borderRadius: '4px',
+                                        border: '1px solid rgba(127,127,127,0.2)'
+                                    }}>
                                         {
                                             this.state.loadingReportData ?
                                                 (<div style={{
                                                     width: '100%',
+                                                    height: '100%',
                                                     overflow: 'hidden',
                                                     flexGrow: '1',
                                                     display: 'flex',

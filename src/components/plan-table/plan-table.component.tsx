@@ -22,35 +22,85 @@ interface PlanTableProps {
     id?: string;
 }
 
-const PlanTable: React.FC<PlanTableProps> = ({ data, id, isLoading, onDisplayDetails,  }) => {
+const PlanTable: React.FC<PlanTableProps> = ({ data, id, isLoading, onDisplayDetails, }) => {
 
-   
+
 
     const columns: GridColDef[] = [
-       
-        { field: 'date', headerName: 'Date', width: 150 ,valueFormatter(params) {
-            return formatDateToYYYYMMDD(params.value);
-        },},
-        { field: 'wilayas', headerName: 'Wilayas', width: 150 },
-        { field: 'tasks', headerName: 'Visites programmes', width: 150 },
-        { field: 'visits', headerName: 'visites realiser', width: 150 },
-        {
-            field: 'details', headerName: 'Details', width: 80,
 
+        {
+            field: 'date', headerName: 'Date', width: 100, valueFormatter(params) {
+                return formatDateToYYYYMMDD(params.value);
+            },
+        },
+        {
+            field: 'sldkifu', headerName: 'Wilayas', width: 300,
+
+            resizable: true,
+            renderCell(params) {
+                return (
+                    <div>
+
+                        {params.row.wilayas.map((w: any) => {
+                            return (
+                                <div>
+                                    {w}
+                                </div>
+                            )
+                        })}
+                       
+                    </div>
+                );
+            },
+        },
+        {
+            field: 'tasks', headerName: 'Visites programmes', width: 150,
+            align: 'center',
+        },
+        {
+            field: 'visits', headerName: 'visites realiser', width: 150,
+            align: 'center',
+        },
+        {
+            field: 'details', headerName: 'Details',
             renderCell(params) {
                 return (<Button onClick={() => {
-                    onDisplayDetails(params.row.date,params.row.id);
+                    onDisplayDetails(params.row.date, params.row.id);
                 }} variant="text">Voir</Button>);
             },
 
         },
-       
+
 
 
     ];
 
+
+    function findMax(wilaysa: VisitTaskModel[]): number {
+        if (wilaysa.length === 0) {
+            return 0;
+        }
+
+        let max: number = 0;
+
+        for (const wilaya of wilaysa) {
+            if (wilaya!.tasksWilayasCommunes!.length > max) {
+                max = wilaya!.tasksWilayasCommunes!.length;
+            }
+        }
+
+        return max;
+    }
+
     return (
-        <div id={id} style={{ display: 'flex', flexDirection: 'column', flexGrow: '1', }}>
+        <div id={id} style={{
+            display: 'flex',
+            flexDirection: 'column',
+            flexGrow: '1',
+            margin: '0px 8px 8px 16px',
+            borderRadius: '8px',
+            backgroundColor: 'rgba(255,255,255,0.5)'
+        }}>
             {
                 isLoading ? (<div style={{
                     width: '100%',
@@ -70,19 +120,20 @@ const PlanTable: React.FC<PlanTableProps> = ({ data, id, isLoading, onDisplayDet
                     (<DataGrid
 
                         rows={
-                            [ ...data.map((row,index) => {
+                            [...data.map((row, index) => {
                                 return {
                                     id: index,
                                     date: row.date || new Date(),
-                                    wilayas: row.tasksWilayasCommunes?.map(twc => `(${twc})`).join(' '),
+                                    wilayas: row.tasksWilayasCommunes?.map(twc => `(${twc})`),
                                     tasks: row.numTasks,
                                     visits: row.numVisits,
                                 };
                             })]}
                         columns={columns}
-                      
-                       
+
+                        rowHeight={findMax(data) * 40}
                         hideFooterPagination={true}
+                        hideFooter={true}
                         checkboxSelection={false}
 
                     />)}

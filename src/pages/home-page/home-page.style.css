@@ -25,14 +25,3 @@
     margin-left: 8px;
     margin-bottom: 8px;
 }
-
-.user-panel{
-    width: 30%;
-    background-color: white;
-    flex-grow: 1;
-    border-radius: 4px;
-    display: flex;
-    justify-content: stretch;
-    align-items: stretch;
-    margin: 8px;
-}

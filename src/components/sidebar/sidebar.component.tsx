@@ -18,9 +18,10 @@ import { Link, useLocation } from 'react-router-dom';
 import Button from '@mui/material/Button/Button';
 import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
+import NavListItem from '../nav-list-item/nav-list-item';
+import { PRIMARY_COLOR } from '../../theme';
 
 const Sidebar: React.FC = () => {
-
 
   const [isOpen, setIsOpen] = useState<Boolean>(localStorage.getItem('sidebarOpen') === 'true');
 
@@ -58,8 +59,26 @@ const Sidebar: React.FC = () => {
         }}
           onClick={toggleDrawer}
           variant="contained">
-          <ArrowBackIosNewIcon style={{ width: '30px', left: '0px', top: '8px', position: 'absolute', color: 'rgb(0, 182, 182)', transition: 'opacity 0.5s ease', opacity: isOpen ? '1' : '0', }} />
-          <ArrowForwardIosIcon style={{ width: '30px', left: '0px', top: '8px', position: 'absolute', color: 'rgb(0, 182, 182)', transition: 'opacity 0.5s ease', opacity: isOpen ? '0' : '1', }} />
+          <ArrowBackIosNewIcon
+            style={{
+              width: '30px',
+              left: '0px',
+              top: '8px',
+              position: 'absolute',
+              color: PRIMARY_COLOR,
+              transition: 'opacity 0.5s ease',
+              opacity: isOpen ? '1' : '0',
+            }} />
+          <ArrowForwardIosIcon
+            style={{
+              width: '30px',
+              left: '0px',
+              top: '8px',
+              position: 'absolute',
+              color: PRIMARY_COLOR,
+              transition: 'opacity 0.5s ease',
+              opacity: isOpen ? '0' : '1',
+            }} />
         </Button>
         <img src='/images/broker_logo_white.png'
           style={{
@@ -77,72 +96,73 @@ const Sidebar: React.FC = () => {
             transition: 'opacity 0.5s ease',
             opacity: isOpen ? '1' : '0',
           }} alt="" />
-        <Nav.Link style={{ display: 'flex', }} href="/home">
-          <HomeIcon style={{ color: 'white', width: '30px', height: '30px', marginRight: '8px' }} />
-          <p style={{ color: 'white', transition: 'opacity 0.5s ease', opacity: isOpen ? '1' : '0', }}>
-            Acceuil
-          </p>
-        </Nav.Link>
-        <Nav.Link style={{ display: 'flex' }} href="/delegate">
-          <BusinessCenterIcon style={{ color: 'white', width: '30px', height: '30px', marginRight: '8px' }} />
-          <p style={{ color: 'white', transition: 'opacity 0.5s ease', opacity: isOpen ? '1' : '0', }}>
-            Délégués
-          </p>
-        </Nav.Link>
-        <Nav.Link style={{ display: 'flex', }} href="/plan">
-          <CalendarMonthIcon style={{ color: 'white', width: '30px', height: '30px', marginRight: '8px' }} />
-          <p style={{ color: 'white', transition: 'opacity 0.5s ease', opacity: isOpen ? '1' : '0', }}>
-            Plan de tournée
-          </p>
-        </Nav.Link>
-        <Nav.Link style={{ display: 'flex' }} href="/report">
-          <EventNoteIcon style={{ color: 'white', width: '30px', height: '30px', marginRight: '8px' }} />
-          <p style={{ color: 'white', transition: 'opacity 0.5s ease', opacity: isOpen ? '1' : '0', }}>
-            Rapports des visites
-          </p>
-        </Nav.Link>
-        <Nav.Link style={{ display: 'flex' }} href="/command">
-          <ShoppingCartIcon style={{ color: 'white', width: '30px', height: '30px', marginRight: '8px' }} />
-          <p style={{ color: 'white', transition: 'opacity 0.5s ease', opacity: isOpen ? '1' : '0', }}>
-            Bons de commandes
-          </p>
-        </Nav.Link>
-        <Nav.Link style={{ display: 'flex' }} href="/expense">
-          <PaidIcon style={{ color: 'white', width: '30px', height: '30px', marginRight: '8px' }} />
-          <p style={{ color: 'white', transition: 'opacity 0.5s ease', opacity: isOpen ? '1' : '0', }}>
-            Notes des frais
-          </p>
-        </Nav.Link>
-        <Nav.Link style={{ display: 'flex' }} href="/clients">
-          <Diversity3Icon style={{ color: 'white', width: '30px', height: '30px', marginRight: '8px' }} />
-          <p style={{ color: 'white', transition: 'opacity 0.5s ease', opacity: isOpen ? '1' : '0', }}>
-            Clients
-          </p>
-        </Nav.Link>
-        <Nav.Link style={{ display: 'flex' }} href="/revenue">
-          <CreditCardIcon style={{ color: 'white', width: '30px', height: '30px', marginRight: '8px' }} />
-          <p style={{ color: 'white', transition: 'opacity 0.5s ease', opacity: isOpen ? '1' : '0', }}>
-            Chiffre d'affaire
-          </p>
-        </Nav.Link>
-        <Nav.Link style={{ display: 'flex' }} href="/statistics">
-          <InsertChartIcon style={{ color: 'white', width: '30px', height: '30px', marginRight: '8px' }} />
-          <p style={{ color: 'white', transition: 'opacity 0.5s ease', opacity: isOpen ? '1' : '0', }}>
-            Statistiques
-          </p>
-        </Nav.Link>
-        <Nav.Link style={{ display: 'flex' }} href="/config">
-          <TuneIcon style={{ color: 'white', width: '30px', height: '30px', marginRight: '8px' }} />
-          <p style={{ color: 'white', transition: 'opacity 0.5s ease', opacity: isOpen ? '1' : '0', }}>
-            Listes prédéfinies
-          </p>
-        </Nav.Link>
-        <Nav.Link style={{ display: 'flex' }} href="/profile">
-          <AssignmentIndIcon style={{ color: 'white', width: '30px', height: '30px', marginRight: '8px' }} />
-          <p style={{ color: 'white', transition: 'opacity 0.5s ease', opacity: isOpen ? '1' : '0', }}>
-            Profil
-          </p>
-        </Nav.Link>
+
+        <NavListItem
+          name='Acceuil'
+          route='/home'
+          isOpen={isOpen}
+          icon={<HomeIcon style={{ color: 'white', width: '30px', height: '30px', marginRight: '8px', }} />}
+        />
+        <NavListItem
+          name='Délégués'
+          route='/delegate'
+          isOpen={isOpen}
+          icon={<BusinessCenterIcon style={{ color: 'white', width: '30px', height: '30px', marginRight: '8px' }} />}
+        />
+        <NavListItem
+          name='Plan de tournée'
+          route='/plan'
+          isOpen={isOpen}
+          icon={<CalendarMonthIcon style={{ color: 'white', width: '30px', height: '30px', marginRight: '8px' }} />}
+        />
+        <NavListItem
+          name='Rapports des visites'
+          route='/report'
+          isOpen={isOpen}
+          icon={<EventNoteIcon style={{ color: 'white', width: '30px', height: '30px', marginRight: '8px' }} />}
+        />
+        <NavListItem
+          name='Bons de commandes'
+          route='/command'
+          isOpen={isOpen}
+          icon={<ShoppingCartIcon style={{ color: 'white', width: '30px', height: '30px', marginRight: '8px' }} />}
+        />
+        <NavListItem
+          name='Notes des frais'
+          route='/expense'
+          isOpen={isOpen}
+          icon={<PaidIcon style={{ color: 'white', width: '30px', height: '30px', marginRight: '8px' }} />}
+        />
+        <NavListItem
+          name='Clients'
+          route='/clients'
+          isOpen={isOpen}
+          icon={<Diversity3Icon style={{ color: 'white', width: '30px', height: '30px', marginRight: '8px' }} />}
+        />
+        <NavListItem
+          name="Chiffre d'affaire"
+          route='/revenue'
+          isOpen={isOpen}
+          icon={<CreditCardIcon style={{ color: 'white', width: '30px', height: '30px', marginRight: '8px' }} />}
+        />
+        <NavListItem
+          name="Statistiques"
+          route='/statistics'
+          isOpen={isOpen}
+          icon={<InsertChartIcon style={{ color: 'white', width: '30px', height: '30px', marginRight: '8px' }} />}
+        />
+        <NavListItem
+          name="Listes prédéfinies"
+          route='/config'
+          isOpen={isOpen}
+          icon={<TuneIcon style={{ color: 'white', width: '30px', height: '30px', marginRight: '8px' }} />}
+        />
+        <NavListItem
+          name="Profil"
+          route='/profile'
+          isOpen={isOpen}
+          icon={<AssignmentIndIcon style={{ color: 'white', width: '30px', height: '30px', marginRight: '8px' }} />}
+        />
       </div>
     </Nav>
 

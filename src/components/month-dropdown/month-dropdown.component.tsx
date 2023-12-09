@@ -1,6 +1,10 @@
 import React, { useState } from 'react';
 import '../month-dropdown/month-dropdown.style.css';
-import Form from 'react-bootstrap/Form';
+import { PRIMARY_COLOR, PRIMARY_COLOR_HIGHLIGHT } from '../../theme';
+import InputLabel from '@mui/material/InputLabel';
+import MenuItem from '@mui/material/MenuItem';
+import FormControl from '@mui/material/FormControl';
+import Select, { SelectChangeEvent } from '@mui/material/Select';
 
 interface MonthDropdownProps {
   onChange: (selectedMonth: number) => void;
@@ -15,26 +19,37 @@ const MonthDropdown: React.FC<MonthDropdownProps> = ({ onChange, style }) => {
   const currentMonth = new Date().getMonth() + 1;
   const [selectedMonth, setSelectedMonth] = useState<number>(currentMonth);
 
-  const handleMonthChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    const selectedValue = parseInt(event.target.value);
-    setSelectedMonth(selectedValue);
-    onChange(selectedValue);
-  };
+
 
   return (
     <div style={style}>
+      <FormControl sx={{
+        height: '40px',
+        width: '150px',
+        backgroundColor: 'white',
+      }}>
 
-      <Form.Select
-        value={selectedMonth}
-        onChange={handleMonthChange}
-        aria-label="Default select example" size="sm"
-        style={{ height: '40px', width: '150px', margin: '0px 4px' }}>
-        {months.map((month, index) => (
-          <option key={index} value={index + 1}>{month}</option>
-        ))}
+        <Select
+          sx={{
+            height: '40px',
+            width: '150px',
+            backgroundColor: 'white',
+          }}
+          value={selectedMonth}
+          onChange={(event) => {
+            const selectedValue = parseInt(event.target.value.toString());
+            setSelectedMonth(selectedValue);
+            onChange(selectedValue);
+          }}
+        >
+          {
+            months.map((month, index) => (
+              <MenuItem value={index + 1}>{month}</MenuItem>
+            ))
+          }
 
-      </Form.Select>
-
+        </Select>
+      </FormControl>
     </div>
   );
 };

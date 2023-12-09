@@ -26,7 +26,6 @@ interface ProfilePageState {
     loadingUsers: boolean;
     showSnackbar: boolean;
     isLoading: boolean;
-    hasData: boolean;
     snackbarMessage: string;
     addClientDialogIsOpen: boolean,
 }
@@ -38,8 +37,7 @@ class ProfilePage extends Component<ProfilePageProps, ProfilePageState> {
     constructor() {
         super({});
         this.state = {
-            isLoading: false,
-            hasData: false,
+            isLoading: true,
             showSnackbar: false,
             snackbarMessage: '',
             currentUser: new UserModel(),
@@ -85,13 +83,17 @@ class ProfilePage extends Component<ProfilePageProps, ProfilePageState> {
     }
 
     loadProfilePageData = async () => {
-        this.setState({ isLoading: true });
-        if (!this.state.isLoading) {
-            var currentUser = await this.userService.getMe();
+        var currentUser = await this.userService.getMe();
+        if (currentUser.type === UserType.supervisor) {
+            var users = await this.userService.getUsersByCreator(currentUser.id!, UserType.delegate,);
+            var wilayas = await this.wilayaService.getAllWilayasFromServer();
+            this.setState({ users: users, loadingUsers: false, isLoading: false, currentUser: currentUser, wilayas: wilayas, });
+        } else {
+
             var users = await this.userService.getUsersByCreator(currentUser.id!, UserType.admin,);
             var wilayas = await this.wilayaService.getAllWilayasFromServer();
-            this.setState({ users: users, loadingUsers: false,});
-            this.setState({ isLoading: false, currentUser: currentUser, wilayas: wilayas, hasData: true });
+            this.setState({ users: users, loadingUsers: false, isLoading: false, currentUser: currentUser, wilayas: wilayas, });
+
         }
     }
 
@@ -99,9 +101,13 @@ class ProfilePage extends Component<ProfilePageProps, ProfilePageState> {
         this.setState({ showSnackbar: false });
     };
 
+    componentDidMount(): void {
+        this.loadProfilePageData();
+    }
+
     render() {
-        if (!this.state.hasData) {
-            this.loadProfilePageData();
+        if (this.state.isLoading) {
+
             return (
                 <div style={{
                     width: '100%',
@@ -157,7 +163,7 @@ class ProfilePage extends Component<ProfilePageProps, ProfilePageState> {
                                     isLoading={false}
                                     data={this.state.users}
                                     wilayas={this.state.wilayas}
-                                   
+
                                 />}
                     </div>
                     <AddClientDialog

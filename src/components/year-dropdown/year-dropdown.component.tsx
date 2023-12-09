@@ -1,6 +1,10 @@
 import React, { useState } from 'react';
 import '../year-dropdown/year-dropdown.style.css';
-import Form from 'react-bootstrap/Form';
+import { PRIMARY_COLOR, PRIMARY_COLOR_HIGHLIGHT } from '../../theme';
+import InputLabel from '@mui/material/InputLabel';
+import MenuItem from '@mui/material/MenuItem';
+import FormControl from '@mui/material/FormControl';
+import Select, { SelectChangeEvent } from '@mui/material/Select';
 
 interface YearDropdownProps {
   onChange: (selectedYear: number) => void;
@@ -16,20 +20,35 @@ const YearDropdown: React.FC<YearDropdownProps> = ({ onChange, initalYear, style
     yearOptions.push(<option key={year} value={year.toString()}>{year}</option>);
   }
 
-  const handleYearChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    const newYear = parseInt(event.target.value);
-    setSelectedYear(newYear);
-    onChange(newYear);
-  };
 
   return (
     <div style={style}>
-      <Form.Select value={selectedYear} onChange={handleYearChange}
-        aria-label="Default select example" size="sm"
-        style={{ height: '40px', width: '150px', margin: '0px 4px' }}>
-        {yearOptions}
+      <FormControl sx={{
+        height: '40px',
+        width: '150px',
+        backgroundColor: 'white',
+      }}>
 
-      </Form.Select>
+        <Select
+          sx={{
+            height: '40px',
+            width: '150px',
+            backgroundColor: 'white',
+          }}
+          value={selectedYear}
+          onChange={(event) => {
+            const newYear = parseInt(event.target.value.toString());
+            setSelectedYear(newYear);
+            onChange(newYear);
+          }}
+        >
+          {
+            yearOptions
+          }
+
+        </Select>
+      </FormControl>
+      
     </div>
   );
 };
