@@ -140,7 +140,7 @@ class ProfilePage extends Component<ProfilePageProps, ProfilePageState> {
                     <div className='title'>
                         <h3>Information d'équipe :</h3>
                         <div style={{ display: 'flex', alignItems: 'end' }}>
-                            <h4 onClick={this.handleOpenAddClientDialog}>{this.state.currentUser.type === UserType.admin ? 'Ajouter spervisor/kam' : 'Ajouter un délégué'}</h4>
+                            <h4 onClick={this.handleOpenAddClientDialog}>{this.state.currentUser.type === UserType.admin ? 'Ajouter superviseur/kam' : 'Ajouter un délégué'}</h4>
                             <Button onClick={this.handleSaveChanges} startIcon={<SaveIcon />} sx={{ marginLeft: '16px' }} variant="outlined">Enregistrer les modifications</Button>
                         </div>
                     </div>

@@ -23,10 +23,10 @@ import ClientsDoctorTable from '../../components/clients-doctor-table/clients-do
 import { ClientType } from '../../models/client.model';
 import UserModel, { UserType } from '../../models/user.model';
 import UserPicker from '../../components/user-picker/user-picker.component';
+import UserDropdown from '../../components/user-dropdown/user-dropdown';
 
 interface ClientsPageProps {
     selectedDate: Date;
-    hasData: boolean;
     isLoading: boolean;
     pharmSearchText: string;
     docSearchText: string;
@@ -65,8 +65,7 @@ class ClientsPage extends Component<{}, ClientsPageProps> {
         this.state = {
             currentUser: new UserModel(),
             selectedDate: new Date(),
-            hasData: false,
-            isLoading: false,
+            isLoading: true,
             docSearchText: '',
             pharmSearchText: '',
             wholeSearchText: '',
@@ -127,84 +126,39 @@ class ClientsPage extends Component<{}, ClientsPageProps> {
     };
 
     loadClientsPageData = async () => {
-        this.setState({ isLoading: true });
-        if (!this.state.isLoading) {
-            var currentUser = await this.userService.getMe();
-            if (currentUser.type === UserType.supervisor) {
-                var { visits: pharmVisits, total: totalPharm } = await this.visitService.getAllVisitsPaginated(1, 25, '', ClientType.pharmacy, currentUser.id!);
-                var { visits: docVisits, total: totalDoc } = await this.visitService.getAllVisitsPaginated(1, 25, '', ClientType.doctor, currentUser.id!);
-                this.setState({
-                    currentUser: currentUser,
-                    isLoading: false,
-                    hasData: true,
-                    pharmVisits: pharmVisits,
-                    totalPharm: totalPharm,
-                    docVisits: docVisits,
-                    totalDoc: totalDoc,
-                });
-            } else {
-                var supervisors = await this.userService.getUsersByCreator(currentUser.id!, UserType.supervisor);
 
-                if (supervisors.length > 0) {
-                    var { visits: pharmVisits, total: totalPharm } = await this.visitService.getAllVisitsPaginated(1, 25, '', ClientType.pharmacy, supervisors[0].id!);
-                    var { visits: docVisits, total: totalDoc } = await this.visitService.getAllVisitsPaginated(1, 25, '', ClientType.doctor, supervisors[0].id!);
-                    var { visits: wholeVisits, total: totalWhole } = await this.visitService.getAllVisitsPaginated(1, 25, '', ClientType.wholesaler, currentUser.id!);
-                    this.setState({
-                        supervisors: supervisors,
-                        selectedSupervisor: supervisors[0],
-                        currentUser: currentUser,
-                        isLoading: false,
-                        hasData: true,
-                        pharmVisits: pharmVisits,
-                        totalPharm: totalPharm,
-                        docVisits: docVisits,
-                        totalDoc: totalDoc,
-                        wholeVisits: wholeVisits,
-                        totalWhole: totalWhole,
-                    });
-                }
-            }
+        var currentUser = await this.userService.getMe();
+        if (currentUser.type === UserType.supervisor) {
+            this.setState({
+                currentUser: currentUser,
+                isLoading: false,
+
+            });
+        } else {
+            var supervisors = await this.userService.getUsersByCreator(currentUser.id!, UserType.supervisor);
+            var { visits: wholeVisits, total: totalWhole } = await this.visitService.getAllVisitsPaginated(1, 25, this.state.wholeSearchText, ClientType.wholesaler, this.state.currentUser.id!);
+            this.setState({
+                wholeVisits: wholeVisits,
+                totalWhole: totalWhole,
+                supervisors: supervisors,
+                currentUser: currentUser,
+                isLoading: false,
+
+            });
         }
+
     };
-
-    handlePharmVisitsFilter = async () => {
-        this.setState({ pharmReportData: undefined, pharmCommandData: undefined, pharmPage: 1, loadingVisitsData: true });
-        var { visits: pharmVisits, total: totalPharm } = await this.visitService.getAllVisitsPaginated(1, this.state.sizePharm, this.state.pharmSearchText, ClientType.pharmacy, this.state.currentUser.id!);
-        this.setState({ pharmVisits: pharmVisits, totalPharm: totalPharm, loadingVisitsData: false, pharmPage: 1, });
-    }
-    handleWholeVisitsFilter = async () => {
-        this.setState({ wholeReportData: undefined, wholeCommandData: undefined, wholePage: 1, loadingVisitsData: true });
-        var { visits: wholeVisits, total: totalWhole } = await this.visitService.getAllVisitsPaginated(1, this.state.sizeWhole, this.state.wholeSearchText, ClientType.wholesaler, this.state.currentUser.id!);
-        this.setState({ wholeVisits: wholeVisits, totalWhole: totalWhole, loadingVisitsData: false });
-    }
-
-    handleDocVisitsFilter = async () => {
-        this.setState({ docReportData: undefined, docPage: 1, loadingVisitsData: true });
-        var { visits: docVisits, total: totalDoc } = await this.visitService.getAllVisitsPaginated(1, this.state.sizeDoc, this.state.docSearchText, ClientType.doctor, this.state.currentUser.id!);
-        this.setState({ docVisits: docVisits, totalDoc: totalDoc, loadingVisitsData: false });
-    }
-
-    handlePharmSearchTextChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        this.setState({ pharmSearchText: event.target.value });
-    }
-
-    handleDocSearchTextChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        this.setState({ docSearchText: event.target.value });
-    }
-
-    handleWholeSearchTextChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        this.setState({ wholeSearchText: event.target.value });
-    }
 
     handlePharmPageChange = async (page: number, size: number) => {
         this.setState({ loadingVisitsData: true, pharmPage: page, sizePharm: size });
         var { visits: pharmVisits, total: totalPharm } = await this.visitService.getAllVisitsPaginated(page, size, this.state.pharmSearchText, ClientType.pharmacy, this.state.currentUser.id!);
         this.setState({ pharmVisits: pharmVisits, totalPharm: totalPharm, loadingVisitsData: false, sizePharm: size });
     }
+
     handleWholePageChange = async (page: number, size: number) => {
         this.setState({ loadingVisitsData: true, wholePage: page, sizeWhole: size });
         var { visits: wholeVisits, total: totalWhole } = await this.visitService.getAllVisitsPaginated(page, size, this.state.wholeSearchText, ClientType.wholesaler, this.state.currentUser.id!);
-        this.setState({ wholeVisits: wholeVisits, totalWhole: totalWhole, loadingVisitsData: false, sizeWhole:size});
+        this.setState({ wholeVisits: wholeVisits, totalWhole: totalWhole, loadingVisitsData: false, sizeWhole: size });
     }
 
     handleDocPageChange = async (page: number, size: number) => {
@@ -240,8 +194,7 @@ class ClientsPage extends Component<{}, ClientsPageProps> {
         var { visits: docVisits, total: totalDoc } = await this.visitService.getAllVisitsPaginated(1, 25, '', ClientType.doctor, supervisor!.id!);
         this.setState({
             selectedSupervisor: supervisor,
-            isLoading: false,
-            hasData: true,
+            loadingVisitsData: false,
             pharmVisits: pharmVisits,
             totalPharm: totalPharm,
             docVisits: docVisits,
@@ -249,10 +202,14 @@ class ClientsPage extends Component<{}, ClientsPageProps> {
         });
     }
 
+    componentDidMount(): void {
+        this.loadClientsPageData();
+    }
+
     render() {
 
-        if (!this.state.hasData) {
-            this.loadClientsPageData();
+        if (this.state.isLoading) {
+
             return (
                 <div style={{
                     width: '100%',
@@ -284,23 +241,21 @@ class ClientsPage extends Component<{}, ClientsPageProps> {
                         </Box>
                         <CustomTabPanel style={{ display: 'flex', flexDirection: 'row', flexGrow: '1', height: `calc(100% - ${this.state.currentUser.type !== UserType.supervisor ? '105' : '50'}px)`, }} value={this.state.index} index={0} >
                             <div style={{ display: 'flex', flexDirection: 'column', flexGrow: '1', height: 'calc(100% - 40px)', }}>
-                                {
-                                    this.state.currentUser.type === UserType.admin ? (<div style={{ display: 'flex' }}>
-                                        <UserPicker delegates={this.state.supervisors} onSelect={this.handleSelectSupervisor}></UserPicker>
-                                    </div>) : null
-                                }
-                                <div style={{ display: 'flex', height: '40px', marginLeft: '8px', }}>
-                                    <Form>
-                                        <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
-                                            <Form.Control type="search" placeholder="Recherche" onChange={this.handlePharmSearchTextChange} />
-                                        </Form.Group>
-                                    </Form>
-                                    <button onClick={this.handlePharmVisitsFilter} className="btn btn-primary" style={{ backgroundColor: '#fff', border: '#ddd solid 1px', height: '38px', margin: '0px 0px 0px 8px' }}>
-                                        <FontAwesomeIcon icon={faSearch} style={{ color: 'black' }} />
-                                    </button>
+                                <div style={{ display: 'flex', justifyContent: 'stretch', flexGrow: '1', marginTop: '8px' }}>
+                                    {
+                                        this.state.currentUser.type === UserType.admin ? (<div style={{ height: '50px', width: '150px', marginRight: '8px' }}>
+                                            <UserDropdown
+                                                users={this.state.supervisors}
+                                                selectedUser={this.state.selectedSupervisor}
+                                                onSelectUser={this.handleSelectSupervisor}
+                                                label='Superviseur'
+                                            />
+                                        </div>) : null
+                                    }
+
 
                                 </div>
-                                <div style={{ width: '100%', display: 'flex', flexDirection: 'row', flexGrow: '1', height: 'calc(100% - 40px)', }}>
+                                <div style={{ width: '100%', display: 'flex', flexDirection: 'row', flexGrow: '1', height: 'calc(100% - 0px)', }}>
                                     <ClientsPharmacyTable
                                         total={this.state.totalPharm}
                                         page={this.state.pharmPage}
@@ -312,7 +267,13 @@ class ClientsPage extends Component<{}, ClientsPageProps> {
                                         displayCommand={this.handleDisplayPharmCommand}
                                         displayReport={this.handleDisplayPharmReport}
                                     ></ClientsPharmacyTable>
-                                    <div style={{ backgroundColor: 'white', borderRadius: '8px', margin: '8px 0px', width: '30%' }}>
+                                    <div style={{
+                                        width: '30%',
+                                        backgroundColor: 'rgba(255,255,255,0.5)',
+                                        margin: '0px 0px 8px',
+                                        borderRadius: '4px',
+                                        border: '1px solid rgba(127,127,127,0.2)'
+                                    }}>
                                         {
                                             this.state.loadingReportData ?
                                                 (<div style={{
@@ -347,22 +308,19 @@ class ClientsPage extends Component<{}, ClientsPageProps> {
                         </CustomTabPanel>
                         <CustomTabPanel style={{ display: 'flex', flexDirection: 'row', flexGrow: '1', height: `calc(100% - ${this.state.currentUser.type !== UserType.supervisor ? '105' : '50'}px)` }} value={this.state.index} index={1} >
                             <div style={{ display: 'flex', flexDirection: 'column', flexGrow: '1', height: 'calc(100% - 48px)' }}>
-                                {
-                                    this.state.currentUser.type === UserType.admin ? (<div style={{ display: 'flex' }}>
-                                        <UserPicker delegates={this.state.supervisors} onSelect={this.handleSelectSupervisor}></UserPicker>
-                                    </div>) : null
-                                }
-                                <div style={{ display: 'flex', height: '40px', marginLeft: '8px', }}>
-                                    <Form>
-                                        <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
-                                            <Form.Control type="search" placeholder="Recherche" onChange={this.handleDocSearchTextChange} />
-                                        </Form.Group>
-                                    </Form>
-                                    <button onClick={this.handleDocVisitsFilter} className="btn btn-primary" style={{ backgroundColor: '#fff', border: '#ddd solid 1px', height: '38px', margin: '0px 0px 0px 8px' }}>
-                                        <FontAwesomeIcon icon={faSearch} style={{ color: 'black' }} />
-                                    </button>
+                                <div style={{ display: 'flex', justifyContent: 'stretch', flexGrow: '1', marginTop: '8px' }}>
+                                    {
+                                        this.state.currentUser.type === UserType.admin ? (<div style={{ height: '50px', width: '150px', marginRight: '8px' }}>
+                                            <UserDropdown
+                                                users={this.state.supervisors}
+                                                selectedUser={this.state.selectedSupervisor}
+                                                onSelectUser={this.handleSelectSupervisor}
+                                                label='Superviseur'
+                                            />
+                                        </div>) : null
+                                    }
                                 </div>
-                                <div style={{ width: '100%', display: 'flex', flexDirection: 'row', flexGrow: '1', height: 'calc(100% - 48px)' }}>
+                                <div style={{ width: '100%', display: 'flex', flexDirection: 'row', flexGrow: '1', height: 'calc(100% - 0px)' }}>
 
                                     <ClientsDoctorTable
                                         id='clients-doctor-table'
@@ -375,7 +333,13 @@ class ClientsPage extends Component<{}, ClientsPageProps> {
                                         displayReport={this.handleDisplayDocReport}
                                     ></ClientsDoctorTable>
 
-                                    <div style={{ backgroundColor: 'white', borderRadius: '8px', margin: '8px 0px', width: '30%' }}>
+                                    <div style={{
+                                        width: '30%',
+                                        backgroundColor: 'rgba(255,255,255,0.5)',
+                                        margin: '0px 0px 8px',
+                                        borderRadius: '4px',
+                                        border: '1px solid rgba(127,127,127,0.2)'
+                                    }}>
                                         {
                                             this.state.loadingReportData ?
                                                 (<div style={{
@@ -407,18 +371,8 @@ class ClientsPage extends Component<{}, ClientsPageProps> {
                         </CustomTabPanel>
                         <CustomTabPanel style={{ display: 'flex', flexDirection: 'row', flexGrow: '1', height: 'calc(100% - 50px)' }} value={this.state.index} index={2} >
                             <div style={{ display: 'flex', flexDirection: 'column', flexGrow: '1', height: 'calc(100% - 40px)' }}>
-                                <div style={{ display: 'flex', height: '40px', marginLeft: '8px', }}>
-                                    <Form>
-                                        <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
-                                            <Form.Control type="search" placeholder="Recherche" onChange={this.handleWholeSearchTextChange} />
-                                        </Form.Group>
-                                    </Form>
-                                    <button onClick={this.handleWholeVisitsFilter} className="btn btn-primary" style={{ backgroundColor: '#fff', border: '#ddd solid 1px', height: '38px', margin: '0px 0px 0px 8px' }}>
-                                        <FontAwesomeIcon icon={faSearch} style={{ color: 'black' }} />
-                                    </button>
 
-                                </div>
-                                <div style={{ width: '100%', display: 'flex', flexDirection: 'row', flexGrow: '1', height: 'calc(100% - 40px)' }}>
+                                <div style={{ width: '100%', display: 'flex', flexDirection: 'row', flexGrow: '1', height: 'calc(100% - 0px)' }}>
                                     <ClientsPharmacyTable
                                         total={this.state.totalWhole}
                                         page={this.state.wholePage}
@@ -430,7 +384,13 @@ class ClientsPage extends Component<{}, ClientsPageProps> {
                                         displayCommand={this.handleDisplayWholeCommand}
                                         displayReport={this.handleDisplayWholeReport}
                                     ></ClientsPharmacyTable>
-                                    <div style={{ backgroundColor: 'white', borderRadius: '8px', margin: '8px 0px', width: '40%' }}>
+                                    <div style={{
+                                        width: '30%',
+                                        backgroundColor: 'rgba(255,255,255,0.5)',
+                                        margin: '0px 0px 8px',
+                                        borderRadius: '4px',
+                                        border: '1px solid rgba(127,127,127,0.2)'
+                                    }}>
                                         {
                                             this.state.loadingReportData ?
                                                 (<div style={{

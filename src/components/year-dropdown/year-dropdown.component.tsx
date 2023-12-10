@@ -15,9 +15,9 @@ interface YearDropdownProps {
 const YearDropdown: React.FC<YearDropdownProps> = ({ onChange, initalYear, style }) => {
   const [selectedYear, setSelectedYear] = useState(initalYear);
 
-  const yearOptions: JSX.Element[] = [];
-  for (let year = initalYear + 10; year >= initalYear - 100; year--) {
-    yearOptions.push(<option key={year} value={year.toString()}>{year}</option>);
+  const years: number[] = [];
+  for (let year = initalYear + 10; year >= 2023; year--) {
+    years.push(year);
   }
 
 
@@ -42,13 +42,17 @@ const YearDropdown: React.FC<YearDropdownProps> = ({ onChange, initalYear, style
             onChange(newYear);
           }}
         >
+
           {
-            yearOptions
+            years.map((year, index) => (
+              <MenuItem value={year}>{year}</MenuItem>
+            ))
           }
+
 
         </Select>
       </FormControl>
-      
+
     </div>
   );
 };

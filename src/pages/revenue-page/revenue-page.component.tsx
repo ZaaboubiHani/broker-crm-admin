@@ -212,18 +212,10 @@ class RevenuePage extends Component<{}, RevenuePageProps> {
             return (
                 <div className='revenue-container' style={{ display: 'flex', flexDirection: 'column', height: '100%', alignItems: 'stretch', backgroundColor: '#eee' }}>
                     <div style={{ display: 'flex', height: '40px', margin: '8px 0px 8px 8px' }}>
-                        <Form >
-                            <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
-                                <Form.Control type="search" placeholder="Recherche" onChange={this.handleSearchTextChange} />
-                            </Form.Group>
-                        </Form>
-                        <button onClick={this.handleRevenuesFilter} style={{ backgroundColor: '#fff', border: '#ddd solid 1px', height: '38px', margin: '0px 0px 0px 8px' }}>
-                            <FontAwesomeIcon icon={faSearch} style={{ color: 'black' }} />
-                        </button>
-                        <MonthYearPicker onPick={this.handleOnPickDate}></MonthYearPicker >
+
                         {
                             this.state.currentUser.type === UserType.admin ? (
-                                <div style={{marginLeft:'8px'}}>
+                                <div style={{ margin: '0px 8px' }}>
                                     <UserDropdown
                                         users={this.state.supervisors}
                                         selectedUser={this.state.selectedSupervisor}
@@ -234,6 +226,8 @@ class RevenuePage extends Component<{}, RevenuePageProps> {
 
                             ) : null
                         }
+                        <MonthYearPicker onPick={this.handleOnPickDate}></MonthYearPicker >
+
                     </div>
                     <div style={{ margin: '0px 8px', display: 'flex', justifyContent: 'space-between', padding: '4px', backgroundColor: 'white', borderRadius: '8px' }}>
                         <CircularProgressLabel

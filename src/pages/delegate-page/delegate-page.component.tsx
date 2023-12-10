@@ -10,7 +10,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSearch } from '@fortawesome/free-solid-svg-icons';
 import UserPicker from '../../components/user-picker/user-picker.component';
 import UserModel, { UserType } from '../../models/user.model';
-import { DotSpinner } from '@uiball/loaders';
+import { DotSpinner,DotWave } from '@uiball/loaders';
 import UserService from '../../services/user.service';
 import VisitService from '../../services/visit.service';
 import ReportService from '../../services/report.service';
@@ -27,7 +27,6 @@ import UserDropdown from '../../components/user-dropdown/user-dropdown';
 
 
 
-
 interface DelegatePageState {
     selectedDate: Date;
     visits: VisitModel[];
@@ -37,6 +36,7 @@ interface DelegatePageState {
     selectedCommand?: CommandModel;
     selectedVisit?: VisitModel;
     isLoading: boolean;
+    loadingDelegates: boolean;
     loadingReportData: boolean;
     loadingVisitsData: boolean;
     searchText: string;
@@ -65,6 +65,7 @@ class DelegatePage extends Component<{}, DelegatePageState> {
             visits: [],
             delegates: [],
             isLoading: true,
+            loadingDelegates: false,
             showReportPanel: true,
             loadingReportData: false,
             loadingVisitsData: false,
@@ -183,11 +184,13 @@ class DelegatePage extends Component<{}, DelegatePageState> {
             selectedVisit: undefined,
             delegates: [],
             visits: [],
+            loadingDelegates: true,
         });
+
         var delegates = await this.userService.getUsersByCreator(supervisor.id!, UserType.delegate);
 
 
-        this.setState({ delegates: delegates, });
+        this.setState({ delegates: delegates, loadingDelegates: false, });
     }
 
     handleDelegatePageChange = async (page: number, size: number) => {
@@ -251,6 +254,7 @@ class DelegatePage extends Component<{}, DelegatePageState> {
                                 selectedUser={this.state.selectedDelegate}
                                 onSelectUser={this.handleSelectDelegate}
                                 label='Délégué'
+                                loading={this.state.loadingDelegates}
                             />
                         </div>
                         <MonthYearPicker onPick={this.handleOnPickDate}></MonthYearPicker >

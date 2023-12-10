@@ -25,6 +25,7 @@ import CircularProgressLabel from '../../components/circular-progress-label/circ
 import ReportPanel from '../../components/report-panel/report-panel.component';
 import VisitModel from '@/src/models/visit.model';
 import UserDropdown from '../../components/user-dropdown/user-dropdown';
+import MapDialog from '../../components/map-dialog/map-dialog.component';
 
 interface PlanPageProps {
     selectedDate: Date;
@@ -38,6 +39,7 @@ interface PlanPageProps {
     loadingVisitTasksData: boolean;
     isLoading: boolean;
     loadingReport: boolean;
+    loadingDelegates: boolean;
     loadingVisitTaskDetails: boolean;
     visitTasks: VisitTaskModel[];
     visitTaskDetails: TaskModel[];
@@ -67,6 +69,7 @@ class PlanPage extends Component<{}, PlanPageProps> {
             loadingVisitTasksData: false,
             isLoading: true,
             loadingVisitTaskDetails: false,
+            loadingDelegates: false,
             visitTasks: [],
             visitTaskDetails: [],
             planDeTournee: 0,
@@ -168,7 +171,12 @@ class PlanPage extends Component<{}, PlanPageProps> {
     };
 
     handleSelectSupervisor = async (supervisor: UserModel) => {
-        this.setState({ delegates: [], selectedSupervisor: supervisor });
+        this.setState({
+            delegates: [],
+            selectedSupervisor: supervisor,
+            visitTasks: [],
+            loadingDelegates: true,
+        });
         var delegates = await this.userService.getUsersByCreator(supervisor.id!, UserType.delegate);
         this.setState({
             planDeTournee: 0,
@@ -177,9 +185,10 @@ class PlanPage extends Component<{}, PlanPageProps> {
             objectifChiffreDaffaire: 0,
             objectifVisites: 0,
             successRate: 0,
-            visitTasks:[],
+            visitTasks: [],
+            loadingDelegates:false,
         });
-        this.setState({  delegates: delegates, });
+        this.setState({ delegates: delegates, });
     }
 
     handleSelectVisitTaskDate = async (date: Date, index: number) => {
@@ -243,6 +252,7 @@ class PlanPage extends Component<{}, PlanPageProps> {
                                 selectedUser={this.state.selectedDelegate}
                                 onSelectUser={this.handleSelectDelegate}
                                 label='Délégué'
+                                loading={this.state.loadingDelegates}
                             />
                         </div>
                         <MonthYearPicker onPick={this.handleOnPickDate}></MonthYearPicker >
@@ -260,7 +270,7 @@ class PlanPage extends Component<{}, PlanPageProps> {
                         flexGrow: '1',
                         display: 'flex',
                         height: 'calc(100% - 220px)',
-                       
+
                     }}>
                         <PlanTable onDisplayDetails={this.handleSelectVisitTaskDate} isLoading={this.state.loadingVisitTasksData} id='plantable' data={this.state.visitTasks}></PlanTable>
                         <div style={{
@@ -282,7 +292,7 @@ class PlanPage extends Component<{}, PlanPageProps> {
                                         flexDirection: 'column',
                                         justifyContent: 'center',
                                         alignItems: 'center',
-                                        marginTop:'8px',
+                                        marginTop: '8px',
                                         transition: 'all 300ms ease'
                                     }}>
                                         <DotSpinner

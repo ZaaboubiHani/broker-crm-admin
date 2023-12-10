@@ -14,6 +14,7 @@ import Button from '@mui/material/Button';
 import VisitTaskModel from '../../models/visit-task.model';
 import TablePagination from '@mui/material/TablePagination';
 import { DataGrid, GridColDef, GridValueGetterParams } from '@mui/x-data-grid';
+import MapIcon from '@mui/icons-material/Map';
 
 interface PlanTableProps {
     data: VisitTaskModel[];
@@ -37,6 +38,7 @@ const PlanTable: React.FC<PlanTableProps> = ({ data, id, isLoading, onDisplayDet
             field: 'sldkifu', headerName: 'Wilayas', width: 300,
 
             resizable: true,
+
             renderCell(params) {
                 return (
                     <div>
@@ -48,7 +50,7 @@ const PlanTable: React.FC<PlanTableProps> = ({ data, id, isLoading, onDisplayDet
                                 </div>
                             )
                         })}
-                       
+
                     </div>
                 );
             },
@@ -67,6 +69,16 @@ const PlanTable: React.FC<PlanTableProps> = ({ data, id, isLoading, onDisplayDet
                 return (<Button onClick={() => {
                     onDisplayDetails(params.row.date, params.row.id);
                 }} variant="text">Voir</Button>);
+            },
+
+        },
+        {
+            field: 'map', headerName: 'Carte de parcours', width: 150,
+            align: 'center',
+            renderCell(params) {
+                return (<Button onClick={() => {
+                    onDisplayDetails(params.row.date, params.row.id);
+                }} variant="text"><MapIcon /></Button>);
             },
 
         },
@@ -131,7 +143,7 @@ const PlanTable: React.FC<PlanTableProps> = ({ data, id, isLoading, onDisplayDet
                             })]}
                         columns={columns}
 
-                        rowHeight={findMax(data) * 40}
+                        rowHeight={52 + (findMax(data) - 1) * 10}
                         hideFooterPagination={true}
                         hideFooter={true}
                         checkboxSelection={false}
