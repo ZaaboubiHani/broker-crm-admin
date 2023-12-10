@@ -76,7 +76,8 @@ const HomeTable: React.FC<HomeTableProps> = ({ data, id, isLoading, firstHeader,
                 flexGrow: '1',
                 margin: '0px 8px 8px 8px',
                 borderRadius: '8px',
-                backgroundColor: 'rgba(255,255,255,0.5)'
+                backgroundColor: 'rgba(255,255,255,0.5)',
+                
             }}>
             {
                 isLoading ? (<div style={{

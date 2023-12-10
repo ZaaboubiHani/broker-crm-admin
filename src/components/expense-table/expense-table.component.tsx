@@ -38,7 +38,7 @@ export interface ExpenseTableProps {
 const ExpenseTable: React.FC<ExpenseTableProps> = ({ data, isLoading }) => {
     const columns: GridColDef[] = [
         {
-            field: 'date', headerName: 'Date', width: 150, valueFormatter(params) {
+            field: 'date', headerName: 'Date', width: 100, valueFormatter(params) {
                 return formatDateToYYYYMMDD(params.value);
             },
             filterable: false,
@@ -55,44 +55,61 @@ const ExpenseTable: React.FC<ExpenseTableProps> = ({ data, isLoading }) => {
         {
             field: 'totalVisitsDoctor', headerName: 'Total contact médcins', width: 150,
             filterable: false,
+            align: 'center'
         },
         {
             field: 'totalVisitsPharmacy', headerName: 'Total contact pharmacies', width: 150,
             filterable: false,
+            align: 'center'
         },
         {
-            field: 'kmTotal', headerName: 'Total KM', width: 150,
+            field: 'kmTotal', headerName: 'Total KM', width: 100,
             filterable: false,
+            align: 'center'
         },
         {
             field: 'indemnityKm', headerName: 'Indemnités KM', width: 150, valueFormatter(params) {
                 return params.value.toLocaleString('fr-DZ', { style: 'currency', currency: 'DZD' });
             },
             filterable: false,
+            align: 'center'
         },
-        { field: 'nightsTotal', headerName: 'Total nuites', width: 150, },
+        { field: 'nightsTotal', headerName: 'Total nuites', width: 100, align: 'center' },
         {
             field: 'indemnityNights', headerName: 'Indemnités nuites', width: 150, valueFormatter(params) {
                 return params.value.toLocaleString('fr-DZ', { style: 'currency', currency: 'DZD' });
             },
             filterable: false,
+            align: 'center'
         },
         {
-            field: 'otherExpenses', headerName: 'autre frais', width: 150, valueFormatter(params) {
+            field: 'otherExpenses', headerName: 'Autre frais', width: 150, valueFormatter(params) {
                 return params.value.toLocaleString('fr-DZ', { style: 'currency', currency: 'DZD' });
             },
             filterable: false,
+            align: 'center',
+            headerAlign: 'center'
         },
         {
             field: 'totalExpense', headerName: 'Total des indemnités', width: 150, valueFormatter(params) {
                 return params.value.toLocaleString('fr-DZ', { style: 'currency', currency: 'DZD' });
             },
             filterable: false,
+            align: 'center'
         },
     ];
 
     return (
-        <div style={{ flexGrow: '1', display: 'flex', overflow: 'hidden', height: '100%',width:'100%' }}>
+        <div  style={{
+            flexGrow: '1',
+            display: 'flex',
+            overflow: 'hidden',
+            height: '100%',
+            width: '100%',
+            margin:'0px 8px 8px 8px',
+            borderRadius: '8px',
+            backgroundColor: 'rgba(255,255,255,0.5)',
+        }}>
             {
                 isLoading ? (<div style={{
                     width: '100%',
@@ -110,7 +127,7 @@ const ExpenseTable: React.FC<ExpenseTableProps> = ({ data, isLoading }) => {
                     />
                 </div>) :
                     (<DataGrid
-                    sx={{flexGrow: '1', display: 'flex', overflow: 'hidden', height: '100%',width:'10px' }}
+                        sx={{ flexGrow: '1', display: 'flex', overflow: 'hidden', height: '100%', width: '10px' }}
                         rows={
                             [...data.map((row, index) => {
                                 return {

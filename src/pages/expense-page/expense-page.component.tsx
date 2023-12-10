@@ -20,6 +20,7 @@ import CustomTabPanel from '../../components/custom-tab-panel/costum-tab-panel.c
 import Box from '@mui/material/Box';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
+import UserDropdown from '../../components/user-dropdown/user-dropdown';
 
 
 
@@ -28,14 +29,12 @@ interface ExpensePageProps {
     isLoading: boolean;
     proofsDialogIsOpen: boolean;
     expenseStatsDialogIsOpen: boolean;
-    hasData: boolean;
+    loadingDelegates: boolean;
     index: number;
     searchText: string;
     delegates: UserModel[];
     supervisors: UserModel[];
     kams: UserModel[];
-    filteredKams: UserModel[];
-    filteredDelegates: UserModel[];
     selectedDelegate?: UserModel;
     selectedKam?: UserModel;
     selectedSupervisor?: UserModel;
@@ -54,14 +53,12 @@ class ExpensePage extends Component<{}, ExpensePageProps> {
         this.state = {
             currentUser: new UserModel(),
             selectedDate: new Date(),
-            isLoading: false,
-            hasData: false,
+            isLoading: true,
+            loadingDelegates: false,
             searchText: '',
             delegates: [],
             supervisors: [],
             kams: [],
-            filteredKams: [],
-            filteredDelegates: [],
             loadingExpensesData: false,
             proofsDialogIsOpen: false,
             expenseStatsDialogIsOpen: false,
@@ -76,31 +73,6 @@ class ExpensePage extends Component<{}, ExpensePageProps> {
     userService = new UserService();
     expenseService = new ExpenseService();
 
-    handleDelegateFilter = () => {
-        if (this.state.searchText.length === 0) {
-            var filteredDelegates = [...this.state.delegates];
-            this.setState({ filteredDelegates: filteredDelegates });
-        }
-        else {
-            var filteredDelegates = this.state.delegates.filter(delegate => delegate.username!.toLowerCase().includes(this.state.searchText.toLowerCase()));
-            this.setState({ filteredDelegates: filteredDelegates });
-        }
-    }
-
-    handleKamFilter = () => {
-        if (this.state.searchText.length === 0) {
-            var filteredKams = [...this.state.kams];
-            this.setState({ filteredKams: filteredKams });
-        }
-        else {
-            var filteredKams = this.state.delegates.filter(delegate => delegate.username!.toLowerCase().includes(this.state.searchText.toLowerCase()));
-            this.setState({ filteredKams: filteredKams });
-        }
-    }
-
-    handleSearchTextChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        this.setState({ searchText: event.target.value });
-    }
 
     handleSelectDelegate = async (delegate: UserModel) => {
         this.setState({ loadingExpensesData: true, });
@@ -117,18 +89,17 @@ class ExpensePage extends Component<{}, ExpensePageProps> {
     }
 
     handleSelectSupervisor = async (supervisor: UserModel) => {
-        this.setState({ loadingExpensesData: true, delegates: [] });
+        this.setState({
+            delegates: [],
+            delegteExpenses: [],
+            loadingDelegates: true,
+        });
         var delegates = await this.userService.getUsersByCreator(supervisor.id!, UserType.delegate);
-        if (delegates.length > 0) {
-            this.setState({ selectedDelegate: delegates[0], selectedSupervisor: supervisor });
-            var delegteExpenses = await this.expenseService.getAllExpensesOfUserByDateMoth(this.state.selectedDate, delegates[0].id!);
-            var delegteExpensesUser = await this.expenseService.getExpensesUserByDateMoth(this.state.selectedDate, delegates[0].id!);
-            this.setState({ delegteExpenses: delegteExpenses, delegteExpensesUser: delegteExpensesUser });
-        }
-        else {
-            this.setState({ delegteExpenses: [], });
-        }
-        this.setState({ loadingExpensesData: false, });
+
+        this.setState({
+            delegates: delegates,
+            loadingDelegates: false,
+        });
     }
 
     handleOnPickDate = async (date: Date) => {
@@ -147,44 +118,21 @@ class ExpensePage extends Component<{}, ExpensePageProps> {
     }
 
     loadExpensePageData = async () => {
-        this.setState({ isLoading: true });
-        if (!this.state.isLoading) {
-            var currentUser = await this.userService.getMe();
 
-            if (currentUser != undefined) {
-                this.setState({ currentUser: currentUser });
-            }
+        var currentUser = await this.userService.getMe();
 
-            if (currentUser.type === UserType.supervisor) {
-                var delegates = await this.userService.getUsersByCreator(currentUser.id!, UserType.delegate);
-                if (delegates.length > 0) {
-                    this.setState({ selectedDelegate: delegates[0] });
-                    var delegteExpenses = await this.expenseService.getAllExpensesOfUserByDateMoth(new Date(), delegates[0].id!);
-                    var delegteExpensesUser = await this.expenseService.getExpensesUserByDateMoth(new Date(), delegates[0].id!);
-                    this.setState({ delegteExpenses: delegteExpenses, delegteExpensesUser: delegteExpensesUser });
-                }
-                this.setState({ isLoading: false, delegates: delegates, filteredDelegates: delegates, hasData: true });
-            } else {
-                var supervisors = await this.userService.getUsersByCreator(currentUser.id!, UserType.supervisor);
-                var kams = await this.userService.getUsersByCreator(currentUser.id!, UserType.kam);
-                this.setState({ supervisors: supervisors, kams: kams, filteredKams: kams });
-                if (kams.length > 0) {
-                    this.setState({ selectedKam: kams[0], });
-                    var kamExpenses = await this.expenseService.getAllExpensesOfUserByDateMoth(new Date(), kams[0].id!);
-                    var kamExpensesUser = await this.expenseService.getExpensesUserByDateMoth(new Date(), kams[0].id!);
-                    this.setState({ kamExpenses: kamExpenses, kamExpensesUser: kamExpensesUser });
-                }
-                if (supervisors.length > 0) {
-                    var delegates = await this.userService.getUsersByCreator(supervisors[0].id!, UserType.delegate);
-                    if (delegates.length > 0) {
-                        this.setState({ selectedDelegate: delegates[0], selectedSupervisor: supervisors[0] });
-                        var delegteExpenses = await this.expenseService.getAllExpensesOfUserByDateMoth(new Date(), delegates[0].id!);
-                        var delegteExpensesUser = await this.expenseService.getExpensesUserByDateMoth(new Date(), delegates[0].id!);
-                        this.setState({ delegteExpenses: delegteExpenses, delegteExpensesUser: delegteExpensesUser });
-                    }
-                    this.setState({ isLoading: false, delegates: delegates, filteredDelegates: delegates, hasData: true });
-                }
-            }
+        if (currentUser != undefined) {
+            this.setState({ currentUser: currentUser });
+        }
+
+        if (currentUser.type === UserType.supervisor) {
+            var delegates = await this.userService.getUsersByCreator(currentUser.id!, UserType.delegate);
+
+            this.setState({ isLoading: false, delegates: delegates, });
+        } else {
+            var supervisors = await this.userService.getUsersByCreator(currentUser.id!, UserType.supervisor);
+            var kams = await this.userService.getUsersByCreator(currentUser.id!, UserType.kam);
+            this.setState({ supervisors: supervisors, kams: kams, isLoading: false, });
         }
     }
 
@@ -200,8 +148,12 @@ class ExpensePage extends Component<{}, ExpensePageProps> {
         this.setState({ index: newValue, });
     };
 
+    componentDidMount(): void {
+        this.loadExpensePageData();
+    }
+
     render() {
-        if (!this.state.hasData) {
+        if (this.state.isLoading) {
             this.loadExpensePageData();
             return (
                 <div style={{
@@ -233,29 +185,43 @@ class ExpensePage extends Component<{}, ExpensePageProps> {
                         </Box>
                         <CustomTabPanel style={{ display: 'flex', flexDirection: 'row', flexGrow: '1', height: 'calc(100% - 50px)', width: '100%' }} value={this.state.index} index={0} >
                             <div style={{ display: 'flex', flexDirection: 'column', flexGrow: '1', height: 'calc(100% - 40px)', width: '100%', }}>
-                                <div className='search-bar'>
-                                    <Form>
-                                        <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
-                                            <Form.Control type="search" placeholder="Recherche" onChange={this.handleSearchTextChange} />
-                                        </Form.Group>
-                                    </Form>
-                                    <button onClick={this.handleDelegateFilter} className="btn btn-primary" style={{ backgroundColor: '#fff', border: '#ddd solid 1px', height: '38px' }}>
-                                        <FontAwesomeIcon icon={faSearch} style={{ color: 'black' }} />
-                                    </button>
+                                <div style={{ display: 'flex', justifyContent: 'stretch', flexGrow: '1', marginTop: '16px' }}>
+                                    {this.state.currentUser.type === UserType.admin ?
+                                        (<div style={{
+                                            height: '50px',
+                                            width: '150px',
+                                            margin: '0px 8px'
+                                        }}>
+                                            <UserDropdown
+                                                users={this.state.supervisors}
+                                                selectedUser={this.state.selectedSupervisor}
+                                                onSelectUser={this.handleSelectSupervisor}
+                                                label='Superviseur'
+                                            />
+                                        </div>) : null
+                                    }
+                                    <div style={{ height: '50px', width: '150px', marginRight: '8px' }}>
+                                        <UserDropdown
+                                            users={this.state.delegates}
+                                            selectedUser={this.state.selectedDelegate}
+                                            onSelectUser={this.handleSelectDelegate}
+                                            label='Délégué'
+                                            loading={this.state.loadingDelegates}
+                                        />
+                                    </div>
                                     <MonthYearPicker onPick={this.handleOnPickDate}></MonthYearPicker >
                                 </div>
-                                {
-                                    this.state.currentUser.type === UserType.admin ? (<div style={{ display: 'flex', height: '55px' }}>
-                                        <UserPicker delegates={this.state.supervisors} onSelect={this.handleSelectSupervisor}></UserPicker>
-                                    </div>) : null
-                                }
-                                <div style={{ display: 'flex', height: '55px' }}>
-                                    <UserPicker delegates={this.state.filteredDelegates} onSelect={this.handleSelectDelegate}></UserPicker>
-                                </div>
-                                <div style={{ width: '100%', marginTop: '5px', display: 'flex', flexGrow: '1', height: this.state.currentUser.type === UserType.admin ? 'calc(100% - 240px)' : 'calc(100% - 180px)' }} >
+                                <div style={{
+                                    width: '100%',
+
+                                    display: 'flex',
+                                    flexGrow: '1',
+                                    marginBottom: '16px',
+                                    height: 'calc(100% - 170px)'
+                                }} >
                                     <ExpenseTable data={this.state.delegteExpenses} isLoading={this.state.loadingExpensesData}></ExpenseTable>
                                 </div>
-                                <div style={{ display: 'flex', justifyContent: 'space-evenly' }}>
+                                <div style={{ display: 'flex', justifyContent: 'space-evenly', marginBottom: '8px' }}>
                                     <h6 style={{ fontSize: '16px', marginRight: '16px' }}>
                                         état: {!this.state.delegteExpensesUser.userValidation && !this.state.delegteExpensesUser.userValidation ? 'En attente' :
                                             this.state.delegteExpensesUser.userValidation && !this.state.delegteExpensesUser.userValidation ? 'Envoyée' : 'Approuvée'
@@ -298,24 +264,27 @@ class ExpensePage extends Component<{}, ExpensePageProps> {
                         </CustomTabPanel>
                         <CustomTabPanel style={{ display: 'flex', flexDirection: 'row', flexGrow: '1', height: 'calc(100% - 50px)', width: '100%' }} value={this.state.index} index={1} >
                             <div style={{ display: 'flex', flexDirection: 'column', flexGrow: '1', height: 'calc(100% - 40px)', width: '100%', }}>
-                                <div className='search-bar'>
-                                    <Form>
-                                        <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
-                                            <Form.Control type="search" placeholder="Recherche" onChange={this.handleSearchTextChange} />
-                                        </Form.Group>
-                                    </Form>
-                                    <button onClick={this.handleKamFilter} className="btn btn-primary" style={{ backgroundColor: '#fff', border: '#ddd solid 1px', height: '38px' }}>
-                                        <FontAwesomeIcon icon={faSearch} style={{ color: 'black' }} />
-                                    </button>
+                                <div style={{ display: 'flex', justifyContent: 'stretch', flexGrow: '1', marginTop: '16px' }}>
+                                    <div style={{ height: '50px', width: '150px', margin: '0px 8px' }}>
+                                        <UserDropdown
+                                            users={this.state.kams}
+                                            selectedUser={this.state.selectedKam}
+                                            onSelectUser={this.handleSelectKam}
+                                            label='Kam'
+                                        />
+                                    </div>
                                     <MonthYearPicker onPick={this.handleOnPickDate}></MonthYearPicker >
                                 </div>
-                                <div style={{ display: 'flex', height: '55px' }}>
-                                    <UserPicker delegates={this.state.filteredKams} onSelect={this.handleSelectKam}></UserPicker>
-                                </div>
-                                <div style={{ width: '100%', marginTop: '5px', display: 'flex', flexGrow: '1', height: this.state.currentUser.type === UserType.admin ? 'calc(100% - 240px)' : 'calc(100% - 180px)' }} >
+                                <div style={{
+                                    width: '100%',
+                                    marginBottom: '16px',
+                                    display: 'flex',
+                                    flexGrow: '1',
+                                    height: 'calc(100% - 170px)'
+                                }} >
                                     <ExpenseTable data={this.state.kamExpenses} isLoading={this.state.loadingExpensesData}></ExpenseTable>
                                 </div>
-                                <div style={{ display: 'flex', justifyContent: 'space-evenly' }}>
+                                <div style={{ display: 'flex', justifyContent: 'space-evenly', marginBottom: '8px' }}>
                                     <h6 style={{ fontSize: '16px', marginRight: '16px' }}>
                                         état: {!this.state.kamExpensesUser.userValidation && !this.state.kamExpensesUser.userValidation ? 'En attente' :
                                             this.state.kamExpensesUser.userValidation && !this.state.kamExpensesUser.userValidation ? 'Envoyée' : 'Approuvée'

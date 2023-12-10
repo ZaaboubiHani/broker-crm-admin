@@ -64,7 +64,14 @@ const ClientsPharmacyTable: React.FC<ClientsPharmacyTableProps> = ({ total, size
 
     return (
 
-        <div id={id} style={{ display: 'flex', flexDirection: 'column', flexGrow: '1', }}>
+        <div id={id} style={{
+            display: 'flex',
+            flexDirection: 'column',
+            flexGrow: '1',
+            marginBottom: '8px',
+            borderRadius: '8px',
+            backgroundColor: 'rgba(255,255,255,0.5)',
+        }}>
             {
                 isLoading ? (<div style={{
                     width: '100%',

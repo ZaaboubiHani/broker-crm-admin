@@ -18,17 +18,11 @@
     height: calc(100% - 145px);
 }
 
-.command-delegate-container
-#command-delegatetable{
-    width: 40%;
-}
 
-.table-panel
 #command-cam-table{
     width: 60%;
 }
 
-.table-panel
 #command-delegate-table{
     width: 60%;
 }

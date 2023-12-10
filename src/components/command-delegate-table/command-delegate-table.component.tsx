@@ -110,7 +110,7 @@ const CommandDelegateTable: React.FC<CommandDelegateTableProps> = ({ data, id, i
         {
             field: 'honor', headerName: 'Honorer', width: 80,
             renderCell(params) {
-                return ( <Switch disabled={switchesEnablers[params.row.index]} checked={switchesState[params.row.index]}
+                return (<Switch disabled={switchesEnablers[params.row.index]} checked={switchesState[params.row.index]}
                     onChange={() => handleSwitchChange(params.row.index)}
                 />);
             },
@@ -127,7 +127,15 @@ const CommandDelegateTable: React.FC<CommandDelegateTableProps> = ({ data, id, i
 
 
     return (
-        <div id={id} style={{ display: 'flex', flexDirection: 'column', flexGrow: '1', marginRight: '16px' }}>
+        <div id={id} style={{
+            display: 'flex',
+            flexDirection: 'column',
+            flexGrow: '1',
+            margin: '0px 8px 8px 8px',
+            borderRadius: '8px',
+            backgroundColor: 'rgba(255,255,255,0.5)',
+           
+        }}>
             {
                 isLoading ? (<div style={{
                     width: '100%',
@@ -156,11 +164,11 @@ const CommandDelegateTable: React.FC<CommandDelegateTableProps> = ({ data, id, i
                                     client: row.visit?.client?.name,
                                     amount: row.totalRemised?.toLocaleString('fr-DZ', { style: 'currency', currency: 'DZD' }),
                                     location: `${row.visit?.client?.wilaya}, ${row.visit?.client?.commune}`,
-                                  
+
                                     command: row,
                                     finalSupplier: row.finalSupplier,
                                     suppliers: row.suppliers,
-                                    index:index,
+                                    index: index,
                                 };
                             })]}
                         columns={columns}

@@ -25,6 +25,7 @@ interface ReportPageProps {
     isLoading: boolean;
     loadingVisitsData: boolean;
     loadingReportData: boolean;
+    loadingDelegates: boolean;
     delegateSearchText: string;
     kamSearchText: string;
     selectedVisit?: VisitModel;
@@ -55,6 +56,7 @@ class ReportPage extends Component<{}, ReportPageProps> {
             isLoading: true,
             loadingVisitsData: false,
             loadingReportData: false,
+            loadingDelegates: false,
             delegateVisits: [],
             kamVisits: [],
             delegateSearchText: '',
@@ -171,17 +173,28 @@ class ReportPage extends Component<{}, ReportPageProps> {
     }
 
     handleSelectSupervisor = async (supervisor: UserModel) => {
-        this.setState({ delegatePage: 1, delegates: [], totalDelegate: 0 });
+        this.setState({
+            delegatePage: 1,
+            delegates: [],
+            totalDelegate: 0,
+            delegateVisits: [],
+            loadingDelegates: true,
+        });
         var delegates = await this.userService.getUsersByCreator(supervisor!.id!, UserType.delegate);
 
         this.setState({
             selectedSupervisor: supervisor,
             delegates: delegates,
+            loadingDelegates: false,
         });
     }
 
     handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
-        this.setState({ index: newValue, selectedVisit: undefined, reportData: undefined });
+        this.setState({
+            index: newValue,
+            selectedVisit: undefined,
+            reportData: undefined,
+        });
     };
 
 
@@ -239,12 +252,13 @@ class ReportPage extends Component<{}, ReportPageProps> {
                                             />
                                         </div>) : null
                                     }
-                                    <div style={{ height: '50px', width: '150px', marginRight: '8px' }}>
+                                    <div style={{ height: '40px', width: '150px', marginRight: '8px' }}>
                                         <UserDropdown
                                             users={this.state.delegates}
                                             selectedUser={this.state.selectedDelegate}
                                             onSelectUser={this.handleSelectDelegate}
                                             label='Délégué'
+                                            loading={this.state.loadingDelegates}
                                         />
                                     </div>
                                     <MonthYearPicker onPick={this.handleOnPickDate}></MonthYearPicker >
@@ -253,7 +267,7 @@ class ReportPage extends Component<{}, ReportPageProps> {
                                     width: '100%',
                                     flexGrow: '1',
                                     display: 'flex',
-                                    height: '100%'
+                                    height: 'calc(100% - 60px)'
                                 }} >
                                     <ReportTable
                                         total={this.state.totalDelegate}
@@ -277,6 +291,7 @@ class ReportPage extends Component<{}, ReportPageProps> {
                                             this.state.loadingReportData ?
                                                 (<div style={{
                                                     width: '100%',
+                                                    height: '100%',
                                                     overflow: 'hidden',
                                                     flexGrow: '1',
                                                     display: 'flex',
@@ -320,7 +335,7 @@ class ReportPage extends Component<{}, ReportPageProps> {
                                     width: '100%',
                                     flexGrow: '1',
                                     display: 'flex',
-                                    height: '100%'
+                                    height: 'calc(100% - 60px)'
                                 }} key={0}>
                                     <ReportTable
                                         total={this.state.totalKam}
@@ -344,6 +359,7 @@ class ReportPage extends Component<{}, ReportPageProps> {
                                             this.state.loadingReportData ?
                                                 (<div style={{
                                                     width: '100%',
+                                                    height: '100%',
                                                     overflow: 'hidden',
                                                     flexGrow: '1',
                                                     display: 'flex',

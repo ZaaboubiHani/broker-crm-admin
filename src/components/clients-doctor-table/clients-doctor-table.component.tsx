@@ -46,7 +46,15 @@ const ClientsDoctorTable: React.FC<ClientsDoctorTableProps> = ({ total, size, pa
     ];
 
     return (
-        <div id={id} style={{ display: 'flex', flexDirection: 'column', flexGrow: '1', marginRight: '16px' }}>
+        <div id={id} style={{
+            display: 'flex',
+            flexDirection: 'column',
+            flexGrow: '1',
+            marginRight: '16px',
+            borderRadius: '8px',
+            marginBottom: '8px',
+            backgroundColor: 'rgba(255,255,255,0.5)',
+        }}>
             {
                 isLoading ? (<div style={{
                     width: '100%',
@@ -56,6 +64,7 @@ const ClientsDoctorTable: React.FC<ClientsDoctorTableProps> = ({ total, size, pa
                     display: 'flex',
                     justifyContent: 'center',
                     alignItems: 'center',
+
                 }}>
                     <DotSpinner
                         size={40}

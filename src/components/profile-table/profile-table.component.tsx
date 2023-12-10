@@ -93,7 +93,7 @@ const ProfileTable: React.FC<ProfileTableProps> = ({ data, isLoading, wilayas, }
         },
         {
             field: 'wilayat', headerName: 'Wilayat', width: 250,
-
+            headerAlign: 'center',
             renderCell(params) {
                 return params.row.type === 'Superviseur' ? (
                     <div style={{ width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'end', height: '60px', margin: '0px', padding: '0px' }}>
@@ -136,7 +136,14 @@ const ProfileTable: React.FC<ProfileTableProps> = ({ data, isLoading, wilayas, }
     ];
 
     return (
-        <div style={{ display: 'flex', flexDirection: 'column', flexGrow: '1', margin: '16px' }}>
+        <div style={{
+            display: 'flex',
+            flexDirection: 'column',
+            flexGrow: '1',
+            margin: '16px',
+            borderRadius: '8px',
+            backgroundColor: 'rgba(255,255,255,0.5)',
+        }}>
             {
                 isLoading ? (<div style={{
                     width: '100%',
