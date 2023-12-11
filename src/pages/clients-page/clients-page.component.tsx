@@ -203,7 +203,10 @@ class ClientsPage extends Component<{}, ClientsPageProps> {
     }
 
     componentDidMount(): void {
-        this.loadClientsPageData();
+        if (localStorage.getItem('isLogged') === 'true') {
+
+            this.loadClientsPageData();
+        }
     }
 
     render() {

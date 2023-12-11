@@ -186,7 +186,10 @@ class RevenuePage extends Component<{}, RevenuePageProps> {
 
 
     componentDidMount() {
-        this.loadRevenuePageData();
+        if (localStorage.getItem('isLogged') === 'true') {
+           
+            this.loadRevenuePageData();
+        }
     }
 
     render() {
@@ -229,7 +232,7 @@ class RevenuePage extends Component<{}, RevenuePageProps> {
                         <MonthYearPicker onPick={this.handleOnPickDate}></MonthYearPicker >
 
                     </div>
-                    <div style={{ margin: '0px 8px', display: 'flex', justifyContent: 'space-between', padding: '4px', backgroundColor: 'white', borderRadius: '8px' }}>
+                    <div style={{ margin: '0px 8px 0px 16px', display: 'flex', justifyContent: 'space-between', padding: '4px', backgroundColor: 'white', borderRadius: '8px' }}>
                         <CircularProgressLabel
                             colorStroke='#FC761E'
                             direction='row'
@@ -251,7 +254,12 @@ class RevenuePage extends Component<{}, RevenuePageProps> {
                     </div>
                     <div style={{ width: '100%', display: 'flex', flexGrow: '1', height: 'calc(100% - 500px)' }}>
                         <RevenueTable id='revenue-table' data={this.state.filteredRevenues} isLoading={this.state.loadingRevenuesData} displayDetails={this.handleDisplayDetails}></RevenueTable>
-                        <div style={{ width: '40%', backgroundColor: 'rgba(255,255,255,0.5)', margin: '8px 0px', borderRadius: '8px' }}>
+                        <div style={{
+                            width: '40%',
+                            backgroundColor: 'rgba(255,255,255,0.5)',
+                            margin: '8px 8px 8px 0px',
+                            borderRadius: '8px'
+                        }}>
                             {
                                 this.state.loadingRevenueData ?
                                     (<div style={{

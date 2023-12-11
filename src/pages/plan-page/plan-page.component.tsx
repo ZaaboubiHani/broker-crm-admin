@@ -96,10 +96,10 @@ class PlanPage extends Component<{}, PlanPageProps> {
         let report = await this.reportService.getReportOfClient(clientId, date);
         this.setState({ loadingReport: false, delegateReport: report, delegateVisit: visit });
     }
+
     handleBackReportPanel = () => {
         this.setState({ loadingReport: false, delegateReport: undefined, delegateVisit: undefined });
     }
-
 
     handleSelectDelegate = async (delegate: UserModel) => {
         this.setState({ loadingVisitTasksData: true, selectedVisitTaskDate: undefined, visitTaskDetails: [], selectedIndex: -1 });
@@ -186,13 +186,13 @@ class PlanPage extends Component<{}, PlanPageProps> {
             objectifVisites: 0,
             successRate: 0,
             visitTasks: [],
-            loadingDelegates:false,
+            loadingDelegates: false,
         });
         this.setState({ delegates: delegates, });
     }
 
     handleSelectVisitTaskDate = async (date: Date, index: number) => {
-        this.setState({ loadingVisitTaskDetails: true, selectedIndex: index });
+        this.setState({ loadingVisitTaskDetails: true, selectedIndex: index, delegateReport: undefined });
         var tasks = await this.taskService.getAllTasksOfDelegate(date, this.state.selectedDelegate!.id!);
         var visits = await this.visitService.getAllVisitsOfDelegateDay(date, this.state.selectedDelegate!.id!);
         tasks.forEach((task) => {
@@ -204,7 +204,10 @@ class PlanPage extends Component<{}, PlanPageProps> {
         this.setState({ visitTaskDetails: tasks, loadingVisitTaskDetails: false });
     };
     componentDidMount(): void {
-        this.loadPlanPageData();
+        if (localStorage.getItem('isLogged') === 'true') {
+           
+            this.loadPlanPageData();
+        }
     }
 
     render() {
@@ -228,7 +231,9 @@ class PlanPage extends Component<{}, PlanPageProps> {
         }
         else {
             return (
+
                 <div className='plan-container'>
+
                     <div style={{ display: 'flex', justifyContent: 'stretch', flexGrow: '1', marginTop: '16px' }}>
 
                         {

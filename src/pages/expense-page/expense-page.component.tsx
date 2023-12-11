@@ -149,7 +149,10 @@ class ExpensePage extends Component<{}, ExpensePageProps> {
     };
 
     componentDidMount(): void {
-        this.loadExpensePageData();
+        if (localStorage.getItem('isLogged') === 'true') {
+           
+            this.loadExpensePageData();
+        }
     }
 
     render() {

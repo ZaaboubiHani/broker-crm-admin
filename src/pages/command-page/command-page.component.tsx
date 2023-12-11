@@ -245,7 +245,10 @@ class CommandPage extends Component<{}, CommandDelegatePageProps> {
     }
 
     componentDidMount(): void {
-        this.loadCommandPageData();
+        if (localStorage.getItem('isLogged') === 'true') {
+           
+            this.loadCommandPageData();
+        }
     }
 
     render() {

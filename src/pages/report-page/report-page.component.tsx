@@ -199,7 +199,10 @@ class ReportPage extends Component<{}, ReportPageProps> {
 
 
     componentDidMount(): void {
-        this.loadRepportPageData();
+        if (localStorage.getItem('isLogged') === 'true') {
+
+            this.loadRepportPageData();
+        }
     }
 
     render() {

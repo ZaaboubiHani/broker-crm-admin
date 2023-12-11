@@ -16,10 +16,21 @@ export default class AuthService {
                 });
             if (response.status == 200) {
                 localStorage.setItem('token', response.data['jwt']);
-                localStorage.setItem('id', response.data.user.id);
+                localStorage.setItem('isLogged', 'true');
                 return true;
             }
             return false;
+        } catch (error) {
+            return false;
+        }
+
+    }
+
+    async logout(): Promise<boolean> {
+        try {
+            localStorage.clear();
+            return true;
+
         } catch (error) {
             return false;
         }

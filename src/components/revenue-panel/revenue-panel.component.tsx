@@ -9,6 +9,7 @@ import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import Button from '@mui/material/Button';
 import Divider from '@mui/material/Divider';
+import { DataGrid, GridColDef, GridValueGetterParams } from '@mui/x-data-grid';
 
 interface RevenuePanelProps {
     showData: boolean;
@@ -20,69 +21,111 @@ interface RevenuePanelProps {
 }
 
 const RevenuePanel: React.FC<RevenuePanelProps> = ({ showData, total, totalHonored, totalNotHonored, wilayasRevenue, productsRevenue }) => {
+
+    const productsColumns: GridColDef[] = [
+        { field: 'product', headerName: 'Produit', width: 100 },
+        {
+            field: 'quantity', headerName: 'Quantité', width: 100,
+            align: 'center',
+            headerAlign: 'center'
+        },
+        {
+            field: 'total', headerName: 'Total', width: 150,
+            align: 'center',
+            headerAlign: 'center'
+        },
+        {
+            field: 'percentage', headerName: 'Pourcentage', width: 100,
+            align: 'right',
+            headerAlign: 'right'
+        },
+    ];
+
+    const wilayasColumns: GridColDef[] = [
+        {
+            field: 'wilaya',
+            headerName: 'Wilaya',
+            width: 150
+        },
+        {
+            field: 'total',
+            headerName: 'Total',
+            width: 150,
+            align: 'center',
+            headerAlign: 'center',
+        },
+        {
+            field: 'percentage',
+            headerName: 'Pourcentage',
+            width: 150,
+            align: 'right',
+            headerAlign: 'right',
+        },
+    ];
+
+
     if (showData) {
         return (
             <div style={{ margin: '16px', flexGrow: '1' }}>
                 <div>
-                    <h6 style={{ fontSize: 15, fontWeight: '600' }}>total : {total.toLocaleString('fr-DZ', { style: 'currency', currency: 'DZD' })}</h6>
-                    <h6 style={{ fontSize: 15, fontWeight: '600' }}>total honore : {totalHonored.toLocaleString('fr-DZ', { style: 'currency', currency: 'DZD' })}</h6>
-                    <h6 style={{ fontSize: 15, fontWeight: '600' }}>total non honore : {totalNotHonored.toLocaleString('fr-DZ', { style: 'currency', currency: 'DZD' })}</h6>
+                    <h6 style={{ fontSize: 15, fontWeight: '600' }}>Total : {total.toLocaleString('fr-DZ', { style: 'currency', currency: 'DZD' })}</h6>
+                    <h6 style={{ fontSize: 15, fontWeight: '600' }}>Total honore : {totalHonored.toLocaleString('fr-DZ', { style: 'currency', currency: 'DZD' })}</h6>
+                    <h6 style={{ fontSize: 15, fontWeight: '600' }}>Total non honore : {totalNotHonored.toLocaleString('fr-DZ', { style: 'currency', currency: 'DZD' })}</h6>
                 </div>
                 <Divider component="div" style={{ margin: '8px 0px' }} />
-                <h6 style={{ fontSize: 15, fontWeight: '600' }}>vente par produit:</h6>
-                <TableContainer sx={{ flexGrow: '1', display: 'flex', flexDirection: 'column', borderRadius: '8px', margin: '8px', overflow: 'hidden', border: '1px solid teal' }} component={Paper}>
-                    <Table sx={{ flexGrow: '1', display: 'flex', flexDirection: 'column', overflow: 'hidden', margin: '0px', width: "100%" }} size="small" aria-label="a dense table">
-                        <TableHead sx={{ height: '45px', marginBottom: '16px' }}>
-                            <TableRow>
-                                <TableCell sx={{ width: '25%' }}>wilaya</TableCell>
-                                <TableCell sx={{ width: '25%' }} align="left">quantite</TableCell>
-                                <TableCell sx={{ width: '25%' }} align="left">total</TableCell>
-                                <TableCell sx={{ width: '25%' }} align="left">percentage</TableCell>
-                            </TableRow>
-                        </TableHead>
-                        <TableBody sx={{ flexGrow: '1', overflowY: 'auto', overflowX: 'hidden', }}>
-                            {
+                <h6 style={{ fontSize: 15, fontWeight: '600' }}>Vente par produit:</h6>
+                <DataGrid
+                    sx={{
+                        flexGrow: '1',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        borderRadius: '8px',
+                        overflow: 'hidden',
+                        border: '1px solid teal'
+                    }}
+                    rows={
+                        [...productsRevenue.map((row, index) => {
+                            return {
+                                id: index,
+                                product: row.product,
+                                quantity: row.quantity,
+                                total: row.total?.toLocaleString('fr-DZ', { style: 'currency', currency: 'DZD' }) ?? (0)?.toLocaleString('fr-DZ', { style: 'currency', currency: 'DZD' }),
+                                percentage: row.percentage,
 
-                                productsRevenue.map((row, index) => (
-                                    <TableRow
-                                        sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-                                    >
-
-                                        <TableCell sx={{ width: '27%' }} align="left">{row.product}</TableCell>
-                                        <TableCell sx={{ width: '27%' }} align="left">{row.quantity}</TableCell>
-                                        <TableCell sx={{ width: '27%' }} align="left">{row.total?.toLocaleString('fr-DZ', { style: 'currency', currency: 'DZD' })}</TableCell>
-                                        <TableCell sx={{ width: '27%' }} align="left">{row.percentage}</TableCell>
-
-                                    </TableRow>
-                                ))}
-                        </TableBody>
-                    </Table>
-                </TableContainer>
+                            };
+                        })]}
+                    columns={productsColumns}
+                    hideFooterPagination={true}
+                    hideFooter={true}
+                    checkboxSelection={false}
+                />
                 <Divider component="div" style={{ margin: '8px 0px' }} />
-                <h6 style={{ fontSize: 15, fontWeight: '600' }}>vente par wilaya:</h6>
-                <TableContainer sx={{ flexGrow: '1', display: 'flex', flexDirection: 'column', borderRadius: '8px', margin: '8px', overflow: 'hidden', border: '1px solid teal' }} component={Paper}>
-                    <Table sx={{ flexGrow: '1', display: 'flex', flexDirection: 'column', overflow: 'hidden', margin: '0px', width: "100%" }} size="small" aria-label="a dense table">
-                        <TableHead sx={{ height: '45px', marginBottom: '16px' }}>
-                            <TableRow>
-                                <TableCell sx={{ width: '34%' }}>wilaya</TableCell>
-                                <TableCell sx={{ width: '34%' }} align="left">total</TableCell>
-                                <TableCell sx={{ width: '34%' }} align="left">percentage</TableCell>
-                            </TableRow>
-                        </TableHead>
-                        <TableBody sx={{ flexGrow: '1', overflowY: 'auto', overflowX: 'hidden', }}>
-                            {
-                                wilayasRevenue.map((row, index) => (
-                                    <TableRow
-                                        sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-                                    >
-                                        <TableCell sx={{ width: '40%' }} align="left">{row.wilaya}</TableCell>
-                                        <TableCell sx={{ width: '40%' }} align="left">{row.total?.toLocaleString('fr-DZ', { style: 'currency', currency: 'DZD' })}</TableCell>
-                                        <TableCell sx={{ width: '40%' }} align="left">{row.percentage}</TableCell>
-                                    </TableRow>
-                                ))}
-                        </TableBody>
-                    </Table>
-                </TableContainer>
+                <h6 style={{ fontSize: 15, fontWeight: '600' }}>Vente par wilaya:</h6>
+                <DataGrid
+                    sx={{
+                        flexGrow: '1',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        borderRadius: '8px',
+                        overflow: 'hidden',
+                        border: '1px solid teal'
+                    }}
+                    rows={
+                        [...wilayasRevenue.map((row, index) => {
+
+                            return {
+                                id: index,
+                                wilaya: row.wilaya,
+                                total: row.total?.toLocaleString('fr-DZ', { style: 'currency', currency: 'DZD' }) ?? (0)?.toLocaleString('fr-DZ', { style: 'currency', currency: 'DZD' }),
+                                percentage: row.percentage,
+
+                            };
+                        })]}
+                    columns={wilayasColumns}
+                    hideFooterPagination={true}
+                    hideFooter={true}
+                    checkboxSelection={false}
+                />
             </div>
         );
     } else {

@@ -1,5 +1,7 @@
 
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import YesNoDialog from '../../components/yes-no-dialog/yes-no-dialog.component';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { Nav, NavDropdown, Navbar } from 'react-bootstrap';
 import '../sidebar/sidebar.style.css';
@@ -19,18 +21,29 @@ import Button from '@mui/material/Button/Button';
 import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import NavListItem from '../nav-list-item/nav-list-item';
+import ReceiptIcon from '@mui/icons-material/Receipt';
 import { PRIMARY_COLOR } from '../../theme';
+import LogoutIcon from '@mui/icons-material/Logout';
+
 
 const Sidebar: React.FC = () => {
 
-  const [isOpen, setIsOpen] = useState<Boolean>(localStorage.getItem('sidebarOpen') === 'true');
+  const [sidebarOpen, setSidebarOpen] = useState<Boolean>(localStorage.getItem('sidebarOpen') === 'true');
+  const [dialoOpen, setDialoOpen] = useState<boolean>(false);
 
   const toggleDrawer = () => {
-    setIsOpen(!isOpen);
-    localStorage.setItem('sidebarOpen', String(!isOpen));
+    setSidebarOpen(!sidebarOpen);
+    localStorage.setItem('sidebarOpen', String(!sidebarOpen));
   };
 
   const location = useLocation();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (localStorage.getItem('isLogged') !== 'true') {
+      navigate('/');
+    }
+  }, [location]);
 
   return (
 
@@ -38,18 +51,17 @@ const Sidebar: React.FC = () => {
       overflowY: 'auto',
       overflowX: 'hidden',
       height: '100vh',
-      width: isOpen ? '220px' : '58px',
+      width: sidebarOpen ? '220px' : '58px',
       whiteSpace: 'nowrap',
       transition: 'width 0.5s ease',
       backgroundColor: 'teal',
       borderRadius: '0px 8px 8px 0px'
     }}>
-
       <div >
         <Button style={{
           display: 'block', position:
-            'absolute', left: isOpen ? '200px' : '38px',
-          bottom: "20px",
+            'absolute', left: sidebarOpen ? '200px' : '38px',
+          bottom: "16px",
           backgroundColor: 'white',
           width: '10px',
           minWidth: '10px',
@@ -67,7 +79,7 @@ const Sidebar: React.FC = () => {
               position: 'absolute',
               color: PRIMARY_COLOR,
               transition: 'opacity 0.5s ease',
-              opacity: isOpen ? '1' : '0',
+              opacity: sidebarOpen ? '1' : '0',
             }} />
           <ArrowForwardIosIcon
             style={{
@@ -77,92 +89,127 @@ const Sidebar: React.FC = () => {
               position: 'absolute',
               color: PRIMARY_COLOR,
               transition: 'opacity 0.5s ease',
-              opacity: isOpen ? '0' : '1',
+              opacity: sidebarOpen ? '0' : '1',
             }} />
         </Button>
         <img src='/images/broker_logo_white.png'
           style={{
-            margin: '0px 8px 40px 8px ',
+            margin: '0px 8px 20px 8px ',
             height: '50px',
             transition: 'opacity 0.5s ease',
-            opacity: isOpen ? '0' : '1',
+            opacity: sidebarOpen ? '0' : '1',
           }} alt="" />
         <img src="/images/broker_title.png"
           height='60px'
           style={{
-            margin: '0px 8px 40px 8px ',
+            margin: '0px 8px 20px 8px ',
             left: '0px',
             position: 'absolute',
             transition: 'opacity 0.5s ease',
-            opacity: isOpen ? '1' : '0',
+            opacity: sidebarOpen ? '1' : '0',
           }} alt="" />
 
         <NavListItem
           name='Acceuil'
           route='/home'
-          isOpen={isOpen}
+          isOpen={sidebarOpen}
           icon={<HomeIcon style={{ color: 'white', width: '30px', height: '30px', marginRight: '8px', }} />}
         />
         <NavListItem
           name='Délégués'
           route='/delegate'
-          isOpen={isOpen}
+          isOpen={sidebarOpen}
           icon={<BusinessCenterIcon style={{ color: 'white', width: '30px', height: '30px', marginRight: '8px' }} />}
         />
         <NavListItem
           name='Plan de tournée'
           route='/plan'
-          isOpen={isOpen}
+          isOpen={sidebarOpen}
           icon={<CalendarMonthIcon style={{ color: 'white', width: '30px', height: '30px', marginRight: '8px' }} />}
         />
         <NavListItem
           name='Rapports des visites'
           route='/report'
-          isOpen={isOpen}
-          icon={<EventNoteIcon style={{ color: 'white', width: '30px', height: '30px', marginRight: '8px' }} />}
+          isOpen={sidebarOpen}
+          icon={<ReceiptIcon style={{ color: 'white', width: '30px', height: '30px', marginRight: '8px' }} />}
         />
         <NavListItem
           name='Bons de commandes'
           route='/command'
-          isOpen={isOpen}
+          isOpen={sidebarOpen}
           icon={<ShoppingCartIcon style={{ color: 'white', width: '30px', height: '30px', marginRight: '8px' }} />}
         />
         <NavListItem
           name='Notes des frais'
           route='/expense'
-          isOpen={isOpen}
+          isOpen={sidebarOpen}
           icon={<PaidIcon style={{ color: 'white', width: '30px', height: '30px', marginRight: '8px' }} />}
         />
         <NavListItem
           name='Clients'
           route='/clients'
-          isOpen={isOpen}
+          isOpen={sidebarOpen}
           icon={<Diversity3Icon style={{ color: 'white', width: '30px', height: '30px', marginRight: '8px' }} />}
         />
         <NavListItem
           name="Chiffre d'affaire"
           route='/revenue'
-          isOpen={isOpen}
+          isOpen={sidebarOpen}
           icon={<CreditCardIcon style={{ color: 'white', width: '30px', height: '30px', marginRight: '8px' }} />}
         />
         <NavListItem
           name="Statistiques"
           route='/statistics'
-          isOpen={isOpen}
+          isOpen={sidebarOpen}
           icon={<InsertChartIcon style={{ color: 'white', width: '30px', height: '30px', marginRight: '8px' }} />}
         />
         <NavListItem
           name="Listes prédéfinies"
           route='/config'
-          isOpen={isOpen}
+          isOpen={sidebarOpen}
           icon={<TuneIcon style={{ color: 'white', width: '30px', height: '30px', marginRight: '8px' }} />}
         />
         <NavListItem
           name="Profil"
           route='/profile'
-          isOpen={isOpen}
+          isOpen={sidebarOpen}
           icon={<AssignmentIndIcon style={{ color: 'white', width: '30px', height: '30px', marginRight: '8px' }} />}
         />
+        <Button style={{
+          height: '35px',
+          justifyContent: 'center',
+          alignItems: 'center',
+          color: 'white',
+          marginLeft: '8px',
+          textTransform: 'none',
+          fontWeight: 'normal'
+        }}
+          onClick={() => {
+            setDialoOpen(true);
+          }}
+          variant="text">
+          <LogoutIcon style={{ width: '30px', color: 'white', marginRight: '5px' }} />
+          <div style={{
+            opacity: sidebarOpen ? '1' : '0',
+            transition: 'all 300ms ease'
+          }}>
+            Déconnecter
+          </div>
+        </Button>
+        <YesNoDialog
+          isOpen={dialoOpen}
+          onNo={() => {
+            setDialoOpen(false);
+          }}
+          onYes={() => {
+            setDialoOpen(false);
+            navigate('/');
+            localStorage.clear();
+          }}
+          onClose={() => {
+            setDialoOpen(false);
+          }}
+          message='Vous souhaitez vous déconnecter ??'></YesNoDialog>
       </div>
     </Nav>
 

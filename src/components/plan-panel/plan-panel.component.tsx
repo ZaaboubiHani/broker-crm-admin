@@ -14,10 +14,10 @@ interface PlanPanelProps {
     id?: string;
     data: TaskModel[];
     isLoading: boolean;
-    onTaskClick:(clientId:number,date:Date,visit:VisitModel)=>void;
+    onTaskClick: (clientId: number, date: Date, visit: VisitModel) => void;
 }
 
-const PlanPanel: React.FC<PlanPanelProps> = ({ id, data, isLoading ,onTaskClick}) => {
+const PlanPanel: React.FC<PlanPanelProps> = ({ id, data, isLoading, onTaskClick }) => {
 
     if (isLoading) {
         return (
@@ -40,54 +40,57 @@ const PlanPanel: React.FC<PlanPanelProps> = ({ id, data, isLoading ,onTaskClick}
     else {
         return (
             <div id={id} style={{
-                
-            flexDirection: 'row',
-            flexGrow: '1',
-            borderRadius: '8px',
+
+                flexDirection: 'row',
+                flexGrow: '1',
+                margin: '4px',
+                borderRadius: '8px',
                 display: 'flex',
                 flexWrap: 'wrap',
                 alignContent: 'start',
                 width: '100%',
                 overflowY: 'auto',
+                
             }}>
                 {
                     data.map((e) => (
-                        <Card sx={{ width: '100%',
-                         margin: '16px', 
-                         padding: '4px', 
-                         display: 'flex',
-                          height: '120px', 
-                          justifyContent: 'space-between',border:'1px solid teal' }}>
-                              <CardActionArea onClick={()=>{
-                                if(e.isDone){
-                                    onTaskClick(e.client!.id!,e.visitDate!,e.visit!);
+                        <Card sx={{
+                            width: '200px',
+                            margin: '4px',
+                            padding: '4px',
+                            display: 'flex',
+                            height: '120px',
+                            position: 'relative',
+                            justifyContent: 'space-between', border: '1px solid teal'
+                        }}>
+                            <CardActionArea onClick={() => {
+                                if (e.isDone) {
+                                    onTaskClick(e.client!.id!, e.visitDate!, e.visit!);
                                 }
-                              
-                              }}>
+
+                            }}>
                                 <CardContent sx={{ margin: 0, padding: '0px 0px 4px 8px' }}>
-                                    <Typography gutterBottom sx={{ margin: 0, fontSize: '15px' }} component="div">
+                                    <Typography gutterBottom sx={{ margin: 0, fontSize: '14px',maxWidth:'160px' }} component="div">
                                         {e.client?.name}
                                     </Typography>
                                     <Typography variant="body2" sx={{ margin: 0, fontSize: '13px' }} color="text.secondary">
                                         spécialité: {e.client?.speciality}
                                     </Typography>
                                 </CardContent>
-                                <Typography sx={{ margin: "0px", fontSize: '12px', whiteSpace: 'nowrap' }} variant="body2" color="text.secondary">
+                                <Typography sx={{ margin: "0px", fontSize: '11px', whiteSpace: 'nowrap' }} variant="body2" color="text.secondary">
                                     <LocationOnIcon sx={{ width: '20px' }} /> localisation : {e.client?.wilaya}, {e.client?.commune}
                                 </Typography>
-                               
-                                <Typography sx={{ margin: "0px ", fontSize: '12px' }} variant="body2" color="text.secondary">
+
+                                <Typography sx={{ margin: "0px ", fontSize: '11px' }} variant="body2" color="text.secondary">
                                     <StarIcon sx={{ width: '20px' }} /> potentiel : {e.client?.potential === 0 ? 'C' : e.client?.potential === 1 ? 'B' : 'A'}
                                 </Typography>
                             </CardActionArea>
                             {
-                                e.isDone ? (<CheckCircleIcon style={{ display: 'block', position: 'relative', color: 'lime', right: 10, top: 0 }} />) : (<HourglassBottomIcon style={{ display: 'block', position: 'relative', color: 'orange', right: 10, top: 0 }} />)
+                                e.isDone ? (<CheckCircleIcon style={{ display: 'block', position: 'absolute', color: 'lime', right: 8, top: 8 }} />) : (<HourglassBottomIcon style={{ display: 'block', position: 'relative', color: 'orange', right: 10, top: 0 }} />)
                             }
-
                         </Card>
                     ))
                 }
-
             </div>
         );
     }
