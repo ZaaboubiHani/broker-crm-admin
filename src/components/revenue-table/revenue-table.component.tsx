@@ -41,7 +41,7 @@ const RevenueTable: React.FC<RevenueTableProps> = ({ data, id, isLoading, displa
 
 
     return (
-        <div id={id} style={{ display: 'flex', flexDirection: 'column', flexGrow: '1', margin: '8px',borderRadius:'8px',backgroundColor:'rgba(255,255,255,0.5)' }}>
+        <div id={id} style={{ display: 'flex', flexDirection: 'column', flexGrow: '1', margin: '8px 8px 8px 16px',borderRadius:'8px',backgroundColor:'rgba(255,255,255,0.5)' }}>
             {
                 isLoading ? (<div style={{
                     width: '100%',

@@ -147,7 +147,10 @@ class HomePage extends Component<{}, HomePageState> {
     };
 
     componentDidMount(): void {
-        this.loadHomePageData();
+        if (localStorage.getItem('isLogged') === 'true') {
+           
+            this.loadHomePageData();
+        }
     }
 
     handleOnPickDate = async (date: Date) => {

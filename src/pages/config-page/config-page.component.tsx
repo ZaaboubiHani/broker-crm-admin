@@ -51,7 +51,6 @@ import { NumericFormat, NumericFormatProps } from 'react-number-format';
 interface ConfigPageProps {
     currentUser: UserModel;
     isLoading: boolean;
-    hasData: boolean;
     specialityName: string;
     commentContent: string;
     motivationContent: string;
@@ -137,8 +136,7 @@ class ConfigPage extends Component<{}, ConfigPageProps> {
         super({});
         this.state = {
             currentUser: new UserModel(),
-            hasData: false,
-            isLoading: false,
+            isLoading: true,
             specialityName: '',
             commentContent: '',
             motivationContent: '',
@@ -202,49 +200,46 @@ class ConfigPage extends Component<{}, ConfigPageProps> {
 
     loadConfigPageData = async () => {
 
-        this.setState({ isLoading: true });
 
-        if (!this.state.isLoading) {
-            var specialities = await this.specialityService.getAllMedicalSpecialities();
-            var draftedSpecialities = await this.specialityService.getAllDraftedMedicalSpecialities();
-            var comments = await this.commentService.getAllComments();
-            var draftedComments = await this.commentService.getDraftedComments();
-            var motivations = await this.motivationService.getAllMotivations();
-            var draftedMotivations = await this.motivationService.getAllDraftedMotivations();
-            var suppliers = await this.supplierService.getAllSuppliers();
-            var draftedSuppliers = await this.supplierService.getAllDraftedSuppliers();
-            var wilayas = await this.wilayaService.getAllWilayas();
-            var expensesConfig = await this.expenseService.getExpensesConfig();
-            var currentUser = await this.userService.getMe();
-            var goals = await this.goalService.getAllGoalsOfUserByDateMoth(new Date(), currentUser.id!);
-            var products = await this.productService.getAllProducts();
-            var draftedProducts = await this.productService.getAllDraftedProducts();
-            var coproducts = await this.productService.getAllCoProducts();
-            var draftedCoProducts = await this.productService.getAllDraftedCoProducts();
-            if (!expensesConfig) {
-                expensesConfig = await this.expenseService.createExpensesConfig();
-            }
-            this.setState({
-                currentUser: currentUser,
-                isLoading: false,
-                hasData: true,
-                medicalSpecialities: specialities,
-                draftedComments: draftedComments,
-                draftedMotivations: draftedMotivations,
-                draftedMedicalSpecialities: draftedSpecialities,
-                draftedProducts: draftedProducts,
-                draftedSuppliers: draftedSuppliers,
-                motivations: motivations,
-                comments: comments,
-                suppliers: suppliers,
-                wilayas: wilayas,
-                expensesConfig: expensesConfig!,
-                goals: goals,
-                products: products,
-                coproducts: coproducts,
-                draftedCoProducts: draftedCoProducts,
-            });
+        var specialities = await this.specialityService.getAllMedicalSpecialities();
+        var draftedSpecialities = await this.specialityService.getAllDraftedMedicalSpecialities();
+        var comments = await this.commentService.getAllComments();
+        var draftedComments = await this.commentService.getDraftedComments();
+        var motivations = await this.motivationService.getAllMotivations();
+        var draftedMotivations = await this.motivationService.getAllDraftedMotivations();
+        var suppliers = await this.supplierService.getAllSuppliers();
+        var draftedSuppliers = await this.supplierService.getAllDraftedSuppliers();
+        var wilayas = await this.wilayaService.getAllWilayas();
+        var expensesConfig = await this.expenseService.getExpensesConfig();
+        var currentUser = await this.userService.getMe();
+        var goals = await this.goalService.getAllGoalsOfUserByDateMoth(new Date(), currentUser.id!);
+        var products = await this.productService.getAllProducts();
+        var draftedProducts = await this.productService.getAllDraftedProducts();
+        var coproducts = await this.productService.getAllCoProducts();
+        var draftedCoProducts = await this.productService.getAllDraftedCoProducts();
+        if (!expensesConfig) {
+            expensesConfig = await this.expenseService.createExpensesConfig();
         }
+        this.setState({
+            currentUser: currentUser,
+            isLoading: false,
+            medicalSpecialities: specialities,
+            draftedComments: draftedComments,
+            draftedMotivations: draftedMotivations,
+            draftedMedicalSpecialities: draftedSpecialities,
+            draftedProducts: draftedProducts,
+            draftedSuppliers: draftedSuppliers,
+            motivations: motivations,
+            comments: comments,
+            suppliers: suppliers,
+            wilayas: wilayas,
+            expensesConfig: expensesConfig!,
+            goals: goals,
+            products: products,
+            coproducts: coproducts,
+            draftedCoProducts: draftedCoProducts,
+        });
+
     }
 
     handleRemoveSpeciality = async () => {
@@ -441,9 +436,14 @@ class ConfigPage extends Component<{}, ConfigPageProps> {
         this.setState({ index: newValue });
     };
 
-    render() {
-        if (!this.state.hasData) {
+    componentDidMount(): void {
+        if (localStorage.getItem('isLogged') === 'true') {
             this.loadConfigPageData();
+        }
+    }
+
+    render() {
+        if (this.state.isLoading) {
             return (
                 <div style={{
                     width: '100%',

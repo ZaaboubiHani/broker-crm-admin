@@ -23,7 +23,6 @@ interface StatisticsPageProps {
     currentUser:UserModel;
     selectedDate: Date;
     isLoading: boolean;
-    hasData: boolean;
     searchText: string;
     delegates: UserModel[];
     filtredDelegates: UserModel[];
@@ -49,8 +48,7 @@ class StatisticsPage extends Component<{}, StatisticsPageProps> {
         this.state = {
             currentUser: new UserModel(),
             selectedDate: new Date(),
-            isLoading: false,
-            hasData: false,
+            isLoading: true,
             searchText: '',
             delegates: [],
             filtredDelegates: [],
@@ -596,9 +594,7 @@ class StatisticsPage extends Component<{}, StatisticsPageProps> {
 
     loadStatisticsPageData = async () => {
 
-        this.setState({ isLoading: true });
-
-        if (!this.state.isLoading) {
+      
             var currentUser = await this.userService.getMe();
 
             if (currentUser != undefined) {
@@ -725,17 +721,22 @@ class StatisticsPage extends Component<{}, StatisticsPageProps> {
                 this.setState({ loadingStatisticsData: false, visitGoalAreaChart: this.state.visitGoalAreaChart, visitTaskAreaChart: this.state.visitTaskAreaChart, salesAreaChart: this.state.salesAreaChart, chartPieOptions: this.state.chartPieOptions });
 
             }
-            this.setState({ isLoading: false, delegates: delegates, filtredDelegates: delegates, hasData: true,currentUser:currentUser });
-        }
+            this.setState({ isLoading: false, delegates: delegates, filtredDelegates: delegates,currentUser:currentUser });
+        
     }
 
     handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
         this.setState({ index: newValue });
     };
 
+    componentDidMount(): void {
+        if (localStorage.getItem('isLogged') === 'true') {
+           this.loadStatisticsPageData();
+        }
+    }
+
     render() {
-        if (!this.state.hasData) {
-            this.loadStatisticsPageData();
+        if (this.state.isLoading) {
             return (
                 <div style={{
                     width: '100%',

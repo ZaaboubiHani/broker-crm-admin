@@ -102,7 +102,10 @@ class ProfilePage extends Component<ProfilePageProps, ProfilePageState> {
     };
 
     componentDidMount(): void {
-        this.loadProfilePageData();
+        if (localStorage.getItem('isLogged') === 'true') {
+           
+            this.loadProfilePageData();
+        }
     }
 
     render() {

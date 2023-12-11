@@ -206,7 +206,10 @@ class DelegatePage extends Component<{}, DelegatePageState> {
     }
 
     componentDidMount(): void {
-        this.loadDelegatePageData();
+        if (localStorage.getItem('isLogged') === 'true') {
+           
+            this.loadDelegatePageData();
+        }
     }
 
     render() {
