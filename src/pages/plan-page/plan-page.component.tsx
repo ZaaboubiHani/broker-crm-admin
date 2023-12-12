@@ -26,6 +26,7 @@ import ReportPanel from '../../components/report-panel/report-panel.component';
 import VisitModel from '@/src/models/visit.model';
 import UserDropdown from '../../components/user-dropdown/user-dropdown';
 import MapDialog from '../../components/map-dialog/map-dialog.component';
+import { point } from 'leaflet';
 
 interface PlanPageProps {
     selectedDate: Date;
@@ -39,6 +40,8 @@ interface PlanPageProps {
     loadingVisitTasksData: boolean;
     isLoading: boolean;
     loadingReport: boolean;
+    loadingMap: boolean;
+    showMap: boolean;
     loadingDelegates: boolean;
     loadingVisitTaskDetails: boolean;
     visitTasks: VisitTaskModel[];
@@ -46,19 +49,17 @@ interface PlanPageProps {
     selectedVisitTaskDate?: Date;
     planDeTournee: number;
     couverturePortfeuille: number;
+    coordinates: { point: number[], name: string }[];
     moyenneVisitesParJour: number;
     objectifChiffreDaffaire: number;
     objectifVisites: number;
     successRate: number;
-    selectedIndex: number;
     currentUser: UserModel;
 }
 
-const kPrincipal = '#35d9da';
-const kSecondary = '#0A2C3B';
-const kTernary = '#3D7C98';
 
 class PlanPage extends Component<{}, PlanPageProps> {
+
     constructor({ }) {
         super({});
         this.state = {
@@ -68,17 +69,19 @@ class PlanPage extends Component<{}, PlanPageProps> {
             supervisors: [],
             loadingVisitTasksData: false,
             isLoading: true,
+            loadingMap: false,
             loadingVisitTaskDetails: false,
             loadingDelegates: false,
             visitTasks: [],
             visitTaskDetails: [],
+            coordinates: [],
+            showMap: false,
             planDeTournee: 0,
             couverturePortfeuille: 0,
             moyenneVisitesParJour: 0,
             objectifChiffreDaffaire: 0,
             objectifVisites: 0,
             successRate: 0,
-            selectedIndex: -1,
             currentUser: new UserModel(),
             loadingReport: false,
         }
@@ -102,7 +105,7 @@ class PlanPage extends Component<{}, PlanPageProps> {
     }
 
     handleSelectDelegate = async (delegate: UserModel) => {
-        this.setState({ loadingVisitTasksData: true, selectedVisitTaskDate: undefined, visitTaskDetails: [], selectedIndex: -1 });
+        this.setState({ loadingVisitTasksData: true, selectedVisitTaskDate: undefined, visitTaskDetails: [], });
         var visitTasks = await this.visitTaskService.getAllVisitsTasks(this.state.selectedDate, delegate.id!);
         this.setState({ selectedDelegate: delegate, visitTasks: visitTasks, loadingVisitTasksData: false });
         var planDeTournee = await this.statisticsService.getPlanDeTournee(this.state.selectedDate, delegate.id!);
@@ -125,7 +128,7 @@ class PlanPage extends Component<{}, PlanPageProps> {
 
     handleOnPickDate = async (date: Date) => {
         if (this.state.selectedDelegate) {
-            this.setState({ loadingVisitTasksData: true, selectedVisitTaskDate: undefined, visitTaskDetails: [], selectedIndex: -1 });
+            this.setState({ loadingVisitTasksData: true, selectedVisitTaskDate: undefined, visitTaskDetails: [], });
             var visitTasks = await this.visitTaskService.getAllVisitsTasks(date, this.state.selectedDelegate!.id!);
             var planDeTournee = await this.statisticsService.getPlanDeTournee(date, this.state.selectedDelegate!.id!);
             var couverturePortfeuille = await this.statisticsService.getCouverturePortfeuille(date, this.state.selectedDelegate!.id!);
@@ -153,6 +156,7 @@ class PlanPage extends Component<{}, PlanPageProps> {
         if (currentUser != undefined) {
             this.setState({ currentUser: currentUser });
         }
+
         if (currentUser.type === UserType.supervisor) {
             var delegates = await this.userService.getUsersByCreator(currentUser.id!, UserType.delegate);
 
@@ -171,13 +175,16 @@ class PlanPage extends Component<{}, PlanPageProps> {
     };
 
     handleSelectSupervisor = async (supervisor: UserModel) => {
+
         this.setState({
             delegates: [],
             selectedSupervisor: supervisor,
             visitTasks: [],
             loadingDelegates: true,
         });
+
         var delegates = await this.userService.getUsersByCreator(supervisor.id!, UserType.delegate);
+
         this.setState({
             planDeTournee: 0,
             couverturePortfeuille: 0,
@@ -187,12 +194,12 @@ class PlanPage extends Component<{}, PlanPageProps> {
             successRate: 0,
             visitTasks: [],
             loadingDelegates: false,
+            delegates: delegates,
         });
-        this.setState({ delegates: delegates, });
     }
 
-    handleSelectVisitTaskDate = async (date: Date, index: number) => {
-        this.setState({ loadingVisitTaskDetails: true, selectedIndex: index, delegateReport: undefined });
+    handleSelectVisitTaskDate = async (date: Date,) => {
+        this.setState({ loadingVisitTaskDetails: true, delegateReport: undefined });
         var tasks = await this.taskService.getAllTasksOfDelegate(date, this.state.selectedDelegate!.id!);
         var visits = await this.visitService.getAllVisitsOfDelegateDay(date, this.state.selectedDelegate!.id!);
         tasks.forEach((task) => {
@@ -203,9 +210,27 @@ class PlanPage extends Component<{}, PlanPageProps> {
         });
         this.setState({ visitTaskDetails: tasks, loadingVisitTaskDetails: false });
     };
+
+    handleDisplayMap = async (date: Date) => {
+        this.setState({ loadingMap: true });
+        var visits = await this.visitService.getAllVisitsOfDelegateDay(date, this.state.selectedDelegate!.id!);
+        let coordinates: { point: number[], name: string }[] = visits.map((v) => {
+            return {
+                point: (v.visitLocation ?? '0.0,0.0').split(',').map((s) => parseFloat(s)),
+                name: v.client?.name ?? ''
+            };
+        }
+        );
+        this.setState({
+            loadingMap: false,
+            showMap: true,
+            coordinates: coordinates
+        });
+    };
+
     componentDidMount(): void {
         if (localStorage.getItem('isLogged') === 'true') {
-           
+
             this.loadPlanPageData();
         }
     }
@@ -231,7 +256,6 @@ class PlanPage extends Component<{}, PlanPageProps> {
         }
         else {
             return (
-
                 <div className='plan-container'>
 
                     <div style={{ display: 'flex', justifyContent: 'stretch', flexGrow: '1', marginTop: '16px' }}>
@@ -277,7 +301,13 @@ class PlanPage extends Component<{}, PlanPageProps> {
                         height: 'calc(100% - 220px)',
 
                     }}>
-                        <PlanTable onDisplayDetails={this.handleSelectVisitTaskDate} isLoading={this.state.loadingVisitTasksData} id='plantable' data={this.state.visitTasks}></PlanTable>
+                        <PlanTable
+                            onDisplayDetails={this.handleSelectVisitTaskDate}
+                            onDisplayMap={this.handleDisplayMap}
+                            isLoading={this.state.loadingVisitTasksData}
+                            id='plantable'
+                            data={this.state.visitTasks}
+                        ></PlanTable>
                         <div style={{
                             width: '30%',
                             backgroundColor: 'rgba(255,255,255,0.5)',
@@ -318,6 +348,32 @@ class PlanPage extends Component<{}, PlanPageProps> {
                                         )
                             }
                         </div>
+                    </div>
+                    <MapDialog
+                        coordinates={this.state.coordinates}
+                        isOpen={this.state.showMap}
+                        onClose={() => {
+                            this.setState({ showMap: false });
+                        }} />
+                    <div style={{
+
+                        position: 'absolute',
+                        width: '100%',
+                        height: '100%',
+                        backgroundColor: 'rgba(0,0,0,0.2)',
+                        padding: '16px',
+                        borderRadius: '8px',
+                        display: this.state.loadingMap ? 'flex' : 'none',
+                       
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                    }}>
+                        <DotSpinner
+
+                            size={40}
+                            speed={0.9}
+                            color="black"
+                        />
                     </div>
                 </div>
             );

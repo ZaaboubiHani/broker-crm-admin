@@ -29,7 +29,7 @@ import LogoutIcon from '@mui/icons-material/Logout';
 const Sidebar: React.FC = () => {
 
   const [sidebarOpen, setSidebarOpen] = useState<Boolean>(localStorage.getItem('sidebarOpen') === 'true');
-  const [dialoOpen, setDialoOpen] = useState<boolean>(false);
+  const [dialogOpen, setDialogOpen] = useState<boolean>(false);
 
   const toggleDrawer = () => {
     setSidebarOpen(!sidebarOpen);
@@ -185,7 +185,7 @@ const Sidebar: React.FC = () => {
           fontWeight: 'normal'
         }}
           onClick={() => {
-            setDialoOpen(true);
+            setDialogOpen(true);
           }}
           variant="text">
           <LogoutIcon style={{ width: '30px', color: 'white', marginRight: '5px' }} />
@@ -197,17 +197,17 @@ const Sidebar: React.FC = () => {
           </div>
         </Button>
         <YesNoDialog
-          isOpen={dialoOpen}
+          isOpen={dialogOpen}
           onNo={() => {
-            setDialoOpen(false);
+            setDialogOpen(false);
           }}
           onYes={() => {
-            setDialoOpen(false);
+            setDialogOpen(false);
             navigate('/');
             localStorage.clear();
           }}
           onClose={() => {
-            setDialoOpen(false);
+            setDialogOpen(false);
           }}
           message='Vous souhaitez vous déconnecter ??'></YesNoDialog>
       </div>

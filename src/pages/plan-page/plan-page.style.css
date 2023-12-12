@@ -5,6 +5,7 @@
     height: 100%;
     align-items: stretch;
     background-color: #eee;
+    position: relative;
 }
 
 .table-panel{
