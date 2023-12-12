@@ -74,7 +74,7 @@ const LoginPage: React.FC = () => {
   };
 
   const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
-    event.preventDefault();
+    
     if (event.key === 'Enter') {
       handleLogin(event);
     }
