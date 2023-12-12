@@ -19,11 +19,12 @@ import MapIcon from '@mui/icons-material/Map';
 interface PlanTableProps {
     data: VisitTaskModel[];
     isLoading: boolean;
-    onDisplayDetails: (date: Date, index: number) => {};
+    onDisplayDetails: (date: Date) => {};
+    onDisplayMap: (date: Date) => {};
     id?: string;
 }
 
-const PlanTable: React.FC<PlanTableProps> = ({ data, id, isLoading, onDisplayDetails, }) => {
+const PlanTable: React.FC<PlanTableProps> = ({ data, id, isLoading, onDisplayDetails, onDisplayMap }) => {
 
 
 
@@ -35,7 +36,7 @@ const PlanTable: React.FC<PlanTableProps> = ({ data, id, isLoading, onDisplayDet
             },
         },
         {
-            field: 'sldkifu', headerName: 'Wilayas', width: 300,
+            field: 'sldkifu', headerName: 'Wilayas', width: 200,
 
             resizable: true,
 
@@ -58,16 +59,18 @@ const PlanTable: React.FC<PlanTableProps> = ({ data, id, isLoading, onDisplayDet
         {
             field: 'tasks', headerName: 'Visites programmes', width: 150,
             align: 'center',
+            headerAlign: 'center',
         },
         {
             field: 'visits', headerName: 'visites realiser', width: 150,
             align: 'center',
+            headerAlign: 'center',
         },
         {
             field: 'details', headerName: 'Details',
             renderCell(params) {
                 return (<Button onClick={() => {
-                    onDisplayDetails(params.row.date, params.row.id);
+                    onDisplayDetails(params.row.date);
                 }} variant="text">Voir</Button>);
             },
 
@@ -77,7 +80,7 @@ const PlanTable: React.FC<PlanTableProps> = ({ data, id, isLoading, onDisplayDet
             align: 'center',
             renderCell(params) {
                 return (<Button onClick={() => {
-                    onDisplayDetails(params.row.date, params.row.id);
+                    onDisplayMap(params.row.date,);
                 }} variant="text"><MapIcon /></Button>);
             },
 
