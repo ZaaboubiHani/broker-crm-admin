@@ -129,10 +129,16 @@ class ClientsPage extends Component<{}, ClientsPageProps> {
 
         var currentUser = await this.userService.getMe();
         if (currentUser.type === UserType.supervisor) {
+            var { visits: pharmVisits, total: totalPharm } = await this.visitService.getAllVisitsPaginated(1, 25, this.state.pharmSearchText, ClientType.pharmacy, this.state.currentUser.id!);
+            var { visits: docVisits, total: totalDoc } = await this.visitService.getAllVisitsPaginated(1, 25, this.state.docSearchText, ClientType.doctor, this.state.currentUser.id!);
+
             this.setState({
                 currentUser: currentUser,
                 isLoading: false,
-
+                pharmVisits: pharmVisits,
+                totalPharm: totalPharm,
+                docVisits: docVisits,
+                totalDoc: totalDoc,
             });
         } else {
             var supervisors = await this.userService.getUsersByCreator(currentUser.id!, UserType.supervisor);
