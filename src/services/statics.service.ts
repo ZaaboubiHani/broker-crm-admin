@@ -16,7 +16,7 @@ export default class StatisticsService {
             });
 
         if (response.status == 200) {
-            return response.data.percentage || 0;
+            return response.data.percentage ?? 0;
         }
         return 0;
     }
@@ -31,7 +31,7 @@ export default class StatisticsService {
             });
 
         if (response.status == 200) {
-            return response.data.couverturePortfeuille || 0;
+            return response.data.couverturePortfeuille ?? 0;
         }
         return 0;
     }
@@ -46,7 +46,7 @@ export default class StatisticsService {
             });
 
         if (response.status == 200) {
-            return response.data.moyenneVisitesParJour || 0;
+            return response.data.moyenneVisitesParJour ?? 0;
         }
         return 0;
     }
@@ -67,7 +67,7 @@ export default class StatisticsService {
             });
 
         if (response.status == 200) {
-            return response.data.objectifChiffreDaffaire || 0;
+            return response.data.objectifChiffreDaffaire ?? 0;
         }
 
         return 0;
@@ -86,7 +86,7 @@ export default class StatisticsService {
             });
 
         if (response.status == 200) {
-            return response.data.objectifVisites || 0;
+            return response.data.objectifVisites ?? 0;
         }
 
         return 0;
@@ -108,7 +108,7 @@ export default class StatisticsService {
             });
 
         if (response.status == 200) {
-            return response.data.totalChiffreDaffaireEquipe || 0;
+            return response.data.totalChiffreDaffaireEquipe ?? 0;
         }
 
         return 0;
@@ -129,7 +129,7 @@ export default class StatisticsService {
             });
 
         if (response.status == 200) {
-            return response.data.totalChiffreDaffaireDelegate || 0;
+            return response.data.totalChiffreDaffaireDelegate ?? 0;
         }
 
         return 0;
@@ -288,7 +288,7 @@ export default class StatisticsService {
 
         if (response.status == 200) {
 
-            return response.data.delegateSuccessRate || 0;
+            return response.data.delegateSuccessRate ?? 0;
         }
 
         return 0;

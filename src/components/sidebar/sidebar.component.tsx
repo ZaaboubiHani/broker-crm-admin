@@ -1,5 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
+import { PRIMARY_COLOR, PRIMARY_COLOR_HIGHLIGHT } from '../../theme';
 import { useNavigate } from 'react-router-dom';
 import YesNoDialog from '../../components/yes-no-dialog/yes-no-dialog.component';
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -22,14 +23,34 @@ import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import NavListItem from '../nav-list-item/nav-list-item';
 import ReceiptIcon from '@mui/icons-material/Receipt';
-import { PRIMARY_COLOR } from '../../theme';
 import LogoutIcon from '@mui/icons-material/Logout';
+import { styled } from '@mui/material/styles';
+import Tooltip, { TooltipProps, tooltipClasses } from '@mui/material/Tooltip';
+import Typography from '@mui/material/Typography';
+
+
+const HtmlTooltip = styled(({ className, ...props }: TooltipProps) => (
+  <Tooltip {...props} classes={{ popper: className }} TransitionProps={{ timeout: 250 }}/>
+))(({ theme }) => ({
+  [`& .${tooltipClasses.tooltip}`]: {
+    top: '-18px',
+    left: '-165px',
+    position: 'absolute',
+    backgroundColor: '#f5f5f9',
+    color: 'rgba(0, 0, 0, 0.87)',
+    maxWidth: 220,
+    width: 'max-content',
+    fontSize: theme.typography.pxToRem(12),
+    border: '1px solid #dadde9',
+  },
+}));
 
 
 const Sidebar: React.FC = () => {
 
   const [sidebarOpen, setSidebarOpen] = useState<Boolean>(localStorage.getItem('sidebarOpen') === 'true');
   const [dialogOpen, setDialogOpen] = useState<boolean>(false);
+  const [onHoverBool, setOnHoverBool] = useState(false);
 
   const toggleDrawer = () => {
     setSidebarOpen(!sidebarOpen);
@@ -94,7 +115,7 @@ const Sidebar: React.FC = () => {
         </Button>
         <img src='/images/broker_logo_white.png'
           style={{
-            margin: '0px 8px 32px 8px ',
+            margin: '0px 8px 32px 4px ',
             height: '50px',
             transition: 'opacity 0.5s ease',
             opacity: sidebarOpen ? '0' : '1',
@@ -175,29 +196,47 @@ const Sidebar: React.FC = () => {
           isOpen={sidebarOpen}
           icon={<AssignmentIndIcon style={{ color: 'white', width: '30px', height: '30px', marginRight: '8px' }} />}
         />
-        <Button 
-        className='logout-btn'
-        style={{
-          height: '35px',
-          justifyContent: 'center',
-          alignItems: 'center',
-          color: 'white',
-          marginLeft: '8px',
-          textTransform: 'none',
-          fontWeight: 'normal',
-        }}
-          onClick={() => {
-            setDialogOpen(true);
-          }}
-          variant="text">
-          <LogoutIcon style={{ width: '30px', color: 'white', marginRight: '5px' }} />
-          <div style={{
-            opacity: sidebarOpen ? '1' : '0',
-            transition: 'all 300ms ease'
-          }}>
-            Déconnecter
-          </div>
-        </Button>
+        <HtmlTooltip
+          sx={{ display: sidebarOpen ? 'none' : 'block' }}
+          title={
+            <React.Fragment>
+              <Typography color="inherit">Déconnecter</Typography>
+            </React.Fragment>
+          } placement='right'>
+
+          <Button
+            className='logout-btn'
+            style={{
+              marginTop: '16px',
+              height: '45px',
+              width: '220px',
+              justifyContent: 'start',
+              alignItems: 'center',
+              color: 'white',
+              textTransform: 'none',
+              padding: '0px 0px 0px 16px',
+              fontWeight: 'normal',
+              backgroundColor: onHoverBool ? PRIMARY_COLOR_HIGHLIGHT : 'transparent',
+            }}
+            onClick={() => {
+              setDialogOpen(true);
+            }}
+            onMouseEnter={() => {
+              setOnHoverBool(true);
+            }}
+            onMouseLeave={() => {
+              setOnHoverBool(false);
+            }}
+            variant="text">
+            <LogoutIcon style={{ width: '30px', color: 'white', marginRight: '5px' }} />
+            <div style={{
+              opacity: sidebarOpen ? '1' : '0',
+              transition: 'all 300ms ease'
+            }}>
+              Déconnecter
+            </div>
+          </Button>
+        </HtmlTooltip>
         <YesNoDialog
           isOpen={dialogOpen}
           onNo={() => {
