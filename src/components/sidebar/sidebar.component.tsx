@@ -94,7 +94,7 @@ const Sidebar: React.FC = () => {
         </Button>
         <img src='/images/broker_logo_white.png'
           style={{
-            margin: '0px 8px 20px 8px ',
+            margin: '0px 8px 32px 8px ',
             height: '50px',
             transition: 'opacity 0.5s ease',
             opacity: sidebarOpen ? '0' : '1',
@@ -102,7 +102,7 @@ const Sidebar: React.FC = () => {
         <img src="/images/broker_title.png"
           height='60px'
           style={{
-            margin: '0px 8px 20px 8px ',
+            margin: '0px 8px 32px 8px ',
             left: '0px',
             position: 'absolute',
             transition: 'opacity 0.5s ease',
@@ -175,14 +175,16 @@ const Sidebar: React.FC = () => {
           isOpen={sidebarOpen}
           icon={<AssignmentIndIcon style={{ color: 'white', width: '30px', height: '30px', marginRight: '8px' }} />}
         />
-        <Button style={{
+        <Button 
+        className='logout-btn'
+        style={{
           height: '35px',
           justifyContent: 'center',
           alignItems: 'center',
           color: 'white',
           marginLeft: '8px',
           textTransform: 'none',
-          fontWeight: 'normal'
+          fontWeight: 'normal',
         }}
           onClick={() => {
             setDialogOpen(true);

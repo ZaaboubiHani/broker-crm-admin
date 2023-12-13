@@ -112,7 +112,7 @@ const PlanTable: React.FC<PlanTableProps> = ({ data, id, isLoading, onDisplayDet
             display: 'flex',
             flexDirection: 'column',
             flexGrow: '1',
-            margin: '0px 8px 8px 16px',
+            margin: '0px 8px 8px 8px',
             borderRadius: '8px',
             backgroundColor: 'rgba(255,255,255,0.5)'
         }}>
