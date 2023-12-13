@@ -5,7 +5,6 @@ import { useLocation } from 'react-router-dom';
 import { styled } from '@mui/material/styles';
 import Tooltip, { TooltipProps, tooltipClasses } from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
-import { posix } from 'path';
 
 interface NavListItemProps {
     name: string,
@@ -16,7 +15,7 @@ interface NavListItemProps {
 
 
 const HtmlTooltip = styled(({ className, ...props }: TooltipProps) => (
-    <Tooltip {...props} classes={{ popper: className }} />
+    <Tooltip {...props} classes={{ popper: className }} TransitionProps={{ timeout: 250 }}/>
 ))(({ theme }) => ({
     [`& .${tooltipClasses.tooltip}`]: {
         top: '-18px',
