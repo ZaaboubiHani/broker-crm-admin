@@ -86,7 +86,7 @@ const PlanPanel: React.FC<PlanPanelProps> = ({ id, data, isLoading, onTaskClick 
                                 </Typography>
                             </CardActionArea>
                             {
-                                e.isDone ? (<CheckCircleIcon style={{ display: 'block', position: 'absolute', color: 'lime', right: 8, top: 8 }} />) : (<HourglassBottomIcon style={{ display: 'block', position: 'relative', color: 'orange', right: 10, top: 0 }} />)
+                                e.isDone ? (<CheckCircleIcon style={{ display: 'block', position: 'absolute', color: 'lime', right: 8, top: 8 }} />) : (<HourglassBottomIcon style={{ display: 'block', position: 'absolute', color: 'orange', right: 8, top: 8 }} />)
                             }
                         </Card>
                     ))

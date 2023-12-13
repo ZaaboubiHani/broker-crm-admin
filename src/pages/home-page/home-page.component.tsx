@@ -298,7 +298,6 @@ class HomePage extends Component<{}, HomePageState> {
         }
         else {
             return (
-
                 <div style={{ display: 'flex', flexDirection: 'column', height: '100%', width: '100%', backgroundColor: '#eee' }}>
                     <Box sx={{ width: '100%', height: '100%' }}>
                         <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>

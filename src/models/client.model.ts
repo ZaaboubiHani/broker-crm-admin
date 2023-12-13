@@ -13,6 +13,7 @@ export default class ClientModel{
     wilaya?: string;
     commune?: string;
     speciality?: string;
+    location?: string;
     potential?: number;
     totalSellers?: number;
     totalPostChifa?: number;
@@ -27,6 +28,7 @@ export default class ClientModel{
         this.password = params.password;
         this.phoneOne = params.phoneOne;
         this.wilaya = params.wilaya;
+        this.location = params.location;
         this.commune = params.commune;
         this.speciality = params.speciality;
         this.potential = params.potential;
@@ -45,6 +47,7 @@ export default class ClientModel{
             commune: json?.attributes?.commun,
             speciality: json?.attributes?.relatedSpeciality?.data?.attributes?.name,
             potential: json?.attributes?.potential,
+            location: json?.attributes?.localization,
             totalSellers: json?.attributes?.totalSellers,
             totalPostChifa: json?.attributes?.totalPostChifa,
             type: json?.attributes?.relatedSpeciality?.data?.id === 1 ? ClientType.pharmacy : json?.attributes?.relatedSpeciality?.data?.id === 2 ? ClientType.wholesaler : ClientType.doctor,
