@@ -1,5 +1,5 @@
-import React, { Component, Suspense, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { Component, Suspense, useState, useEffect } from 'react';
+import { useNavigate, } from 'react-router-dom';
 import '../login-page/login-page.style.css';
 import UserService from '../../services/user.service';
 import AuthService from '../../services/auth.service';
@@ -28,6 +28,7 @@ const LoginPage: React.FC = () => {
   const [identifier, setIdentifier] = useState<string>('');
   const [password, setPassword] = useState<string>('');
   const [isLogging, setIsLogging] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
   const [showSnackbar, setShowSnackbar] = useState<boolean>(false);
   const [snackbarMessage, setSnackbarMessage] = useState<string>('');
 
@@ -74,13 +75,43 @@ const LoginPage: React.FC = () => {
   };
 
   const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
-    
+
     if (event.key === 'Enter') {
       handleLogin(event);
     }
   };
 
-  return (
+  const handleAutoLogin = async () => {
+    if (localStorage.getItem('isLogged') === 'true' && localStorage.getItem('jwt') !== '' && localStorage.getItem('jwt') !== undefined) {
+      let currentUser = await userService.getMe();
+      if (!currentUser.isBlocked) {
+        navigate('/home');
+      }else{
+        localStorage.clear();
+      }
+
+    }
+    setIsLoading(false);
+  }
+
+  useEffect(() => {
+    handleAutoLogin();
+  }, []);
+
+
+  return isLoading ? (<div style={{
+    width: '100%',
+    height: '100vh',
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+  }}>
+    <DotSpinner
+      size={40}
+      speed={0.9}
+      color="black"
+    />
+  </div>) : (
     <div className='login-container'>
       <div className='login-border'>
         <h2 style={{ fontWeight: 'bold', textAlign: 'center' }}>Se connecter</h2>
@@ -116,32 +147,7 @@ const LoginPage: React.FC = () => {
           />
         </FormControl>
         <Button variant="primary" onClick={handleLogin} style={{ backgroundColor: 'teal' }}>Connecter</Button>
-        {/* <Form style={{ height: '100%', display: 'flex', width: '100%', flexDirection: 'column' }}>
-          <Form.Group className="mb-3" style={{ height: '100%', display: 'flex', width: '100%', flexDirection: 'column', justifyContent: 'space-around' }}>
-            <div>
-              <Form.Label>Entrez votre </Form.Label>
-              <Form.Control placeholder="name@example.com" 
-              onKeyDown={handleKeyDown}
-              
-              />
-            </div>
-            <div style={{ display: 'flex', justifyItems: 'space-between', alignItems: "flex-end" }}>
-              <div style={{ flexGrow: '1' }}>
-                <Form.Label htmlFor="inputPassword5">Mot de passe:</Form.Label>
-                <Form.Control
-                  type={showPassword ? 'text' : "password"}
-                  id="inputPassword5"
-                  aria-describedby="passwordHelpBlock"
-                 
-                  onKeyDown={handleKeyDown}
-                  autoFocus={true}
-                />
-              </div>
-              
-            </div>
-           
-          </Form.Group>
-        </Form> */}
+
       </div>
       <div style={{
         width: '80px',

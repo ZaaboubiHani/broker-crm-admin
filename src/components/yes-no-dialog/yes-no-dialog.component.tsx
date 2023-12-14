@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import '../add-client-dialog/add-client-dialog.style.css';
 import Button from '@mui/material/Button';
 import DialogTitle from '@mui/material/DialogTitle';
 import Dialog from '@mui/material/Dialog';
@@ -14,7 +13,7 @@ interface YesNoDialogProps {
 }
 
 
-const YesNoDialog: React.FC<YesNoDialogProps> = ({isOpen,message,onClose,onNo,onYes}) => {
+const YesNoDialog: React.FC<YesNoDialogProps> = ({ isOpen, message, onClose, onNo, onYes }) => {
 
     const handleClose = () => {
         onClose('selectedValue');
@@ -23,12 +22,12 @@ const YesNoDialog: React.FC<YesNoDialogProps> = ({isOpen,message,onClose,onNo,on
     return (
         <Dialog fullWidth={true} maxWidth='sm' onClose={handleClose} open={isOpen} >
             <DialogTitle>{message}</DialogTitle>
-           
+
             <DialogActions sx={{ display: 'flex', justifyContent: 'space-evenly' }}>
-                <Button onClick={()=>onYes()} variant="contained" disableElevation>
+                <Button onClick={() => onYes()} variant="contained" disableElevation>
                     Oui
                 </Button>
-                <Button onClick={()=>onNo()} variant="contained" disableElevation>
+                <Button onClick={() => onNo()} variant="contained" disableElevation>
                     Non
                 </Button>
             </DialogActions>

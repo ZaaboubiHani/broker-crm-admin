@@ -2,12 +2,7 @@ import React from 'react';
 import './profile-table.style.css';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 import UserModel, { UserType } from '../../models/user.model';
-import TableContainer from '@mui/material/TableContainer';
-import Table from '@mui/material/Table';
-import TableHead from '@mui/material/TableHead';
-import TableRow from '@mui/material/TableRow';
-import TableCell from '@mui/material/TableCell';
-import TableBody from '@mui/material/TableBody';
+import EditIcon from '@mui/icons-material/Edit';
 import { DotSpinner } from '@uiball/loaders';
 import { formatDateToYYYYMMDD } from '../../functions/date-format';
 import FormControl from '@mui/material/FormControl';
@@ -26,14 +21,16 @@ import Input from '@mui/material/Input';
 import WilayaModel from '../../models/wilaya.model';
 import TablePagination from '@mui/material/TablePagination';
 import { DataGrid, GridColDef, GridValueGetterParams } from '@mui/x-data-grid';
+import Button from '@mui/material/Button';
 
 export interface ProfileTableProps {
     data: UserModel[];
     isLoading: boolean;
-    wilayas: WilayaModel[]
+    wilayas: WilayaModel[],
+    editUser: (user:UserModel)=>void,
 }
 
-const ProfileTable: React.FC<ProfileTableProps> = ({ data, isLoading, wilayas, }) => {
+const ProfileTable: React.FC<ProfileTableProps> = ({ data, isLoading, wilayas, editUser}) => {
 
     const [stateTrigger, setStateTrigger] = React.useState<boolean>(false);
 
@@ -62,13 +59,10 @@ const ProfileTable: React.FC<ProfileTableProps> = ({ data, isLoading, wilayas, }
         { field: 'type', headerName: 'Type', width: 100 },
         {
             field: 'password', headerName: 'Mot de passe', width: 200,
-
-
             renderCell(params) {
                 return (<FormControl sx={{ m: 1, margin: '0px', padding: '0px' }} variant="standard">
-                    <InputLabel htmlFor="standard-adornment-password">Mot de passe</InputLabel>
+                    <InputLabel>Mot de passe</InputLabel>
                     <Input
-                        id="standard-adornment-password"
                         type={showPassword[params.row.index] ? 'text' : 'password'}
 
                         onChange={(event) => {
@@ -89,7 +83,6 @@ const ProfileTable: React.FC<ProfileTableProps> = ({ data, isLoading, wilayas, }
                     />
                 </FormControl>);
             },
-
         },
         {
             field: 'wilayat', headerName: 'Wilayat', width: 250,
@@ -105,7 +98,6 @@ const ProfileTable: React.FC<ProfileTableProps> = ({ data, isLoading, wilayas, }
                     <FormControl sx={{ m: 1, width: 200, margin: '0px', padding: '0px' }} size="small">
                         <InputLabel >Wilayat</InputLabel>
                         <Select
-
                             multiple
                             value={(params.row.wilayas as any[]).map<string>((w: any) => w.name?.toLowerCase() ?? '')}
                             onChange={(event) => handleChange((event.target.value as string[]), params.row.index)}
@@ -131,6 +123,15 @@ const ProfileTable: React.FC<ProfileTableProps> = ({ data, isLoading, wilayas, }
                     setStateTrigger(!stateTrigger);
                 }} checked={params.row.isBlocked} />);
             }
+        },
+        {
+            field: 'edit', headerName: 'Modifier', width: 150,
+            align: 'center',
+            renderCell(params) {
+                return (<Button onClick={() => {
+                   editUser(params.row.user.clone());
+                }} variant="text"><EditIcon/></Button>);
+            },
         },
 
     ];
@@ -176,6 +177,7 @@ const ProfileTable: React.FC<ProfileTableProps> = ({ data, isLoading, wilayas, }
                                     email: row.email,
                                     type: row.type === UserType.supervisor ? 'Superviseur' : row.type === UserType.kam ? 'Kam' : 'Délégué',
                                     isBlocked: row.isBlocked,
+                                    user:row,
                                 };
                             })]}
                         columns={columns}

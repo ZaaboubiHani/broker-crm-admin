@@ -1,12 +1,11 @@
 import React from "react";
-import '../add-client-dialog/add-client-dialog.style.css';
 import Button from '@mui/material/Button';
 import DialogTitle from '@mui/material/DialogTitle';
 import Dialog from '@mui/material/Dialog';
 import DialogContent from "@mui/material/DialogContent";
 import { Card, CardActionArea, CardMedia, DialogActions } from "@mui/material";
 import CloseIcon from '@mui/icons-material/Close';
-import { formatDateToYYYYMMDD,calculateDaysBetweenDates } from "../../functions/date-format";
+import { formatDateToYYYYMMDD, calculateDaysBetweenDates } from "../../functions/date-format";
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
@@ -57,7 +56,7 @@ const ExpenseStatsDialog: React.FC<ExpenseStatsDialogProps> = ({ onClose, isOpen
             }
         };
         initData();
-    }, [isOpen]); 
+    }, [isOpen]);
 
 
     return (
@@ -103,7 +102,7 @@ const ExpenseStatsDialog: React.FC<ExpenseStatsDialogProps> = ({ onClose, isOpen
                 </div>
                 <div style={{ display: 'flex', justifyContent: 'space-evenly' }}>
                     <h6 style={{ fontSize: '16px', }}>
-                        Nombre de jours : {calculateDaysBetweenDates(startDate , endDate)}
+                        Nombre de jours : {calculateDaysBetweenDates(startDate, endDate)}
                     </h6>
                     <h6 style={{ fontSize: '15px', }}>
                         Total Km : {expenses.map((e) => e.kmTotal || 0).reduce((sum, current) => sum + current, 0)}
@@ -114,7 +113,7 @@ const ExpenseStatsDialog: React.FC<ExpenseStatsDialogProps> = ({ onClose, isOpen
                     <h6 style={{ fontSize: '15px', }}>
                         Total autre frais : {expenses.map((e) => e.otherExpenses || 0).reduce((sum, current) => sum + current, 0).toLocaleString('fr-DZ', { style: 'currency', currency: 'DZD' }) ?? (0).toLocaleString('fr-DZ', { style: 'currency', currency: 'DZD' })}
                     </h6>
-                    <h6 style={{ fontSize: '15px',  }}>
+                    <h6 style={{ fontSize: '15px', }}>
                         Total note de frais : {expenses.map((e) => e.totalExpense || 0).reduce((sum, current) => sum + current, 0).toLocaleString('fr-DZ', { style: 'currency', currency: 'DZD' }) ?? (0).toLocaleString('fr-DZ', { style: 'currency', currency: 'DZD' })}
                     </h6>
                 </div>

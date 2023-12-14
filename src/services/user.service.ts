@@ -89,11 +89,14 @@ export default class UserService {
             });
         }
 
-        await axios.put(`${Globals.apiUrl}/updateUser`,
+        var res = await axios.put(`${Globals.apiUrl}/updateUser`,
             {
                 User: {
                     id: user.id,
-                    isBlocked: user.isBlocked
+                    isBlocked: user.isBlocked,
+                    username: user.username,
+                    email: user.email,
+                    phoneOne: user.phoneOne,
                 }
             }, {
             headers: {
@@ -197,17 +200,28 @@ export default class UserService {
 
     async getMe(): Promise<UserModel> {
         const token = localStorage.getItem('token');
-        var response = await axios.get(`${Globals.apiUrl}/users/me?populate=*`,
-            {
-                headers: {
-                    'Authorization': `Bearer ${token}`
-                }
-            });
-        if (response.status == 200) {
-            var user = UserModel.fromJson(response.data);
-            user.token = token || undefined;
-            return user;
+
+        try {
+            var response = await axios.get(`${Globals.apiUrl}/users/me?populate=*`,
+                {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+            if (response.status == 200) {
+                var user = UserModel.fromJson(response.data);
+                user.token = token || undefined;
+                return user;
+            }
+            return new UserModel({});
+        } catch (error: any) {
+            if (error.response.status === 401) {
+                return new UserModel({isBlocked:true});
+            }
+            return new UserModel({});
+
         }
-        return new UserModel({});
+
+
     }
 }

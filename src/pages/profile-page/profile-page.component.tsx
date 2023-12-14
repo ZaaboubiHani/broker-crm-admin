@@ -2,11 +2,10 @@ import React, { Component } from 'react';
 
 import CircleAvatar from '../../components/circle-avatar/circle-avatar.component';
 import UserDetails from '../../components/user-details/user-details.component';
-import User, { UserType } from '../../models/user.model';
+import UserModel, { UserType } from '../../models/user.model';
 import '../profile-page/profile-page.style.css';
 import UserService from '../../services/user.service';
-import AddClientDialog from '../../components/add-client-dialog/add-client-dialog.component';
-import UserModel from '../../models/user.model';
+import ClientDialog from '../../components/client-dialog/client-dialog.component';
 import DotSpinner from '@uiball/loaders/dist/components/DotSpinner';
 import ProfileTable from '../../components/profile-table/profile-table.component';
 import Button from '@mui/material/Button/Button';
@@ -20,14 +19,15 @@ interface ProfilePageProps {
 }
 
 interface ProfilePageState {
-    users: User[];
+    users: UserModel[];
     wilayas: WilayaModel[],
-    currentUser: User;
+    currentUser: UserModel;
+    selectedUser?: UserModel;
     loadingUsers: boolean;
     showSnackbar: boolean;
     isLoading: boolean;
     snackbarMessage: string;
-    addClientDialogIsOpen: boolean,
+    clientDialogIsOpen: boolean,
 }
 
 
@@ -44,7 +44,7 @@ class ProfilePage extends Component<ProfilePageProps, ProfilePageState> {
             users: [],
             wilayas: [],
             loadingUsers: true,
-            addClientDialogIsOpen: false
+            clientDialogIsOpen: false
         };
     }
 
@@ -56,7 +56,7 @@ class ProfilePage extends Component<ProfilePageProps, ProfilePageState> {
         if (this.state.users.some((u) => u.password !== undefined && u.password.length < 8 && u.password.length > 0)) {
             this.setState({ showSnackbar: true, snackbarMessage: 'le mot de passe doit comporter au moins 8 caractères' })
         } else {
-            this.setState({ addClientDialogIsOpen: false, loadingUsers: true });
+            this.setState({ clientDialogIsOpen: false, loadingUsers: true });
             for (var i = 0; i < this.state.users.length; i++) {
                 await this.userService.updateUser(this.state.users[i]);
             }
@@ -66,20 +66,28 @@ class ProfilePage extends Component<ProfilePageProps, ProfilePageState> {
         }
     }
 
-    handleAddUser = async (user: User) => {
-        this.setState({ addClientDialogIsOpen: false, loadingUsers: true, });
+    handleAddUser = async (user: UserModel) => {
+        this.setState({ clientDialogIsOpen: false, loadingUsers: true, });
         await this.userService.addUser(user);
 
         var users = await this.userService.getUsersByCreator(this.state.currentUser.id!, UserType.admin,);
         this.setState({ users: users, loadingUsers: false, });
     }
 
+    handleEditUser = async (user: UserModel) => {
+        this.setState({ clientDialogIsOpen: false, loadingUsers: true, });
+        await this.userService.updateUser(user);
+
+        var users = await this.userService.getUsersByCreator(this.state.currentUser.id!, UserType.admin,);
+        this.setState({ users: users, loadingUsers: false, });
+    }
+
     handleOpenAddClientDialog = () => {
-        this.setState({ addClientDialogIsOpen: true });
+        this.setState({ clientDialogIsOpen: true, selectedUser: undefined });
     }
 
     handleCloseAddClientDialog = () => {
-        this.setState({ addClientDialogIsOpen: false });
+        this.setState({ clientDialogIsOpen: false, selectedUser: undefined });
     }
 
     loadProfilePageData = async () => {
@@ -101,9 +109,13 @@ class ProfilePage extends Component<ProfilePageProps, ProfilePageState> {
         this.setState({ showSnackbar: false });
     };
 
+    handleShowUserDialog = (user: UserModel) => {
+        this.setState({ clientDialogIsOpen: true, selectedUser: user });
+    };
+
     componentDidMount(): void {
         if (localStorage.getItem('isLogged') === 'true') {
-           
+
             this.loadProfilePageData();
         }
     }
@@ -166,16 +178,18 @@ class ProfilePage extends Component<ProfilePageProps, ProfilePageState> {
                                     isLoading={false}
                                     data={this.state.users}
                                     wilayas={this.state.wilayas}
-
+                                    editUser={this.handleShowUserDialog}
                                 />}
                     </div>
-                    <AddClientDialog
+                    <ClientDialog
                         wilayas={this.state.wilayas}
                         onAdd={this.handleAddUser}
-                        isOpen={this.state.addClientDialogIsOpen}
+                        onEdit={this.handleEditUser}
+                        isOpen={this.state.clientDialogIsOpen}
                         onClose={this.handleCloseAddClientDialog}
+                        initUser={this.state.selectedUser}
                         creatorType={this.state.currentUser.type!}
-                    ></AddClientDialog>
+                    ></ClientDialog>
                     <Snackbar anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }} onClose={this.handleCloseSanckbar} open={this.state.showSnackbar} autoHideDuration={3000} message={this.state.snackbarMessage} />
                 </div>
             );

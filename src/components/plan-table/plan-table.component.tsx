@@ -83,11 +83,7 @@ const PlanTable: React.FC<PlanTableProps> = ({ data, id, isLoading, onDisplayDet
                     onDisplayMap(params.row.date,);
                 }} variant="text"><MapIcon /></Button>);
             },
-
         },
-
-
-
     ];
 
 

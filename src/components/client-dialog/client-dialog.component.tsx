@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import '../add-client-dialog/add-client-dialog.style.css';
+import React, { useState, useEffect } from "react";
+import './client-dialog.style.css';
 import Button from '@mui/material/Button';
 import ListItemText from '@mui/material/ListItemText';
 import DialogTitle from '@mui/material/DialogTitle';
@@ -18,33 +18,65 @@ import { DialogActions } from "@mui/material";
 import UserModel, { UserType } from "../../models/user.model";
 import WilayaModel from "../../models/wilaya.model";
 
-interface AddClientDialogProps {
+interface ClientDialogProps {
     isOpen: boolean,
-    onClose: (value: string) => void;
+    onClose: () => void;
     onAdd: (user: UserModel) => void,
+    onEdit: (user: UserModel) => void,
     creatorType: UserType,
     wilayas: WilayaModel[],
+    initUser?: UserModel,
 }
 
 
-const AddClientDialog: React.FC<AddClientDialogProps> = (props: AddClientDialogProps) => {
-    const { onClose, isOpen, onAdd, creatorType } = props;
+const ClientDialog: React.FC<ClientDialogProps> = (props: ClientDialogProps) => {
+    const { onClose, isOpen, onAdd, creatorType, onEdit, initUser, wilayas } = props;
     const [stateTrigger, setStateTrigger] = React.useState<boolean>(false);
 
     const [userWilayas, setUserWilayas] = React.useState<string[]>([]);
 
-    
-
     const [user, setUser] = useState<UserModel>(new UserModel({ type: creatorType === UserType.admin || creatorType === undefined ? UserType.supervisor : UserType.delegate }));
 
-    if (!isOpen) return null;
+
+    useEffect(() => {
+        var userWilayas: string[] = [];
+
+        for (var wilaya of props.wilayas) {
+            if (initUser?.wilayas!.some((w) => w.name === wilaya.name)) {
+                userWilayas.push(wilaya.name ?? '');
+            }
+        }
+
+        if(initUser){
+            setUser(initUser.clone());
+        }
+
+        setUserWilayas(userWilayas);
+    }, [initUser]);
+
+
+    if (!isOpen) {
+        return null;
+    }
+
 
     const handleAddUser = (event: React.MouseEvent<HTMLButtonElement>): void => {
         if (user != undefined) {
-            if(props.creatorType === UserType.supervisor){
+            if (props.creatorType === UserType.supervisor) {
                 user.type = UserType.delegate;
             }
             onAdd(user);
+            setUser(new UserModel({ type: creatorType === UserType.admin ? UserType.supervisor : UserType.delegate }));
+            setUserWilayas([]);
+        }
+    }
+
+    const handleEditUser = (event: React.MouseEvent<HTMLButtonElement>): void => {
+        if (user != undefined) {
+            if (props.creatorType === UserType.supervisor) {
+                user.type = UserType.delegate;
+            }
+            onEdit(user);
             setUser(new UserModel({ type: creatorType === UserType.admin ? UserType.supervisor : UserType.delegate }));
             setUserWilayas([]);
         }
@@ -82,43 +114,59 @@ const AddClientDialog: React.FC<AddClientDialogProps> = (props: AddClientDialogP
 
     const handleUsername = (event: React.ChangeEvent<HTMLInputElement>): void => {
         user.username = event.target.value;
+        if (initUser) {
+            initUser.username = event.target.value;
+            setStateTrigger(!stateTrigger);
+        }
     }
 
     const handleEmail = (event: React.ChangeEvent<HTMLInputElement>): void => {
         user.email = event.target.value;
+        if (initUser) {
+            initUser.email = event.target.value;
+            setStateTrigger(!stateTrigger);
+        }
     }
 
     const handlePassword = (event: React.ChangeEvent<HTMLInputElement>): void => {
         user.password = event.target.value;
+        if (initUser) {
+            initUser.password = event.target.value;
+            setStateTrigger(!stateTrigger);
+        }
     }
 
     const handlePhone01 = (event: React.ChangeEvent<HTMLInputElement>): void => {
         user.phoneOne = event.target.value;
+        if (initUser) {
+            initUser.phoneOne = event.target.value;
+            setStateTrigger(!stateTrigger);
+        }
     }
 
     const handleClose = () => {
         setUser(new UserModel({ type: creatorType === UserType.admin ? UserType.supervisor : UserType.delegate }));
         setUserWilayas([]);
-        onClose('selectedValue');
+        onClose();
     };
 
     return (
-        <Dialog fullWidth={true} maxWidth='sm' onClose={handleClose} open={isOpen} >
+        <Dialog fullWidth={true} maxWidth='sm' onClose={handleClose} open={isOpen}  >
             <DialogTitle>Ajouter un utilisateur</DialogTitle>
             <DialogContent>
                 <Box sx={{ flexGrow: 1, width: '550px' }}>
                     <Grid container spacing={2}>
                         <Grid item xs={4}>
-                            <TextField onChange={handleUsername} id="standard-basic" label="Nom d'utilisateur" variant="standard" />
+                            <TextField value={user?.username} onChange={handleUsername} id="standard-basic" label="Nom d'utilisateur" variant="standard" />
                         </Grid>
                         <Grid item xs={4}>
-                            <TextField onChange={handleEmail} id="standard-basic" label="Email" variant="standard" type="email" />
+                            <TextField value={user?.email} onChange={handleEmail} id="standard-basic" label="Email" variant="standard" type="email" />
                         </Grid>
                         <Grid item xs={4}>
                             <TextField onChange={handlePassword} id="standard-basic" label="Mot de passe" variant="standard" type="password" />
                         </Grid>
                         <Grid item xs={4}>
-                            <TextField onChange={handlePhone01} id="standard-basic" label="téléphone" variant="standard" type="phone" />
+                            <TextField value={user?.phoneOne} onChange={handlePhone01} id="standard-basic" label="téléphone" variant="standard" type="phone" />
                         </Grid>
 
 
@@ -130,7 +178,7 @@ const AddClientDialog: React.FC<AddClientDialogProps> = (props: AddClientDialogP
                                         <Select
                                             labelId="demo-simple-select-label"
                                             id="demo-simple-select"
-                                            defaultValue={2}
+                                            defaultValue={initUser?.type ?? 2}
                                             label="type d'utilisateur"
                                             onChange={handleTypeChange}
                                         >
@@ -141,13 +189,11 @@ const AddClientDialog: React.FC<AddClientDialogProps> = (props: AddClientDialogP
                                 </Grid>
                             ) : null
                         }
-
-
                         <Grid item xs={4}>
                             <FormControl sx={{
                                 flexGrow: '1',
                                 width: '100%',
-                                opacity: creatorType === UserType.supervisor ? '1' : user.type === UserType.kam ? '1' : '0',
+                                opacity: creatorType === UserType.supervisor || user.type === UserType.kam || initUser?.type === UserType.kam ? '1' : '0',
                                 transition: 'all 300ms ease'
                             }}>
                                 <InputLabel id="demo-multiple-checkbox-label">Wilayat</InputLabel>
@@ -160,7 +206,7 @@ const AddClientDialog: React.FC<AddClientDialogProps> = (props: AddClientDialogP
                                     input={<OutlinedInput label="Tag" />}
                                     renderValue={(selected) => selected.join(', ')}
                                 >
-                                    {props.wilayas.map((wilaya) => (
+                                    {wilayas.map((wilaya) => (
                                         <MenuItem key={wilaya.id} value={wilaya.name}>
                                             <Checkbox checked={userWilayas.indexOf(wilaya.name ?? '') > -1} />
                                             <ListItemText primary={wilaya.name} />
@@ -174,12 +220,18 @@ const AddClientDialog: React.FC<AddClientDialogProps> = (props: AddClientDialogP
                 </Box>
             </DialogContent>
             <DialogActions sx={{ display: 'flex', justifyContent: 'center' }}>
-                <Button onClick={handleAddUser} variant="contained" disableElevation>
-                    Ajouter
-                </Button>
+                {
+                    initUser ? (<Button onClick={handleEditUser} variant="contained" disableElevation>
+                        Modifier
+                    </Button>) :
+                        (<Button onClick={handleAddUser} variant="contained" disableElevation>
+                            Ajouter
+                        </Button>)
+                }
+
             </DialogActions>
         </Dialog>
     );
 }
 
-export default AddClientDialog;
+export default ClientDialog;
