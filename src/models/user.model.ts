@@ -83,6 +83,25 @@ class UserModel {
             company: json.company != null && json.company != undefined ? Company.fromJson(json.company) : undefined
         });
     }
+
+    clone(): UserModel {
+        return new UserModel({
+            id: this.id,
+            username: this.username,
+            email: this.email,
+            password: this.password,
+            token: this.token,
+            phoneOne: this.phoneOne,
+            wilaya: this.wilaya,
+            commune: this.commune,
+            type: this.type,
+            createdAt: this.createdAt,
+            isBlocked: this.isBlocked,
+            company: this.company,
+            creatorId: this.creatorId,
+            wilayas: this.wilayas,
+        });
+    }
 }
 
 export default UserModel;

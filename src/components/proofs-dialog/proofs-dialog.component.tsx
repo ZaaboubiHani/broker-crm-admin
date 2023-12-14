@@ -1,5 +1,4 @@
 import React from "react";
-import '../add-client-dialog/add-client-dialog.style.css';
 import Button from '@mui/material/Button';
 import DialogTitle from '@mui/material/DialogTitle';
 import Dialog from '@mui/material/Dialog';
@@ -47,7 +46,7 @@ const ProofsDialog: React.FC<ProofsDialogProps> = ({ onClose, isOpen, data }) =>
                                 {
                                     link.urls.length === 0 ?
                                         (
-                                            <div style={{margin:'16px 8px',borderTop:'solid #aaa 1px',width:"100%"}}>
+                                            <div style={{ margin: '16px 8px', borderTop: 'solid #aaa 1px', width: "100%" }}>
 
                                             </div>
                                         ) :
