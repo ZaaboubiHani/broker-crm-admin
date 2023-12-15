@@ -304,7 +304,7 @@ class HomePage extends Component<{}, HomePageState> {
                             <Tabs value={this.state.index} onChange={this.handleTabChange} aria-label="basic tabs example">
                                 <Tab label="Superviseurs" />
                                 {
-                                    this.state.currentUser.type === UserType.admin ? (<Tab label="Kams" />) : null
+                                    this.state.currentUser.type !== UserType.supervisor ? (<Tab label="Kams" />) : null
                                 }
                             </Tabs>
                         </Box>
@@ -321,7 +321,7 @@ class HomePage extends Component<{}, HomePageState> {
 
                                 <div style={{ display: 'flex', justifyContent: 'stretch', flexGrow: '1', marginTop: '8px' }}>
                                     {
-                                        this.state.currentUser.type === UserType.admin ? (<div style={{ height: '50px', width: '150px', marginRight: '8px' }}>
+                                         this.state.currentUser.type !== UserType.supervisor ? (<div style={{ height: '50px', width: '150px', marginRight: '8px' }}>
                                             <UserDropdown
                                                 users={this.state.supervisors}
                                                 selectedUser={this.state.selectedSupervisor}

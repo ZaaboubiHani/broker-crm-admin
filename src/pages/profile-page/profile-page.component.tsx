@@ -5,7 +5,7 @@ import UserDetails from '../../components/user-details/user-details.component';
 import UserModel, { UserType } from '../../models/user.model';
 import '../profile-page/profile-page.style.css';
 import UserService from '../../services/user.service';
-import ClientDialog from '../../components/client-dialog/client-dialog.component';
+import UserDialog from '../../components/user-dialog/user-dialog.component';
 import DotSpinner from '@uiball/loaders/dist/components/DotSpinner';
 import ProfileTable from '../../components/profile-table/profile-table.component';
 import Button from '@mui/material/Button/Button';
@@ -159,7 +159,13 @@ class ProfilePage extends Component<ProfilePageProps, ProfilePageState> {
                             <Button onClick={this.handleSaveChanges} startIcon={<SaveIcon />} sx={{ marginLeft: '16px' }} variant="outlined">Enregistrer les modifications</Button>
                         </div>
                     </div>
-                    <div style={{ width: '100%', display: 'flex', flexGrow: '1', justifyContent: 'stretch', height: '150px' }}>
+                    <div style={{
+                        width: '100%',
+                        display: 'flex',
+                        flex: '1',
+                        justifyContent: 'stretch',
+                        height: '150px'
+                    }}>
                         {
                             this.state.loadingUsers ? <div style={{
                                 width: '100%',
@@ -174,14 +180,23 @@ class ProfilePage extends Component<ProfilePageProps, ProfilePageState> {
                                     color="black"
                                 />
                             </div> :
-                                <ProfileTable
-                                    isLoading={false}
-                                    data={this.state.users}
-                                    wilayas={this.state.wilayas}
-                                    editUser={this.handleShowUserDialog}
-                                />}
+                                <div style={{
+                                    width: '100%',
+                                    display: 'flex',
+                                    flexGrow: '1',
+                                    flex: '1',
+                                    paddingBottom: '16px',
+                                }} >
+                                    <ProfileTable
+                                        isLoading={false}
+                                        data={this.state.users}
+                                        wilayas={this.state.wilayas}
+                                        editUser={this.handleShowUserDialog}
+                                    />
+                                </div>
+                        }
                     </div>
-                    <ClientDialog
+                    <UserDialog
                         wilayas={this.state.wilayas}
                         onAdd={this.handleAddUser}
                         onEdit={this.handleEditUser}
@@ -189,7 +204,7 @@ class ProfilePage extends Component<ProfilePageProps, ProfilePageState> {
                         onClose={this.handleCloseAddClientDialog}
                         initUser={this.state.selectedUser}
                         creatorType={this.state.currentUser.type!}
-                    ></ClientDialog>
+                    ></UserDialog>
                     <Snackbar anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }} onClose={this.handleCloseSanckbar} open={this.state.showSnackbar} autoHideDuration={3000} message={this.state.snackbarMessage} />
                 </div>
             );

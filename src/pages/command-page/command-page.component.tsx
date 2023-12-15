@@ -278,7 +278,7 @@ class CommandPage extends Component<{}, CommandDelegatePageProps> {
                             <Tabs value={this.state.index} onChange={this.handleTabChange} aria-label="basic tabs example">
                                 <Tab label="Délégués" />
                                 {
-                                    this.state.currentUser.type === UserType.admin ? (<Tab label="Kam" />) : null
+                                    this.state.currentUser.type !== UserType.supervisor ? (<Tab label="Kam" />) : null
                                 }
 
                             </Tabs>
@@ -287,7 +287,7 @@ class CommandPage extends Component<{}, CommandDelegatePageProps> {
                     <CustomTabPanel style={{ display: 'flex', flexDirection: 'row', flexGrow: '1', height: 'calc(100% - 50px)', padding: '0px' }} value={this.state.index} index={0} >
                         <div style={{ display: 'flex', flexDirection: 'column', flexGrow: '1', height: 'calc(100% - 40px)' }}>
                             <div style={{ display: 'flex', justifyContent: 'stretch', flexGrow: '1', marginTop: '16px' }}>
-                                {this.state.currentUser.type === UserType.admin ?
+                                {this.state.currentUser.type !== UserType.supervisor ?
                                     (<div style={{
                                         height: '50px',
                                         width: '150px',

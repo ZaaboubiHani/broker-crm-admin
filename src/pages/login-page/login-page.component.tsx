@@ -44,7 +44,9 @@ const LoginPage: React.FC = () => {
 
     if (loginSuccess) {
       var user = await userService.getMe();
-      if (user.type === UserType.admin || user.type === UserType.supervisor) {
+      if (user.type === UserType.admin || user.type === UserType.supervisor || user.type === UserType.operator) {
+
+        localStorage.setItem('userType', user.type === UserType.admin ? 'admin' : user.type === UserType.supervisor ? 'supervisor' : 'operator');
         navigate('/home');
       }
       else {
@@ -85,8 +87,9 @@ const LoginPage: React.FC = () => {
     if (localStorage.getItem('isLogged') === 'true' && localStorage.getItem('jwt') !== '' && localStorage.getItem('jwt') !== undefined) {
       let currentUser = await userService.getMe();
       if (!currentUser.isBlocked) {
+        localStorage.setItem('userType', currentUser.type === UserType.admin ? 'admin' : currentUser.type === UserType.supervisor ? 'supervisor' : 'operator');
         navigate('/home');
-      }else{
+      } else {
         localStorage.clear();
       }
 

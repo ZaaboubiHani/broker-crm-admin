@@ -244,7 +244,7 @@ class ClientsPage extends Component<{}, ClientsPageProps> {
                                 <Tab label="Pharmacies" />
                                 <Tab label="Médecins" />
                                 {
-                                    this.state.currentUser.type === UserType.admin ? (<Tab label="Grossiste" />) : null
+                                    this.state.currentUser.type !== UserType.supervisor ? (<Tab label="Grossiste" />) : null
                                 }
                             </Tabs>
                         </Box>
@@ -252,7 +252,7 @@ class ClientsPage extends Component<{}, ClientsPageProps> {
                             <div style={{ display: 'flex', flexDirection: 'column', flexGrow: '1', height: 'calc(100% - 40px)', }}>
                                 <div style={{ display: 'flex', justifyContent: 'stretch', flexGrow: '1', marginTop: '8px' }}>
                                     {
-                                        this.state.currentUser.type === UserType.admin ? (<div style={{ height: '50px', width: '150px', marginRight: '8px' }}>
+                                        this.state.currentUser.type !== UserType.supervisor ? (<div style={{ height: '50px', width: '150px', marginRight: '8px' }}>
                                             <UserDropdown
                                                 users={this.state.supervisors}
                                                 selectedUser={this.state.selectedSupervisor}
@@ -319,7 +319,7 @@ class ClientsPage extends Component<{}, ClientsPageProps> {
                             <div style={{ display: 'flex', flexDirection: 'column', flexGrow: '1', height: 'calc(100% - 48px)' }}>
                                 <div style={{ display: 'flex', justifyContent: 'stretch', flexGrow: '1', marginTop: '8px' }}>
                                     {
-                                        this.state.currentUser.type === UserType.admin ? (<div style={{ height: '50px', width: '150px', marginRight: '8px' }}>
+                                        this.state.currentUser.type !== UserType.supervisor ? (<div style={{ height: '50px', width: '150px', marginRight: '8px' }}>
                                             <UserDropdown
                                                 users={this.state.supervisors}
                                                 selectedUser={this.state.selectedSupervisor}

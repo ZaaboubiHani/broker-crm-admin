@@ -27,10 +27,10 @@ export interface ProfileTableProps {
     data: UserModel[];
     isLoading: boolean;
     wilayas: WilayaModel[],
-    editUser: (user:UserModel)=>void,
+    editUser: (user: UserModel) => void,
 }
 
-const ProfileTable: React.FC<ProfileTableProps> = ({ data, isLoading, wilayas, editUser}) => {
+const ProfileTable: React.FC<ProfileTableProps> = ({ data, isLoading, wilayas, editUser }) => {
 
     const [stateTrigger, setStateTrigger] = React.useState<boolean>(false);
 
@@ -53,8 +53,8 @@ const ProfileTable: React.FC<ProfileTableProps> = ({ data, isLoading, wilayas, e
 
     const columns: GridColDef[] = [
         { field: 'date', headerName: 'Création', width: 100 },
-        { field: 'username', headerName: 'Nom et prénom', width: 150 },
-        { field: 'phone', headerName: 'Mobile', width: 150 },
+        { field: 'username', headerName: 'Nom d\'utilisateur', width: 150 },
+        { field: 'phone', headerName: 'Mobile', width: 120 },
         { field: 'email', headerName: 'E-mail', width: 200 },
         { field: 'type', headerName: 'Type', width: 100 },
         {
@@ -87,6 +87,7 @@ const ProfileTable: React.FC<ProfileTableProps> = ({ data, isLoading, wilayas, e
         {
             field: 'wilayat', headerName: 'Wilayat', width: 250,
             headerAlign: 'center',
+            align: 'center',
             renderCell(params) {
                 return params.row.type === 'Superviseur' ? (
                     <div style={{ width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'end', height: '60px', margin: '0px', padding: '0px' }}>
@@ -116,7 +117,7 @@ const ProfileTable: React.FC<ProfileTableProps> = ({ data, isLoading, wilayas, e
             },
         },
         {
-            field: 'isBlocked', headerName: 'Blocage', width: 100,
+            field: 'isBlocked', headerName: 'Blocage', width: 80,
             renderCell(params) {
                 return (<Switch onChange={() => {
                     params.row.isBlocked = !params.row.isBlocked;
@@ -125,12 +126,12 @@ const ProfileTable: React.FC<ProfileTableProps> = ({ data, isLoading, wilayas, e
             }
         },
         {
-            field: 'edit', headerName: 'Modifier', width: 150,
+            field: 'edit', headerName: 'Modifier', width: 80,
             align: 'center',
             renderCell(params) {
                 return (<Button onClick={() => {
-                   editUser(params.row.user.clone());
-                }} variant="text"><EditIcon/></Button>);
+                    editUser(params.row.user.clone());
+                }} variant="text"><EditIcon /></Button>);
             },
         },
 
@@ -138,10 +139,12 @@ const ProfileTable: React.FC<ProfileTableProps> = ({ data, isLoading, wilayas, e
 
     return (
         <div style={{
-            display: 'flex',
-            flexDirection: 'column',
             flexGrow: '1',
-            margin: '16px',
+            display: 'flex',
+            overflow: 'hidden',
+            height: '100%',
+            width: '100%',
+            margin: '8px 8px 16px 16px',
             borderRadius: '8px',
             backgroundColor: 'rgba(255,255,255,0.5)',
         }}>
@@ -162,7 +165,7 @@ const ProfileTable: React.FC<ProfileTableProps> = ({ data, isLoading, wilayas, e
                     />
                 </div>) :
                     (<DataGrid
-
+                        sx={{ marginBottom: '16px' }}
                         rows={
                             [...data.map((row, index) => {
 
@@ -175,9 +178,9 @@ const ProfileTable: React.FC<ProfileTableProps> = ({ data, isLoading, wilayas, e
                                     phone: row.phoneOne,
                                     password: row.password,
                                     email: row.email,
-                                    type: row.type === UserType.supervisor ? 'Superviseur' : row.type === UserType.kam ? 'Kam' : 'Délégué',
+                                    type: row.type === UserType.supervisor ? 'Superviseur' : row.type === UserType.kam ? 'Kam' : row.type === UserType.operator ? 'Opératrice' : 'Délégué',
                                     isBlocked: row.isBlocked,
-                                    user:row,
+                                    user: row,
                                 };
                             })]}
                         columns={columns}
