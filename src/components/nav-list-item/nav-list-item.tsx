@@ -19,7 +19,7 @@ const HtmlTooltip = styled(({ className, ...props }: TooltipProps) => (
 ))(({ theme }) => ({
     [`& .${tooltipClasses.tooltip}`]: {
         top: '-18px',
-        left: '-165px',
+        left: '-8px',
         position: 'absolute',
         backgroundColor: '#f5f5f9',
         color: 'rgba(0, 0, 0, 0.87)',

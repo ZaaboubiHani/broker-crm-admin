@@ -118,13 +118,10 @@ class ExpensePage extends Component<{}, ExpensePageProps> {
     }
 
     loadExpensePageData = async () => {
-
         var currentUser = await this.userService.getMe();
-
         if (currentUser != undefined) {
             this.setState({ currentUser: currentUser });
         }
-
         if (currentUser.type === UserType.supervisor) {
             var delegates = await this.userService.getUsersByCreator(currentUser.id!, UserType.delegate);
 
@@ -150,7 +147,6 @@ class ExpensePage extends Component<{}, ExpensePageProps> {
 
     componentDidMount(): void {
         if (localStorage.getItem('isLogged') === 'true') {
-           
             this.loadExpensePageData();
         }
     }
@@ -216,7 +212,6 @@ class ExpensePage extends Component<{}, ExpensePageProps> {
                                 </div>
                                 <div style={{
                                     width: '100%',
-
                                     display: 'flex',
                                     flexGrow: '1',
                                     marginBottom: '16px',

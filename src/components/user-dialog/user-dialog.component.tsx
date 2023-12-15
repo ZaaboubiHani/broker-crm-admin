@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import './client-dialog.style.css';
+import './user-dialog.style.css';
 import Button from '@mui/material/Button';
 import ListItemText from '@mui/material/ListItemText';
 import DialogTitle from '@mui/material/DialogTitle';
@@ -18,7 +18,7 @@ import { DialogActions } from "@mui/material";
 import UserModel, { UserType } from "../../models/user.model";
 import WilayaModel from "../../models/wilaya.model";
 
-interface ClientDialogProps {
+interface UserDialogProps {
     isOpen: boolean,
     onClose: () => void;
     onAdd: (user: UserModel) => void,
@@ -29,14 +29,13 @@ interface ClientDialogProps {
 }
 
 
-const ClientDialog: React.FC<ClientDialogProps> = (props: ClientDialogProps) => {
+const UserDialog: React.FC<UserDialogProps> = (props: UserDialogProps) => {
     const { onClose, isOpen, onAdd, creatorType, onEdit, initUser, wilayas } = props;
     const [stateTrigger, setStateTrigger] = React.useState<boolean>(false);
 
     const [userWilayas, setUserWilayas] = React.useState<string[]>([]);
 
     const [user, setUser] = useState<UserModel>(new UserModel({ type: creatorType === UserType.admin || creatorType === undefined ? UserType.supervisor : UserType.delegate }));
-
 
     useEffect(() => {
         var userWilayas: string[] = [];
@@ -184,6 +183,7 @@ const ClientDialog: React.FC<ClientDialogProps> = (props: ClientDialogProps) => 
                                         >
                                             <MenuItem value={2}>Superviseur</MenuItem>
                                             <MenuItem value={4}>Kam</MenuItem>
+                                            <MenuItem value={5}>Opératrice</MenuItem>
                                         </Select>
                                     </FormControl>
                                 </Grid>
@@ -234,4 +234,4 @@ const ClientDialog: React.FC<ClientDialogProps> = (props: ClientDialogProps) => 
     );
 }
 
-export default ClientDialog;
+export default UserDialog;

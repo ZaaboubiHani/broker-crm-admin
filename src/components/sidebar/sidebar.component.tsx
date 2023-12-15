@@ -6,6 +6,7 @@ import YesNoDialog from '../../components/yes-no-dialog/yes-no-dialog.component'
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { Nav, NavDropdown, Navbar } from 'react-bootstrap';
 import '../sidebar/sidebar.style.css';
+import Divider from '@mui/material/Divider';
 import HomeIcon from '@mui/icons-material/Home';
 import BusinessCenterIcon from '@mui/icons-material/BusinessCenter';
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
@@ -27,10 +28,16 @@ import LogoutIcon from '@mui/icons-material/Logout';
 import { styled } from '@mui/material/styles';
 import Tooltip, { TooltipProps, tooltipClasses } from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
+import UserModel from '../../models/user.model';
 
+/*
+home page
+command page
+clients page
+*/
 
 const HtmlTooltip = styled(({ className, ...props }: TooltipProps) => (
-  <Tooltip {...props} classes={{ popper: className }} TransitionProps={{ timeout: 250 }}/>
+  <Tooltip {...props} classes={{ popper: className }} TransitionProps={{ timeout: 250 }} />
 ))(({ theme }) => ({
   [`& .${tooltipClasses.tooltip}`]: {
     top: '-18px',
@@ -50,6 +57,7 @@ const Sidebar: React.FC = () => {
 
   const [sidebarOpen, setSidebarOpen] = useState<Boolean>(localStorage.getItem('sidebarOpen') === 'true');
   const [dialogOpen, setDialogOpen] = useState<boolean>(false);
+  const [userType, setUserType] = useState<string>('');
   const [onHoverBool, setOnHoverBool] = useState(false);
 
   const toggleDrawer = () => {
@@ -60,25 +68,47 @@ const Sidebar: React.FC = () => {
   const location = useLocation();
   const navigate = useNavigate();
 
-  useEffect(() => {
+  const initData = () => {
     if (localStorage.getItem('isLogged') !== 'true') {
       navigate('/');
+    } else {
+      let type = localStorage.getItem('userType');
+      setUserType(type ?? '');
     }
+  }
+
+  useEffect(() => {
+    initData();
   }, [location]);
+
+
 
   return (
 
     <Nav style={{
       overflowY: 'auto',
       overflowX: 'hidden',
-      height: '100vh',
+      height: '100%',
+      display: 'flex',
+      flexDirection: 'column',
       width: sidebarOpen ? '220px' : '58px',
       whiteSpace: 'nowrap',
       transition: 'width 0.5s ease',
       backgroundColor: 'teal',
       borderRadius: '0px 8px 8px 0px'
     }}>
-      <div >
+      <div style={{
+      overflowY: 'auto',
+      overflowX: 'hidden',
+      height: '100%',
+      display: 'flex',
+      flexDirection: 'column',
+      width: sidebarOpen ? '220px' : '58px',
+      whiteSpace: 'nowrap',
+      transition: 'width 0.5s ease',
+      backgroundColor: 'teal',
+      borderRadius: '0px 8px 8px 0px'
+    }}>
         <Button style={{
           display: 'block', position:
             'absolute', left: sidebarOpen ? '200px' : '38px',
@@ -115,8 +145,9 @@ const Sidebar: React.FC = () => {
         </Button>
         <img src='/images/broker_logo_white.png'
           style={{
-            margin: '0px 8px 32px 4px ',
+            margin: '8px 8px 32px 4px ',
             height: '50px',
+            width: '50px',
             transition: 'opacity 0.5s ease',
             opacity: sidebarOpen ? '0' : '1',
           }} alt="" />
@@ -129,73 +160,92 @@ const Sidebar: React.FC = () => {
             transition: 'opacity 0.5s ease',
             opacity: sidebarOpen ? '1' : '0',
           }} alt="" />
-
         <NavListItem
           name='Acceuil'
           route='/home'
           isOpen={sidebarOpen}
           icon={<HomeIcon style={{ color: 'white', width: '30px', height: '30px', marginRight: '8px', }} />}
         />
-        <NavListItem
-          name='Délégués'
-          route='/delegate'
-          isOpen={sidebarOpen}
-          icon={<BusinessCenterIcon style={{ color: 'white', width: '30px', height: '30px', marginRight: '8px' }} />}
-        />
-        <NavListItem
-          name='Plan de tournée'
-          route='/plan'
-          isOpen={sidebarOpen}
-          icon={<CalendarMonthIcon style={{ color: 'white', width: '30px', height: '30px', marginRight: '8px' }} />}
-        />
-        <NavListItem
-          name='Rapports des visites'
-          route='/report'
-          isOpen={sidebarOpen}
-          icon={<ReceiptIcon style={{ color: 'white', width: '30px', height: '30px', marginRight: '8px' }} />}
-        />
+        {
+          userType !== 'operator' ? (<NavListItem
+            name='Délégués'
+            route='/delegate'
+            isOpen={sidebarOpen}
+            icon={<BusinessCenterIcon style={{ color: 'white', width: '30px', height: '30px', marginRight: '8px' }} />}
+          />) : undefined
+        }
+        {
+          userType !== 'operator' ? (<NavListItem
+            name='Plan de tournée'
+            route='/plan'
+            isOpen={sidebarOpen}
+            icon={<CalendarMonthIcon style={{ color: 'white', width: '30px', height: '30px', marginRight: '8px' }} />}
+          />) : undefined
+        }
+        {
+          userType !== 'operator' ? (<NavListItem
+            name='Rapports des visites'
+            route='/report'
+            isOpen={sidebarOpen}
+            icon={<ReceiptIcon style={{ color: 'white', width: '30px', height: '30px', marginRight: '8px' }} />}
+          />) : undefined
+        }
         <NavListItem
           name='Bons de commandes'
           route='/command'
           isOpen={sidebarOpen}
           icon={<ShoppingCartIcon style={{ color: 'white', width: '30px', height: '30px', marginRight: '8px' }} />}
         />
-        <NavListItem
-          name='Notes des frais'
-          route='/expense'
-          isOpen={sidebarOpen}
-          icon={<PaidIcon style={{ color: 'white', width: '30px', height: '30px', marginRight: '8px' }} />}
-        />
+        {
+          userType !== 'operator' ? (<NavListItem
+            name='Notes des frais'
+            route='/expense'
+            isOpen={sidebarOpen}
+            icon={<PaidIcon style={{ color: 'white', width: '30px', height: '30px', marginRight: '8px' }} />}
+          />) : undefined
+        }
         <NavListItem
           name='Clients'
           route='/clients'
           isOpen={sidebarOpen}
           icon={<Diversity3Icon style={{ color: 'white', width: '30px', height: '30px', marginRight: '8px' }} />}
         />
-        <NavListItem
-          name="Chiffre d'affaire"
-          route='/revenue'
-          isOpen={sidebarOpen}
-          icon={<CreditCardIcon style={{ color: 'white', width: '30px', height: '30px', marginRight: '8px' }} />}
-        />
-        <NavListItem
-          name="Statistiques"
-          route='/statistics'
-          isOpen={sidebarOpen}
-          icon={<InsertChartIcon style={{ color: 'white', width: '30px', height: '30px', marginRight: '8px' }} />}
-        />
-        <NavListItem
-          name="Listes prédéfinies"
-          route='/config'
-          isOpen={sidebarOpen}
-          icon={<TuneIcon style={{ color: 'white', width: '30px', height: '30px', marginRight: '8px' }} />}
-        />
-        <NavListItem
-          name="Profil"
-          route='/profile'
-          isOpen={sidebarOpen}
-          icon={<AssignmentIndIcon style={{ color: 'white', width: '30px', height: '30px', marginRight: '8px' }} />}
-        />
+        {
+          userType !== 'operator' ? (<NavListItem
+            name="Chiffre d'affaire"
+            route='/revenue'
+            isOpen={sidebarOpen}
+            icon={<CreditCardIcon style={{ color: 'white', width: '30px', height: '30px', marginRight: '8px' }} />}
+          />) : undefined
+        }
+        {
+          userType !== 'operator' ? (<NavListItem
+            name="Statistiques"
+            route='/statistics'
+            isOpen={sidebarOpen}
+            icon={<InsertChartIcon style={{ color: 'white', width: '30px', height: '30px', marginRight: '8px' }} />}
+          />) : undefined
+        }
+        {
+          userType !== 'operator' ? (<NavListItem
+            name="Listes prédéfinies"
+            route='/config'
+            isOpen={sidebarOpen}
+            icon={<TuneIcon style={{ color: 'white', width: '30px', height: '30px', marginRight: '8px' }} />}
+          />) : undefined
+        }
+        {
+          userType !== 'operator' ? (<NavListItem
+            name="Profil"
+            route='/profile'
+            isOpen={sidebarOpen}
+            icon={<AssignmentIndIcon style={{ color: 'white', width: '30px', height: '30px', marginRight: '8px' }} />}
+          />) : undefined
+        }
+        <div style={{ display: 'flex', flex: '1', }}>
+
+        </div>
+        <Divider variant="middle" color='white' />
         <HtmlTooltip
           sx={{ display: sidebarOpen ? 'none' : 'block' }}
           title={
@@ -207,7 +257,8 @@ const Sidebar: React.FC = () => {
           <Button
             className='logout-btn'
             style={{
-              marginTop: '16px',
+              marginTop: '8px',
+              marginBottom:'64px',
               height: '45px',
               width: '220px',
               justifyContent: 'start',

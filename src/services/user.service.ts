@@ -167,6 +167,10 @@ export default class UserService {
                 typeFilter = `&filters[relatedType][reference][$eq]=cam`;
                 break;
             }
+            case UserType.operator: {
+                typeFilter = `&filters[$and][0][relatedType][reference][$ne]=operator&filters[$and][1][relatedType][reference][$ne]=admin&filters[$and][2][relatedType][reference][$ne]=delegate`;
+                break;
+            }
             case UserType.admin: {
                 typeFilter = `&filters[$and][0][relatedType][reference][$ne]=admin&filters[$and][1][relatedType][reference][$ne]=delegate`;
                 break;
@@ -196,8 +200,6 @@ export default class UserService {
         return [];
     }
 
-
-
     async getMe(): Promise<UserModel> {
         const token = localStorage.getItem('token');
 
@@ -219,9 +221,6 @@ export default class UserService {
                 return new UserModel({isBlocked:true});
             }
             return new UserModel({});
-
         }
-
-
     }
 }

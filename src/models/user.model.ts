@@ -6,6 +6,7 @@ export enum UserType {
     supervisor = 2,
     delegate = 3,
     kam = 4,
+    operator = 5,
 }
 
 class UserModel {
@@ -75,7 +76,7 @@ class UserModel {
             phoneOne: json?.phoneOne || json?.attributes?.phoneOne,
             wilaya: json?.wilaya || json?.attributes?.wilaya,
             commune: json?.commun || json?.attributes?.commun,
-            type: json?.relatedType?.reference === 'admin' ? UserType.admin : json?.relatedType?.reference === 'supervisor' ? UserType.supervisor : json?.relatedType?.reference === 'delegate' ? UserType.delegate : UserType.kam,
+            type: json?.relatedType?.reference === 'admin' ? UserType.admin : json?.relatedType?.reference === 'supervisor' ? UserType.supervisor : json?.relatedType?.reference === 'delegate' ? UserType.delegate : json?.relatedType?.reference === 'operator' ? UserType.operator : UserType.kam,
             createdAt: new Date(json?.createdAt || json?.attributes?.createdAt),
             isBlocked: json?.blocked || json?.attributes?.blocked,
             wilayas: wilayas,
