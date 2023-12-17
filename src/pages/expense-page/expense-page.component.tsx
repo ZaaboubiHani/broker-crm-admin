@@ -104,11 +104,28 @@ class ExpensePage extends Component<{}, ExpensePageProps> {
 
     handleOnPickDate = async (date: Date) => {
         this.setState({ loadingExpensesData: true, });
-        var delegteExpenses = await this.expenseService.getAllExpensesOfUserByDateMoth(date, this.state.selectedDelegate!.id!);
-        var delegteExpensesUser = await this.expenseService.getExpensesUserByDateMoth(date, this.state.selectedDelegate!.id!);
-        var kamExpenses = await this.expenseService.getAllExpensesOfUserByDateMoth(date, this.state.selectedKam!.id!);
-        var kamExpensesUser = await this.expenseService.getExpensesUserByDateMoth(date, this.state.selectedKam!.id!);
-        this.setState({ selectedDate: date, kamExpenses: kamExpenses, kamExpensesUser: kamExpensesUser, delegteExpenses: delegteExpenses, loadingExpensesData: false, delegteExpensesUser: delegteExpensesUser });
+        if (this.state.selectedDelegate) {
+            var delegteExpenses = await this.expenseService.getAllExpensesOfUserByDateMoth(date, this.state.selectedDelegate!.id!);
+            var delegteExpensesUser = await this.expenseService.getExpensesUserByDateMoth(date, this.state.selectedDelegate!.id!);
+            this.setState({
+                delegteExpenses: delegteExpenses,
+                delegteExpensesUser: delegteExpensesUser
+            });
+        }
+        if (this.state.selectedKam) {
+            var kamExpenses = await this.expenseService.getAllExpensesOfUserByDateMoth(date, this.state.selectedKam!.id!);
+            var kamExpensesUser = await this.expenseService.getExpensesUserByDateMoth(date, this.state.selectedKam!.id!);
+            this.setState({
+               
+                kamExpenses: kamExpenses,
+                kamExpensesUser: kamExpensesUser,
+            });
+        }
+
+        this.setState({
+            selectedDate: date,
+            loadingExpensesData: false,
+        });
     }
 
     handleValidateExpensesUser = async () => {

@@ -20,8 +20,8 @@ const MapDialog: React.FC<MapDialogProps> = ({ isOpen, onClose, visitsCoordinate
         let sumLat = 0;
         let sumLng = 0;
 
-        let filteredTasksPoints = tasksCoordinates.filter((t)=>!isNaN(t.point[0])).map(c => c.point);
-        let filteredVisitsPoints = visitsCoordinates.filter((t)=>!isNaN(t.point[0])).map(c => c.point);
+        let filteredTasksPoints = tasksCoordinates.filter((t) => !isNaN(t.point[0])).map(c => c.point);
+        let filteredVisitsPoints = visitsCoordinates.filter((t) => !isNaN(t.point[0])).map(c => c.point);
         for (const point of filteredVisitsPoints) {
             sumLat += point[0];
             sumLng += point[1];
@@ -43,6 +43,7 @@ const MapDialog: React.FC<MapDialogProps> = ({ isOpen, onClose, visitsCoordinate
         onClose('selectedValue');
     };
 
+    const firstVisitColorOptions = { color: 'blue', }
     const visitColorOptions = { color: 'lime', }
     const taskColorOptions = { color: 'orange', }
 
@@ -59,8 +60,10 @@ const MapDialog: React.FC<MapDialogProps> = ({ isOpen, onClose, visitsCoordinate
                     url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                 />
                 {
-                    visitsCoordinates.map((c) => (
-                        <CircleMarker center={ll.latLng(c.point[0], c.point[1])} pathOptions={visitColorOptions} radius={15}>
+                    visitsCoordinates.map((c, index) => (
+                        <CircleMarker center={ll.latLng(c.point[0], c.point[1])}
+                            pathOptions={index === 0 ? firstVisitColorOptions : visitColorOptions}
+                            radius={15}>
                             <Popup>{c.name}</Popup>
                         </CircleMarker>
                     ))

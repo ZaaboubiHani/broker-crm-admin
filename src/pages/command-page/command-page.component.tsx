@@ -310,7 +310,7 @@ class CommandPage extends Component<{}, CommandDelegatePageProps> {
                                         loading={this.state.loadingDelegates}
                                     />
                                 </div>
-                                <MonthYearPicker onPick={this.handleOnPickDateDelegate}></MonthYearPicker >
+                                <MonthYearPicker initialDate={this.state.selectedDateDelegate} onPick={this.handleOnPickDateDelegate}></MonthYearPicker >
                             </div>
                             <div style={{
                                 width: '100%',
@@ -376,7 +376,7 @@ class CommandPage extends Component<{}, CommandDelegatePageProps> {
                                         label='Kam'
                                     />
                                 </div>
-                                <MonthYearPicker onPick={this.handleOnPickDateKam}></MonthYearPicker >
+                                <MonthYearPicker initialDate={this.state.selectedDateKam} onPick={this.handleOnPickDateKam}></MonthYearPicker >
                             </div>
                             <div style={{
                                 width: '100%',

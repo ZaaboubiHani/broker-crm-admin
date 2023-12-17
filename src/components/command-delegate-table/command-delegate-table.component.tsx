@@ -75,7 +75,7 @@ const CommandDelegateTable: React.FC<CommandDelegateTableProps> = ({ data, id, i
     const columns: GridColDef[] = [
 
         {
-            field: 'date', headerName: 'Date', width: 150, valueFormatter(params) {
+            field: 'date', headerName: 'Date', width: 100, valueFormatter(params) {
                 return formatDateToYYYYMMDD(params.value);
             },
         },

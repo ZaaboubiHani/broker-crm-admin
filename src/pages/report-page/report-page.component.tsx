@@ -264,7 +264,7 @@ class ReportPage extends Component<{}, ReportPageProps> {
                                             loading={this.state.loadingDelegates}
                                         />
                                     </div>
-                                    <MonthYearPicker onPick={this.handleOnPickDate}></MonthYearPicker >
+                                    <MonthYearPicker initialDate={this.state.selectedDate} onPick={this.handleOnPickDate}></MonthYearPicker >
                                 </div>
                                 <div style={{
                                     width: '100%',
@@ -332,7 +332,7 @@ class ReportPage extends Component<{}, ReportPageProps> {
                                             label='Kam'
                                         />
                                     </div>
-                                    <MonthYearPicker onPick={this.handleOnPickDate}></MonthYearPicker >
+                                    <MonthYearPicker initialDate={this.state.selectedDate} onPick={this.handleOnPickDate}></MonthYearPicker >
                                 </div>
                                 <div style={{
                                     width: '100%',
