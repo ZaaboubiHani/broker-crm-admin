@@ -282,10 +282,15 @@ class PlanPage extends Component<{}, PlanPageProps> {
         this.setState({ visitTaskDetails: tasks, loadingVisitTaskDetails: false });
     };
 
+    compareDates = (a: VisitModel, b: VisitModel) => a!.createdDate!.getTime() - b!.createdDate!.getTime();
+
     handleDelegateDisplayMap = async (date: Date) => {
         this.setState({ loadingMap: true });
         var tasks = await this.taskService.getAllTasksOfDelegate(date, this.state.selectedDelegate!.id!);
         var visits = await this.visitService.getAllVisitsOfDelegateDay(date, this.state.selectedDelegate!.id!);
+        
+        visits.sort(this.compareDates);
+
         let visitsCoordinates: { point: number[], name: string }[] = visits.map((v) => {
             return {
                 point: (v.visitLocation ?? ',').split(',').map((s) => parseFloat(s)),

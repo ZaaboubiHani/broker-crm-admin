@@ -69,7 +69,6 @@ class ProfilePage extends Component<ProfilePageProps, ProfilePageState> {
     handleAddUser = async (user: UserModel) => {
         this.setState({ clientDialogIsOpen: false, loadingUsers: true, });
         await this.userService.addUser(user);
-
         var users = await this.userService.getUsersByCreator(this.state.currentUser.id!, UserType.admin,);
         this.setState({ users: users, loadingUsers: false, });
     }
@@ -77,7 +76,6 @@ class ProfilePage extends Component<ProfilePageProps, ProfilePageState> {
     handleEditUser = async (user: UserModel) => {
         this.setState({ clientDialogIsOpen: false, loadingUsers: true, });
         await this.userService.updateUser(user);
-
         var users = await this.userService.getUsersByCreator(this.state.currentUser.id!, UserType.admin,);
         this.setState({ users: users, loadingUsers: false, });
     }
@@ -97,11 +95,9 @@ class ProfilePage extends Component<ProfilePageProps, ProfilePageState> {
             var wilayas = await this.wilayaService.getAllWilayasFromServer();
             this.setState({ users: users, loadingUsers: false, isLoading: false, currentUser: currentUser, wilayas: wilayas, });
         } else {
-
             var users = await this.userService.getUsersByCreator(currentUser.id!, UserType.admin,);
             var wilayas = await this.wilayaService.getAllWilayasFromServer();
             this.setState({ users: users, loadingUsers: false, isLoading: false, currentUser: currentUser, wilayas: wilayas, });
-
         }
     }
 
@@ -115,14 +111,12 @@ class ProfilePage extends Component<ProfilePageProps, ProfilePageState> {
 
     componentDidMount(): void {
         if (localStorage.getItem('isLogged') === 'true') {
-
             this.loadProfilePageData();
         }
     }
 
     render() {
         if (this.state.isLoading) {
-
             return (
                 <div style={{
                     width: '100%',
@@ -166,34 +160,33 @@ class ProfilePage extends Component<ProfilePageProps, ProfilePageState> {
                         justifyContent: 'stretch',
                         height: '150px'
                     }}>
-                        {
-                            this.state.loadingUsers ? <div style={{
+                        {this.state.loadingUsers ? <div style={{
+                            width: '100%',
+                            height: '100vh',
+                            display: 'flex',
+                            justifyContent: 'center',
+                            alignItems: 'center',
+                        }}>
+                            <DotSpinner
+                                size={40}
+                                speed={0.9}
+                                color="black"
+                            />
+                        </div> :
+                            <div style={{
                                 width: '100%',
-                                height: '100vh',
                                 display: 'flex',
-                                justifyContent: 'center',
-                                alignItems: 'center',
+                                flexGrow: '1',
+                                flex: '1',
+                                paddingBottom: '16px',
                             }}>
-                                <DotSpinner
-                                    size={40}
-                                    speed={0.9}
-                                    color="black"
+                                <ProfileTable
+                                    isLoading={false}
+                                    data={this.state.users}
+                                    wilayas={this.state.wilayas}
+                                    editUser={this.handleShowUserDialog}
                                 />
-                            </div> :
-                                <div style={{
-                                    width: '100%',
-                                    display: 'flex',
-                                    flexGrow: '1',
-                                    flex: '1',
-                                    paddingBottom: '16px',
-                                }} >
-                                    <ProfileTable
-                                        isLoading={false}
-                                        data={this.state.users}
-                                        wilayas={this.state.wilayas}
-                                        editUser={this.handleShowUserDialog}
-                                    />
-                                </div>
+                            </div>
                         }
                     </div>
                     <UserDialog
@@ -205,7 +198,12 @@ class ProfilePage extends Component<ProfilePageProps, ProfilePageState> {
                         initUser={this.state.selectedUser}
                         creatorType={this.state.currentUser.type!}
                     ></UserDialog>
-                    <Snackbar anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }} onClose={this.handleCloseSanckbar} open={this.state.showSnackbar} autoHideDuration={3000} message={this.state.snackbarMessage} />
+                    <Snackbar
+                        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+                        onClose={this.handleCloseSanckbar}
+                        open={this.state.showSnackbar}
+                        autoHideDuration={3000}
+                        message={this.state.snackbarMessage} />
                 </div>
             );
         }

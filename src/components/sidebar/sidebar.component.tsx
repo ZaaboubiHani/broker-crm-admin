@@ -145,7 +145,7 @@ const Sidebar: React.FC = () => {
         </Button>
         <img src='/images/broker_logo_white.png'
           style={{
-            margin: '8px 8px 32px 4px ',
+            margin: '4px 8px 16px 4px ',
             height: '50px',
             width: '50px',
             transition: 'opacity 0.5s ease',
@@ -154,7 +154,7 @@ const Sidebar: React.FC = () => {
         <img src="/images/broker_title.png"
           height='60px'
           style={{
-            margin: '0px 8px 32px 8px ',
+            margin: '0px 8px 16px 8px ',
             left: '0px',
             position: 'absolute',
             transition: 'opacity 0.5s ease',
@@ -258,14 +258,14 @@ const Sidebar: React.FC = () => {
             className='logout-btn'
             style={{
               marginTop: '8px',
-              marginBottom:'64px',
+              marginBottom:'60px',
               height: '45px',
               width: '220px',
               justifyContent: 'start',
               alignItems: 'center',
               color: 'white',
               textTransform: 'none',
-              padding: '0px 0px 0px 16px',
+              padding: '8px 0px 8px 16px',
               fontWeight: 'normal',
               backgroundColor: onHoverBool ? PRIMARY_COLOR_HIGHLIGHT : 'transparent',
             }}
