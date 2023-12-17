@@ -149,7 +149,6 @@ const ExpenseTable: React.FC<ExpenseTableProps> = ({ data, isLoading }) => {
                         hideFooterSelectedRowCount={true}
                         hideFooterPagination={true}
                         hideFooter={true}
-
                     />)}
         </div>
         // <TableContainer sx={{ flexGrow: '1', display: 'flex', flexDirection: 'column', borderRadius: '8px', margin: '8px', overflow: 'hidden', }} component={Paper}>

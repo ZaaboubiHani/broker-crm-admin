@@ -29,7 +29,6 @@ const HomeTable: React.FC<HomeTableProps> = ({ data, id, isLoading, firstHeader,
         setPageIndex(page - 1);
     }
 
-
     const columns: GridColDef[] = [
         {
             field: 'username', headerName: firstHeader, width: 150,
@@ -128,6 +127,7 @@ const HomeTable: React.FC<HomeTableProps> = ({ data, id, isLoading, firstHeader,
                         }}
                         pageSizeOptions={[5, 10, 25, 50, 100]}
                         checkboxSelection={false}
+                        hideFooterSelectedRowCount={true}
                     />)}
             {/* <TableContainer sx={{ flexGrow: '1', display: 'flex', flexDirection: 'column', borderRadius: '8px', margin: '8px', overflow: 'hidden' }} component={Paper}>
 

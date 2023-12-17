@@ -18,7 +18,6 @@ import FormControl from '@mui/material/FormControl';
 import InputLabel from '@mui/material/InputLabel';
 import Select from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
-import { DemoContainer, DemoItem } from '@mui/x-date-pickers/internals/demo';
 import CommentService from '../../services/comment.service';
 import MotivationService from '../../services/motivation.service';
 import MotivationModel from '../../models/motivation.model';
@@ -47,6 +46,7 @@ import Box from '@mui/material/Box';
 import CustomTabPanel from '../../components/custom-tab-panel/costum-tab-panel.component';
 import RestoreIcon from '@mui/icons-material/Restore';
 import { NumericFormat, NumericFormatProps } from 'react-number-format';
+import SpecialityTable from '../../components/speciality-table/speciality-table.component';
 
 interface ConfigPageProps {
     currentUser: UserModel;
@@ -99,6 +99,9 @@ interface ConfigPageProps {
     selectedSupplierId: number;
     selectedProductId: number;
     selectedCoProductId: number;
+    specialityPage: number;
+    specialitySize: number;
+    specialitiesTotal: number;
     index: number;
 }
 
@@ -165,6 +168,9 @@ class ConfigPage extends Component<{}, ConfigPageProps> {
             expensesConfig: new ExpenseConfigModel({}),
             goals: [],
             showSnackbar: false,
+            specialityPage: 1,
+            specialitySize: 25,
+            specialitiesTotal: 0,
             showDeleteSpecialityDialog: false,
             showRestoreSpecialityDialog: false,
             showDeleteCoProductDialog: false,
@@ -199,9 +205,7 @@ class ConfigPage extends Component<{}, ConfigPageProps> {
     productService = new ProductService();
 
     loadConfigPageData = async () => {
-
-
-        var specialities = await this.specialityService.getAllMedicalSpecialities();
+        var { specialities, total: specialitiesTotal } = await this.specialityService.getAllMedicalSpecialities(1, 25);
         var draftedSpecialities = await this.specialityService.getAllDraftedMedicalSpecialities();
         var comments = await this.commentService.getAllComments();
         var draftedComments = await this.commentService.getDraftedComments();
@@ -222,6 +226,7 @@ class ConfigPage extends Component<{}, ConfigPageProps> {
         }
         this.setState({
             currentUser: currentUser,
+            specialitiesTotal: specialitiesTotal,
             isLoading: false,
             medicalSpecialities: specialities,
             draftedComments: draftedComments,
@@ -245,27 +250,62 @@ class ConfigPage extends Component<{}, ConfigPageProps> {
     handleRemoveSpeciality = async () => {
         this.setState({ loadingSpecialitiesData: true, showDeleteSpecialityDialog: false });
         await this.specialityService.draftMedicalSpeciality(this.state.selectedSpecialityId);
-        var specialities = await this.specialityService.getAllMedicalSpecialities();
+        var { specialities, total: specialitiesTotal } = await this.specialityService.getAllMedicalSpecialities(this.state.specialityPage, this.state.specialitySize);
         var draftedSpecialities = await this.specialityService.getAllDraftedMedicalSpecialities();
-        this.setState({ loadingSpecialitiesData: false, medicalSpecialities: specialities, draftedMedicalSpecialities: draftedSpecialities });
-        this.setState({ showSnackbar: true, snackbarMessage: 'Spécialité supprimé' });
+        this.setState({
+            loadingSpecialitiesData: false,
+            medicalSpecialities: specialities,
+            draftedMedicalSpecialities: draftedSpecialities,
+        });
+        this.setState({
+            showSnackbar: true,
+            snackbarMessage: 'Spécialité supprimé',
+        });
     }
 
     handleRestoreSpeciality = async () => {
         this.setState({ loadingSpecialitiesData: true, showRestoreSpecialityDialog: false });
         await this.specialityService.publishMedicalSpeciality(this.state.selectedSpecialityId);
-        var specialities = await this.specialityService.getAllMedicalSpecialities();
+        var { specialities, total: specialitiesTotal } = await this.specialityService.getAllMedicalSpecialities(this.state.specialityPage, this.state.specialitySize);
         var draftedSpecialities = await this.specialityService.getAllDraftedMedicalSpecialities();
-        this.setState({ loadingSpecialitiesData: false, medicalSpecialities: specialities, draftedMedicalSpecialities: draftedSpecialities });
-        this.setState({ showSnackbar: true, snackbarMessage: 'Spécialité restauré' });
+        this.setState({
+            loadingSpecialitiesData: false,
+            medicalSpecialities: specialities,
+            specialitiesTotal: specialitiesTotal,
+            draftedMedicalSpecialities: draftedSpecialities
+        });
+        this.setState({
+            showSnackbar: true,
+            snackbarMessage: 'Spécialité restauré'
+        });
     }
 
     handleCreateSpeciality = async () => {
         this.setState({ loadingSpecialitiesData: true });
         await this.specialityService.createMedicalSpeciality(this.state.specialityName);
-        var specialities = await this.specialityService.getAllMedicalSpecialities();
-        this.setState({ loadingSpecialitiesData: false, medicalSpecialities: specialities, specialityName: '' });
-        this.setState({ showSnackbar: true, snackbarMessage: 'Spécialité créé' });
+        var { specialities, total: specialitiesTotal } = await this.specialityService.getAllMedicalSpecialities(this.state.specialityPage, this.state.specialitySize);
+        this.setState({
+            loadingSpecialitiesData: false,
+            medicalSpecialities: specialities,
+            specialitiesTotal: specialitiesTotal,
+            specialityName: '',
+        });
+        this.setState({
+            showSnackbar: true,
+            snackbarMessage: 'Spécialité créé',
+        });
+    }
+
+    handleSpecialityPageChange = async (page: number, size: number) => {
+        this.setState({ loadingSpecialitiesData: true });
+        var { specialities, total: specialitiesTotal } = await this.specialityService.getAllMedicalSpecialities(page, size);
+        this.setState({
+            loadingSpecialitiesData: false,
+            specialitiesTotal: specialitiesTotal,
+            medicalSpecialities: specialities,
+            specialityPage: page,
+            specialitySize: size,
+        });
     }
 
     handleSpecialityNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -468,10 +508,8 @@ class ConfigPage extends Component<{}, ConfigPageProps> {
                             <Tabs value={this.state.index} onChange={this.handleTabChange} aria-label="basic tabs example">
                                 <Tab label="Configuration" />
                                 <Tab label="Corbeille" />
-
                             </Tabs>
                         </Box>
-
                         <CustomTabPanel style={{ display: 'flex', flexDirection: 'row', flexGrow: '1', height: 'calc(100% - 50px)' }} value={this.state.index} index={0} >
                             <div className='config-container'>
                                 <div style={{ display: 'flex', width: '100%', maxHeight: '450px', marginTop: '8px' }}>
@@ -482,48 +520,19 @@ class ConfigPage extends Component<{}, ConfigPageProps> {
                                                 <AddIcon />
                                             </IconButton>
                                         </div>
-                                        <div style={{ display: 'flex', flexGrow: '1', padding: '8px 8px 0px 16px', marginBottom: '8px', maxHeight: '392px' }}>
-                                            <Table sx={{ flexGrow: '1', display: 'flex', flexDirection: 'column', overflow: 'hidden', margin: '0px', width: "100%", borderRadius: '4px', }} aria-label="simple table">
-                                                <TableHead sx={{ height: '45px', display: 'flex', width: '100%' }}>
-                                                    <TableRow sx={{ display: 'flex', width: '100%' }}>
-                                                        <TableCell sx={{ width: '100%' }} align="left">Nom de spécialité </TableCell>
-                                                        <TableCell sx={{ width: '100%' }} align="right">Supprimer</TableCell>
-                                                    </TableRow>
-                                                </TableHead>
-                                                <TableBody sx={{ flexGrow: '1', overflowY: 'auto', overflowX: 'hidden', }}>
-                                                    {
-                                                        this.state.loadingSpecialitiesData ? (<div style={{
-                                                            width: '100%',
-                                                            flexGrow: '1',
-                                                            overflow: 'hidden',
-                                                            height: '100%',
-                                                            display: 'flex',
-                                                            justifyContent: 'center',
-                                                            alignItems: 'center',
-                                                        }}>
-                                                            <DotSpinner
-                                                                size={40}
-                                                                speed={0.9}
-                                                                color="black"
-                                                            />
-                                                        </div>) :
-                                                            this.state.medicalSpecialities.map((row) => (
-                                                                <TableRow
-                                                                    key={row.id}
-                                                                    sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-                                                                >
-                                                                    <TableCell sx={{ width: '100%' }} align="left">{row.name}</TableCell>
-                                                                    <TableCell sx={{ width: '100%', padding: '0px 16px 0px 0px' }} align="right">
-                                                                        <IconButton onClick={() => {
-                                                                            this.setState({ showDeleteSpecialityDialog: true, selectedSpecialityId: row.id! });
-                                                                        }} >
-                                                                            <DeleteIcon />
-                                                                        </IconButton>
-                                                                    </TableCell>
-                                                                </TableRow>
-                                                            ))}
-                                                </TableBody>
-                                            </Table>
+                                        <div style={{ display: 'flex', flexGrow: '1', padding: '8px 8px 0px 8px', marginBottom: '8px', maxHeight: '392px' }}>
+                                            <SpecialityTable
+                                                isLoading={this.state.loadingSpecialitiesData}
+                                                data={this.state.medicalSpecialities}
+                                                page={this.state.specialityPage}
+                                                size={this.state.specialitySize}
+                                                total={this.state.specialitiesTotal}
+                                                onRemove={(id) => {
+                                                    this.setState({ showDeleteSpecialityDialog: true, selectedSpecialityId: id });
+                                                }}
+                                                onEdit={() => { }}
+                                                pageChange={this.handleSpecialityPageChange}
+                                            />
                                         </div>
                                     </div>
                                     <Divider orientation="vertical" flexItem component="div" style={{ width: '0.5%' }} sx={{ borderRight: 'solid grey 1px' }} />

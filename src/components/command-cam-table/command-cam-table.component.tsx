@@ -117,7 +117,7 @@ const CommandCamTable: React.FC<CommandCamTableProps> = ({ data, id, isLoading, 
                         }}
                         pageSizeOptions={[5, 10, 25, 50, 100]}
                         checkboxSelection={false}
-
+                        hideFooterSelectedRowCount={true}
                     />)}
             {/* <TableContainer sx={{ flexGrow: '1', display: 'flex', flexDirection: 'column', borderRadius: '8px', margin: '8px', overflow: 'hidden' }} component={Paper}>
                 <Table sx={{ flexGrow: '1', display: 'flex', flexDirection: 'column', overflow: 'hidden', margin: '0px', width: "100%" }} size="small" aria-label="a dense table">

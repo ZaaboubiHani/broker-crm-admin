@@ -1,10 +1,6 @@
 import React, { Component } from 'react';
 import '../statistics-page/statistics-page.style.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import Form from 'react-bootstrap/esm/Form';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faSearch } from '@fortawesome/free-solid-svg-icons';
-import UserPicker from '../../components/user-picker/user-picker.component';
 import UserService from '../../services/user.service';
 import UserModel, { UserType } from '../../models/user.model';
 import { DotSpinner } from '@uiball/loaders';
@@ -12,7 +8,7 @@ import ReactApexChart from 'react-apexcharts';
 import { ApexOptions } from 'apexcharts';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
-import Typography from '@mui/material/Typography';
+import UserDropdown from '../../components/user-dropdown/user-dropdown';
 import Box from '@mui/material/Box';
 import StatisticsService from '../../services/statics.service';
 import YearPicker from '../../components/year-picker/year-picker.component';
@@ -20,20 +16,29 @@ import CustomTabPanel from '../../components/custom-tab-panel/costum-tab-panel.c
 
 
 interface StatisticsPageProps {
-    currentUser:UserModel;
+    currentUser: UserModel;
     selectedDate: Date;
     isLoading: boolean;
+    loadingDelegates: boolean;
     searchText: string;
     delegates: UserModel[];
-    filtredDelegates: UserModel[];
+    supervisors: UserModel[];
+    kams: UserModel[];
     selectedDelegate?: UserModel;
+    selectedSupervisor?: UserModel;
+    selectedKam?: UserModel;
     loadingStatisticsData: boolean;
     visitTaskAreaChart: ApexOptions,
     delegateSuccessRateAreaChart: ApexOptions,
     visitGoalAreaChart: ApexOptions,
     salesAreaChart: ApexOptions,
+    kamSalesAreaChart: ApexOptions,
+    kamChartPieOptions: ApexOptions,
     chartPieOptions: ApexOptions,
+    kamSuccessRateAreaChart: ApexOptions,
+    kamVisitTaskAreaChart: ApexOptions,
     teamContributionPieOptions: ApexOptions,
+    kamVisitGoalAreaChart: ApexOptions,
     delegatesContributionChartPie: ApexOptions,
     teamSalesAreaChart: ApexOptions,
     teamSuccessRateAreaChart: ApexOptions,
@@ -51,8 +56,34 @@ class StatisticsPage extends Component<{}, StatisticsPageProps> {
             isLoading: true,
             searchText: '',
             delegates: [],
-            filtredDelegates: [],
+            supervisors: [],
+            kams: [],
             loadingStatisticsData: false,
+            loadingDelegates: false,
+            kamChartPieOptions: {
+                chart: {
+                    type: 'pie',
+                },
+                fill: {
+                    type: 'gradient',
+                },
+                series: [],
+                labels: [],
+                colors: ['#2AEB80', '#FF5747'],
+                title: {
+                    text: 'Diagramme de contribution au chiffre d\'affaire annuel',
+                    align: 'left',
+                    margin: 10,
+                    offsetX: 0,
+                    offsetY: 0,
+                    floating: false,
+                    style: {
+                        fontSize: '20px',
+                        fontWeight: 'bold',
+                        color: '#263238'
+                    },
+                }
+            },
             chartPieOptions: {
                 chart: {
                     type: 'pie',
@@ -124,6 +155,29 @@ class StatisticsPage extends Component<{}, StatisticsPageProps> {
                     },
                 }
             },
+            kamSuccessRateAreaChart: {
+                chart: {
+                    type: 'area',
+                },
+                title: {
+                    text: 'Graphe des taux de réussite annuel',
+                    align: 'left',
+                    margin: 10,
+                    offsetX: 0,
+                    offsetY: 0,
+                    floating: false,
+                    style: {
+                        fontSize: '20px',
+                        fontWeight: 'bold',
+                        color: '#263238'
+                    },
+                },
+                colors: ['#CC38E0', '#2AEB80'],
+                series: [],
+                xaxis: {
+                    categories: ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'],
+                }
+            },
             delegateSuccessRateAreaChart: {
                 chart: {
                     type: 'area',
@@ -170,6 +224,29 @@ class StatisticsPage extends Component<{}, StatisticsPageProps> {
                     categories: ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'],
                 }
             },
+            kamSalesAreaChart: {
+                chart: {
+                    type: 'area',
+                },
+                title: {
+                    text: 'Graphe des objectifs de ventes annuel',
+                    align: 'left',
+                    margin: 10,
+                    offsetX: 0,
+                    offsetY: 0,
+                    floating: false,
+                    style: {
+                        fontSize: '20px',
+                        fontWeight: 'bold',
+                        color: '#263238'
+                    },
+                },
+                colors: ['#CC38E0', '#6571EB'],
+                series: [],
+                xaxis: {
+                    categories: ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'],
+                }
+            },
             salesAreaChart: {
                 chart: {
                     type: 'area',
@@ -193,6 +270,29 @@ class StatisticsPage extends Component<{}, StatisticsPageProps> {
                     categories: ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'],
                 }
             },
+            kamVisitTaskAreaChart: {
+                chart: {
+                    type: 'area',
+                },
+                title: {
+                    text: 'Graphe du plan de tournee annuel',
+                    align: 'left',
+                    margin: 10,
+                    offsetX: 0,
+                    offsetY: 0,
+                    floating: false,
+                    style: {
+                        fontSize: '20px',
+                        fontWeight: 'bold',
+                        color: '#263238'
+                    },
+                },
+                colors: ['#38EB5D', '#EA572C'],
+                series: [],
+                xaxis: {
+                    categories: ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'],
+                }
+            },
             visitTaskAreaChart: {
                 chart: {
                     type: 'area',
@@ -211,6 +311,29 @@ class StatisticsPage extends Component<{}, StatisticsPageProps> {
                     },
                 },
                 colors: ['#38EB5D', '#EA572C'],
+                series: [],
+                xaxis: {
+                    categories: ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'],
+                }
+            },
+            kamVisitGoalAreaChart: {
+                chart: {
+                    type: 'area',
+                },
+                title: {
+                    text: 'Graphe des objectifs de visites annuel',
+                    align: 'left',
+                    margin: 10,
+                    offsetX: 0,
+                    offsetY: 0,
+                    floating: false,
+                    style: {
+                        fontSize: '20px',
+                        fontWeight: 'bold',
+                        color: '#263238'
+                    },
+                },
+                colors: ['#38EB5D', '#2FBCEB'],
                 series: [],
                 xaxis: {
                     categories: ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'],
@@ -312,57 +435,24 @@ class StatisticsPage extends Component<{}, StatisticsPageProps> {
         }
     }
 
-
     userService = new UserService();
     statisticsService = new StatisticsService();
 
-    handleDelegateFilter = () => {
-        if (this.state.searchText.length === 0) {
-            var filtredDelegates = [...this.state.delegates];
-            this.setState({ filtredDelegates: filtredDelegates });
-        }
-        else {
-            var filtredDelegates = this.state.delegates.filter(delegate => delegate.username!.toLowerCase().includes(this.state.searchText.toLowerCase()));
-            this.setState({ filtredDelegates: filtredDelegates });
-        }
-    }
-
-    handleSearchTextChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        this.setState({ searchText: event.target.value });
-    }
-
-    handleSelectDelegate = async (delegate: UserModel) => {
+    handleSelectKam = async (kam: UserModel) => {
 
         this.setState({ loadingStatisticsData: true, });
 
-        var visitStats = await this.statisticsService.getDelegateYearVisitStats(this.state.selectedDate, delegate!.id!);
-        var salesStats = await this.statisticsService.getDelegateYearSaleStats(this.state.selectedDate, delegate!.id!);
-        var contributionStats = await this.statisticsService.getDelegateContributionStats(this.state.selectedDate, delegate!.id!,this.state.currentUser.id!);
-        var teamVisitsData = await this.statisticsService.getTeamYearVisitStats(this.state.selectedDate,this.state.currentUser.id!);
-        var teamSalesData = await this.statisticsService.getTeamYearSaleStats(this.state.selectedDate,this.state.currentUser.id!);
-        var successRate = await this.statisticsService.getDelegateSuccessRateYear(delegate!.id!, this.state.selectedDate);
-       
-        var teamSuccessRate = await this.statisticsService.getTeamSuccessRateYear(this.state.currentUser.id!, this.state.selectedDate);
-        var delegatesContributions = await this.statisticsService.getDelegatesContributionsOfSupervisor(this.state.currentUser.id!, this.state.selectedDate,);
-        var teamContribution = await this.statisticsService.getTeamContributionsOfSupervisor(this.state.currentUser.id!, this.state.selectedDate,);
+        var visitStats = await this.statisticsService.getDelegateYearVisitStats(this.state.selectedDate, kam.id!);
+        var salesStats = await this.statisticsService.getDelegateYearSaleStats(this.state.selectedDate, kam.id!);
+        var contributionStats = await this.statisticsService.getDelegateContributionStats(this.state.selectedDate, kam.id!, this.state.currentUser.id!);
+        var successRate = await this.statisticsService.getDelegateSuccessRateYear(kam.id!, this.state.selectedDate);
 
-        this.state.chartPieOptions.series = [contributionStats.delegateSales, contributionStats.teamSales - contributionStats.delegateSales];
-        this.state.chartPieOptions.labels?.splice(0, this.state.chartPieOptions.labels?.length);
-        this.state.chartPieOptions.labels?.push(delegate.username!);
-        this.state.chartPieOptions.labels?.push('reste d\'equipe');
+        this.state.kamChartPieOptions.series = [contributionStats.delegateSales, contributionStats.teamSales - contributionStats.delegateSales];
+        this.state.kamChartPieOptions.labels?.splice(0, this.state.kamChartPieOptions.labels?.length);
+        this.state.kamChartPieOptions.labels?.push(kam.username!);
+        this.state.kamChartPieOptions.labels?.push('reste d\'equipe');
 
-        this.state.teamContributionPieOptions.series = [teamContribution.teamSales, teamContribution.companySales - teamContribution.teamSales];
-        this.state.teamContributionPieOptions.labels?.splice(0, this.state.teamContributionPieOptions.labels?.length);
-        this.state.teamContributionPieOptions.labels?.push('equipe');
-        this.state.teamContributionPieOptions.labels?.push('entreprise');
-
-        this.state.delegatesContributionChartPie.series = [...delegatesContributions.map(e => e.ChiffreDaffaire)];
-        this.state.delegatesContributionChartPie.labels?.splice(0, this.state.delegatesContributionChartPie.labels?.length);
-        delegatesContributions.forEach(e => {
-            this.state.delegatesContributionChartPie.labels?.push(e.delegateName);
-        });
-
-        this.state.delegateSuccessRateAreaChart.series = [
+        this.state.kamSuccessRateAreaChart.series = [
             {
                 name: 'Total de bon de commandes honores',
                 data: successRate.map(e => e.honoredCommands),
@@ -373,51 +463,7 @@ class StatisticsPage extends Component<{}, StatisticsPageProps> {
             },
         ];
 
-        this.state.teamSuccessRateAreaChart.series = [
-            {
-                name: 'Total de bon de commandes honores',
-                data: teamSuccessRate.map(e => e.honoredCommands),
-            },
-            {
-                name: 'Total visites',
-                data: teamSuccessRate.map(e => e.totalVisits),
-            },
-        ];
-
-        this.state.teamSalesAreaChart.series = [
-            {
-                name: 'Total des ventes',
-                data: teamSalesData.map(e => e.totalSales),
-            },
-            {
-                name: 'Objectifs chiffre d\'affaire',
-                data: teamSalesData.map(e => e.salesGoal),
-            },
-        ];
-
-        this.state.teamVisitGoalAreaChart.series = [
-            {
-                name: 'Total visites',
-                data: teamVisitsData.map(e => e.numberOfVisits),
-            },
-            {
-                name: 'Objectifs de visites',
-                data: teamVisitsData.map(e => e.visitsGoal),
-            },
-        ];
-
-        this.state.teamVisitTaskAreaChart.series = [
-            {
-                name: 'Visites réalisées',
-                data: teamVisitsData.map(e => e.numberOfVisits),
-            },
-            {
-                name: 'Visites programmées',
-                data: teamVisitsData.map(e => e.numberOfTasks),
-            },
-        ];
-
-        this.state.salesAreaChart.series = [
+        this.state.kamSalesAreaChart.series = [
             {
                 name: 'Total chiffre d\'affaire',
                 data: salesStats.map(e => e.totalSales),
@@ -428,7 +474,7 @@ class StatisticsPage extends Component<{}, StatisticsPageProps> {
             },
         ];
 
-        this.state.visitGoalAreaChart.series = [
+        this.state.kamVisitGoalAreaChart.series = [
             {
                 name: 'Visites réalisées',
                 data: visitStats.map(e => e.numberOfVisits),
@@ -439,7 +485,7 @@ class StatisticsPage extends Component<{}, StatisticsPageProps> {
             },
         ];
 
-        this.state.visitTaskAreaChart.series = [
+        this.state.kamVisitTaskAreaChart.series = [
             {
                 name: 'Visites réalisées',
                 data: visitStats.map(e => e.numberOfVisits),
@@ -451,7 +497,7 @@ class StatisticsPage extends Component<{}, StatisticsPageProps> {
         ];
 
         this.setState({
-            selectedDelegate: delegate,
+            selectedKam: kam,
             loadingStatisticsData: false,
             visitGoalAreaChart: this.state.visitGoalAreaChart,
             visitTaskAreaChart: this.state.visitTaskAreaChart,
@@ -461,28 +507,29 @@ class StatisticsPage extends Component<{}, StatisticsPageProps> {
         });
     }
 
-    handleOnPickDate = async (date: Date) => {
+    handleSelectDelegate = async (delegate: UserModel) => {
 
         this.setState({ loadingStatisticsData: true, });
 
-        if (this.state.selectedDelegate) {
-            var visitStats = await this.statisticsService.getDelegateYearVisitStats(date, this.state.selectedDelegate!.id!);
-            var salesStats = await this.statisticsService.getDelegateYearSaleStats(date, this.state.selectedDelegate!.id!);
-            var contributionStats = await this.statisticsService.getDelegateContributionStats(date, this.state.selectedDelegate!.id!,this.state.currentUser.id!);
-            var teamVisitsData = await this.statisticsService.getTeamYearVisitStats(date,this.state.currentUser.id!);
-            var teamSalesData = await this.statisticsService.getTeamYearSaleStats(date,this.state.currentUser.id!);
-            var successRate = await this.statisticsService.getDelegateSuccessRateYear(this.state.selectedDelegate!.id!, date);
+        if (this.state.currentUser.type === UserType.supervisor) {
 
-            var teamSuccessRate = await this.statisticsService.getTeamSuccessRateYear(this.state.currentUser.id!, date);
-            var delegatesContributions = await this.statisticsService.getDelegatesContributionsOfSupervisor(this.state.currentUser.id!, date,);
-            var teamContribution = await this.statisticsService.getTeamContributionsOfSupervisor(this.state.currentUser.id!, date,);
+            var visitStats = await this.statisticsService.getDelegateYearVisitStats(this.state.selectedDate, delegate.id!);
+            var salesStats = await this.statisticsService.getDelegateYearSaleStats(this.state.selectedDate, delegate.id!);
+            var contributionStats = await this.statisticsService.getDelegateContributionStats(this.state.selectedDate, delegate.id!, this.state.currentUser.id!);
+            var teamVisitsData = await this.statisticsService.getTeamYearVisitStats(this.state.selectedDate, this.state.currentUser.id!);
+            var teamSalesData = await this.statisticsService.getTeamYearSaleStats(this.state.selectedDate, this.state.currentUser.id!);
+            var successRate = await this.statisticsService.getDelegateSuccessRateYear(delegate.id!, this.state.selectedDate);
+
+            var teamSuccessRate = await this.statisticsService.getTeamSuccessRateYear(this.state.currentUser.id!, this.state.selectedDate);
+            var delegatesContributions = await this.statisticsService.getDelegatesContributionsOfSupervisor(this.state.currentUser.id!, this.state.selectedDate,);
+            var teamContribution = await this.statisticsService.getTeamContributionsOfSupervisor(this.state.currentUser.id!, this.state.selectedDate,);
 
             this.state.chartPieOptions.series = [contributionStats.delegateSales, contributionStats.teamSales - contributionStats.delegateSales];
             this.state.chartPieOptions.labels?.splice(0, this.state.chartPieOptions.labels?.length);
-            this.state.chartPieOptions.labels?.push(this.state.selectedDelegate!.username!);
+            this.state.chartPieOptions.labels?.push(delegate.username!);
             this.state.chartPieOptions.labels?.push('reste d\'equipe');
 
-            this.state.teamContributionPieOptions.series = [teamContribution.teamSales,teamContribution.companySales - teamContribution.teamSales];
+            this.state.teamContributionPieOptions.series = [teamContribution.teamSales, teamContribution.companySales - teamContribution.teamSales];
             this.state.teamContributionPieOptions.labels?.splice(0, this.state.teamContributionPieOptions.labels?.length);
             this.state.teamContributionPieOptions.labels?.push('equipe');
             this.state.teamContributionPieOptions.labels?.push('entreprise');
@@ -536,6 +583,7 @@ class StatisticsPage extends Component<{}, StatisticsPageProps> {
                     data: teamVisitsData.map(e => e.visitsGoal),
                 },
             ];
+
             this.state.teamVisitTaskAreaChart.series = [
                 {
                     name: 'Visites réalisées',
@@ -579,10 +627,83 @@ class StatisticsPage extends Component<{}, StatisticsPageProps> {
                     data: visitStats.map(e => e.numberOfTasks),
                 },
             ];
+
+            this.setState({
+                selectedDelegate: delegate,
+                loadingStatisticsData: false,
+                visitGoalAreaChart: this.state.visitGoalAreaChart,
+                visitTaskAreaChart: this.state.visitTaskAreaChart,
+                salesAreaChart: this.state.salesAreaChart,
+                chartPieOptions: this.state.chartPieOptions,
+                teamContributionPieOptions: this.state.teamContributionPieOptions,
+            });
+        } else {
+
+
+            var visitStats = await this.statisticsService.getDelegateYearVisitStats(this.state.selectedDate, delegate.id!);
+            var salesStats = await this.statisticsService.getDelegateYearSaleStats(this.state.selectedDate, delegate.id!);
+            var successRate = await this.statisticsService.getDelegateSuccessRateYear(delegate.id!, this.state.selectedDate);
+            var contributionStats = await this.statisticsService.getDelegateContributionStats(this.state.selectedDate, delegate.id!, this.state.selectedSupervisor!.id!);
+            var delegatesContributions = await this.statisticsService.getDelegatesContributionsOfSupervisor(this.state.selectedSupervisor!.id!, this.state.selectedDate,);
+
+            this.state.chartPieOptions.series = [contributionStats.delegateSales, contributionStats.teamSales - contributionStats.delegateSales];
+            this.state.delegatesContributionChartPie.series = [...delegatesContributions.map(e => e.ChiffreDaffaire)];
+            delegatesContributions.forEach(e => {
+                this.state.delegatesContributionChartPie.labels?.push(e.delegateName);
+            });
+            this.state.chartPieOptions.labels?.splice(0, this.state.chartPieOptions.labels?.length);
+            this.state.chartPieOptions.labels?.push(delegate.username!);
+            this.state.chartPieOptions.labels?.push('reste d\'equipe');
+            this.state.delegatesContributionChartPie.labels?.splice(0, this.state.chartPieOptions.labels?.length);
+
+            this.state.delegateSuccessRateAreaChart.series = [
+                {
+                    name: 'Total de bon de commandes honores',
+                    data: successRate.map(e => e.honoredCommands),
+                },
+                {
+                    name: 'Total visites',
+                    data: successRate.map(e => e.totalVisits),
+                },
+            ];
+
+            this.state.salesAreaChart.series = [
+                {
+                    name: 'Total chiffre d\'affaire',
+                    data: salesStats.map(e => e.totalSales),
+                },
+                {
+                    name: 'Objectifs chiffre d\'affaire',
+                    data: salesStats.map(e => e.salesGoal),
+                },
+            ];
+
+            this.state.visitGoalAreaChart.series = [
+                {
+                    name: 'Visites réalisées',
+                    data: visitStats.map(e => e.numberOfVisits),
+                },
+                {
+                    name: 'Objectifs de visites',
+                    data: visitStats.map(e => e.visitsGoal),
+                },
+            ];
+
+            this.state.visitTaskAreaChart.series = [
+                {
+                    name: 'Visites réalisées',
+                    data: visitStats.map(e => e.numberOfVisits),
+                },
+                {
+                    name: 'visites programmées',
+                    data: visitStats.map(e => e.numberOfTasks),
+                },
+            ];
         }
 
+
         this.setState({
-            selectedDate: date,
+            selectedDelegate: delegate,
             loadingStatisticsData: false,
             visitGoalAreaChart: this.state.visitGoalAreaChart,
             visitTaskAreaChart: this.state.visitTaskAreaChart,
@@ -592,36 +713,28 @@ class StatisticsPage extends Component<{}, StatisticsPageProps> {
         });
     }
 
-    loadStatisticsPageData = async () => {
+    handleOnPickDate = async (date: Date) => {
 
-      
-            var currentUser = await this.userService.getMe();
+        this.setState({ loadingStatisticsData: true, });
+        if (this.state.currentUser.type === UserType.supervisor) {
+            if (this.state.selectedDelegate) {
+                var visitStats = await this.statisticsService.getDelegateYearVisitStats(date, this.state.selectedDelegate!.id!);
+                var salesStats = await this.statisticsService.getDelegateYearSaleStats(date, this.state.selectedDelegate!.id!);
+                var contributionStats = await this.statisticsService.getDelegateContributionStats(date, this.state.selectedDelegate!.id!, this.state.currentUser.id!);
+                var teamVisitsData = await this.statisticsService.getTeamYearVisitStats(date, this.state.currentUser.id!);
+                var teamSalesData = await this.statisticsService.getTeamYearSaleStats(date, this.state.currentUser.id!);
+                var successRate = await this.statisticsService.getDelegateSuccessRateYear(this.state.selectedDelegate!.id!, date);
 
-            if (currentUser != undefined) {
-                this.setState({ currentUser: currentUser });
-            }
-
-            var delegates = await this.userService.getUsersByCreator(currentUser.id!, UserType.delegate);
-            var currentUser = await this.userService.getMe();
-            if (delegates.length > 0) {
-                this.setState({ selectedDelegate: delegates[0] });
-                var visitStats = await this.statisticsService.getDelegateYearVisitStats(new Date(), delegates[0].id!);
-                var salesStats = await this.statisticsService.getDelegateYearSaleStats(new Date(), delegates[0].id!);
-                var contributionStats = await this.statisticsService.getDelegateContributionStats(new Date(), delegates[0].id!,currentUser.id!);
-                var teamVisitsData = await this.statisticsService.getTeamYearVisitStats(new Date(),currentUser.id!);
-                var successRate = await this.statisticsService.getDelegateSuccessRateYear(delegates[0].id!, new Date());
-                var teamSalesData = await this.statisticsService.getTeamYearSaleStats(new Date(),currentUser.id!);
-
-                var teamSuccessRate = await this.statisticsService.getTeamSuccessRateYear(currentUser.id!, new Date());
-                var delegatesContributions = await this.statisticsService.getDelegatesContributionsOfSupervisor(currentUser.id!, new Date());
-                var teamContribution = await this.statisticsService.getTeamContributionsOfSupervisor(currentUser.id!, new Date());
+                var teamSuccessRate = await this.statisticsService.getTeamSuccessRateYear(this.state.currentUser.id!, date);
+                var delegatesContributions = await this.statisticsService.getDelegatesContributionsOfSupervisor(this.state.currentUser.id!, date,);
+                var teamContribution = await this.statisticsService.getTeamContributionsOfSupervisor(this.state.currentUser.id!, date,);
 
                 this.state.chartPieOptions.series = [contributionStats.delegateSales, contributionStats.teamSales - contributionStats.delegateSales];
                 this.state.chartPieOptions.labels?.splice(0, this.state.chartPieOptions.labels?.length);
-                this.state.chartPieOptions.labels?.push(delegates[0].username!);
+                this.state.chartPieOptions.labels?.push(this.state.selectedDelegate!.username!);
                 this.state.chartPieOptions.labels?.push('reste d\'equipe');
 
-                this.state.teamContributionPieOptions.series = [teamContribution.teamSales,teamContribution.companySales - teamContribution.teamSales];
+                this.state.teamContributionPieOptions.series = [teamContribution.teamSales, teamContribution.companySales - teamContribution.teamSales];
                 this.state.teamContributionPieOptions.labels?.splice(0, this.state.teamContributionPieOptions.labels?.length);
                 this.state.teamContributionPieOptions.labels?.push('equipe');
                 this.state.teamContributionPieOptions.labels?.push('entreprise');
@@ -718,11 +831,187 @@ class StatisticsPage extends Component<{}, StatisticsPageProps> {
                         data: visitStats.map(e => e.numberOfTasks),
                     },
                 ];
-                this.setState({ loadingStatisticsData: false, visitGoalAreaChart: this.state.visitGoalAreaChart, visitTaskAreaChart: this.state.visitTaskAreaChart, salesAreaChart: this.state.salesAreaChart, chartPieOptions: this.state.chartPieOptions });
-
             }
-            this.setState({ isLoading: false, delegates: delegates, filtredDelegates: delegates,currentUser:currentUser });
-        
+
+
+            this.setState({
+                selectedDate: date,
+                loadingStatisticsData: false,
+                visitGoalAreaChart: this.state.visitGoalAreaChart,
+                visitTaskAreaChart: this.state.visitTaskAreaChart,
+                salesAreaChart: this.state.salesAreaChart,
+                chartPieOptions: this.state.chartPieOptions,
+                teamContributionPieOptions: this.state.teamContributionPieOptions,
+            });
+        } else {
+
+            if (this.state.selectedDelegate) {
+                var visitStats = await this.statisticsService.getDelegateYearVisitStats(date, this.state.selectedDelegate!.id!);
+                var salesStats = await this.statisticsService.getDelegateYearSaleStats(date, this.state.selectedDelegate!.id!);
+                var successRate = await this.statisticsService.getDelegateSuccessRateYear(this.state.selectedDelegate!.id!, date);
+                var contributionStats = await this.statisticsService.getDelegateContributionStats(date, this.state.selectedDelegate!.id!, this.state.selectedSupervisor!.id!);
+                var delegatesContributions = await this.statisticsService.getDelegatesContributionsOfSupervisor(this.state.selectedSupervisor!.id!, date,);
+
+                this.state.chartPieOptions.series = [contributionStats.delegateSales, contributionStats.teamSales - contributionStats.delegateSales];
+                this.state.delegatesContributionChartPie.series = [...delegatesContributions.map(e => e.ChiffreDaffaire)];
+                delegatesContributions.forEach(e => {
+                    this.state.delegatesContributionChartPie.labels?.push(e.delegateName);
+                });
+                this.state.chartPieOptions.labels?.splice(0, this.state.chartPieOptions.labels?.length);
+                this.state.chartPieOptions.labels?.push(this.state.selectedDelegate!.username!);
+                this.state.chartPieOptions.labels?.push('reste d\'equipe');
+                this.state.delegatesContributionChartPie.labels?.splice(0, this.state.chartPieOptions.labels?.length);
+
+                this.state.delegateSuccessRateAreaChart.series = [
+                    {
+                        name: 'Total de bon de commandes honores',
+                        data: successRate.map(e => e.honoredCommands),
+                    },
+                    {
+                        name: 'Total visites',
+                        data: successRate.map(e => e.totalVisits),
+                    },
+                ];
+
+                this.state.salesAreaChart.series = [
+                    {
+                        name: 'Total chiffre d\'affaire',
+                        data: salesStats.map(e => e.totalSales),
+                    },
+                    {
+                        name: 'Objectifs chiffre d\'affaire',
+                        data: salesStats.map(e => e.salesGoal),
+                    },
+                ];
+
+                this.state.visitGoalAreaChart.series = [
+                    {
+                        name: 'Visites réalisées',
+                        data: visitStats.map(e => e.numberOfVisits),
+                    },
+                    {
+                        name: 'Objectifs de visites',
+                        data: visitStats.map(e => e.visitsGoal),
+                    },
+                ];
+
+                this.state.visitTaskAreaChart.series = [
+                    {
+                        name: 'Visites réalisées',
+                        data: visitStats.map(e => e.numberOfVisits),
+                    },
+                    {
+                        name: 'visites programmées',
+                        data: visitStats.map(e => e.numberOfTasks),
+                    },
+                ];
+            }
+            this.setState({
+                selectedDate: date,
+                loadingStatisticsData: false,
+                visitGoalAreaChart: this.state.visitGoalAreaChart,
+                visitTaskAreaChart: this.state.visitTaskAreaChart,
+                salesAreaChart: this.state.salesAreaChart,
+                chartPieOptions: this.state.chartPieOptions,
+                teamContributionPieOptions: this.state.teamContributionPieOptions,
+            });
+        }
+    }
+
+    handleSelectSupervisor = async (supervisor: UserModel) => {
+        this.setState({ loadingDelegates: true, loadingStatisticsData: true, });
+        var delegates = await this.userService.getUsersByCreator(supervisor.id!, UserType.delegate);
+        var teamVisitsData = await this.statisticsService.getTeamYearVisitStats(this.state.selectedDate, supervisor.id!);
+        var teamSalesData = await this.statisticsService.getTeamYearSaleStats(this.state.selectedDate, supervisor.id!);
+        var teamSuccessRate = await this.statisticsService.getTeamSuccessRateYear(supervisor.id!, this.state.selectedDate);
+        var delegatesContributions = await this.statisticsService.getDelegatesContributionsOfSupervisor(supervisor.id!, this.state.selectedDate,);
+        var teamContribution = await this.statisticsService.getTeamContributionsOfSupervisor(supervisor.id!, this.state.selectedDate,);
+
+        this.state.teamContributionPieOptions.series = [teamContribution.teamSales, teamContribution.companySales - teamContribution.teamSales];
+        this.state.delegatesContributionChartPie.series = [...delegatesContributions.map(e => e.ChiffreDaffaire)];
+        delegatesContributions.forEach(e => {
+            this.state.delegatesContributionChartPie.labels?.push(e.delegateName);
+        });
+
+
+        this.state.teamContributionPieOptions.labels?.splice(0, this.state.teamContributionPieOptions.labels?.length);
+        this.state.teamContributionPieOptions.labels?.push('equipe');
+        this.state.teamContributionPieOptions.labels?.push('entreprise');
+
+
+        this.state.teamSuccessRateAreaChart.series = [
+            {
+                name: 'Total de bon de commandes honores',
+                data: teamSuccessRate.map(e => e.honoredCommands),
+            },
+            {
+                name: 'Total visites',
+                data: teamSuccessRate.map(e => e.totalVisits),
+            },
+        ];
+
+        this.state.teamSalesAreaChart.series = [
+            {
+                name: 'Total des ventes',
+                data: teamSalesData.map(e => e.totalSales),
+            },
+            {
+                name: 'Objectifs chiffre d\'affaire',
+                data: teamSalesData.map(e => e.salesGoal),
+            },
+        ];
+
+        this.state.teamVisitGoalAreaChart.series = [
+            {
+                name: 'Total visites',
+                data: teamVisitsData.map(e => e.numberOfVisits),
+            },
+            {
+                name: 'Objectifs de visites',
+                data: teamVisitsData.map(e => e.visitsGoal),
+            },
+        ];
+        this.state.teamVisitTaskAreaChart.series = [
+            {
+                name: 'Visites réalisées',
+                data: teamVisitsData.map(e => e.numberOfVisits),
+            },
+            {
+                name: 'Visites programmées',
+                data: teamVisitsData.map(e => e.numberOfTasks),
+            },
+        ];
+        this.setState({
+            selectedSupervisor: supervisor,
+            delegates: delegates,
+            loadingDelegates: false,
+            loadingStatisticsData: false,
+        });
+    }
+
+
+    loadStatisticsPageData = async () => {
+
+        var currentUser = await this.userService.getMe();
+
+        if (currentUser != undefined) {
+            this.setState({ currentUser: currentUser });
+        }
+
+        if (currentUser.type === UserType.supervisor) {
+            var delegates = await this.userService.getUsersByCreator(currentUser.id!, UserType.delegate);
+            this.setState({ delegates: delegates, });
+        } else {
+            var supervisors = await this.userService.getUsersByCreator(currentUser.id!, UserType.supervisor);
+            var kams = await this.userService.getUsersByCreator(currentUser.id!, UserType.kam);
+            this.setState({
+                supervisors: supervisors,
+                kams: kams,
+            });
+        }
+
+        this.setState({ isLoading: false, currentUser: currentUser });
+
     }
 
     handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
@@ -731,7 +1020,7 @@ class StatisticsPage extends Component<{}, StatisticsPageProps> {
 
     componentDidMount(): void {
         if (localStorage.getItem('isLogged') === 'true') {
-           this.loadStatisticsPageData();
+            this.loadStatisticsPageData();
         }
     }
 
@@ -763,23 +1052,40 @@ class StatisticsPage extends Component<{}, StatisticsPageProps> {
                             <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
                                 <Tabs value={this.state.index} onChange={this.handleTabChange} aria-label="basic tabs example">
                                     <Tab label="Délégué" />
-                                    <Tab label="Équipe" />
+                                    <Tab label={this.state.currentUser.type === UserType.admin ? "Superviseur" : "Équipe"} />
+                                    {
+                                        this.state.currentUser.type === UserType.admin ? (<Tab label="Kam" />) : undefined
+                                    }
                                 </Tabs>
                             </Box>
                             <CustomTabPanel value={this.state.index} index={0} >
-                                <div style={{ display: 'flex', height: '40px' }}>
-                                    <Form>
-                                        <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
-                                            <Form.Control type="search" placeholder="Recherche" onChange={this.handleSearchTextChange} />
-                                        </Form.Group>
-                                    </Form>
-                                    <button onClick={this.handleDelegateFilter} className="btn btn-primary" style={{ backgroundColor: '#fff', border: '#ddd solid 1px', height: '38px' }}>
-                                        <FontAwesomeIcon icon={faSearch} style={{ color: 'black' }} />
-                                    </button>
-                                    <YearPicker initialDate={this.state.selectedDate} onPick={this.handleOnPickDate}></YearPicker >
-                                </div>
-                                <div style={{ display: 'flex' }}>
-                                    <UserPicker delegates={this.state.filtredDelegates} onSelect={this.handleSelectDelegate}></UserPicker>
+                                <div style={{ display: 'flex', justifyContent: 'stretch', flexGrow: '1', marginTop: '16px' }}>
+                                    {this.state.currentUser.type === UserType.admin ?
+                                        (<div style={{
+                                            height: '50px',
+                                            width: '150px',
+                                            margin: '0px 8px'
+                                        }}>
+                                            <UserDropdown
+                                                users={this.state.supervisors}
+                                                selectedUser={this.state.selectedSupervisor}
+                                                onSelectUser={this.handleSelectSupervisor}
+                                                label='Superviseur'
+                                            />
+                                        </div>) : null
+                                    }
+                                    <div style={{ height: '40px', width: '150px', marginRight: '8px' }}>
+                                        <UserDropdown
+                                            users={this.state.delegates}
+                                            selectedUser={this.state.selectedDelegate}
+                                            onSelectUser={this.handleSelectDelegate}
+                                            label='Délégué'
+                                            loading={this.state.loadingDelegates}
+                                        />
+                                    </div>
+                                    <div style={{ display: 'flex' }}>
+                                        <YearPicker initialDate={this.state.selectedDate} onPick={this.handleOnPickDate}></YearPicker >
+                                    </div>
                                 </div>
                                 {
                                     this.state.loadingStatisticsData ? (
@@ -791,7 +1097,7 @@ class StatisticsPage extends Component<{}, StatisticsPageProps> {
                                             />
                                         </div>
                                     ) : (
-                                        <div>
+                                        <div style={{ marginLeft: '8px', }}>
                                             <div style={{ display: 'flex' }}>
                                                 <ReactApexChart
                                                     options={this.state.salesAreaChart}
@@ -799,9 +1105,10 @@ class StatisticsPage extends Component<{}, StatisticsPageProps> {
                                                     type="area"
                                                     height={350}
                                                     style={{
+                                                        backgroundColor: 'white',
                                                         width: '50%',
-                                                        border: 'solid black 1px',
-                                                        borderRadius: '16px 0px 0px 0px',
+                                                        border: 'solid rgba(0,0,0,0.2) 1px',
+                                                        borderRadius: '4px 0px 0px 0px',
                                                         padding: '16px'
                                                     }}
                                                 />
@@ -811,9 +1118,10 @@ class StatisticsPage extends Component<{}, StatisticsPageProps> {
                                                     type="pie"
                                                     height={350}
                                                     style={{
+                                                        backgroundColor: 'white',
                                                         width: '50%',
-                                                        border: 'solid black 1px',
-                                                        borderRadius: '0px 16px 0px 0px',
+                                                        border: 'solid rgba(0,0,0,0.2) 1px',
+                                                        borderRadius: '0px 4px 0px 0px',
                                                         padding: '16px'
                                                     }}
                                                 />
@@ -825,8 +1133,9 @@ class StatisticsPage extends Component<{}, StatisticsPageProps> {
                                                     type="area"
                                                     height={350}
                                                     style={{
+                                                        backgroundColor: 'white',
                                                         width: '50%',
-                                                        border: 'solid black 1px',
+                                                        border: 'solid rgba(0,0,0,0.2) 1px',
                                                         padding: '16px',
                                                     }}
                                                 />
@@ -836,9 +1145,10 @@ class StatisticsPage extends Component<{}, StatisticsPageProps> {
                                                     type="area"
                                                     height={350}
                                                     style={{
+                                                        backgroundColor: 'white',
                                                         width: '50%',
-                                                        border: 'solid black 1px',
-                                                        borderRadius: '0px 0px 16px 0px',
+                                                        border: 'solid rgba(0,0,0,0.2) 1px',
+                                                        borderRadius: '0px 0px 4px 0px',
                                                         padding: '16px',
                                                     }}
                                                 />
@@ -850,9 +1160,10 @@ class StatisticsPage extends Component<{}, StatisticsPageProps> {
                                                     type="area"
                                                     height={350}
                                                     style={{
+                                                        backgroundColor: 'white',
                                                         width: '50%',
-                                                        border: 'solid black 1px',
-                                                        borderRadius: '0px 0px 16px 16px',
+                                                        border: 'solid rgba(0,0,0,0.2) 1px',
+                                                        borderRadius: '0px 0px 4px 4px',
                                                         padding: '16px',
                                                     }}
                                                 />
@@ -864,8 +1175,24 @@ class StatisticsPage extends Component<{}, StatisticsPageProps> {
                                 }
                             </CustomTabPanel>
                             <CustomTabPanel value={this.state.index} index={1}>
-                                <div style={{ display: 'flex' }}>
-                                    <YearPicker initialDate={this.state.selectedDate} onPick={this.handleOnPickDate}></YearPicker >
+                                <div style={{ display: 'flex', justifyContent: 'stretch', flexGrow: '1', marginTop: '16px' }}>
+                                    {this.state.currentUser.type === UserType.admin ?
+                                        (<div style={{
+                                            height: '50px',
+                                            width: '150px',
+                                            margin: '0px 8px'
+                                        }}>
+                                            <UserDropdown
+                                                users={this.state.supervisors}
+                                                selectedUser={this.state.selectedSupervisor}
+                                                onSelectUser={this.handleSelectSupervisor}
+                                                label='Superviseur'
+                                            />
+                                        </div>) : null
+                                    }
+                                    <div style={{ display: 'flex' }}>
+                                        <YearPicker initialDate={this.state.selectedDate} onPick={this.handleOnPickDate}></YearPicker >
+                                    </div>
                                 </div>
                                 {
                                     this.state.loadingStatisticsData ? (
@@ -877,9 +1204,7 @@ class StatisticsPage extends Component<{}, StatisticsPageProps> {
                                             />
                                         </div>
                                     ) : (
-                                        <div>
-
-
+                                        <div style={{ marginLeft: '8px', backgroundColor: 'white', borderRadius: '4px' }}>
                                             <div style={{ display: 'flex', flexGrow: '1' }}>
                                                 <ReactApexChart
                                                     options={this.state.teamSalesAreaChart}
@@ -887,9 +1212,10 @@ class StatisticsPage extends Component<{}, StatisticsPageProps> {
                                                     type="area"
                                                     height={350}
                                                     style={{
+
                                                         width: '50%',
-                                                        border: 'solid black 1px',
-                                                        borderRadius: '16px 0px 0px 0px',
+                                                        border: 'solid rgba(0,0,0,0.2) 1px',
+                                                        borderRadius: '4px 0px 0px 0px',
                                                         padding: '16px'
                                                     }}
                                                 />
@@ -900,8 +1226,8 @@ class StatisticsPage extends Component<{}, StatisticsPageProps> {
                                                     height={350}
                                                     style={{
                                                         width: '50%',
-                                                        border: 'solid black 1px',
-                                                        borderRadius: '0px 16px 0px 0px',
+                                                        border: 'solid rgba(0,0,0,0.2) 1px',
+                                                        borderRadius: '0px 4px 0px 0px',
                                                         padding: '16px'
                                                     }}
                                                 />
@@ -914,7 +1240,7 @@ class StatisticsPage extends Component<{}, StatisticsPageProps> {
                                                     height={350}
                                                     style={{
                                                         width: '50%',
-                                                        border: 'solid black 1px',
+                                                        border: 'solid rgba(0,0,0,0.2) 1px',
                                                         borderRadius: '0px',
                                                         padding: '16px'
                                                     }}
@@ -926,7 +1252,7 @@ class StatisticsPage extends Component<{}, StatisticsPageProps> {
                                                     height={350}
                                                     style={{
                                                         width: '50%',
-                                                        border: 'solid black 1px',
+                                                        border: 'solid rgba(0,0,0,0.2) 1px',
                                                         borderRadius: '0px',
                                                         padding: '16px'
                                                     }}
@@ -941,8 +1267,8 @@ class StatisticsPage extends Component<{}, StatisticsPageProps> {
                                                     height={350}
                                                     style={{
                                                         width: '50%',
-                                                        border: 'solid black 1px',
-                                                        borderRadius: '0px 0px 0px 16px',
+                                                        border: 'solid rgba(0,0,0,0.2) 1px',
+                                                        borderRadius: '0px 0px 0px 4px',
                                                         padding: '16px',
                                                     }}
                                                 />
@@ -953,8 +1279,8 @@ class StatisticsPage extends Component<{}, StatisticsPageProps> {
                                                     height={350}
                                                     style={{
                                                         width: '50%',
-                                                        border: 'solid black 1px',
-                                                        borderRadius: '0px 0px 16px 0px',
+                                                        border: 'solid rgba(0,0,0,0.2) 1px',
+                                                        borderRadius: '0px 0px 4px 0px',
                                                         padding: '16px',
                                                     }}
                                                 />
@@ -964,9 +1290,116 @@ class StatisticsPage extends Component<{}, StatisticsPageProps> {
                                     )
                                 }
                             </CustomTabPanel>
+                            <CustomTabPanel value={this.state.index} index={2} >
+                                <div style={{ display: 'flex', justifyContent: 'stretch', flexGrow: '1', marginTop: '16px' }}>
+
+                                    <div style={{ height: '40px', width: '150px', marginRight: '8px', marginLeft: '8px' }}>
+                                        <UserDropdown
+                                            users={this.state.kams}
+                                            selectedUser={this.state.selectedKam}
+                                            onSelectUser={this.handleSelectKam}
+                                            label='Kam'
+                                        />
+                                    </div>
+                                    <div style={{ display: 'flex' }}>
+                                        <YearPicker initialDate={this.state.selectedDate} onPick={this.handleOnPickDate}></YearPicker >
+                                    </div>
+                                </div>
+                                {
+                                    this.state.loadingStatisticsData ? (
+                                        <div style={{
+                                            display: 'flex',
+                                            flexGrow: '1',
+                                            justifyContent: 'center',
+                                            alignItems: 'center',
+                                            height: '700px'
+                                        }}>
+                                            <DotSpinner
+                                                size={40}
+                                                speed={0.9}
+                                                color="black"
+                                            />
+                                        </div>
+                                    ) : (
+                                        <div style={{ marginLeft: '8px', }}>
+                                            <div style={{ display: 'flex' }}>
+                                                <ReactApexChart
+                                                    options={this.state.kamSalesAreaChart}
+                                                    series={this.state.kamSalesAreaChart.series}
+                                                    type="area"
+                                                    height={350}
+                                                    style={{
+                                                        backgroundColor: 'white',
+                                                        width: '50%',
+                                                        border: 'solid rgba(0,0,0,0.2) 1px',
+                                                        borderRadius: '4px 0px 0px 0px',
+                                                        padding: '16px'
+                                                    }}
+                                                />
+                                                <ReactApexChart
+                                                    options={this.state.kamChartPieOptions}
+                                                    series={this.state.kamChartPieOptions.series}
+                                                    type="pie"
+                                                    height={350}
+                                                    style={{
+                                                        backgroundColor: 'white',
+                                                        width: '50%',
+                                                        border: 'solid rgba(0,0,0,0.2) 1px',
+                                                        borderRadius: '0px 4px 0px 0px',
+                                                        padding: '16px'
+                                                    }}
+                                                />
+                                            </div>
+                                            <div style={{ display: 'flex' }}>
+                                                <ReactApexChart
+                                                    options={this.state.kamVisitGoalAreaChart}
+                                                    series={this.state.kamVisitGoalAreaChart.series}
+                                                    type="area"
+                                                    height={350}
+                                                    style={{
+                                                        backgroundColor: 'white',
+                                                        width: '50%',
+                                                        border: 'solid rgba(0,0,0,0.2) 1px',
+                                                        padding: '16px',
+                                                    }}
+                                                />
+                                                <ReactApexChart
+                                                    options={this.state.kamVisitTaskAreaChart}
+                                                    series={this.state.kamVisitTaskAreaChart.series}
+                                                    type="area"
+                                                    height={350}
+                                                    style={{
+                                                        backgroundColor: 'white',
+                                                        width: '50%',
+                                                        border: 'solid rgba(0,0,0,0.2) 1px',
+                                                        borderRadius: '0px 0px 4px 0px',
+                                                        padding: '16px',
+                                                    }}
+                                                />
+                                            </div>
+                                            <div style={{ display: 'flex' }}>
+                                                <ReactApexChart
+                                                    options={this.state.kamSuccessRateAreaChart}
+                                                    series={this.state.kamSuccessRateAreaChart.series}
+                                                    type="area"
+                                                    height={350}
+                                                    style={{
+                                                        backgroundColor: 'white',
+                                                        width: '50%',
+                                                        border: 'solid rgba(0,0,0,0.2) 1px',
+                                                        borderRadius: '0px 0px 4px 4px',
+                                                        padding: '16px',
+                                                    }}
+                                                />
+                                            </div>
+                                        </div>
+                                    )
+
+                                }
+                            </CustomTabPanel>
                         </Box>
                     </div>
-                </div>
+                </div >
             );
         }
     }
