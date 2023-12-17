@@ -173,23 +173,6 @@ class ClientsPage extends Component<{}, ClientsPageProps> {
         this.setState({ docVisits: docVisits, totalDoc: totalDoc, loadingVisitsData: false, sizeDoc: size });
     }
 
-    handlePharmRowNumChange = async (size: number) => {
-        this.setState({ loadingVisitsData: true, pharmPage: 1, sizePharm: size });
-        var { visits: pharmVisits, total: totalPharm } = await this.visitService.getAllVisitsPaginated(1, size, this.state.pharmSearchText, ClientType.pharmacy, this.state.currentUser.id!);
-        this.setState({ pharmVisits: pharmVisits, totalPharm: totalPharm, loadingVisitsData: false, });
-    }
-    handleWholeRowNumChange = async (size: number) => {
-        this.setState({ loadingVisitsData: true, wholePage: 1, sizeWhole: size });
-        var { visits: wholeVisits, total: totalWhole } = await this.visitService.getAllVisitsPaginated(1, size, this.state.wholeSearchText, ClientType.wholesaler, this.state.currentUser.id!);
-        this.setState({ wholeVisits: wholeVisits, totalWhole: totalWhole, loadingVisitsData: false, });
-    }
-
-    handleDocRowNumChange = async (size: number) => {
-        this.setState({ loadingVisitsData: true, docPage: 1, sizeDoc: size });
-        var { visits: docVisits, total: totalDoc } = await this.visitService.getAllVisitsPaginated(1, size, this.state.docSearchText, ClientType.doctor, this.state.currentUser.id!);
-        this.setState({ docVisits: docVisits, totalDoc: totalDoc, loadingVisitsData: false, });
-    }
-
     handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
         this.setState({ index: newValue });
     };

@@ -105,13 +105,13 @@ class HomePage extends Component<{}, HomePageState> {
         }
 
         if (currentUser.type === UserType.supervisor) {
-            // var { visits: visits, total: total } = await this.visitService.getAllVisits(1, 25, new Date(), ClientType.pharmacy, currentUser.id!);
-            // this.setState({
-            //     isLoading: false,
-            //     delegateVisits: visits,
-            //     filteredDelegateVisits: visits,
-            //     totalDelegate: total,
-            // });
+            var { visits: visits, total: total } = await this.visitService.getAllVisits(1, 25, new Date(), ClientType.pharmacy, currentUser.id!);
+            this.setState({
+                isLoading: false,
+                delegateVisits: visits,
+                filteredDelegateVisits: visits,
+                totalDelegate: total,
+            });
         } else {
             var supervisors = await this.userService.getUsersByCreator(currentUser.id!, UserType.supervisor);
             this.setState({
