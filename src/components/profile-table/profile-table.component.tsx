@@ -12,14 +12,11 @@ import MenuItem from '@mui/material/MenuItem';
 import Checkbox from '@mui/material/Checkbox';
 import ListItemText from '@mui/material/ListItemText';
 import Switch from '@mui/material/Switch';
-import Paper from '@mui/material/Paper';
-import TextField from '@mui/material/TextField';
 import InputAdornment from '@mui/material/InputAdornment';
 import IconButton from '@mui/material/IconButton';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 import Input from '@mui/material/Input';
 import WilayaModel from '../../models/wilaya.model';
-import TablePagination from '@mui/material/TablePagination';
 import { DataGrid, GridColDef, GridValueGetterParams } from '@mui/x-data-grid';
 import Button from '@mui/material/Button';
 
@@ -187,7 +184,7 @@ const ProfileTable: React.FC<ProfileTableProps> = ({ data, isLoading, wilayas, e
                         hideFooterPagination={true}
                         hideFooter={true}
                         checkboxSelection={false}
-
+                        hideFooterSelectedRowCount={true}
                     />)}
             {/* <TableContainer sx={{ flexGrow: '1', display: 'flex', flexDirection: 'column', borderRadius: '8px', margin: '8px', overflow: 'hidden' }} component={Paper}>
                 <Table sx={{ flexGrow: '1', display: 'flex', flexDirection: 'column', overflow: 'hidden', margin: '0px', width: "100%" }} size="small" aria-label="a dense table">

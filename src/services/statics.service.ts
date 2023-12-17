@@ -235,6 +235,7 @@ export default class StatisticsService {
 
         return { teamSales: 0, delegateSales: 0 };
     }
+    
     async getTeamYearVisitStats(date: Date,superId:number): Promise<{ month: string, numberOfTasks: number, numberOfVisits: number, visitsGoal: number }[]> {
 
         const token = localStorage.getItem('token');

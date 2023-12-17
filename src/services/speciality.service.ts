@@ -4,9 +4,9 @@ import Globals from "../api/globals";
 
 export default class SpecialityService {
 
-    async getAllMedicalSpecialities(): Promise<SpecialityModel[]> {
+    async getAllMedicalSpecialities(page: number, size: number,): Promise<{ specialities: SpecialityModel[], total: number }> {
         const token = localStorage.getItem('token');
-        var response = await axios.get(`${Globals.apiUrl}/specialities?filters[domainType][id][$eq]=1`,
+        var response = await axios.get(`${Globals.apiUrl}/specialities?filters[domainType][id][$eq]=1&pagination[page]=${page}&pagination[pageSize]=${size}`,
             {
                 headers: {
                     'Authorization': `Bearer ${token}`
@@ -14,14 +14,14 @@ export default class SpecialityService {
             });
 
         if (response.status == 200) {
-            var specialitys: SpecialityModel[] = [];
+            var specialities: SpecialityModel[] = [];
             for (let index = 0; index < response.data.data.length; index++) {
                 var speciality = SpecialityModel.fromJson(response.data.data[index]);
-                specialitys.push(speciality);
+                specialities.push(speciality);
             }
-            return specialitys;
+            return { specialities: specialities, total: response.data.meta.pagination.total };;
         }
-        return [];
+        return { specialities: [], total: 0 };
     }
 
     async getAllDraftedMedicalSpecialities(): Promise<SpecialityModel[]> {

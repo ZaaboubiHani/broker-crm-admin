@@ -146,7 +146,7 @@ const PlanTable: React.FC<PlanTableProps> = ({ data, id, isLoading, onDisplayDet
                         hideFooterPagination={true}
                         hideFooter={true}
                         checkboxSelection={false}
-
+                        hideFooterSelectedRowCount={true}
                     />)}
         </div>
         // <TableContainer id={id} sx={{ display: 'flex', flexDirection: 'column', borderRadius: '8px', margin: '8px', overflow: 'hidden', }} component={Paper}>

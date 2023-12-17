@@ -1,11 +1,7 @@
 import React, { Component } from 'react';
 import DatePickerBar from '../../components/date-picker/date-picker.component';
 import '../home-page/home-page.style.css';
-import UserPicker from '../../components/user-picker/user-picker.component';
 import HomeTable from '../../components/home-table/home-table.component';
-import Form from 'react-bootstrap/Form';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faSearch } from '@fortawesome/free-solid-svg-icons';
 import UserService from '../../services/user.service';
 import UserModel, { UserType } from '../../models/user.model';
 import { DotSpinner } from '@uiball/loaders'
@@ -17,8 +13,6 @@ import ReportPanel from '../../components/report-panel/report-panel.component';
 import CommandModel from '../../models/command.model';
 import CommandService from '../../services/command.service';
 import CommandPanel from '../../components/comand-panel/command-panel.component';
-import TextField from '@mui/material/TextField';
-import Button from '@mui/material/Button';
 import { ClientType } from '../../models/client.model';
 import CustomTabPanel from '../../components/custom-tab-panel/costum-tab-panel.component';
 import Box from '@mui/material/Box';

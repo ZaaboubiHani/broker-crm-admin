@@ -77,7 +77,7 @@ const RevenueTable: React.FC<RevenueTableProps> = ({ data, id, isLoading, displa
                         hideFooterPagination={true}
                         hideFooter={true}
                         checkboxSelection={false}
-
+                        hideFooterSelectedRowCount={true}
                     />)}
         </div>
         // <TableContainer id={id} sx={{ flexGrow: '1', display: 'flex', flexDirection: 'column', borderRadius: '8px', margin: '8px', overflow: 'hidden' }} component={Paper}>
