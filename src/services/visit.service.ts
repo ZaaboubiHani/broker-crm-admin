@@ -62,7 +62,7 @@ export default class VisitService {
         if (text.length > 0) {
             textFilter = `&filters[client][fullName][$containsi]=${text}`;
         }
-
+        console.log(`${Globals.apiUrl}/visits?populate[rapport][populate]=*&sort[0]=createdDate:desc&populate[client][populate]=relatedSpeciality.domainType&populate=user${textFilter}&pagination[page]=${page}&pagination[pageSize]=${size}&filters[client][relatedSpeciality][domainType][reference][$eq]=${clientType === ClientType.doctor ? `doctor&filters[user][creatorId][$eq]=${superId}` : clientType === ClientType.pharmacy ? `pharmacy&filters[user][creatorId][$eq]=${superId}` : 'wholesaler'}`);
         var response = await axios.get(`${Globals.apiUrl}/visits?populate[rapport][populate]=*&sort[0]=createdDate:desc&populate[client][populate]=relatedSpeciality.domainType&populate=user${textFilter}&pagination[page]=${page}&pagination[pageSize]=${size}&filters[client][relatedSpeciality][domainType][reference][$eq]=${clientType === ClientType.doctor ? `doctor&filters[user][creatorId][$eq]=${superId}` : clientType === ClientType.pharmacy ? `pharmacy&filters[user][creatorId][$eq]=${superId}` : 'wholesaler'}`,
             {
                 headers: {
