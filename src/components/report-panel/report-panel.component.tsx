@@ -65,7 +65,6 @@ const ReportPanel: React.FC<ReportPanelProps> = ({ report, clientType, location,
                         textDecoration: 'none',
                     }} onClick={() => openGoogleMaps(location)} variant="outlined"> <LocationOnIcon />localisation</Button>
                 </div>
-
                 <Divider component="div" style={{ margin: '8px 0px' }} />
                 <h4 style={{ fontSize: 17 }}><InventoryIcon style={{ fontSize: 17 }} /> Produits:</h4>
                 {
@@ -80,7 +79,6 @@ const ReportPanel: React.FC<ReportPanelProps> = ({ report, clientType, location,
                                     </div>
                                 ) : null
                             }
-
                         </div>
                     ))
                 }
@@ -121,7 +119,6 @@ const ReportPanel: React.FC<ReportPanelProps> = ({ report, clientType, location,
                             </div>
                         ) : null
                 }
-
                 {
                     clientType == ClientType.doctor ?
                         (
@@ -146,7 +143,6 @@ const ReportPanel: React.FC<ReportPanelProps> = ({ report, clientType, location,
                         )
                         : null
                 }
-
                 {
                     clientType == ClientType.doctor ? (
                         <div>
