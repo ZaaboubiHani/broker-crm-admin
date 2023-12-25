@@ -39,25 +39,51 @@ const ClientsPharmacyTable: React.FC<ClientsPharmacyTableProps> = ({ total, size
             field: 'date', headerName: 'Date', width: 150, valueFormatter(params) {
                 return formatDateToYYYYMMDD(params.value);
             },
+            filterable: false,
+            sortable: false,
         },
-        { field: 'client', headerName: 'Client', width: 150 },
-        { field: 'delegate', headerName: 'Délégué', width: 150 },
-        { field: 'location', headerName: 'Localisation', minWidth: 150, maxWidth: 200 },
         {
-            field: 'report', headerName: 'Rapport', width: 80,
+            field: 'client',
+            headerName: 'Client',
+            width: 150,
+            filterable: false,
+            sortable: false,
+        },
+        {
+            field: 'delegate',
+            headerName: 'Délégué',
+            width: 150,
+            filterable: false,
+            sortable: false
+        },
+        {
+            field: 'location',
+            headerName: 'Localisation',
+            width: 200,
+            filterable: false,
+            sortable: false,
+        },
+        {
+            field: 'report',
+            headerName: 'Rapport',
+            width: 80,
             renderCell(params) {
                 return (<Button onClick={() => {
                     displayReport(params.row);
                 }} variant="text">Voir</Button>);
-            },
+            }, filterable: false, sortable: false,
         },
         {
-            field: 'command', headerName: 'Bon de commande', width: 80,
+            field: 'command',
+            headerName: 'Bon de commande',
+            width: 80,
             renderCell(params) {
                 return (<Button disabled={!params.row.hasCommand} onClick={() => {
                     displayCommand(params.row);
                 }} variant="text">Voir</Button>);
             },
+            filterable: false,
+            sortable: false,
         },
     ];
 

@@ -19,7 +19,13 @@ import Box from '@mui/material/Box';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import UserDropdown from '../../components/user-dropdown/user-dropdown';
-
+import FormControl from '@mui/material/FormControl';
+import InputLabel from '@mui/material/InputLabel';
+import Select, { SelectChangeEvent } from '@mui/material/Select';
+import MenuItem from '@mui/material/MenuItem';
+import Button from '@mui/material/Button';
+import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
+import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 
 interface HomePageState {
     selectedDate: Date;
@@ -46,6 +52,10 @@ interface HomePageState {
     totalKam: number;
     sizeKam: number;
     kamPage: number;
+    delegateOrder: boolean;
+    kamOrder: boolean;
+    kamProp?: string;
+    delegateProp?: string;
 }
 
 
@@ -76,6 +86,8 @@ class HomePage extends Component<{}, HomePageState> {
             totalKam: 0,
             sizeKam: 100,
             kamPage: 1,
+            delegateOrder: false,
+            kamOrder: false,
         }
     }
 
@@ -105,7 +117,7 @@ class HomePage extends Component<{}, HomePageState> {
         }
 
         if (currentUser.type === UserType.supervisor) {
-            var { visits: visits, total: total } = await this.visitService.getAllVisits(1, 100, new Date(), ClientType.pharmacy, currentUser.id!);
+            var { visits: visits, total: total } = await this.visitService.getAllVisits(1, 100, new Date(), ClientType.pharmacy, currentUser.id!, this.state.delegateOrder, this.state.delegateProp);
             this.setState({
                 isLoading: false,
                 delegateVisits: visits,
@@ -142,7 +154,7 @@ class HomePage extends Component<{}, HomePageState> {
 
     componentDidMount(): void {
         if (localStorage.getItem('isLogged') === 'true') {
-           
+
             this.loadHomePageData();
         }
     }
@@ -151,7 +163,7 @@ class HomePage extends Component<{}, HomePageState> {
         this.setState({ loadingVisitsData: true, selectedReport: undefined, kamPage: 1, delegatePage: 1, selectedVisit: undefined });
 
         if (this.state.currentUser.type === UserType.supervisor) {
-            var { visits: visits, total: total } = await this.visitService.getAllVisits(1, this.state.sizeDelegate, date, ClientType.pharmacy, this.state.currentUser.id!);
+            var { visits: visits, total: total } = await this.visitService.getAllVisits(1, this.state.sizeDelegate, date, ClientType.pharmacy, this.state.currentUser.id!, this.state.delegateOrder, this.state.delegateProp);
             this.setState({
                 selectedDate: date,
                 delegateVisits: visits,
@@ -161,14 +173,14 @@ class HomePage extends Component<{}, HomePageState> {
             });
         } else {
             if (this.state.selectedSupervisor) {
-                var { visits: delegateVisits, total: totalDelegate } = await this.visitService.getAllVisits(1, this.state.sizeDelegate, date, ClientType.pharmacy, this.state.selectedSupervisor!.id!);
+                var { visits: delegateVisits, total: totalDelegate } = await this.visitService.getAllVisits(1, this.state.sizeDelegate, date, ClientType.pharmacy, this.state.selectedSupervisor!.id!, this.state.delegateOrder, this.state.delegateProp);
                 this.setState({
                     delegateVisits: delegateVisits,
                     filteredDelegateVisits: delegateVisits,
                     totalDelegate: totalDelegate,
                 });
             }
-            var { visits: kamVisits, total: totalKam } = await this.visitService.getAllVisits(1, this.state.sizeKam, date, ClientType.wholesaler, this.state.currentUser.id!);
+            var { visits: kamVisits, total: totalKam } = await this.visitService.getAllVisits(1, this.state.sizeKam, date, ClientType.wholesaler, this.state.currentUser.id!, this.state.kamOrder, this.state.kamProp);
             this.setState({
                 selectedDate: date,
                 kamVisits: kamVisits,
@@ -181,33 +193,11 @@ class HomePage extends Component<{}, HomePageState> {
         }
     }
 
-    handleDelegateVisitsFilter = () => {
-        this.setState({ selectedReport: undefined, selectedVisit: undefined, selectedCommand: undefined });
-        if (this.state.delegateSearchText.length === 0) {
-            var filteredVisits = [...this.state.delegateVisits];
-            this.setState({ filteredDelegateVisits: filteredVisits });
-        }
-        else {
-            var filteredVisits = this.state.delegateVisits.filter(visit => visit?.user?.username!.toLowerCase().includes(this.state.delegateSearchText.toLowerCase()));
-            this.setState({ filteredDelegateVisits: filteredVisits });
-        }
-    }
 
-    handleKamVisitsFilter = () => {
-        this.setState({ selectedReport: undefined, selectedVisit: undefined, selectedCommand: undefined });
-        if (this.state.kamSearchText.length === 0) {
-            var filteredVisits = [...this.state.kamVisits];
-            this.setState({ filteredKamVisits: filteredVisits });
-        }
-        else {
-            var filteredVisits = this.state.kamVisits.filter(visit => visit?.user?.username!.toLowerCase().includes(this.state.kamSearchText.toLowerCase()));
-            this.setState({ filteredKamVisits: filteredVisits });
-        }
-    }
 
     handleSelectSupervisor = async (supervisor: UserModel) => {
         this.setState({ loadingVisitsData: true, selectedReport: undefined, selectedVisit: undefined, selectedCommand: undefined, delegatePage: 1 });
-        var { visits: visits, total: total } = await this.visitService.getAllVisits(1, this.state.sizeDelegate, this.state.selectedDate, ClientType.pharmacy, supervisor.id!);
+        var { visits: visits, total: total } = await this.visitService.getAllVisits(1, this.state.sizeDelegate, this.state.selectedDate, ClientType.pharmacy, supervisor.id!, this.state.delegateOrder, this.state.delegateProp);
 
         this.setState({
             selectedSupervisor: supervisor,
@@ -217,6 +207,117 @@ class HomePage extends Component<{}, HomePageState> {
             totalDelegate: total,
             delegatePage: 1,
         });
+    }
+
+    handleChangeDelegateProp = async (event: SelectChangeEvent<unknown>) => {
+        var delegateProp = event.target.value as string | undefined;
+        if (this.state.currentUser.type === UserType.supervisor) {
+            this.setState({ loadingVisitsData: true, selectedReport: undefined, selectedVisit: undefined, selectedCommand: undefined, delegatePage: 1 });
+            var { visits: visits, total: total } = await this.visitService.getAllVisits(1, this.state.sizeDelegate, this.state.selectedDate, ClientType.pharmacy, this.state.currentUser.id!, this.state.delegateOrder, delegateProp);
+
+            this.setState({
+                delegateVisits: visits,
+                loadingVisitsData: false,
+                filteredDelegateVisits: visits,
+                totalDelegate: total,
+                delegateProp: delegateProp,
+            });
+        }
+        else {
+            if (this.state.selectedSupervisor) {
+                this.setState({ loadingVisitsData: true, selectedReport: undefined, selectedVisit: undefined, selectedCommand: undefined, delegatePage: 1 });
+                var { visits: visits, total: total } = await this.visitService.getAllVisits(1, this.state.sizeDelegate, this.state.selectedDate, ClientType.pharmacy, this.state.selectedSupervisor.id!, this.state.delegateOrder, delegateProp);
+
+                this.setState({
+                    delegateVisits: visits,
+                    loadingVisitsData: false,
+                    filteredDelegateVisits: visits,
+                    totalDelegate: total,
+                    delegateProp: delegateProp
+                });
+            }
+        }
+    }
+
+    handleChangeKamProp = async (event: SelectChangeEvent<unknown>) => {
+        var kamProp = event.target.value as string | undefined;
+        this.setState({
+            loadingVisitsData: true,
+            kamPage: 1,
+            selectedReport: undefined,
+            selectedVisit: undefined,
+            selectedCommand: undefined,
+            kamProp: kamProp,
+        });
+
+        var { visits: kamVisits, total: totalKam } = await this.visitService.getAllVisits(1, this.state.sizeKam, this.state.selectedDate, ClientType.wholesaler, this.state.currentUser.id!, this.state.kamOrder, kamProp);
+        this.setState({
+            kamVisits: kamVisits,
+            filteredKamVisits: kamVisits,
+            loadingVisitsData: false,
+            totalKam: totalKam,
+        });
+    }
+    handleKamSort = async () => {
+        var kamOrder = !this.state.kamOrder;
+        this.setState({
+            loadingVisitsData: true,
+            kamPage: 1,
+            selectedReport: undefined,
+            selectedVisit: undefined,
+            selectedCommand: undefined,
+            kamOrder: kamOrder,
+        });
+
+        var { visits: kamVisits, total: totalKam } = await this.visitService.getAllVisits(1, this.state.sizeKam, this.state.selectedDate, ClientType.wholesaler, this.state.currentUser.id!, kamOrder, this.state.kamProp);
+        this.setState({
+            kamVisits: kamVisits,
+            filteredKamVisits: kamVisits,
+            loadingVisitsData: false,
+            totalKam: totalKam,
+        });
+    }
+
+    handleDelegateSort = async () => {
+        var delegateOrder = !this.state.delegateOrder;
+        if (this.state.currentUser.type === UserType.supervisor) {
+            this.setState({
+                loadingVisitsData: true,
+                selectedReport: undefined,
+                selectedVisit: undefined,
+                selectedCommand: undefined,
+                delegatePage: 1,
+                delegateOrder: delegateOrder
+            });
+            var { visits: visits, total: total } = await this.visitService.getAllVisits(1, this.state.sizeDelegate, this.state.selectedDate, ClientType.pharmacy, this.state.currentUser.id!, delegateOrder, this.state.delegateProp);
+
+            this.setState({
+                delegateVisits: visits,
+                loadingVisitsData: false,
+                filteredDelegateVisits: visits,
+                totalDelegate: total,
+            });
+        }
+        else {
+            if (this.state.selectedSupervisor) {
+                this.setState({
+                    loadingVisitsData: true,
+                    selectedReport: undefined,
+                    selectedVisit: undefined,
+                    selectedCommand: undefined,
+                    delegatePage: 1,
+                    delegateOrder: delegateOrder
+                });
+                var { visits: visits, total: total } = await this.visitService.getAllVisits(1, this.state.sizeDelegate, this.state.selectedDate, ClientType.pharmacy, this.state.selectedSupervisor.id!, delegateOrder, this.state.delegateProp);
+
+                this.setState({
+                    delegateVisits: visits,
+                    loadingVisitsData: false,
+                    filteredDelegateVisits: visits,
+                    totalDelegate: total,
+                });
+            }
+        }
     }
 
     handleDelegateSearchTextChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -234,7 +335,7 @@ class HomePage extends Component<{}, HomePageState> {
     handleDelegatePageChange = async (page: number, size: number) => {
         this.setState({ loadingVisitsData: true, selectedReport: undefined, selectedVisit: undefined, selectedCommand: undefined });
         if (this.state.currentUser.type === UserType.supervisor) {
-            var { visits: visits, total: total } = await this.visitService.getAllVisits(page, size, this.state.selectedDate, ClientType.pharmacy, this.state.currentUser.id!);
+            var { visits: visits, total: total } = await this.visitService.getAllVisits(page, size, this.state.selectedDate, ClientType.pharmacy, this.state.currentUser.id!, this.state.delegateOrder, this.state.delegateProp);
             this.setState({
                 delegatePage: page,
                 sizeDelegate: size,
@@ -244,23 +345,25 @@ class HomePage extends Component<{}, HomePageState> {
                 totalDelegate: total
             });
         } else {
-            var { visits: delegateVisits, total: totalDelegate } = await this.visitService.getAllVisits(page, size, this.state.selectedDate, ClientType.pharmacy, this.state.selectedSupervisor!.id!);
+            if (this.state.selectedSupervisor) {
+                var { visits: delegateVisits, total: totalDelegate } = await this.visitService.getAllVisits(page, size, this.state.selectedDate, ClientType.pharmacy, this.state.selectedSupervisor.id!, this.state.delegateOrder, this.state.delegateProp);
 
-            this.setState({
-                delegatePage: page,
-                sizeDelegate: size,
-                delegateVisits: delegateVisits,
-                filteredDelegateVisits: delegateVisits,
-                loadingVisitsData: false,
-                totalDelegate: totalDelegate,
-            });
+                this.setState({
+                    delegatePage: page,
+                    sizeDelegate: size,
+                    delegateVisits: delegateVisits,
+                    filteredDelegateVisits: delegateVisits,
+                    loadingVisitsData: false,
+                    totalDelegate: totalDelegate,
+                });
+            }
         }
     }
 
     handleKamPageChange = async (page: number, size: number) => {
         this.setState({ loadingVisitsData: true, kamPage: page, selectedReport: undefined, selectedVisit: undefined, selectedCommand: undefined });
 
-        var { visits: kamVisits, total: totalKam } = await this.visitService.getAllVisits(page, size, this.state.selectedDate, ClientType.wholesaler, this.state.currentUser.id!);
+        var { visits: kamVisits, total: totalKam } = await this.visitService.getAllVisits(page, size, this.state.selectedDate, ClientType.wholesaler, this.state.currentUser.id!, this.state.kamOrder, this.state.kamProp);
         this.setState({
             kamVisits: kamVisits,
             sizeKam: size,
@@ -313,9 +416,9 @@ class HomePage extends Component<{}, HomePageState> {
                                 width: '100%',
                             }}>
 
-                                <div style={{ display: 'flex', justifyContent: 'stretch', flexGrow: '1', marginTop: '8px' }}>
+                                <div style={{ display: 'flex', justifyContent: 'stretch', flexGrow: '1', marginTop: '8px', marginBottom: '16px' }}>
                                     {
-                                         this.state.currentUser.type !== UserType.supervisor ? (<div style={{ height: '50px', width: '150px', marginRight: '8px' }}>
+                                        this.state.currentUser.type !== UserType.supervisor ? (<div style={{ height: '50px', width: '150px', marginRight: '8px' }}>
                                             <UserDropdown
                                                 users={this.state.supervisors}
                                                 selectedUser={this.state.selectedSupervisor}
@@ -325,9 +428,40 @@ class HomePage extends Component<{}, HomePageState> {
                                         </div>) : null
                                     }
 
-                                    <div style={{ width: '100%' }}>
+                                    <div style={{ width: '100%', position: 'relative' }}>
                                         <DatePickerBar onPick={this.handleOnPickDate} initialDate={this.state.selectedDate}></DatePickerBar>
+                                        <div style={{ width: '300px', display: 'flex', position: 'absolute', right: "0px", top: '46px' }}>
+                                            <FormControl size="small" style={{
+                                                width: '150px',
+                                                flex: '1',
+                                                backgroundColor: 'white',
+                                                height: '40px'
+                                            }}>
+                                                <InputLabel>Trier avec</InputLabel>
+                                                <Select
+                                                    label="Trier avec"
+                                                    onChange={this.handleChangeDelegateProp}
+                                                >
+                                                    <MenuItem value={undefined}>
+                                                        <em>aucun</em>
+                                                    </MenuItem>
+                                                    <MenuItem value={'delegate'}>Délégué</MenuItem>
+                                                    <MenuItem value={'client'}>Client</MenuItem>
+                                                    <MenuItem value={'wilaya'}>wilaya</MenuItem>
+                                                    <MenuItem value={'commune'}>Commune</MenuItem>
+                                                </Select>
+                                            </FormControl>
+                                            <Button variant="outlined"
+                                                onClick={() => {
+                                                    this.handleDelegateSort();
+                                                }}
+                                                sx={{ backgroundColor: 'white', marginLeft: "8px", height: '40px' }}>
+                                                {this.state.delegateOrder ? <ArrowUpwardIcon /> : <ArrowDownwardIcon />}
+                                            </Button>
+
+                                        </div>
                                     </div>
+
                                 </div>
 
                                 <div style={{
@@ -391,7 +525,39 @@ class HomePage extends Component<{}, HomePageState> {
                         </CustomTabPanel>
                         <CustomTabPanel style={{ display: 'flex', flexDirection: 'row', flexGrow: '1', height: 'calc(100% - 50px)', width: '100%' }} value={this.state.index} index={1} >
                             <div style={{ display: 'flex', flexDirection: 'column', flexGrow: '1', height: 'calc(100% - 40px)', width: '100%', }}>
-                                <DatePickerBar onPick={this.handleOnPickDate} initialDate={this.state.selectedDate}></DatePickerBar>
+                                <div style={{ width: '100%', position: 'relative',marginBottom:'16px' }}>
+                                    <DatePickerBar onPick={this.handleOnPickDate} initialDate={this.state.selectedDate}></DatePickerBar>
+                                    <div style={{ width: '300px', display: 'flex', position: 'absolute', right: "0px", top: '46px' }}>
+                                        <FormControl size="small" style={{
+                                            width: '150px',
+                                            flex: '1',
+                                            backgroundColor: 'white',
+                                            height: '40px'
+                                        }}>
+                                            <InputLabel>Trier avec</InputLabel>
+                                            <Select
+                                                label="Trier avec"
+                                                onChange={this.handleChangeKamProp}
+                                            >
+                                                <MenuItem value={undefined}>
+                                                    <em>aucun</em>
+                                                </MenuItem>
+                                                <MenuItem value={'delegate'}>Kam</MenuItem>
+                                                <MenuItem value={'client'}>Client</MenuItem>
+                                                <MenuItem value={'wilaya'}>wilaya</MenuItem>
+                                                <MenuItem value={'commune'}>Commune</MenuItem>
+                                            </Select>
+                                        </FormControl>
+                                        <Button variant="outlined"
+                                            onClick={() => {
+                                                this.handleKamSort();
+                                            }}
+                                            sx={{ backgroundColor: 'white', marginLeft: "8px", height: '40px' }}>
+                                            {this.state.delegateOrder ? <ArrowUpwardIcon /> : <ArrowDownwardIcon />}
+                                        </Button>
+
+                                    </div>
+                                </div>
 
                                 <div className='table-panel'>
                                     <HomeTable id='hometable'
