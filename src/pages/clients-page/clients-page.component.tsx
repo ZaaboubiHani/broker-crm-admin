@@ -55,6 +55,7 @@ interface ClientsPageProps {
     docReportData?: ReportModel;
     pharmPage: number;
     docPage: number;
+    loadingDelegates: boolean;
     wholePage: number;
     sizePharm: number;
     sizeDoc: number;
@@ -71,6 +72,8 @@ interface ClientsPageProps {
     wholeProp?: string;
     currentUser: UserModel;
     supervisors: UserModel[];
+    delegates: UserModel[];
+    selectedDelegate?: UserModel;
     selectedSupervisor?: UserModel;
 }
 
@@ -82,6 +85,8 @@ class ClientsPage extends Component<{}, ClientsPageProps> {
             currentUser: new UserModel(),
             selectedDate: new Date(),
             isLoading: true,
+            loadingDelegates: false,
+            delegates: [],
             docSearchText: '',
             pharmSearchText: '',
             wholeSearchText: '',
@@ -126,6 +131,8 @@ class ClientsPage extends Component<{}, ClientsPageProps> {
 
     };
 
+
+
     handleDisplayDocReport = async (visit: VisitModel) => {
         this.setState({ loadingReportData: true, docReportData: undefined, showReportPanel: true });
         var report = await this.reportService.getReportOfVisit(visit.id!);
@@ -138,6 +145,7 @@ class ClientsPage extends Component<{}, ClientsPageProps> {
         var command = await this.commandService.getCommandOfVisit(visit.id!);
         this.setState({ loadingReportData: false, pharmCommandData: command, selectedVisit: visit, showReportPanel: false });
     };
+
     handleDisplayWholeCommand = async (visit: VisitModel) => {
         this.setState({ loadingReportData: true, wholeCommandData: undefined, showReportPanel: false });
         var command = await this.commandService.getCommandOfVisit(visit.id!);
@@ -148,8 +156,26 @@ class ClientsPage extends Component<{}, ClientsPageProps> {
 
         var currentUser = await this.userService.getMe();
         if (currentUser.type === UserType.supervisor) {
-            var { visits: pharmVisits, total: totalPharm } = await this.visitService.getAllVisitsPaginated(1, 25, this.state.pharmSearchText, ClientType.pharmacy, currentUser.id!, this.state.pharmOrder, this.state.pharmProp);
-            var { visits: docVisits, total: totalDoc } = await this.visitService.getAllVisitsPaginated(1, 25, this.state.docSearchText, ClientType.doctor, currentUser.id!, this.state.docOrder, this.state.docProp);
+            var { visits: pharmVisits, total: totalPharm } = await this.visitService.getAllVisitsPaginated(
+                1,
+                25,
+                this.state.pharmSearchText,
+                ClientType.pharmacy,
+                currentUser.id!,
+                this.state.pharmOrder,
+                this.state.pharmProp,
+                this.state.selectedDelegate?.id
+            );
+            var { visits: docVisits, total: totalDoc } = await this.visitService.getAllVisitsPaginated(
+                1,
+                25,
+                this.state.docSearchText,
+                ClientType.doctor,
+                currentUser.id!,
+                this.state.docOrder,
+                this.state.docProp,
+                this.state.selectedDelegate?.id
+            );
 
             this.setState({
                 currentUser: currentUser,
@@ -176,7 +202,16 @@ class ClientsPage extends Component<{}, ClientsPageProps> {
 
     handlePharmPageChange = async (page: number, size: number) => {
         this.setState({ loadingVisitsData: true, pharmPage: page, sizePharm: size });
-        var { visits: pharmVisits, total: totalPharm } = await this.visitService.getAllVisitsPaginated(page, size, this.state.pharmSearchText, ClientType.pharmacy, this.state.currentUser.id!, this.state.pharmOrder, this.state.pharmProp);
+        var { visits: pharmVisits, total: totalPharm } = await this.visitService.getAllVisitsPaginated(
+            page,
+            size,
+            this.state.pharmSearchText,
+            ClientType.pharmacy,
+            this.state.currentUser.id!,
+            this.state.pharmOrder,
+            this.state.pharmProp,
+            this.state.selectedDelegate?.id
+        );
         this.setState({ pharmVisits: pharmVisits, totalPharm: totalPharm, loadingVisitsData: false, sizePharm: size });
     }
 
@@ -188,7 +223,16 @@ class ClientsPage extends Component<{}, ClientsPageProps> {
 
     handleDocPageChange = async (page: number, size: number) => {
         this.setState({ loadingVisitsData: true, docPage: page, sizeDoc: size });
-        var { visits: docVisits, total: totalDoc } = await this.visitService.getAllVisitsPaginated(page, size, this.state.docSearchText, ClientType.doctor, this.state.currentUser.id!, this.state.docOrder, this.state.docProp);
+        var { visits: docVisits, total: totalDoc } = await this.visitService.getAllVisitsPaginated(
+            page,
+            size,
+            this.state.docSearchText,
+            ClientType.doctor,
+            this.state.currentUser.id!,
+            this.state.docOrder,
+            this.state.docProp,
+            this.state.selectedDelegate?.id
+        );
         this.setState({ docVisits: docVisits, totalDoc: totalDoc, loadingVisitsData: false, sizeDoc: size });
     }
 
@@ -197,12 +241,60 @@ class ClientsPage extends Component<{}, ClientsPageProps> {
     };
 
     handleSelectSupervisor = async (supervisor: UserModel) => {
-        this.setState({ loadingVisitsData: true, docPage: 1, pharmPage: 1, selectedSupervisor: supervisor });
-        var { visits: pharmVisits, total: totalPharm } = await this.visitService.getAllVisitsPaginated(1, 25, this.state.pharmSearchText, ClientType.pharmacy, supervisor!.id!, this.state.pharmOrder, this.state.pharmProp);
-        var { visits: docVisits, total: totalDoc } = await this.visitService.getAllVisitsPaginated(1, 25, this.state.docSearchText, ClientType.doctor, supervisor!.id!, this.state.pharmOrder, this.state.pharmProp);
+        this.setState({
+            loadingVisitsData: true,
+            docPage: 1,
+            pharmPage: 1,
+            selectedSupervisor: supervisor,
+            loadingDelegates: true,
+            selectedDelegate: undefined,
+        });
+        var { visits: pharmVisits, total: totalPharm } = await this.visitService.getAllVisitsPaginated(1, this.state.sizePharm, this.state.pharmSearchText, ClientType.pharmacy, supervisor!.id!, this.state.pharmOrder, this.state.pharmProp);
+        var { visits: docVisits, total: totalDoc } = await this.visitService.getAllVisitsPaginated(1, this.state.sizeDoc, this.state.docSearchText, ClientType.doctor, supervisor!.id!, this.state.pharmOrder, this.state.pharmProp);
+        var delegates = await this.userService.getUsersByCreator(supervisor.id!, UserType.delegate);
         this.setState({
             selectedSupervisor: supervisor,
             loadingVisitsData: false,
+            loadingDelegates: false,
+            pharmVisits: pharmVisits,
+            totalPharm: totalPharm,
+            docVisits: docVisits,
+            totalDoc: totalDoc,
+            delegates: delegates,
+        });
+    }
+
+    handleSelectDelegate = async (delegate: UserModel | undefined) => {
+        this.setState({
+            loadingVisitsData: true,
+            docPage: 1,
+            pharmPage: 1,
+            selectedDelegate: delegate,
+            loadingDelegates: true,
+        });
+        var { visits: pharmVisits, total: totalPharm } = await this.visitService.getAllVisitsPaginated(
+            1,
+            this.state.sizePharm,
+            this.state.pharmSearchText,
+            ClientType.pharmacy,
+            this.state.selectedSupervisor!.id!,
+            this.state.pharmOrder,
+            this.state.pharmProp,
+            delegate?.id,
+        );
+        var { visits: docVisits, total: totalDoc } = await this.visitService.getAllVisitsPaginated(
+            1,
+            this.state.sizeDoc,
+            this.state.docSearchText,
+            ClientType.doctor,
+            this.state.selectedSupervisor!.id!,
+            this.state.pharmOrder,
+            this.state.pharmProp,
+            delegate?.id,
+        );
+        this.setState({
+            loadingVisitsData: false,
+            loadingDelegates: false,
             pharmVisits: pharmVisits,
             totalPharm: totalPharm,
             docVisits: docVisits,
@@ -213,14 +305,32 @@ class ClientsPage extends Component<{}, ClientsPageProps> {
     handleSearchPharmacies = async () => {
         this.setState({ loadingVisitsData: true, docPage: 1, pharmPage: 1, });
         if (this.state.currentUser.type === UserType.supervisor) {
-            var { visits: pharmVisits, total: totalPharm } = await this.visitService.getAllVisitsPaginated(1, 25, this.state.pharmSearchText, ClientType.pharmacy, this.state.currentUser!.id!, this.state.pharmOrder, this.state.pharmProp);
+            var { visits: pharmVisits, total: totalPharm } = await this.visitService.getAllVisitsPaginated(
+                1,
+                this.state.sizePharm,
+                this.state.pharmSearchText,
+                ClientType.pharmacy,
+                this.state.currentUser!.id!,
+                this.state.pharmOrder,
+                this.state.pharmProp,
+                this.state.selectedDelegate?.id
+            );
             this.setState({
                 pharmVisits: pharmVisits,
                 totalPharm: totalPharm,
             });
         } else {
             if (this.state.selectedSupervisor) {
-                var { visits: pharmVisits, total: totalPharm } = await this.visitService.getAllVisitsPaginated(1, 25, this.state.pharmSearchText, ClientType.pharmacy, this.state.selectedSupervisor!.id!, this.state.pharmOrder, this.state.pharmProp);
+                var { visits: pharmVisits, total: totalPharm } = await this.visitService.getAllVisitsPaginated(
+                    1,
+                    this.state.sizePharm,
+                    this.state.pharmSearchText,
+                    ClientType.pharmacy,
+                    this.state.selectedSupervisor!.id!,
+                    this.state.pharmOrder,
+                    this.state.pharmProp,
+                    this.state.selectedDelegate?.id
+                );
                 this.setState({
                     pharmVisits: pharmVisits,
                     totalPharm: totalPharm,
@@ -237,14 +347,32 @@ class ClientsPage extends Component<{}, ClientsPageProps> {
         var pharmProp = event.target.value as string | undefined;
         this.setState({ loadingVisitsData: true, docPage: 1, pharmPage: 1, pharmProp: pharmProp });
         if (this.state.currentUser.type === UserType.supervisor) {
-            var { visits: pharmVisits, total: totalPharm } = await this.visitService.getAllVisitsPaginated(1, 25, this.state.pharmSearchText, ClientType.pharmacy, this.state.currentUser!.id!, this.state.pharmOrder, pharmProp);
+            var { visits: pharmVisits, total: totalPharm } = await this.visitService.getAllVisitsPaginated(
+                1,
+                this.state.sizePharm,
+                this.state.pharmSearchText,
+                ClientType.pharmacy,
+                this.state.currentUser!.id!,
+                this.state.pharmOrder,
+                pharmProp,
+                this.state.selectedDelegate?.id
+            );
             this.setState({
                 pharmVisits: pharmVisits,
                 totalPharm: totalPharm,
             });
         } else {
             if (this.state.selectedSupervisor) {
-                var { visits: pharmVisits, total: totalPharm } = await this.visitService.getAllVisitsPaginated(1, 25, this.state.pharmSearchText, ClientType.pharmacy, this.state.selectedSupervisor!.id!, this.state.pharmOrder, pharmProp);
+                var { visits: pharmVisits, total: totalPharm } = await this.visitService.getAllVisitsPaginated(
+                    1,
+                    this.state.sizePharm,
+                    this.state.pharmSearchText,
+                    ClientType.pharmacy,
+                    this.state.selectedSupervisor!.id!,
+                    this.state.pharmOrder,
+                    pharmProp,
+                    this.state.selectedDelegate?.id
+                );
                 this.setState({
                     pharmVisits: pharmVisits,
                     totalPharm: totalPharm,
@@ -261,14 +389,32 @@ class ClientsPage extends Component<{}, ClientsPageProps> {
         var pharmOrder = !this.state.pharmOrder;
         this.setState({ loadingVisitsData: true, docPage: 1, pharmPage: 1, pharmOrder: pharmOrder });
         if (this.state.currentUser.type === UserType.supervisor) {
-            var { visits: pharmVisits, total: totalPharm } = await this.visitService.getAllVisitsPaginated(1, 25, this.state.pharmSearchText, ClientType.pharmacy, this.state.currentUser!.id!, pharmOrder, this.state.pharmProp);
+            var { visits: pharmVisits, total: totalPharm } = await this.visitService.getAllVisitsPaginated(
+                1,
+                this.state.sizePharm,
+                this.state.pharmSearchText,
+                ClientType.pharmacy,
+                this.state.currentUser!.id!,
+                pharmOrder,
+                this.state.pharmProp,
+                this.state.selectedDelegate?.id
+            );
             this.setState({
                 pharmVisits: pharmVisits,
                 totalPharm: totalPharm,
             });
         } else {
             if (this.state.selectedSupervisor) {
-                var { visits: pharmVisits, total: totalPharm } = await this.visitService.getAllVisitsPaginated(1, 25, this.state.pharmSearchText, ClientType.pharmacy, this.state.selectedSupervisor!.id!, pharmOrder, this.state.pharmProp);
+                var { visits: pharmVisits, total: totalPharm } = await this.visitService.getAllVisitsPaginated(
+                    1,
+                    this.state.sizePharm,
+                    this.state.pharmSearchText,
+                    ClientType.pharmacy,
+                    this.state.selectedSupervisor!.id!,
+                    pharmOrder,
+                    this.state.pharmProp,
+                    this.state.selectedDelegate?.id
+                );
                 this.setState({
                     pharmVisits: pharmVisits,
                     totalPharm: totalPharm,
@@ -284,14 +430,32 @@ class ClientsPage extends Component<{}, ClientsPageProps> {
     handleSearchDoctors = async () => {
         this.setState({ loadingVisitsData: true, docPage: 1, pharmPage: 1, });
         if (this.state.currentUser.type === UserType.supervisor) {
-            var { visits: docVisits, total: totalDoc } = await this.visitService.getAllVisitsPaginated(1, 25, this.state.docSearchText, ClientType.doctor, this.state.currentUser!.id!, this.state.docOrder, this.state.docProp);
+            var { visits: docVisits, total: totalDoc } = await this.visitService.getAllVisitsPaginated(
+                1,
+                this.state.sizeDoc,
+                this.state.docSearchText,
+                ClientType.doctor,
+                this.state.currentUser!.id!,
+                this.state.docOrder,
+                this.state.docProp,
+                this.state.selectedDelegate?.id
+            );
             this.setState({
                 docVisits: docVisits,
                 totalDoc: totalDoc,
             });
         } else {
             if (this.state.selectedSupervisor) {
-                var { visits: docVisits, total: totalDoc } = await this.visitService.getAllVisitsPaginated(1, 25, this.state.docSearchText, ClientType.doctor, this.state.selectedSupervisor!.id!, this.state.docOrder, this.state.docProp);
+                var { visits: docVisits, total: totalDoc } = await this.visitService.getAllVisitsPaginated(
+                    1,
+                    this.state.sizeDoc,
+                    this.state.docSearchText,
+                    ClientType.doctor,
+                    this.state.selectedSupervisor!.id!,
+                    this.state.docOrder,
+                    this.state.docProp,
+                    this.state.selectedDelegate?.id
+                );
                 this.setState({
                     docVisits: docVisits,
                     totalDoc: totalDoc,
@@ -308,14 +472,32 @@ class ClientsPage extends Component<{}, ClientsPageProps> {
         var docProp = event.target.value as string | undefined;
         this.setState({ loadingVisitsData: true, docPage: 1, pharmPage: 1, docProp: docProp });
         if (this.state.currentUser.type === UserType.supervisor) {
-            var { visits: docVisits, total: totalDoc } = await this.visitService.getAllVisitsPaginated(1, 25, this.state.docSearchText, ClientType.doctor, this.state.currentUser!.id!, this.state.docOrder, docProp);
+            var { visits: docVisits, total: totalDoc } = await this.visitService.getAllVisitsPaginated(
+                1,
+                this.state.sizeDoc,
+                this.state.docSearchText,
+                ClientType.doctor,
+                this.state.currentUser!.id!,
+                this.state.docOrder,
+                docProp,
+                this.state.selectedDelegate?.id
+            );
             this.setState({
                 docVisits: docVisits,
                 totalDoc: totalDoc,
             });
         } else {
             if (this.state.selectedSupervisor) {
-                var { visits: docVisits, total: totalDoc } = await this.visitService.getAllVisitsPaginated(1, 25, this.state.docSearchText, ClientType.doctor, this.state.selectedSupervisor!.id!, this.state.docOrder, docProp);
+                var { visits: docVisits, total: totalDoc } = await this.visitService.getAllVisitsPaginated(
+                    1,
+                    this.state.sizeDoc,
+                    this.state.docSearchText,
+                    ClientType.doctor,
+                    this.state.selectedSupervisor!.id!,
+                    this.state.docOrder,
+                    docProp,
+                    this.state.selectedDelegate?.id
+                );
                 this.setState({
                     docVisits: docVisits,
                     totalDoc: totalDoc,
@@ -328,17 +510,35 @@ class ClientsPage extends Component<{}, ClientsPageProps> {
         });
     }
     handleDocSort = async () => {
-        var docOrder= !this.state.docOrder;
+        var docOrder = !this.state.docOrder;
         this.setState({ loadingVisitsData: true, docPage: 1, pharmPage: 1, docOrder: docOrder });
         if (this.state.currentUser.type === UserType.supervisor) {
-            var { visits: docVisits, total: totalDoc } = await this.visitService.getAllVisitsPaginated(1, 25, this.state.docSearchText, ClientType.doctor, this.state.currentUser!.id!, docOrder, this.state.docProp);
+            var { visits: docVisits, total: totalDoc } = await this.visitService.getAllVisitsPaginated(
+                1,
+                this.state.sizeDoc,
+                this.state.docSearchText,
+                ClientType.doctor,
+                this.state.currentUser!.id!,
+                docOrder,
+                this.state.docProp,
+                this.state.selectedDelegate?.id
+            );
             this.setState({
                 docVisits: docVisits,
                 totalDoc: totalDoc,
             });
         } else {
             if (this.state.selectedSupervisor) {
-                var { visits: docVisits, total: totalDoc } = await this.visitService.getAllVisitsPaginated(1, 25, this.state.docSearchText, ClientType.doctor, this.state.selectedSupervisor!.id!, docOrder, this.state.docProp);
+                var { visits: docVisits, total: totalDoc } = await this.visitService.getAllVisitsPaginated(
+                    1,
+                    this.state.sizeDoc,
+                    this.state.docSearchText,
+                    ClientType.doctor,
+                    this.state.selectedSupervisor!.id!,
+                    docOrder,
+                    this.state.docProp,
+                    this.state.selectedDelegate?.id
+                );
                 this.setState({
                     docVisits: docVisits,
                     totalDoc: totalDoc,
@@ -353,7 +553,7 @@ class ClientsPage extends Component<{}, ClientsPageProps> {
 
     handleSearchWholesalers = async () => {
         this.setState({ loadingVisitsData: true, docPage: 1, pharmPage: 1, });
-        var { visits: wholeVisits, total: totalWhole } = await this.visitService.getAllVisitsPaginated(1, 25, this.state.wholeSearchText, ClientType.wholesaler, this.state.currentUser!.id!, this.state.wholeOrder, this.state.wholeProp);
+        var { visits: wholeVisits, total: totalWhole } = await this.visitService.getAllVisitsPaginated(1, this.state.sizeWhole, this.state.wholeSearchText, ClientType.wholesaler, this.state.currentUser!.id!, this.state.wholeOrder, this.state.wholeProp);
         this.setState({
             wholeVisits: wholeVisits,
             totalWhole: totalWhole,
@@ -368,7 +568,7 @@ class ClientsPage extends Component<{}, ClientsPageProps> {
     handleChangeWholeProp = async (event: SelectChangeEvent<unknown>) => {
         var wholeProp = event.target.value as string | undefined;
         this.setState({ loadingVisitsData: true, docPage: 1, pharmPage: 1, wholeProp: wholeProp });
-        var { visits: wholeVisits, total: totalWhole } = await this.visitService.getAllVisitsPaginated(1, 25, this.state.wholeSearchText, ClientType.wholesaler, this.state.currentUser!.id!, this.state.wholeOrder, wholeProp);
+        var { visits: wholeVisits, total: totalWhole } = await this.visitService.getAllVisitsPaginated(1, this.state.sizeWhole, this.state.wholeSearchText, ClientType.wholesaler, this.state.currentUser!.id!, this.state.wholeOrder, wholeProp);
         this.setState({
             wholeVisits: wholeVisits,
             totalWhole: totalWhole,
@@ -383,7 +583,7 @@ class ClientsPage extends Component<{}, ClientsPageProps> {
     handleWholeSort = async () => {
         var wholeOrder = !this.state.wholeOrder;
         this.setState({ loadingVisitsData: true, docPage: 1, pharmPage: 1, wholeOrder: wholeOrder });
-        var { visits: wholeVisits, total: totalWhole } = await this.visitService.getAllVisitsPaginated(1, 25, this.state.wholeSearchText, ClientType.wholesaler, this.state.currentUser!.id!, wholeOrder, this.state.wholeProp);
+        var { visits: wholeVisits, total: totalWhole } = await this.visitService.getAllVisitsPaginated(1, this.state.sizeWhole, this.state.wholeSearchText, ClientType.wholesaler, this.state.currentUser!.id!, wholeOrder, this.state.wholeProp);
         this.setState({
             wholeVisits: wholeVisits,
             totalWhole: totalWhole,
@@ -448,6 +648,16 @@ class ClientsPage extends Component<{}, ClientsPageProps> {
                                             />
                                         </div>) : null
                                     }
+                                    <div style={{ height: '50px', width: '150px', }}>
+                                        <UserDropdown
+                                            users={this.state.delegates}
+                                            selectedUser={this.state.selectedDelegate}
+                                            onSelectUser={this.handleSelectDelegate}
+                                            label='Délégué'
+                                            loading={this.state.loadingDelegates}
+                                        />
+                                    </div>
+                                    <Divider orientation="vertical" flexItem component="div" style={{ width: '0.5%' }} sx={{ borderRight: 'solid rgba(127,127,127,0.5) 1px', margin: '8px 8px 16px 8px' }} />
                                     <FormControl size="small" style={{
                                         width: '150px',
                                         backgroundColor: 'white',
@@ -476,7 +686,7 @@ class ClientsPage extends Component<{}, ClientsPageProps> {
                                         sx={{ backgroundColor: 'white', marginLeft: "8px", height: '40px' }}>
                                         {this.state.pharmOrder ? <ArrowUpwardIcon /> : <ArrowDownwardIcon />}
                                     </Button>
-                                    <Divider orientation="vertical" flexItem component="div" style={{ width: '0.5%' }} sx={{ borderRight: 'solid rgba(127,127,127,0.5) 1px',margin:'8px 8px 16px 8px' }} />
+                                    <Divider orientation="vertical" flexItem component="div" style={{ width: '0.5%' }} sx={{ borderRight: 'solid rgba(127,127,127,0.5) 1px', margin: '8px 8px 16px 8px' }} />
                                     <TextField
                                         onChange={(event) => {
                                             this.setState({ pharmSearchText: event.target.value })
@@ -558,6 +768,17 @@ class ClientsPage extends Component<{}, ClientsPageProps> {
                                             />
                                         </div>) : null
                                     }
+                                    <div style={{ height: '50px', width: '150px', }}>
+                                        <UserDropdown
+                                            users={this.state.delegates}
+                                            selectedUser={this.state.selectedDelegate}
+                                            onSelectUser={this.handleSelectDelegate}
+                                            label='Délégué'
+                                            loading={this.state.loadingDelegates}
+                                        />
+                                    </div>
+                                    <Divider orientation="vertical" flexItem component="div" style={{ width: '0.5%' }} sx={{ borderRight: 'solid rgba(127,127,127,0.5) 1px', margin: '8px 8px 16px 8px' }} />
+
                                     <FormControl size="small" style={{
                                         width: '150px',
                                         backgroundColor: 'white',
@@ -586,8 +807,8 @@ class ClientsPage extends Component<{}, ClientsPageProps> {
                                         sx={{ backgroundColor: 'white', marginLeft: "8px", height: '40px' }}>
                                         {this.state.docOrder ? <ArrowUpwardIcon /> : <ArrowDownwardIcon />}
                                     </Button>
-                                    <Divider orientation="vertical" flexItem component="div" style={{ width: '0.5%' }} sx={{ borderRight: 'solid rgba(127,127,127,0.5) 1px',margin:'8px 8px 16px 8px' }} />
-                                    
+                                    <Divider orientation="vertical" flexItem component="div" style={{ width: '0.5%' }} sx={{ borderRight: 'solid rgba(127,127,127,0.5) 1px', margin: '8px 8px 16px 8px' }} />
+
                                     <TextField
                                         onChange={(event) => {
                                             this.setState({ docSearchText: event.target.value })
@@ -655,8 +876,8 @@ class ClientsPage extends Component<{}, ClientsPageProps> {
                         </CustomTabPanel>
                         <CustomTabPanel style={{ display: 'flex', flexDirection: 'row', flexGrow: '1', height: 'calc(100% - 50px)', }} value={this.state.index} index={2} >
                             <div style={{ display: 'flex', flexDirection: 'column', flexGrow: '1', height: 'calc(100% - 40px)' }}>
-                                <div style={{ display: 'flex', justifyContent: 'stretch', flexGrow: '1', marginTop: '8px',marginBottom:'8px' }}>
-                                <FormControl size="small" style={{
+                                <div style={{ display: 'flex', justifyContent: 'stretch', flexGrow: '1', marginTop: '8px', marginBottom: '8px' }}>
+                                    <FormControl size="small" style={{
                                         width: '150px',
                                         backgroundColor: 'white',
                                         marginLeft: "8px",
@@ -684,7 +905,7 @@ class ClientsPage extends Component<{}, ClientsPageProps> {
                                         sx={{ backgroundColor: 'white', marginLeft: "8px", height: '40px' }}>
                                         {this.state.wholeOrder ? <ArrowUpwardIcon /> : <ArrowDownwardIcon />}
                                     </Button>
-                                    <Divider orientation="vertical" flexItem component="div" style={{ width: '0.5%' }} sx={{ borderRight: 'solid rgba(127,127,127,0.5) 1px',margin:'8px 8px 16px 8px' }} />
+                                    <Divider orientation="vertical" flexItem component="div" style={{ width: '0.5%' }} sx={{ borderRight: 'solid rgba(127,127,127,0.5) 1px', margin: '8px 8px 16px 8px' }} />
                                     <TextField
                                         onChange={(event) => {
                                             this.setState({ wholeSearchText: event.target.value })

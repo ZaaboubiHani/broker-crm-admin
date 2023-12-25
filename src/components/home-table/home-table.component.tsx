@@ -33,22 +33,27 @@ const HomeTable: React.FC<HomeTableProps> = ({ data, id, isLoading, firstHeader,
         {
             field: 'username', headerName: firstHeader, width: 150,
             filterable: false,
+            sortable:false,
         },
         {
             field: 'client', headerName: 'Client', width: 170,
             filterable: false,
+            sortable:false,
         },
         {
             field: 'speciality', headerName: 'Spécialité', width: 130,
             filterable: false,
+            sortable:false,
         },
         {
             field: 'location', headerName: 'Localisation', width: 200,
             filterable: false,
+            sortable:false,
         },
         {
             field: 'report', headerName: 'Rapport', width: 80,
             filterable: false,
+            sortable:false,
             renderCell(params) {
                 return (<Button onClick={() => {
                     onDisplayReport(params.row);
@@ -59,6 +64,7 @@ const HomeTable: React.FC<HomeTableProps> = ({ data, id, isLoading, firstHeader,
             field: 'command', headerName: 'Bon de commande', width: 150,
             align: 'center',
             filterable: false,
+            sortable:false,
             renderCell(params) {
                 return (<Button disabled={!params.row.hasCommand} onClick={() => {
                     onDisplayCommand(params.row);
