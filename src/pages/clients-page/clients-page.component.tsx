@@ -3,6 +3,7 @@ import { Component } from 'react';
 import '../clients-page/clients-page.style.css';
 import { Form } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import SearchIcon from '@mui/icons-material/Search';
 import { DotSpinner } from '@uiball/loaders';
 import UserService from '../../services/user.service';
 import { faSearch } from '@fortawesome/free-solid-svg-icons';
@@ -24,6 +25,8 @@ import { ClientType } from '../../models/client.model';
 import UserModel, { UserType } from '../../models/user.model';
 import UserPicker from '../../components/user-picker/user-picker.component';
 import UserDropdown from '../../components/user-dropdown/user-dropdown';
+import TextField from '@mui/material/TextField/TextField';
+import Button from '@mui/material/Button/Button';
 
 interface ClientsPageProps {
     selectedDate: Date;
@@ -129,8 +132,8 @@ class ClientsPage extends Component<{}, ClientsPageProps> {
 
         var currentUser = await this.userService.getMe();
         if (currentUser.type === UserType.supervisor) {
-            var { visits: pharmVisits, total: totalPharm } = await this.visitService.getAllVisitsPaginated(1, 25, this.state.pharmSearchText, ClientType.pharmacy, this.state.currentUser.id!);
-            var { visits: docVisits, total: totalDoc } = await this.visitService.getAllVisitsPaginated(1, 25, this.state.docSearchText, ClientType.doctor, this.state.currentUser.id!);
+            var { visits: pharmVisits, total: totalPharm } = await this.visitService.getAllVisitsPaginated(1, 25, this.state.pharmSearchText, ClientType.pharmacy, currentUser.id!);
+            var { visits: docVisits, total: totalDoc } = await this.visitService.getAllVisitsPaginated(1, 25, this.state.docSearchText, ClientType.doctor, currentUser.id!);
 
             this.setState({
                 currentUser: currentUser,
@@ -142,7 +145,7 @@ class ClientsPage extends Component<{}, ClientsPageProps> {
             });
         } else {
             var supervisors = await this.userService.getUsersByCreator(currentUser.id!, UserType.supervisor);
-            var { visits: wholeVisits, total: totalWhole } = await this.visitService.getAllVisitsPaginated(1, 25, this.state.wholeSearchText, ClientType.wholesaler, this.state.currentUser.id!);
+            var { visits: wholeVisits, total: totalWhole } = await this.visitService.getAllVisitsPaginated(1, 25, this.state.wholeSearchText, ClientType.wholesaler, currentUser.id!);
             this.setState({
                 wholeVisits: wholeVisits,
                 totalWhole: totalWhole,
@@ -179,8 +182,8 @@ class ClientsPage extends Component<{}, ClientsPageProps> {
 
     handleSelectSupervisor = async (supervisor: UserModel) => {
         this.setState({ loadingVisitsData: true, docPage: 1, pharmPage: 1, selectedSupervisor: supervisor });
-        var { visits: pharmVisits, total: totalPharm } = await this.visitService.getAllVisitsPaginated(1, 25, '', ClientType.pharmacy, supervisor!.id!);
-        var { visits: docVisits, total: totalDoc } = await this.visitService.getAllVisitsPaginated(1, 25, '', ClientType.doctor, supervisor!.id!);
+        var { visits: pharmVisits, total: totalPharm } = await this.visitService.getAllVisitsPaginated(1, 25, this.state.pharmSearchText, ClientType.pharmacy, supervisor!.id!);
+        var { visits: docVisits, total: totalDoc } = await this.visitService.getAllVisitsPaginated(1, 25, this.state.docSearchText, ClientType.doctor, supervisor!.id!);
         this.setState({
             selectedSupervisor: supervisor,
             loadingVisitsData: false,
@@ -188,6 +191,66 @@ class ClientsPage extends Component<{}, ClientsPageProps> {
             totalPharm: totalPharm,
             docVisits: docVisits,
             totalDoc: totalDoc,
+        });
+    }
+
+    handleSearchPharmacies = async () => {
+        this.setState({ loadingVisitsData: true, docPage: 1, pharmPage: 1, });
+        if (this.state.currentUser.type === UserType.supervisor) {
+            var { visits: pharmVisits, total: totalPharm } = await this.visitService.getAllVisitsPaginated(1, 25, this.state.pharmSearchText, ClientType.pharmacy, this.state.currentUser!.id!);
+            this.setState({
+                pharmVisits: pharmVisits,
+                totalPharm: totalPharm,
+            });
+        } else {
+            if (this.state.selectedSupervisor) {
+                var { visits: pharmVisits, total: totalPharm } = await this.visitService.getAllVisitsPaginated(1, 25, this.state.pharmSearchText, ClientType.pharmacy, this.state.selectedSupervisor!.id!);
+                this.setState({
+                    pharmVisits: pharmVisits,
+                    totalPharm: totalPharm,
+                });
+            }
+        }
+
+        this.setState({
+            loadingVisitsData: false,
+        });
+    }
+
+    handleSearchDoctors = async () => {
+        this.setState({ loadingVisitsData: true, docPage: 1, pharmPage: 1, });
+        if (this.state.currentUser.type === UserType.supervisor) {
+            var { visits: docVisits, total: totalDoc } = await this.visitService.getAllVisitsPaginated(1, 25, this.state.docSearchText, ClientType.doctor, this.state.currentUser!.id!);
+            this.setState({
+                docVisits: docVisits,
+                totalDoc: totalDoc,
+            });
+        } else {
+            if (this.state.selectedSupervisor) {
+                var { visits: docVisits, total: totalDoc } = await this.visitService.getAllVisitsPaginated(1, 25, this.state.docSearchText, ClientType.doctor, this.state.selectedSupervisor!.id!);
+                this.setState({
+                    docVisits: docVisits,
+                    totalDoc: totalDoc,
+                });
+            }
+        }
+
+        this.setState({
+            loadingVisitsData: false,
+        });
+    }
+
+    handleSearchWholesalers = async () => {
+        this.setState({ loadingVisitsData: true, docPage: 1, pharmPage: 1, });
+        var { visits: wholeVisits, total: totalWhole } = await this.visitService.getAllVisitsPaginated(1, 25, this.state.wholeSearchText, ClientType.wholesaler, this.state.currentUser!.id!);
+        this.setState({
+            wholeVisits: wholeVisits,
+            totalWhole: totalWhole,
+
+        });
+
+        this.setState({
+            loadingVisitsData: false,
         });
     }
 
@@ -231,8 +294,8 @@ class ClientsPage extends Component<{}, ClientsPageProps> {
                                 }
                             </Tabs>
                         </Box>
-                        <CustomTabPanel style={{ display: 'flex', flexDirection: 'row', flexGrow: '1', height: `calc(100% - ${this.state.currentUser.type !== UserType.supervisor ? '105' : '50'}px)`, }} value={this.state.index} index={0} >
-                            <div style={{ display: 'flex', flexDirection: 'column', flexGrow: '1', height: 'calc(100% - 40px)', }}>
+                        <CustomTabPanel style={{ display: 'flex', flexDirection: 'row', flexGrow: '1', height: 'calc(100% - 50px)', }} value={this.state.index} index={0} >
+                            <div style={{ display: 'flex', flexDirection: 'column', flexGrow: '1', height: 'calc(100% - 40px)' }}>
                                 <div style={{ display: 'flex', justifyContent: 'stretch', flexGrow: '1', marginTop: '8px' }}>
                                     {
                                         this.state.currentUser.type !== UserType.supervisor ? (<div style={{ height: '50px', width: '150px', marginRight: '8px' }}>
@@ -244,10 +307,23 @@ class ClientsPage extends Component<{}, ClientsPageProps> {
                                             />
                                         </div>) : null
                                     }
-
-
+                                    <TextField
+                                        onChange={(event) => {
+                                            this.setState({ pharmSearchText: event.target.value })
+                                        }}
+                                        value={this.state.pharmSearchText}
+                                        sx={{ backgroundColor: 'white', marginLeft: "8px", height: '40px' }}
+                                        placeholder='Recherche'
+                                        size="small" />
+                                    <Button variant="outlined"
+                                        onClick={() => {
+                                            this.handleSearchPharmacies();
+                                        }}
+                                        sx={{ backgroundColor: 'white', marginLeft: "8px", height: '40px' }}>
+                                        <SearchIcon />
+                                    </Button>
                                 </div>
-                                <div style={{ width: '100%', display: 'flex', flexDirection: 'row', flexGrow: '1', height: 'calc(100% - 0px)', }}>
+                                <div style={{ width: '100%', display: 'flex', flexDirection: 'row', flexGrow: '1', height: 'calc(100% - 55px)', }}>
                                     <ClientsPharmacyTable
                                         total={this.state.totalPharm}
                                         page={this.state.pharmPage}
@@ -298,8 +374,8 @@ class ClientsPage extends Component<{}, ClientsPageProps> {
                                 </div>
                             </div>
                         </CustomTabPanel>
-                        <CustomTabPanel style={{ display: 'flex', flexDirection: 'row', flexGrow: '1', height: `calc(100% - ${this.state.currentUser.type !== UserType.supervisor ? '105' : '50'}px)` }} value={this.state.index} index={1} >
-                            <div style={{ display: 'flex', flexDirection: 'column', flexGrow: '1', height: 'calc(100% - 48px)' }}>
+                        <CustomTabPanel style={{ display: 'flex', flexDirection: 'row', flexGrow: '1', height: `calc(100% - 50px)` }} value={this.state.index} index={1} >
+                            <div style={{ display: 'flex', flexDirection: 'column', flexGrow: '1', height: 'calc(100% - 40px)' }}>
                                 <div style={{ display: 'flex', justifyContent: 'stretch', flexGrow: '1', marginTop: '8px' }}>
                                     {
                                         this.state.currentUser.type !== UserType.supervisor ? (<div style={{ height: '50px', width: '150px', marginRight: '8px' }}>
@@ -311,8 +387,23 @@ class ClientsPage extends Component<{}, ClientsPageProps> {
                                             />
                                         </div>) : null
                                     }
+                                    <TextField
+                                        onChange={(event) => {
+                                            this.setState({ docSearchText: event.target.value })
+                                        }}
+                                        value={this.state.docSearchText}
+                                        sx={{ backgroundColor: 'white', marginLeft: "8px", height: '40px' }}
+                                        placeholder='Recherche'
+                                        size="small" />
+                                    <Button variant="outlined"
+                                        onClick={() => {
+                                            this.handleSearchDoctors();
+                                        }}
+                                        sx={{ backgroundColor: 'white', marginLeft: "8px", height: '40px' }}>
+                                        <SearchIcon />
+                                    </Button>
                                 </div>
-                                <div style={{ width: '100%', display: 'flex', flexDirection: 'row', flexGrow: '1', height: 'calc(100% - 0px)' }}>
+                                <div style={{ width: '100%', display: 'flex', flexDirection: 'row', flexGrow: '1',  height: 'calc(100% - 55px)' }}>
 
                                     <ClientsDoctorTable
                                         id='clients-doctor-table'
@@ -361,10 +452,27 @@ class ClientsPage extends Component<{}, ClientsPageProps> {
                                 </div>
                             </div>
                         </CustomTabPanel>
-                        <CustomTabPanel style={{ display: 'flex', flexDirection: 'row', flexGrow: '1', height: 'calc(100% - 50px)' }} value={this.state.index} index={2} >
+                        <CustomTabPanel style={{ display: 'flex', flexDirection: 'row', flexGrow: '1', height: 'calc(100% - 50px)', }} value={this.state.index} index={2} >
                             <div style={{ display: 'flex', flexDirection: 'column', flexGrow: '1', height: 'calc(100% - 40px)' }}>
+                                <div style={{ display: 'flex', justifyContent: 'stretch', flexGrow: '1', marginTop: '8px',}}>
 
-                                <div style={{ width: '100%', display: 'flex', flexDirection: 'row', flexGrow: '1', height: 'calc(100% - 0px)' }}>
+                                    <TextField
+                                        onChange={(event) => {
+                                            this.setState({ wholeSearchText: event.target.value })
+                                        }}
+                                        value={this.state.wholeSearchText}
+                                        sx={{ backgroundColor: 'white', marginLeft: "8px", height: '40px' }}
+                                        placeholder='Recherche'
+                                        size="small" />
+                                    <Button variant="outlined"
+                                        onClick={() => {
+                                            this.handleSearchWholesalers();
+                                        }}
+                                        sx={{ backgroundColor: 'white', marginLeft: "8px", height: '40px' }}>
+                                        <SearchIcon />
+                                    </Button>
+                                </div>
+                                <div style={{ width: '100%', display: 'flex', flexDirection: 'row', flexGrow: '1',  height: 'calc(100% - 55px)' }}>
                                     <ClientsPharmacyTable
                                         total={this.state.totalWhole}
                                         page={this.state.wholePage}

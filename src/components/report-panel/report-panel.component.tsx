@@ -37,7 +37,7 @@ const ReportPanel: React.FC<ReportPanelProps> = ({ report, clientType, location,
     if (report) {
         return (
             <div style={{ margin: '16px', flexGrow: '1' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between' , alignItems: 'start', marginBottom: '8px' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start', marginBottom: '8px' }}>
                     <div style={{
                         display: 'flex',
                         flexDirection: 'column',
@@ -158,7 +158,13 @@ const ReportPanel: React.FC<ReportPanelProps> = ({ report, clientType, location,
                         : null
                 }
                 <h4 style={{ fontSize: 17 }}><EditNoteIcon style={{ fontSize: 17 }} /> Remarque:</h4>
-                <h6 style={{ fontSize: 15, fontWeight: '400' }}>{report.note}</h6>
+                <h6 style={{
+                    fontSize: 15, fontWeight: '400',
+                    width: '360px',
+                    flex: '1',
+                    overflowWrap: 'break-word',
+                    overflow: 'hidden'
+                }}>{report.note}</h6>
             </div>
         );
     } else {
