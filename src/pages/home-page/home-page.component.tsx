@@ -71,10 +71,10 @@ class HomePage extends Component<{}, HomePageState> {
             kamSearchText: '',
             supervisors: [],
             totalDelegate: 0,
-            sizeDelegate: 25,
+            sizeDelegate: 100,
             delegatePage: 1,
             totalKam: 0,
-            sizeKam: 25,
+            sizeKam: 100,
             kamPage: 1,
         }
     }
@@ -105,7 +105,7 @@ class HomePage extends Component<{}, HomePageState> {
         }
 
         if (currentUser.type === UserType.supervisor) {
-            var { visits: visits, total: total } = await this.visitService.getAllVisits(1, 25, new Date(), ClientType.pharmacy, currentUser.id!);
+            var { visits: visits, total: total } = await this.visitService.getAllVisits(1, 100, new Date(), ClientType.pharmacy, currentUser.id!);
             this.setState({
                 isLoading: false,
                 delegateVisits: visits,
@@ -118,9 +118,9 @@ class HomePage extends Component<{}, HomePageState> {
                 supervisors: supervisors,
             });
             // if (supervisors.length > 0) {
-            //     var { visits: kamVisits, total: totalKam } = await this.visitService.getAllVisits(1, 25, new Date(), ClientType.wholesaler, currentUser.id!);
+            //     var { visits: kamVisits, total: totalKam } = await this.visitService.getAllVisits(1, 100, new Date(), ClientType.wholesaler, currentUser.id!);
 
-            //     var { visits: delegateVisits, total: totalDelegate } = await this.visitService.getAllVisits(1, 25, new Date(), ClientType.pharmacy, supervisors[0].id!);
+            //     var { visits: delegateVisits, total: totalDelegate } = await this.visitService.getAllVisits(1, 100, new Date(), ClientType.pharmacy, supervisors[0].id!);
             //     this.setState({
             //         isLoading: false,
             //         delegateVisits: delegateVisits,

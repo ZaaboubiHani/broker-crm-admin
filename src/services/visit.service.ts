@@ -3,6 +3,7 @@ import VisitModel from "../models/visit.model";
 import Globals from "../api/globals";
 import { formatDateToYYYYMM, formatDateToYYYYMMDD } from "../functions/date-format";
 import { ClientType } from "../models/client.model";
+import { Sort } from "@mui/icons-material";
 
 export default class VisitService {
 
@@ -56,14 +57,34 @@ export default class VisitService {
         return [];
     }
 
-    async getAllVisitsPaginated(page: number, size: number, text: string, clientType: ClientType, superId: number): Promise<{ visits: VisitModel[], total: number }> {
+    async getAllVisitsPaginated(page: number, size: number, text: string, clientType: ClientType, superId: number, order: boolean, propname?: string): Promise<{ visits: VisitModel[], total: number }> {
         const token = localStorage.getItem('token');
         var textFilter = '';
+        var textSort = '';
         if (text.length > 0) {
             textFilter = `&filters[client][fullName][$containsi]=${text}`;
         }
+        if (propname) {
+            switch (propname) {
+                case 'date':
+                    textSort = `&sort[0]=createdDate:${order ? 'asc' : 'desc'}`;
+                    break;
+                case 'client':
+                    textSort = `&sort[0]=client.fullName:${order ? 'asc' : 'desc'}`;
+                    break;
+                case 'delegate':
+                    textSort = `&sort[0]=user.username:${order ? 'asc' : 'desc'}`;
+                    break;
+                case 'wilaya':
+                    textSort = `&sort[0]=client.wilaya:${order ? 'asc' : 'desc'}`;
+                    break;
+                case 'commune':
+                    textSort = `&sort[0]=client.commun:${order ? 'asc' : 'desc'}`;
+                    break;
+            }
+        }
         console.log(`${Globals.apiUrl}/visits?populate[rapport][populate]=*&sort[0]=createdDate:desc&populate[client][populate]=relatedSpeciality.domainType&populate=user${textFilter}&pagination[page]=${page}&pagination[pageSize]=${size}&filters[client][relatedSpeciality][domainType][reference][$eq]=${clientType === ClientType.doctor ? `doctor&filters[user][creatorId][$eq]=${superId}` : clientType === ClientType.pharmacy ? `pharmacy&filters[user][creatorId][$eq]=${superId}` : 'wholesaler'}`);
-        var response = await axios.get(`${Globals.apiUrl}/visits?populate[rapport][populate]=*&sort[0]=createdDate:desc&populate[client][populate]=relatedSpeciality.domainType&populate=user${textFilter}&pagination[page]=${page}&pagination[pageSize]=${size}&filters[client][relatedSpeciality][domainType][reference][$eq]=${clientType === ClientType.doctor ? `doctor&filters[user][creatorId][$eq]=${superId}` : clientType === ClientType.pharmacy ? `pharmacy&filters[user][creatorId][$eq]=${superId}` : 'wholesaler'}`,
+        var response = await axios.get(`${Globals.apiUrl}/visits?populate[rapport][populate]=*${textSort}&populate[client][populate]=relatedSpeciality.domainType&populate=user${textFilter}&pagination[page]=${page}&pagination[pageSize]=${size}&filters[client][relatedSpeciality][domainType][reference][$eq]=${clientType === ClientType.doctor ? `doctor&filters[user][creatorId][$eq]=${superId}` : clientType === ClientType.pharmacy ? `pharmacy&filters[user][creatorId][$eq]=${superId}` : 'wholesaler'}`,
             {
                 headers: {
                     'Authorization': `Bearer ${token}`
