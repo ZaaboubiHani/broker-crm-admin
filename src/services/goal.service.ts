@@ -4,7 +4,17 @@ import { formatDateToMM, formatDateToYYYY, formatDateToYYYYMM, formatDateToYYYYM
 import GoalModel from "../models/goal.model";
 
 export default class GoalService {
+    private static _instance: GoalService | null = null;
 
+    private constructor() {
+    }
+  
+    static getInstance(): GoalService {
+      if (!GoalService._instance) {
+        GoalService._instance = new GoalService();
+      }
+      return GoalService._instance;
+    }
     async getAllGoalsOfUserByDateMoth(date: Date,superId:number): Promise<GoalModel[]> {
         const token = localStorage.getItem('token');
         var response = await axios.get(`${Globals.apiUrl}/goals?filters[users_permissions_user][creatorId][$eq]=${superId}&filters[goalDate][$startsWithi]=${formatDateToYYYYMM(date)}&populate=users_permissions_user`,

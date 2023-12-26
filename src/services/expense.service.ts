@@ -6,7 +6,17 @@ import ExpenseUserModel from "../models/expense-user.model";
 import ExpenseConfigModel from "../models/expense-config.model";
 
 export default class ExpenseService {
+    private static _instance: ExpenseService | null = null;
 
+    private constructor() {
+    }
+  
+    static getInstance(): ExpenseService {
+      if (!ExpenseService._instance) {
+        ExpenseService._instance = new ExpenseService();
+      }
+      return ExpenseService._instance;
+    }
     async getAllExpensesOfUserByDateMoth(date: Date, userId: number): Promise<ExpenseModel[]> {
         const token = localStorage.getItem('token');
         var response = await axios.get(`${Globals.apiUrl}/expenses-days?filters[userExpense][user][id][$eq]=${userId}&filters[createdDate][$containsi]=${formatDateToYYYYMM(date)}&populate=proofs&pagination[pageSize]=31`,

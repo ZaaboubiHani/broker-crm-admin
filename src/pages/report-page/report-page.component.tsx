@@ -75,9 +75,9 @@ class ReportPage extends Component<{}, ReportPageProps> {
         }
     }
 
-    userService = new UserService();
-    visitService = new VisitService();
-    reportService = new ReportService();
+    userService = UserService.getInstance();
+    visitService = VisitService.getInstance();
+    reportService = ReportService.getInstance();
 
     handleSelectDelegate = async (delegate: UserModel) => {
         this.setState({ loadingVisitsData: true, reportData: undefined, selectedVisit: undefined, });

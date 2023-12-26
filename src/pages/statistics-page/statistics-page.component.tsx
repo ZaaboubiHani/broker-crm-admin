@@ -435,8 +435,8 @@ class StatisticsPage extends Component<{}, StatisticsPageProps> {
         }
     }
 
-    userService = new UserService();
-    statisticsService = new StatisticsService();
+    userService = UserService.getInstance();
+    statisticsService = StatisticsService.getInstance();
 
     handleSelectKam = async (kam: UserModel) => {
 

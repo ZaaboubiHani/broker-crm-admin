@@ -194,15 +194,15 @@ class ConfigPage extends Component<{}, ConfigPageProps> {
         }
     }
 
-    specialityService = new SpecialityService();
-    commentService = new CommentService();
-    motivationService = new MotivationService();
-    supplierService = new SupplierService();
-    wilayaService = new WilayaService();
-    expenseService = new ExpenseService();
-    goalService = new GoalService();
-    userService = new UserService();
-    productService = new ProductService();
+    specialityService = SpecialityService.getInstance();
+    commentService = CommentService.getInstance();
+    motivationService = MotivationService.getInstance();
+    supplierService = SupplierService.getInstance();
+    wilayaService = WilayaService.getInstance();
+    expenseService = ExpenseService.getInstance();
+    goalService = GoalService.getInstance();
+    userService = UserService.getInstance();
+    productService = ProductService.getInstance();
 
     loadConfigPageData = async () => {
         var { specialities, total: specialitiesTotal } = await this.specialityService.getAllMedicalSpecialities(1, 25);

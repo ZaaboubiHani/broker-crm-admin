@@ -3,7 +3,17 @@ import MotivationModel from "../models/motivation.model";
 import Globals from "../api/globals";
 
 export default class MotivationService {
+    private static _instance: MotivationService | null = null;
 
+    private constructor() {
+    }
+  
+    static getInstance(): MotivationService {
+      if (!MotivationService._instance) {
+        MotivationService._instance = new MotivationService();
+      }
+      return MotivationService._instance;
+    }
     async getAllMotivations(): Promise<MotivationModel[]> {
         const token = localStorage.getItem('token');
         var response = await axios.get(`${Globals.apiUrl}/company-motivations?filters[domainType][id][$eq]=1`,

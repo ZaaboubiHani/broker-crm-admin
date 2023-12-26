@@ -7,7 +7,17 @@ import { formatDateToYYYYMM, formatDateToYYYYMMDD } from "../functions/date-form
 
 
 export default class CommandService {
+    private static _instance: CommandService | null = null;
 
+    private constructor() {
+    }
+  
+    static getInstance(): CommandService {
+      if (!CommandService._instance) {
+        CommandService._instance = new CommandService();
+      }
+      return CommandService._instance;
+    }
     async getCommandOfVisit(visitId: number): Promise<CommandModel> {
         const token = localStorage.getItem('token');
         var response = await axios.get(`${Globals.apiUrl}/commands?publicationState=preview&filters[visit][id][$eq]=${visitId}&populate=products.product&populate=suppliers.supplier&populate=motivations&populate=visit.client&populate=invoice&populate=signature`,

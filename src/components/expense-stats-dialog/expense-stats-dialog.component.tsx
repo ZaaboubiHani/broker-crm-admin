@@ -37,7 +37,7 @@ const ExpenseStatsDialog: React.FC<ExpenseStatsDialogProps> = ({ onClose, isOpen
         }
     };
 
-    const expenseService = new ExpenseService();
+    const expenseService = ExpenseService.getInstance();
 
     const [startDate, setStartDate] = React.useState<Date | null | undefined>(undefined);
     const [endDate, setEndDate] = React.useState<Date | null | undefined>(undefined);

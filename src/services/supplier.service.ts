@@ -3,6 +3,17 @@ import SupplierModel from "../models/supplier.model";
 import Globals from "../api/globals";
 
 export default class SupplierService {
+    private static _instance: SupplierService | null = null;
+
+    private constructor() {
+    }
+  
+    static getInstance(): SupplierService {
+      if (!SupplierService._instance) {
+        SupplierService._instance = new SupplierService();
+      }
+      return SupplierService._instance;
+    }
 
     async getAllSuppliers(): Promise<SupplierModel[]> {
         const token = localStorage.getItem('token');

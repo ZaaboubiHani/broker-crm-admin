@@ -48,8 +48,8 @@ class ProfilePage extends Component<ProfilePageProps, ProfilePageState> {
         };
     }
 
-    userService = new UserService();
-    wilayaService = new WilayaService();
+    userService = UserService.getInstance();
+    wilayaService = WilayaService.getInstance();
 
 
     handleSaveChanges = async () => {

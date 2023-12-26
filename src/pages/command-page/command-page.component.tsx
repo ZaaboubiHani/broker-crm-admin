@@ -89,8 +89,8 @@ class CommandPage extends Component<{}, CommandDelegatePageProps> {
         }
     }
 
-    userService = new UserService();
-    commandService = new CommandService();
+    userService = UserService.getInstance();
+    commandService = CommandService.getInstance();
 
     handleCloseDialog = (event?: React.SyntheticEvent | Event, reason?: string) => {
         if (reason === 'clickaway') {
@@ -246,7 +246,7 @@ class CommandPage extends Component<{}, CommandDelegatePageProps> {
 
     componentDidMount(): void {
         if (localStorage.getItem('isLogged') === 'true') {
-           
+
             this.loadCommandPageData();
         }
     }
@@ -318,8 +318,8 @@ class CommandPage extends Component<{}, CommandDelegatePageProps> {
                                 display: 'flex',
                                 height: 'calc(100% - 60px)'
                             }} >
-                                <CommandDelegateTable 
-                                id='command-delegate-table'
+                                <CommandDelegateTable
+                                    id='command-delegate-table'
                                     total={this.state.totalDelegate}
                                     page={this.state.delegatePage}
                                     size={this.state.sizeDelegate}

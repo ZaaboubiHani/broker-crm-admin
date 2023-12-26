@@ -70,8 +70,8 @@ class ExpensePage extends Component<{}, ExpensePageProps> {
         }
     }
 
-    userService = new UserService();
-    expenseService = new ExpenseService();
+    userService = UserService.getInstance();
+    expenseService = ExpenseService.getInstance();
 
 
     handleSelectDelegate = async (delegate: UserModel) => {
@@ -116,7 +116,7 @@ class ExpensePage extends Component<{}, ExpensePageProps> {
             var kamExpenses = await this.expenseService.getAllExpensesOfUserByDateMoth(date, this.state.selectedKam!.id!);
             var kamExpensesUser = await this.expenseService.getExpensesUserByDateMoth(date, this.state.selectedKam!.id!);
             this.setState({
-               
+
                 kamExpenses: kamExpenses,
                 kamExpensesUser: kamExpensesUser,
             });

@@ -6,6 +6,18 @@ import { ClientType } from "../models/client.model";
 import { Sort } from "@mui/icons-material";
 
 export default class VisitService {
+    private static _instance: VisitService | null = null;
+
+    private constructor() {
+    }
+  
+    static getInstance(): VisitService {
+      if (!VisitService._instance) {
+        VisitService._instance = new VisitService();
+      }
+      return VisitService._instance;
+    }
+
 
     async getAllVisits(page: number, size: number, date: Date, clientType: ClientType, superId: number, order: boolean, propname?: string): Promise<{ visits: VisitModel[], total: number }> {
         const token = localStorage.getItem('token');

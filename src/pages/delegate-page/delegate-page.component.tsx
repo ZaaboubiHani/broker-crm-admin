@@ -10,7 +10,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSearch } from '@fortawesome/free-solid-svg-icons';
 import UserPicker from '../../components/user-picker/user-picker.component';
 import UserModel, { UserType } from '../../models/user.model';
-import { DotSpinner,DotWave } from '@uiball/loaders';
+import { DotSpinner, DotWave } from '@uiball/loaders';
 import UserService from '../../services/user.service';
 import VisitService from '../../services/visit.service';
 import ReportService from '../../services/report.service';
@@ -82,11 +82,11 @@ class DelegatePage extends Component<{}, DelegatePageState> {
         }
     }
 
-    userService = new UserService();
-    visitService = new VisitService();
-    reportService = new ReportService();
-    commandService = new CommandService();
-    statisticsService = new StatisticsService();
+    userService = UserService.getInstance();
+    visitService = VisitService.getInstance();
+    reportService = ReportService.getInstance();
+    commandService = CommandService.getInstance();
+    statisticsService = StatisticsService.getInstance();
 
     handleDisplayReport = async (visit: VisitModel) => {
         this.setState({ loadingReportData: true, showReportPanel: true, selectedReport: undefined, selectedCommand: undefined, selectedVisit: undefined });
@@ -207,7 +207,7 @@ class DelegatePage extends Component<{}, DelegatePageState> {
 
     componentDidMount(): void {
         if (localStorage.getItem('isLogged') === 'true') {
-           
+
             this.loadDelegatePageData();
         }
     }

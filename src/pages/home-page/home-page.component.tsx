@@ -91,10 +91,10 @@ class HomePage extends Component<{}, HomePageState> {
         }
     }
 
-    userService = new UserService();
-    visitService = new VisitService();
-    reportService = new ReportService();
-    commandService = new CommandService();
+    userService =  UserService.getInstance();
+    visitService =  VisitService.getInstance();
+    reportService =  ReportService.getInstance();
+    commandService =  CommandService.getInstance();
 
     handleDisplayReport = async (visit: VisitModel) => {
         this.setState({ loadingReportData: true, selectedReport: undefined, showReportPanel: true });

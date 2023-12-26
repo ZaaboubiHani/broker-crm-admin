@@ -113,10 +113,10 @@ class ClientsPage extends Component<{}, ClientsPageProps> {
         }
     }
 
-    userService = new UserService();
-    visitService = new VisitService();
-    reportService = new ReportService();
-    commandService = new CommandService();
+    userService = UserService.getInstance();
+    visitService = VisitService.getInstance();
+    reportService = ReportService.getInstance();
+    commandService = CommandService.getInstance();
 
     handleDisplayPharmReport = async (visit: VisitModel) => {
         this.setState({ loadingReportData: true, pharmReportData: undefined, showReportPanel: true });

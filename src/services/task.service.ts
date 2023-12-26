@@ -6,7 +6,17 @@ import { formatDateToYYYYMM, formatDateToYYYYMMDD } from "../functions/date-form
 
 
 export default class TaskService {
+    private static _instance: TaskService | null = null;
 
+    private constructor() {
+    }
+  
+    static getInstance(): TaskService {
+      if (!TaskService._instance) {
+        TaskService._instance = new TaskService();
+      }
+      return TaskService._instance;
+    }
   
     async getAllTasksOfDelegate(date: Date,userId:number): Promise<TaskModel[]> {
         const token = localStorage.getItem('token');
