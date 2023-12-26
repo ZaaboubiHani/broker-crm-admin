@@ -39,10 +39,10 @@ export default class VisitModel {
 
     static fromJson(json: any): VisitModel {
 
-        var parsedDate  = new Date();
+        var parsedDate = new Date();
 
-        if (json?.attributes?.createdDate !== null && json?.attributes?.createdDate !== undefined) {
-            const timestamp = Date.parse(json.attributes.createdDate);
+        if (json?.attributes?.createdAt !== null && json?.attributes?.createdAt !== undefined) {
+            const timestamp = Date.parse(json.attributes.createdAt);
             parsedDate = new Date(timestamp);
         }
 
@@ -51,7 +51,7 @@ export default class VisitModel {
             reference: json.attributes.reference,
             visitLocation: json.attributes.visitLocation,
             hasCommand: json.attributes.hasCommand,
-            createdDate:  parsedDate,
+            createdDate: parsedDate,
             client: json?.attributes?.client?.data !== null && json?.attributes?.client?.data !== undefined ? ClientModel.fromJson(json.attributes.client.data) : undefined,
             user: json?.attributes?.user?.data !== null && json?.attributes?.user?.data !== undefined ? UserModel.fromJson(json.attributes.user.data) : undefined,
         });

@@ -7,10 +7,11 @@ import Dialog from '@mui/material/Dialog';
 import Button from '@mui/material/Button';
 import CloseIcon from '@mui/icons-material/Close';
 
+
 interface MapDialogProps {
     isOpen: boolean,
     onClose: (value: string) => void,
-    visitsCoordinates: { point: number[], name: string }[],
+    visitsCoordinates: { point: number[], name: string, time: string }[],
     tasksCoordinates: { point: number[], name: string }[],
 }
 
@@ -44,7 +45,7 @@ const MapDialog: React.FC<MapDialogProps> = ({ isOpen, onClose, visitsCoordinate
     };
 
     const firstVisitColorOptions = { color: 'blue', }
-    const visitColorOptions = { color: 'lime', }
+    const visitColorOptions = { color: 'black', }
     const taskColorOptions = { color: 'orange', }
 
     return (
@@ -64,7 +65,14 @@ const MapDialog: React.FC<MapDialogProps> = ({ isOpen, onClose, visitsCoordinate
                         <CircleMarker center={ll.latLng(c.point[0], c.point[1])}
                             pathOptions={index === 0 ? firstVisitColorOptions : visitColorOptions}
                             radius={15}>
-                            <Popup>{c.name}</Popup>
+                            <Popup>
+                                <div>
+                                    {c.name}
+                                </div>
+                                <div>
+                                    {c.time}
+                                </div>
+                            </Popup>
                         </CircleMarker>
                     ))
                 }

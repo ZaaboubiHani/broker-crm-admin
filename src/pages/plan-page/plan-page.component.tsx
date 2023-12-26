@@ -1,14 +1,7 @@
 import React, { Component } from 'react';
-import DatePickerBar from '../../components/date-picker/date-picker.component';
-import SearchBar from '../../components/search-bar/search-bar.component';
 import '../plan-page/plan-page.style.css';
-import ClientPicker from '../../components/user-picker/user-picker.component';
 import MonthYearPicker from '../../components/month-year-picker/month-year-picker.component';
 import PlanTable from '../../components/plan-table/plan-table.component';
-import Form from 'react-bootstrap/Form';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faSearch } from '@fortawesome/free-solid-svg-icons';
-import UserPicker from '../../components/user-picker/user-picker.component';
 import UserModel, { UserType } from '../../models/user.model';
 import ReportModel from '../../models/report.model';
 import VisitTaskModel from '../../models/visit-task.model';
@@ -30,6 +23,7 @@ import CustomTabPanel from '../../components/custom-tab-panel/costum-tab-panel.c
 import Box from '@mui/material/Box';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
+import { formatDateToYYYYMMDD, formatTime } from '../../functions/date-format';
 
 interface PlanPageProps {
     selectedDate: Date;
@@ -53,7 +47,7 @@ interface PlanPageProps {
     kamVisitTasks: VisitTaskModel[];
     visitTaskDetails: TaskModel[];
     selectedVisitTaskDate?: Date;
-    visitsCoordinates: { point: number[], name: string }[];
+    visitsCoordinates: { point: number[], name: string, time: string }[];
     tasksCoordinates: { point: number[], name: string }[];
     delegatePlanDeTournee: number;
     kamPlanDeTournee: number;
@@ -291,10 +285,11 @@ class PlanPage extends Component<{}, PlanPageProps> {
 
         visits.sort(this.compareDates);
 
-        let visitsCoordinates: { point: number[], name: string }[] = visits.map((v) => {
+        let visitsCoordinates: { point: number[], name: string, time: string }[] = visits.map((v) => {
             return {
                 point: (v.visitLocation ?? ',').split(',').map((s) => parseFloat(s)),
-                name: v.client?.name ?? ''
+                name: v.client?.name ?? '',
+                time: formatTime(v.createdDate!),
             };
         });
 
@@ -317,10 +312,12 @@ class PlanPage extends Component<{}, PlanPageProps> {
         this.setState({ loadingMap: true });
         var tasks = await this.taskService.getAllTasksOfDelegate(date, this.state.selectedKam!.id!);
         var visits = await this.visitService.getAllVisitsOfDelegateDay(date, this.state.selectedKam!.id!);
-        let visitsCoordinates: { point: number[], name: string }[] = visits.map((v) => {
+
+        let visitsCoordinates: { point: number[], name: string, time: string }[] = visits.map((v) => {
             return {
                 point: (v.visitLocation ?? ',').split(',').map((s) => parseFloat(s)),
-                name: v.client?.name ?? ''
+                name: v.client?.name ?? '',
+                time: formatTime(v.createdDate!),
             };
         });
 
