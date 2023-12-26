@@ -6,7 +6,17 @@ import { formatDateToMM, formatDateToYYYY, formatDateToYYYYMMDD } from "../funct
 
 
 export default class RevenueService {
+    private static _instance: RevenueService | null = null;
 
+    private constructor() {
+    }
+  
+    static getInstance(): RevenueService {
+      if (!RevenueService._instance) {
+        RevenueService._instance = new RevenueService();
+      }
+      return RevenueService._instance;
+    }
     async getAllRevenuesMonth(date: Date,superId:number): Promise<RevenueModel[]> {
         const token = localStorage.getItem('token');
         var response = await axios.get(`${Globals.apiUrl}/classementChiffreDaffaireEquipe?supervisor=${superId}&year=${formatDateToYYYY(date)}&month=${formatDateToMM(date)}`,

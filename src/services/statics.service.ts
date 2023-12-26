@@ -5,6 +5,17 @@ import { formatDateToMM, formatDateToYYYY, formatDateToYYYYMM, formatDateToYYYYM
 
 
 export default class StatisticsService {
+    private static _instance: StatisticsService | null = null;
+
+    private constructor() {
+    }
+  
+    static getInstance(): StatisticsService {
+      if (!StatisticsService._instance) {
+        StatisticsService._instance = new StatisticsService();
+      }
+      return StatisticsService._instance;
+    }
 
     async getPlanDeTournee(date: Date, userId: number): Promise<number> {
         const token = localStorage.getItem('token');

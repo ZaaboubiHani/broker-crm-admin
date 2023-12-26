@@ -111,12 +111,12 @@ class PlanPage extends Component<{}, PlanPageProps> {
         }
     }
 
-    userService = new UserService();
-    statisticsService = new StatisticsService();
-    visitTaskService = new VisitTaskService();
-    taskService = new TaskService();
-    visitService = new VisitService();
-    reportService = new ReportService();
+    userService = UserService.getInstance();
+    statisticsService = StatisticsService.getInstance();
+    visitTaskService = VisitTaskService.getInstance();
+    taskService = TaskService.getInstance();
+    visitService = VisitService.getInstance();
+    reportService = ReportService.getInstance();
 
     handleDisplayReport = async (clientId: number, date: Date, visit: VisitModel) => {
         this.setState({ loadingReport: true });
@@ -288,7 +288,7 @@ class PlanPage extends Component<{}, PlanPageProps> {
         this.setState({ loadingMap: true });
         var tasks = await this.taskService.getAllTasksOfDelegate(date, this.state.selectedDelegate!.id!);
         var visits = await this.visitService.getAllVisitsOfDelegateDay(date, this.state.selectedDelegate!.id!);
-        
+
         visits.sort(this.compareDates);
 
         let visitsCoordinates: { point: number[], name: string }[] = visits.map((v) => {

@@ -3,22 +3,15 @@ import { useNavigate, } from 'react-router-dom';
 import '../login-page/login-page.style.css';
 import UserService from '../../services/user.service';
 import AuthService from '../../services/auth.service';
-import Box from '@mui/material/Box';
 import IconButton from '@mui/material/IconButton';
-import Input from '@mui/material/Input';
-import FilledInput from '@mui/material/FilledInput';
 import OutlinedInput from '@mui/material/OutlinedInput';
 import InputLabel from '@mui/material/InputLabel';
 import InputAdornment from '@mui/material/InputAdornment';
-import FormHelperText from '@mui/material/FormHelperText';
 import FormControl from '@mui/material/FormControl';
 import TextField from '@mui/material/TextField';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
-import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
-import { FontAwesomeIcon, } from '@fortawesome/react-fontawesome';
-import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
 import { DotSpinner } from '@uiball/loaders';
 import Snackbar from '@mui/material/Snackbar';
 import { UserType } from '../../models/user.model';
@@ -34,8 +27,8 @@ const LoginPage: React.FC = () => {
 
   const navigate = useNavigate();
 
-  var authService = new AuthService();
-  var userService = new UserService();
+  var authService = AuthService.getInstance();
+  var userService = UserService.getInstance();
 
   const handleLogin = async (event: any) => {
     event.preventDefault();

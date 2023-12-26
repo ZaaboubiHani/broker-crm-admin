@@ -67,9 +67,9 @@ class RevenuePage extends Component<{}, RevenuePageProps> {
         }
     }
 
-    userService = new UserService();
-    revenueService = new RevenueService();
-    statisticsService = new StatisticsService();
+    userService = UserService.getInstance();
+    revenueService = RevenueService.getInstance();
+    statisticsService = StatisticsService.getInstance();
 
     handleDisplayDetails = async (userId: number) => {
         this.setState({ loadingRevenueData: true });
@@ -187,7 +187,7 @@ class RevenuePage extends Component<{}, RevenuePageProps> {
 
     componentDidMount() {
         if (localStorage.getItem('isLogged') === 'true') {
-           
+
             this.loadRevenuePageData();
         }
     }

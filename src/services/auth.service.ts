@@ -6,7 +6,17 @@ import Globals from "../api/globals";
 
 
 export default class AuthService {
+    private static _instance: AuthService | null = null;
 
+    private constructor() {
+    }
+  
+    static getInstance(): AuthService {
+      if (!AuthService._instance) {
+        AuthService._instance = new AuthService();
+      }
+      return AuthService._instance;
+    }
     async login(identifier: string, password: string): Promise<boolean> {
         try {
             var response = await axios.post(`${Globals.apiUrl}/auth/local`,

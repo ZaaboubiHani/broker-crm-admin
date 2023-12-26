@@ -3,7 +3,17 @@ import SpecialityModel from "../models/speciality.model";
 import Globals from "../api/globals";
 
 export default class SpecialityService {
+    private static _instance: SpecialityService | null = null;
 
+    private constructor() {
+    }
+  
+    static getInstance(): SpecialityService {
+      if (!SpecialityService._instance) {
+        SpecialityService._instance = new SpecialityService();
+      }
+      return SpecialityService._instance;
+    }
     async getAllMedicalSpecialities(page: number, size: number,): Promise<{ specialities: SpecialityModel[], total: number }> {
         const token = localStorage.getItem('token');
         var response = await axios.get(`${Globals.apiUrl}/specialities?filters[domainType][id][$eq]=1&pagination[page]=${page}&pagination[pageSize]=${size}`,

@@ -7,6 +7,17 @@ import VisitTaskModel from "../models/visit-task.model";
 
 
 export default class VisitTaskService {
+    private static _instance: VisitTaskService | null = null;
+
+    private constructor() {
+    }
+  
+    static getInstance(): VisitTaskService {
+      if (!VisitTaskService._instance) {
+        VisitTaskService._instance = new VisitTaskService();
+      }
+      return VisitTaskService._instance;
+    }
 
     async getAllVisitsTasks(date: Date,userId:number): Promise<VisitTaskModel[]> {
         const token = localStorage.getItem('token');

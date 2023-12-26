@@ -3,7 +3,17 @@ import ProductModel from "../models/product.model";
 import Globals from "../api/globals";
 
 export default class ProductService {
+    private static _instance: ProductService | null = null;
 
+    private constructor() {
+    }
+  
+    static getInstance(): ProductService {
+      if (!ProductService._instance) {
+        ProductService._instance = new ProductService();
+      }
+      return ProductService._instance;
+    }
     async getAllProducts(): Promise<ProductModel[]> {
         const token = localStorage.getItem('token');
         var response = await axios.get(`${Globals.apiUrl}/company-products`,

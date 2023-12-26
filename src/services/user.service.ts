@@ -5,6 +5,17 @@ import Globals from "../api/globals";
 
 
 export default class UserService {
+    private static _instance: UserService | null = null;
+
+    private constructor() {
+    }
+  
+    static getInstance(): UserService {
+      if (!UserService._instance) {
+        UserService._instance = new UserService();
+      }
+      return UserService._instance;
+    }
 
     async addUser(user: UserModel): Promise<boolean> {
         const token = localStorage.getItem('token');

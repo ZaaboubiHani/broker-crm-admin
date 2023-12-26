@@ -3,7 +3,17 @@ import CommentModel from "../models/comment.model";
 import Globals from "../api/globals";
 
 export default class CommentService {
+    private static _instance: CommentService | null = null;
 
+    private constructor() {
+    }
+  
+    static getInstance(): CommentService {
+      if (!CommentService._instance) {
+        CommentService._instance = new CommentService();
+      }
+      return CommentService._instance;
+    }
     async getAllComments(): Promise<CommentModel[]> {
         const token = localStorage.getItem('token');
         var response = await axios.get(`${Globals.apiUrl}/company-comments`,

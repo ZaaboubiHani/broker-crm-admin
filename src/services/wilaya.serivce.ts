@@ -5,6 +5,18 @@ import Globals from "../api/globals";
 
 export default class WilayaService {
 
+    private static _instance: WilayaService | null = null;
+
+    private constructor() {
+    }
+  
+    static getInstance(): WilayaService {
+      if (!WilayaService._instance) {
+        WilayaService._instance = new WilayaService();
+      }
+      return WilayaService._instance;
+    }
+
     async getAllWilayas(): Promise<WilayaModel[]> {
         const response = await fetch("/data/wilayas.json");
         const data = await response.json();
