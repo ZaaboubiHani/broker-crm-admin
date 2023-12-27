@@ -176,6 +176,8 @@ class ClientsPage extends Component<{}, ClientsPageProps> {
                 this.state.docProp,
                 this.state.selectedDelegate?.id
             );
+            
+            var delegates = await this.userService.getUsersByCreator(currentUser.id!, UserType.delegate);
 
             this.setState({
                 currentUser: currentUser,
@@ -184,6 +186,7 @@ class ClientsPage extends Component<{}, ClientsPageProps> {
                 totalPharm: totalPharm,
                 docVisits: docVisits,
                 totalDoc: totalDoc,
+                delegates: delegates,
             });
         } else {
             var supervisors = await this.userService.getUsersByCreator(currentUser.id!, UserType.supervisor);

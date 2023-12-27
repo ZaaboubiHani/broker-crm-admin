@@ -61,23 +61,38 @@ class ProfilePage extends Component<ProfilePageProps, ProfilePageState> {
                 await this.userService.updateUser(this.state.users[i]);
             }
             this.setState({ showSnackbar: true, snackbarMessage: 'Données enregistrées' });
-            var users = await this.userService.getUsersByCreator(this.state.currentUser.id!, UserType.admin,);
-            this.setState({ users: users, loadingUsers: false });
+            if (this.state.currentUser.type === UserType.supervisor) {
+                var users = await this.userService.getUsersByCreator(this.state.currentUser.id!, UserType.delegate,);
+                this.setState({ users: users, loadingUsers: false, });
+            } else {
+                var users = await this.userService.getUsersByCreator(this.state.currentUser.id!, UserType.admin,);
+                this.setState({ users: users, loadingUsers: false, });
+            }
         }
     }
 
     handleAddUser = async (user: UserModel) => {
         this.setState({ clientDialogIsOpen: false, loadingUsers: true, });
         await this.userService.addUser(user);
-        var users = await this.userService.getUsersByCreator(this.state.currentUser.id!, UserType.admin,);
-        this.setState({ users: users, loadingUsers: false, });
+        if (this.state.currentUser.type === UserType.supervisor) {
+            var users = await this.userService.getUsersByCreator(this.state.currentUser.id!, UserType.delegate,);
+            this.setState({ users: users, loadingUsers: false, });
+        } else {
+            var users = await this.userService.getUsersByCreator(this.state.currentUser.id!, UserType.admin,);
+            this.setState({ users: users, loadingUsers: false, });
+        }
     }
 
     handleEditUser = async (user: UserModel) => {
         this.setState({ clientDialogIsOpen: false, loadingUsers: true, });
         await this.userService.updateUser(user);
-        var users = await this.userService.getUsersByCreator(this.state.currentUser.id!, UserType.admin,);
-        this.setState({ users: users, loadingUsers: false, });
+        if (this.state.currentUser.type === UserType.supervisor) {
+            var users = await this.userService.getUsersByCreator(this.state.currentUser.id!, UserType.delegate,);
+            this.setState({ users: users, loadingUsers: false, });
+        } else {
+            var users = await this.userService.getUsersByCreator(this.state.currentUser.id!, UserType.admin,);
+            this.setState({ users: users, loadingUsers: false, });
+        }
     }
 
     handleOpenAddClientDialog = () => {
