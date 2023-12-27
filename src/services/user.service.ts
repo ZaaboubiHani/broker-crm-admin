@@ -9,24 +9,32 @@ export default class UserService {
 
     private constructor() {
     }
-  
+
     static getInstance(): UserService {
-      if (!UserService._instance) {
-        UserService._instance = new UserService();
-      }
-      return UserService._instance;
+        if (!UserService._instance) {
+            UserService._instance = new UserService();
+        }
+        return UserService._instance;
     }
 
     async addUser(user: UserModel): Promise<boolean> {
         const token = localStorage.getItem('token');
         var activityResponse: AxiosResponse;
         var currentUser = await this.getMe();
+        var companyResponse = await axios.get(`${Globals.apiUrl}/companies`,
+           {
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        });
+
         if (user.type !== UserType.supervisor) {
             activityResponse = await axios.post(`${Globals.apiUrl}/activities`,
                 {
                     data: {
                         delegate: user.id,
-                        wilayas: user.wilayas?.map<number>(w => w.id!)
+                        wilayas: user.wilayas?.map<number>(w => w.id!),
+                        
                     }
                 }, {
                 headers: {
@@ -46,6 +54,7 @@ export default class UserService {
                 creatorId: currentUser.id,
                 confirmed: true,
                 role: 1,
+                company: companyResponse.data.data[0].id ,
                 relatedType: user.type === UserType.delegate ? 3 : user.type === UserType.supervisor ? 2 : 4,
                 wilayaActivity: user.type !== UserType.supervisor ? activityResponse!.data.data.id : null
             }, {
@@ -229,7 +238,7 @@ export default class UserService {
             return new UserModel({});
         } catch (error: any) {
             if (error.response.status === 401) {
-                return new UserModel({isBlocked:true});
+                return new UserModel({ isBlocked: true });
             }
             return new UserModel({});
         }
