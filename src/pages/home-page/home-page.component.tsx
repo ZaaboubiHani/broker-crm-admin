@@ -91,10 +91,10 @@ class HomePage extends Component<{}, HomePageState> {
         }
     }
 
-    userService =  UserService.getInstance();
-    visitService =  VisitService.getInstance();
-    reportService =  ReportService.getInstance();
-    commandService =  CommandService.getInstance();
+    userService = UserService.getInstance();
+    visitService = VisitService.getInstance();
+    reportService = ReportService.getInstance();
+    commandService = CommandService.getInstance();
 
     handleDisplayReport = async (visit: VisitModel) => {
         this.setState({ loadingReportData: true, selectedReport: undefined, showReportPanel: true });
@@ -124,14 +124,22 @@ class HomePage extends Component<{}, HomePageState> {
                 filteredDelegateVisits: visits,
                 totalDelegate: total,
             });
-        } else {
+        } else if (currentUser.type === UserType.admin) {
             var supervisors = await this.userService.getUsersByCreator(currentUser.id!, UserType.supervisor);
             this.setState({
                 supervisors: supervisors,
             });
+            var { visits: kamVisits, total: totalKam } = await this.visitService.getAllVisits(1, this.state.sizeKam, new Date(), ClientType.wholesaler, this.state.currentUser.id!, this.state.kamOrder, this.state.kamProp);
+            this.setState({
+                kamVisits: kamVisits,
+                filteredKamVisits: kamVisits,
+                loadingVisitsData: false,
+                kamPage: 1,
+                delegatePage: 1,
+                totalKam: totalKam,
+            });
             // if (supervisors.length > 0) {
             //     var { visits: kamVisits, total: totalKam } = await this.visitService.getAllVisits(1, 100, new Date(), ClientType.wholesaler, currentUser.id!);
-
             //     var { visits: delegateVisits, total: totalDelegate } = await this.visitService.getAllVisits(1, 100, new Date(), ClientType.pharmacy, supervisors[0].id!);
             //     this.setState({
             //         isLoading: false,
@@ -146,7 +154,24 @@ class HomePage extends Component<{}, HomePageState> {
             //     });
             // }
         }
+        else {
+            var { visits: delegateVisits, total: totalDelegate } = await this.visitService.getAllVisits(1, this.state.sizeDelegate, new Date(), ClientType.pharmacy, 0, this.state.delegateOrder, this.state.delegateProp);
+            this.setState({
+                delegateVisits: delegateVisits,
+                filteredDelegateVisits: delegateVisits,
+                totalDelegate: totalDelegate,
+            });
 
+            var { visits: kamVisits, total: totalKam } = await this.visitService.getAllVisits(1, this.state.sizeKam, new Date(), ClientType.wholesaler, this.state.currentUser.id!, this.state.kamOrder, this.state.kamProp);
+            this.setState({
+                kamVisits: kamVisits,
+                filteredKamVisits: kamVisits,
+                loadingVisitsData: false,
+                kamPage: 1,
+                delegatePage: 1,
+                totalKam: totalKam,
+            });
+        }
         this.setState({
             isLoading: false,
         });
@@ -171,7 +196,7 @@ class HomePage extends Component<{}, HomePageState> {
                 filteredDelegateVisits: visits,
                 totalDelegate: total,
             });
-        } else {
+        } else if (this.state.currentUser.type === UserType.admin) {
             if (this.state.selectedSupervisor) {
                 var { visits: delegateVisits, total: totalDelegate } = await this.visitService.getAllVisits(1, this.state.sizeDelegate, date, ClientType.pharmacy, this.state.selectedSupervisor!.id!, this.state.delegateOrder, this.state.delegateProp);
                 this.setState({
@@ -180,6 +205,25 @@ class HomePage extends Component<{}, HomePageState> {
                     totalDelegate: totalDelegate,
                 });
             }
+            var { visits: kamVisits, total: totalKam } = await this.visitService.getAllVisits(1, this.state.sizeKam, date, ClientType.wholesaler, this.state.currentUser.id!, this.state.kamOrder, this.state.kamProp);
+            this.setState({
+                selectedDate: date,
+                kamVisits: kamVisits,
+                filteredKamVisits: kamVisits,
+                loadingVisitsData: false,
+                kamPage: 1,
+                delegatePage: 1,
+                totalKam: totalKam,
+            });
+        } else {
+
+            var { visits: delegateVisits, total: totalDelegate } = await this.visitService.getAllVisits(1, this.state.sizeDelegate, date, ClientType.pharmacy, 0, this.state.delegateOrder, this.state.delegateProp);
+            this.setState({
+                delegateVisits: delegateVisits,
+                filteredDelegateVisits: delegateVisits,
+                totalDelegate: totalDelegate,
+            });
+
             var { visits: kamVisits, total: totalKam } = await this.visitService.getAllVisits(1, this.state.sizeKam, date, ClientType.wholesaler, this.state.currentUser.id!, this.state.kamOrder, this.state.kamProp);
             this.setState({
                 selectedDate: date,
@@ -223,7 +267,7 @@ class HomePage extends Component<{}, HomePageState> {
                 delegateProp: delegateProp,
             });
         }
-        else {
+        else if (this.state.currentUser.type === UserType.admin) {
             if (this.state.selectedSupervisor) {
                 this.setState({ loadingVisitsData: true, selectedReport: undefined, selectedVisit: undefined, selectedCommand: undefined, delegatePage: 1 });
                 var { visits: visits, total: total } = await this.visitService.getAllVisits(1, this.state.sizeDelegate, this.state.selectedDate, ClientType.pharmacy, this.state.selectedSupervisor.id!, this.state.delegateOrder, delegateProp);
@@ -236,6 +280,18 @@ class HomePage extends Component<{}, HomePageState> {
                     delegateProp: delegateProp
                 });
             }
+        }
+        else {
+            this.setState({ loadingVisitsData: true, selectedReport: undefined, selectedVisit: undefined, selectedCommand: undefined, delegatePage: 1 });
+            var { visits: visits, total: total } = await this.visitService.getAllVisits(1, this.state.sizeDelegate, this.state.selectedDate, ClientType.pharmacy, 0, this.state.delegateOrder, delegateProp);
+
+            this.setState({
+                delegateVisits: visits,
+                loadingVisitsData: false,
+                filteredDelegateVisits: visits,
+                totalDelegate: total,
+                delegateProp: delegateProp
+            });
         }
     }
 
@@ -298,7 +354,7 @@ class HomePage extends Component<{}, HomePageState> {
                 totalDelegate: total,
             });
         }
-        else {
+        else if (this.state.currentUser.type === UserType.admin) {
             if (this.state.selectedSupervisor) {
                 this.setState({
                     loadingVisitsData: true,
@@ -317,6 +373,24 @@ class HomePage extends Component<{}, HomePageState> {
                     totalDelegate: total,
                 });
             }
+        }
+        else {
+            this.setState({
+                loadingVisitsData: true,
+                selectedReport: undefined,
+                selectedVisit: undefined,
+                selectedCommand: undefined,
+                delegatePage: 1,
+                delegateOrder: delegateOrder
+            });
+            var { visits: visits, total: total } = await this.visitService.getAllVisits(1, this.state.sizeDelegate, this.state.selectedDate, ClientType.pharmacy, 0, delegateOrder, this.state.delegateProp);
+
+            this.setState({
+                delegateVisits: visits,
+                loadingVisitsData: false,
+                filteredDelegateVisits: visits,
+                totalDelegate: total,
+            });
         }
     }
 
@@ -344,7 +418,7 @@ class HomePage extends Component<{}, HomePageState> {
                 filteredDelegateVisits: visits,
                 totalDelegate: total
             });
-        } else {
+        } else if (this.state.currentUser.type === UserType.admin) {
             if (this.state.selectedSupervisor) {
                 var { visits: delegateVisits, total: totalDelegate } = await this.visitService.getAllVisits(page, size, this.state.selectedDate, ClientType.pharmacy, this.state.selectedSupervisor.id!, this.state.delegateOrder, this.state.delegateProp);
 
@@ -357,6 +431,17 @@ class HomePage extends Component<{}, HomePageState> {
                     totalDelegate: totalDelegate,
                 });
             }
+        } else {
+            var { visits: delegateVisits, total: totalDelegate } = await this.visitService.getAllVisits(page, size, this.state.selectedDate, ClientType.pharmacy, 0, this.state.delegateOrder, this.state.delegateProp);
+
+            this.setState({
+                delegatePage: page,
+                sizeDelegate: size,
+                delegateVisits: delegateVisits,
+                filteredDelegateVisits: delegateVisits,
+                loadingVisitsData: false,
+                totalDelegate: totalDelegate,
+            });
         }
     }
 
@@ -415,19 +500,18 @@ class HomePage extends Component<{}, HomePageState> {
                                 height: 'calc(100% - 40px)',
                                 width: '100%',
                             }}>
-
                                 <div style={{ display: 'flex', justifyContent: 'stretch', flexGrow: '1', marginTop: '8px', marginBottom: '16px' }}>
                                     {
-                                        this.state.currentUser.type !== UserType.supervisor ? (<div style={{ height: '50px', width: '150px', marginRight: '8px' }}>
-                                            <UserDropdown
-                                                users={this.state.supervisors}
-                                                selectedUser={this.state.selectedSupervisor}
-                                                onSelectUser={this.handleSelectSupervisor}
-                                                label='Superviseur'
-                                            />
-                                        </div>) : null
+                                        this.state.currentUser.type === UserType.admin ?
+                                            (<div style={{ height: '50px', width: '150px', marginRight: '8px' }}>
+                                                <UserDropdown
+                                                    users={this.state.supervisors}
+                                                    selectedUser={this.state.selectedSupervisor}
+                                                    onSelectUser={this.handleSelectSupervisor}
+                                                    label='Superviseur'
+                                                />
+                                            </div>) : null
                                     }
-
                                     <div style={{ width: '100%', position: 'relative' }}>
                                         <DatePickerBar onPick={this.handleOnPickDate} initialDate={this.state.selectedDate}></DatePickerBar>
                                         <div style={{ width: '300px', display: 'flex', position: 'absolute', right: "0px", top: '46px' }}>
@@ -525,7 +609,7 @@ class HomePage extends Component<{}, HomePageState> {
                         </CustomTabPanel>
                         <CustomTabPanel style={{ display: 'flex', flexDirection: 'row', flexGrow: '1', height: 'calc(100% - 50px)', width: '100%' }} value={this.state.index} index={1} >
                             <div style={{ display: 'flex', flexDirection: 'column', flexGrow: '1', height: 'calc(100% - 40px)', width: '100%', }}>
-                                <div style={{ width: '100%', position: 'relative',marginBottom:'16px' }}>
+                                <div style={{ width: '100%', position: 'relative', marginBottom: '16px' }}>
                                     <DatePickerBar onPick={this.handleOnPickDate} initialDate={this.state.selectedDate}></DatePickerBar>
                                     <div style={{ width: '300px', display: 'flex', position: 'absolute', right: "0px", top: '46px' }}>
                                         <FormControl size="small" style={{
