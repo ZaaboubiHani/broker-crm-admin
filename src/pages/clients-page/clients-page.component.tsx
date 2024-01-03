@@ -34,6 +34,8 @@ import MenuItem from '@mui/material/MenuItem';
 import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 import Divider from '@mui/material/Divider';
+import StorageIcon from '@mui/icons-material/Storage';
+import * as XLSX from 'xlsx';
 
 interface ClientsPageProps {
     selectedDate: Date;
@@ -73,10 +75,10 @@ interface ClientsPageProps {
     currentUser: UserModel;
     supervisors: UserModel[];
     delegates: UserModel[];
+    kams: UserModel[];
     selectedDelegate?: UserModel;
     selectedSupervisor?: UserModel;
 }
-
 
 class ClientsPage extends Component<{}, ClientsPageProps> {
     constructor({ }) {
@@ -87,6 +89,7 @@ class ClientsPage extends Component<{}, ClientsPageProps> {
             isLoading: true,
             loadingDelegates: false,
             delegates: [],
+            kams: [],
             docSearchText: '',
             pharmSearchText: '',
             wholeSearchText: '',
@@ -118,20 +121,31 @@ class ClientsPage extends Component<{}, ClientsPageProps> {
     reportService = ReportService.getInstance();
     commandService = CommandService.getInstance();
 
+    exportToExcel = (data: any[], fileName: string) => {
+        const ws = XLSX.utils.json_to_sheet(data);
+        const wb = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, ws, 'Sheet1');
+        XLSX.writeFile(wb, `${fileName}.xlsx`);
+    };
+
+    handleExportExcelData = async () => {
+        
+        // this.exportToExcel(this.state.pharmVisits, 'exportedData');
+    };
+
     handleDisplayPharmReport = async (visit: VisitModel) => {
         this.setState({ loadingReportData: true, pharmReportData: undefined, showReportPanel: true });
         var report = await this.reportService.getReportOfVisit(visit.id!);
         this.setState({ loadingReportData: false, pharmReportData: report, selectedVisit: visit, showReportPanel: true });
 
     };
+
     handleDisplayWholeReport = async (visit: VisitModel) => {
         this.setState({ loadingReportData: true, wholeReportData: undefined, showReportPanel: true });
         var report = await this.reportService.getReportOfVisit(visit.id!);
         this.setState({ loadingReportData: false, wholeReportData: report, selectedVisit: visit, showReportPanel: true });
 
     };
-
-
 
     handleDisplayDocReport = async (visit: VisitModel) => {
         this.setState({ loadingReportData: true, docReportData: undefined, showReportPanel: true });
@@ -176,7 +190,7 @@ class ClientsPage extends Component<{}, ClientsPageProps> {
                 this.state.docProp,
                 this.state.selectedDelegate?.id
             );
-            
+
             var delegates = await this.userService.getUsersByCreator(currentUser.id!, UserType.delegate);
 
             this.setState({
@@ -651,6 +665,7 @@ class ClientsPage extends Component<{}, ClientsPageProps> {
                                             />
                                         </div>) : null
                                     }
+
                                     <div style={{ height: '50px', width: '150px', }}>
                                         <UserDropdown
                                             users={this.state.delegates}
@@ -705,7 +720,21 @@ class ClientsPage extends Component<{}, ClientsPageProps> {
                                         sx={{ backgroundColor: 'white', marginLeft: "8px", height: '40px' }}>
                                         <SearchIcon />
                                     </Button>
-
+                                    {
+                                        this.state.currentUser.type === UserType.admin ?
+                                            (
+                                                <>
+                                                    <Divider orientation="vertical" flexItem component="div" style={{ width: '0.5%' }} sx={{ borderRight: 'solid rgba(127,127,127,0.5) 1px', margin: '8px 8px 16px 8px' }} />
+                                                    <Button variant="outlined"
+                                                        onClick={() => {
+                                                            this.handleExportExcelData();
+                                                        }}
+                                                        sx={{ backgroundColor: 'white', marginLeft: "8px", height: '40px' }}>
+                                                        <StorageIcon />
+                                                    </Button>
+                                                </>
+                                            ) : null
+                                    }
                                 </div>
                                 <div style={{ width: '100%', display: 'flex', flexDirection: 'row', flexGrow: '1', height: 'calc(100% - 55px)', }}>
                                     <ClientsPharmacyTable

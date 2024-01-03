@@ -29,7 +29,7 @@ export default class VisitService {
             typeFilter = '&filters[client][relatedSpeciality][domainType][reference][$eq]=wholesaler'
         } else {
             typeFilter = '&filters[client][relatedSpeciality][domainType][reference][$ne]=wholesaler'
-            creatorFilter = `filters[user][creatorId][$eq]=${superId}&`;
+            creatorFilter = superId !== 0 ? `filters[user][creatorId][$eq]=${superId}&` : '';
         }
 
         var textSort = '';

@@ -1,11 +1,12 @@
 
 import React, { useEffect, useState } from 'react';
-import { MapContainer, TileLayer, Polyline, CircleMarker, Popup } from 'react-leaflet'
+import { MapContainer, TileLayer, Polyline, CircleMarker, Popup, SVGOverlay } from 'react-leaflet'
 import * as ll from "leaflet";
 import "leaflet/dist/leaflet.css"
 import Dialog from '@mui/material/Dialog';
 import Button from '@mui/material/Button';
 import CloseIcon from '@mui/icons-material/Close';
+import UserTrackingModel from '@/src/models/user-tracking.model';
 
 
 interface MapDialogProps {
@@ -23,6 +24,7 @@ const MapDialog: React.FC<MapDialogProps> = ({ isOpen, onClose, visitsCoordinate
 
         let filteredTasksPoints = tasksCoordinates.filter((t) => !isNaN(t.point[0])).map(c => c.point);
         let filteredVisitsPoints = visitsCoordinates.filter((t) => !isNaN(t.point[0])).map(c => c.point);
+
         for (const point of filteredVisitsPoints) {
             sumLat += point[0];
             sumLng += point[1];
@@ -31,6 +33,7 @@ const MapDialog: React.FC<MapDialogProps> = ({ isOpen, onClose, visitsCoordinate
             sumLat += point[0];
             sumLng += point[1];
         }
+
 
         let sum = (filteredTasksPoints.length + filteredVisitsPoints.length) !== 0 ? (filteredTasksPoints.length + filteredVisitsPoints.length) : 1;
         const avgLat = sumLat / sum;
@@ -77,6 +80,16 @@ const MapDialog: React.FC<MapDialogProps> = ({ isOpen, onClose, visitsCoordinate
                     ))
                 }
                 {
+                    visitsCoordinates.map((c, index) => (
+                        <SVGOverlay attributes={{ stroke: 'black', textAlign: 'center' }} bounds={ll.latLngBounds(ll.latLng(c.point[0] - 0.0002, c.point[1] - 0.0002), ll.latLng(c.point[0] + 0.0002, c.point[1] + 0.0002))}>
+                            <circle r="16" cx="50%" cy="50%" fill="white" />
+                            <text x="50%" y="50%" style={{ transform: 'translate(-10%,5%)' }} fontSize={16} stroke="black" >
+                                {index + 1}
+                            </text>
+                        </SVGOverlay>
+                    ))
+                }
+                {
                     tasksCoordinates.map((c) => {
                         return isNaN(c.point[0]) ? null : (
                             <CircleMarker center={ll.latLng(c.point[0], c.point[1])} pathOptions={taskColorOptions} radius={15}>
@@ -86,7 +99,9 @@ const MapDialog: React.FC<MapDialogProps> = ({ isOpen, onClose, visitsCoordinate
                     }
                     )
                 }
+
                 <Polyline pathOptions={visitColorOptions} positions={visitsCoordinates.map((c) => ll.latLng(c.point[0], c.point[1]))} />
+
             </MapContainer>
             <Button color="error" sx={{
                 backgroundColor: 'red',

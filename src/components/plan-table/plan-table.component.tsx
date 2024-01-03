@@ -15,31 +15,38 @@ import VisitTaskModel from '../../models/visit-task.model';
 import TablePagination from '@mui/material/TablePagination';
 import { DataGrid, GridColDef, GridValueGetterParams } from '@mui/x-data-grid';
 import MapIcon from '@mui/icons-material/Map';
+import RouteIcon from '@mui/icons-material/Route';
 
 interface PlanTableProps {
     data: VisitTaskModel[];
     isLoading: boolean;
     onDisplayDetails: (date: Date) => {};
     onDisplayMap: (date: Date) => {};
+    onDisplayPath: (date: Date) => {};
     id?: string;
 }
 
-const PlanTable: React.FC<PlanTableProps> = ({ data, id, isLoading, onDisplayDetails, onDisplayMap }) => {
+const PlanTable: React.FC<PlanTableProps> = ({ data, id, isLoading, onDisplayDetails, onDisplayMap, onDisplayPath }) => {
 
 
 
     const columns: GridColDef[] = [
 
         {
-            field: 'date', headerName: 'Date', width: 100, valueFormatter(params) {
+            field: 'date',
+            headerName: 'Date',
+            width: 100,
+            sortable: false,
+            filterable: false,
+            valueFormatter(params) {
                 return formatDateToYYYYMMDD(params.value);
             },
         },
         {
             field: 'sldkifu', headerName: 'Wilayas', width: 200,
-
             resizable: true,
-
+            sortable: false,
+            filterable: false,
             renderCell(params) {
                 return (
                     <div>
@@ -60,14 +67,20 @@ const PlanTable: React.FC<PlanTableProps> = ({ data, id, isLoading, onDisplayDet
             field: 'tasks', headerName: 'Visites programmes', width: 150,
             align: 'center',
             headerAlign: 'center',
+            sortable: false,
+            filterable: false,
         },
         {
             field: 'visits', headerName: 'visites realiser', width: 150,
             align: 'center',
             headerAlign: 'center',
+            sortable: false,
+            filterable: false,
         },
         {
             field: 'details', headerName: 'Details',
+            sortable: false,
+            filterable: false,
             renderCell(params) {
                 return (<Button onClick={() => {
                     onDisplayDetails(params.row.date);
@@ -78,10 +91,23 @@ const PlanTable: React.FC<PlanTableProps> = ({ data, id, isLoading, onDisplayDet
         {
             field: 'map', headerName: 'Carte de parcours', width: 150,
             align: 'center',
+            sortable: false,
+            filterable: false,
             renderCell(params) {
                 return (<Button onClick={() => {
                     onDisplayMap(params.row.date,);
                 }} variant="text"><MapIcon /></Button>);
+            },
+        },
+        {
+            field: 'path', headerName: 'Trajectoire de défilement', width: 200,
+            align: 'center',
+            sortable: false,
+            filterable: false,
+            renderCell(params) {
+                return (<Button onClick={() => {
+                    onDisplayPath(params.row.date,);
+                }} variant="text"><RouteIcon /></Button>);
             },
         },
     ];
