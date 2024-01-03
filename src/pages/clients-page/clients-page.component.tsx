@@ -36,6 +36,7 @@ import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 import Divider from '@mui/material/Divider';
 import StorageIcon from '@mui/icons-material/Storage';
 import * as XLSX from 'xlsx';
+import ClientService from '../../services/clients.service';
 
 interface ClientsPageProps {
     selectedDate: Date;
@@ -120,6 +121,7 @@ class ClientsPage extends Component<{}, ClientsPageProps> {
     visitService = VisitService.getInstance();
     reportService = ReportService.getInstance();
     commandService = CommandService.getInstance();
+    clientService = ClientService.getInstance();
 
     exportToExcel = (data: any[], fileName: string) => {
         const ws = XLSX.utils.json_to_sheet(data);
@@ -129,8 +131,8 @@ class ClientsPage extends Component<{}, ClientsPageProps> {
     };
 
     handleExportExcelData = async () => {
-        
-        // this.exportToExcel(this.state.pharmVisits, 'exportedData');
+        let clients = await this.clientService.getAllClients();
+        this.exportToExcel(clients, 'exportedData');
     };
 
     handleDisplayPharmReport = async (visit: VisitModel) => {

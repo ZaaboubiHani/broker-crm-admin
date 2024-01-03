@@ -291,8 +291,7 @@ class PlanPage extends Component<{}, PlanPageProps> {
         this.setState({ loadingMap: true });
         var tasks = await this.taskService.getAllTasksOfDelegate(date, this.state.selectedDelegate!.id!);
         var visits = await this.visitService.getAllVisitsOfDelegateDay(date, this.state.selectedDelegate!.id!);
-        var trackings = await this.userTrackingService.getUserTrackingByDate(date, this.state.selectedDelegate!.id!);
-        this.setState({trackings:trackings});
+       
         visits.sort(this.compareDates);
 
         let visitsCoordinates: { point: number[], name: string, time: string }[] = visits.map((v) => {
