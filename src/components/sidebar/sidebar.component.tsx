@@ -166,14 +166,14 @@ const Sidebar: React.FC = () => {
           isOpen={sidebarOpen}
           icon={<HomeIcon style={{ color: 'white', width: '30px', height: '30px', marginRight: '8px', }} />}
         />
-        {
-          userType !== 'operator' ? (<NavListItem
+       
+          <NavListItem
             name='Délégués'
             route='/delegate'
             isOpen={sidebarOpen}
             icon={<BusinessCenterIcon style={{ color: 'white', width: '30px', height: '30px', marginRight: '8px' }} />}
-          />) : undefined
-        }
+          />
+       
         {
           userType !== 'operator' ? (<NavListItem
             name='Plan de tournée'
@@ -182,14 +182,13 @@ const Sidebar: React.FC = () => {
             icon={<CalendarMonthIcon style={{ color: 'white', width: '30px', height: '30px', marginRight: '8px' }} />}
           />) : undefined
         }
-        {
-          userType !== 'operator' ? (<NavListItem
+        <NavListItem
             name='Rapports des visites'
             route='/report'
             isOpen={sidebarOpen}
             icon={<ReceiptIcon style={{ color: 'white', width: '30px', height: '30px', marginRight: '8px' }} />}
-          />) : undefined
-        }
+          />
+        
         <NavListItem
           name='Bons de commandes'
           route='/command'
@@ -226,14 +225,12 @@ const Sidebar: React.FC = () => {
             icon={<InsertChartIcon style={{ color: 'white', width: '30px', height: '30px', marginRight: '8px' }} />}
           />) : undefined
         }
-        {
-          userType !== 'operator' ? (<NavListItem
+        <NavListItem
             name="Listes prédéfinies"
             route='/config'
             isOpen={sidebarOpen}
             icon={<TuneIcon style={{ color: 'white', width: '30px', height: '30px', marginRight: '8px' }} />}
-          />) : undefined
-        }
+          />
         {
           userType !== 'operator' ? (<NavListItem
             name="Profil"

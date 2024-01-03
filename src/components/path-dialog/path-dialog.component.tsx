@@ -16,6 +16,9 @@ interface PathDialogProps {
 }
 
 const PathDialog: React.FC<PathDialogProps> = ({ isOpen, onClose, trackings }) => {
+
+    var [trackingPolylines, setTrackingPolylines] = useState<UserTrackingModel[][]>([]);
+
     function calculateCenter(): number[] {
 
         let sumLat = 0;
@@ -26,7 +29,6 @@ const PathDialog: React.FC<PathDialogProps> = ({ isOpen, onClose, trackings }) =
             sumLng += point.longitude ? parseFloat(point.longitude) : 0;
         }
 
-
         let sum = (trackings.filter((c) => c.latitude).length) !== 0 ? (trackings.filter((c) => c.latitude).length) : 1;
         const avgLat = sumLat / sum;
         const avgLng = sumLng / sum;
@@ -34,12 +36,37 @@ const PathDialog: React.FC<PathDialogProps> = ({ isOpen, onClose, trackings }) =
         return [avgLat, avgLng];
     }
 
+    const calculateColorGradient = (index: number, total: number) => {
+        const ratio = index / total;
+        const r = Math.round(255 * ratio);
+        const g = Math.round(255 * (1 - ratio));
+        const b = 0;
+        return `rgb(${r},${g},${b})`;
+    };
+
 
     const handleClose = () => {
         onClose('selectedValue');
     };
 
-    const trackingColorOptions = { color: 'purple', }
+    const trackingColorOptions = { color: 'rgb(0,128,0)', }
+
+    useEffect(() => {
+        let polylines: UserTrackingModel[][] = [];
+        let poly: UserTrackingModel[] = [];
+        for (var tracking of trackings) {
+            if (tracking.latitude) {
+                poly.push(tracking);
+            }
+            else {
+                if (poly.length > 0) {
+                    polylines.push(poly);
+                    poly = [];
+                }
+            }
+        }
+        setTrackingPolylines(polylines);
+    }, [isOpen]);
 
     return (
         <Dialog fullWidth={true} maxWidth='lg' onClose={handleClose} open={isOpen} >
@@ -48,6 +75,7 @@ const PathDialog: React.FC<PathDialogProps> = ({ isOpen, onClose, trackings }) =
                 height: '500px',
                 zIndex: '0'
             }}
+            
                 center={ll.latLng(calculateCenter()[0], calculateCenter()[1])} zoom={13} scrollWheelZoom={true}>
                 <TileLayer
                     attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetPath</a> contributors'
@@ -56,7 +84,8 @@ const PathDialog: React.FC<PathDialogProps> = ({ isOpen, onClose, trackings }) =
                 {
                     trackings.map((c, index) => {
                         return c.latitude ? (
-                            <CircleMarker center={ll.latLng(parseFloat(c.latitude!), parseFloat(c.longitude!))} pathOptions={trackingColorOptions} radius={15}>
+                            <CircleMarker center={ll.latLng(parseFloat(c.latitude!), parseFloat(c.longitude!))} 
+                            pathOptions={{ fillColor: 'black', color:'black' }} radius={10}>
 
                             </CircleMarker>
                         ) : null;
@@ -67,8 +96,8 @@ const PathDialog: React.FC<PathDialogProps> = ({ isOpen, onClose, trackings }) =
                     trackings.map((c, index) => {
                         return c.latitude ? (
                             <SVGOverlay attributes={{ stroke: 'black', textAlign: 'center' }} bounds={ll.latLngBounds(ll.latLng(parseFloat(c.latitude!) - 0.0002, parseFloat(c.longitude!) - 0.0002), ll.latLng(parseFloat(c.latitude!) + 0.0002, parseFloat(c.longitude!) + 0.0002))}>
-                                <circle r="16" cx="50%" cy="50%"  fill="white" />
-                                <text x="50%" y="50%" style={{transform:'translate(-10%,5%)'}} fontSize={16} stroke="black" >
+                                <circle r="16" cx="50%" cy="50%" fill="white" />
+                                <text x="50%" y="50%" style={{ transform: 'translate(-10%,5%)' }} fontSize={16} stroke="black" >
                                     {index + 1}
                                 </text>
                             </SVGOverlay>
@@ -76,8 +105,12 @@ const PathDialog: React.FC<PathDialogProps> = ({ isOpen, onClose, trackings }) =
                     }
                     )
                 }
-                
-                <Polyline pathOptions={trackingColorOptions} positions={trackings.filter((c) => c.latitude).map((c) => ll.latLng(parseFloat(c.latitude!), parseFloat(c.longitude!)))} />
+                {
+                    trackingPolylines.map((tracking,index) => (<Polyline
+                        pathOptions={{ fillColor: calculateColorGradient(index, trackingPolylines.length), color: calculateColorGradient(index, trackingPolylines.length), }}
+                        positions={tracking.map((c) => ll.latLng(parseFloat(c.latitude!), parseFloat(c.longitude!)))} />))
+                }
+
             </MapContainer>
             <Button color="error" sx={{
                 backgroundColor: 'red',

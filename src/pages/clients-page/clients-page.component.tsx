@@ -23,7 +23,6 @@ import Tab from '@mui/material/Tab';
 import ClientsDoctorTable from '../../components/clients-doctor-table/clients-doctor-table.component';
 import { ClientType } from '../../models/client.model';
 import UserModel, { UserType } from '../../models/user.model';
-import UserPicker from '../../components/user-picker/user-picker.component';
 import UserDropdown from '../../components/user-dropdown/user-dropdown';
 import TextField from '@mui/material/TextField/TextField';
 import Button from '@mui/material/Button/Button';

@@ -35,19 +35,19 @@ const SpecialityTable: React.FC<SpecialityTableProps> = ({ data, id, isLoading, 
             field: 'name', headerName: 'Nom de spécialité', width: 200,
             filterable: false,
         },
-        {
-            field: 'edit', headerName: 'Modifier', width: 80,
-            filterable: false,
-            headerAlign: 'center',
-            align: 'center',
-            renderCell(params) {
-                return (<IconButton onClick={() => {
-                    onEdit(params.row.model);
-                }} >
-                    <EditIcon />
-                </IconButton>);
-            },
-        },
+        // {
+        //     field: 'edit', headerName: 'Modifier', width: 80,
+        //     filterable: false,
+        //     headerAlign: 'center',
+        //     align: 'center',
+        //     renderCell(params) {
+        //         return (<IconButton onClick={() => {
+        //             onEdit(params.row.model);
+        //         }} >
+        //             <EditIcon />
+        //         </IconButton>);
+        //     },
+        // },
         {
             field: 'delete', headerName: 'Supprimer', width: 80,
             filterable: false,
