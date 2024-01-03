@@ -11,28 +11,35 @@ export default class UserTrackingService {
 
     private constructor() {
     }
-  
+
     static getInstance(): UserTrackingService {
-      if (!UserTrackingService._instance) {
-        UserTrackingService._instance = new UserTrackingService();
-      }
-      return UserTrackingService._instance;
+        if (!UserTrackingService._instance) {
+            UserTrackingService._instance = new UserTrackingService();
+        }
+        return UserTrackingService._instance;
     }
 
-    async getUserTrackingByDate(date:Date,userId:number): Promise<UserTrackingModel[]> {
+    async getUserTrackingByDate(date: Date, userId: number): Promise<UserTrackingModel[]> {
         try {
             const token = localStorage.getItem('token');
-            var response = await axios.get(`${Globals.apiUrl}/user-trackings?filters[user][id][$eq]=${userId}&filters[createdAt][$containsi]=${formatDateToYYYYMMDD(date)}&pagination[pageSize]=100`, {
-                headers: {
-                    'Authorization': `Bearer ${token}`
+            let uerTrackings: UserTrackingModel[] = [];
+            let page = 1;
+            while (true) {
+                var response = await axios.get(`${Globals.apiUrl}/user-trackings?filters[user][id][$eq]=${userId}&filters[createdAt][$containsi]=${formatDateToYYYYMMDD(date)}&pagination[pageSize]=100&pagination[page]=${page}`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                if (response.status == 200) {
+                    for (let index = 0; index < response.data['data'].length; index++) {
+                        var userTracking = UserTrackingModel.fromJson(response.data['data'][index]);
+                        uerTrackings.push(userTracking);
+                    }
                 }
-            });
-            let uerTrackings:UserTrackingModel[] = [];
-            if (response.status == 200) {
-                for (let index = 0; index < response.data['data'].length; index++) {
-                    var userTracking = UserTrackingModel.fromJson(response.data['data'][index]);
-                    uerTrackings.push(userTracking);
+                if(response.data['data'].length === 0){
+                    break;
                 }
+                page++;
             }
             return uerTrackings;
         } catch (error) {
