@@ -92,7 +92,6 @@ class DelegatePage extends Component<{}, DelegatePageState> {
         this.setState({ loadingReportData: true, showReportPanel: true, selectedReport: undefined, selectedCommand: undefined, selectedVisit: undefined });
         var report = await this.reportService.getReportOfVisit(visit.id!);
         this.setState({ loadingReportData: false, selectedReport: report, selectedVisit: visit, showReportPanel: true });
-
     };
 
     handleDisplayCommand = async (visit: VisitModel) => {
@@ -237,7 +236,7 @@ class DelegatePage extends Component<{}, DelegatePageState> {
                     <div style={{ display: 'flex', justifyContent: 'stretch', flexGrow: '1', marginTop: '16px' }}>
 
                         {
-                            this.state.currentUser.type === UserType.admin ?
+                            this.state.currentUser.type !== UserType.supervisor ?
                                 (<div style={{
                                     height: '50px',
                                     width: '150px',
