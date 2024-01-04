@@ -54,9 +54,16 @@ const PathDialog: React.FC<PathDialogProps> = ({ isOpen, onClose, trackings }) =
     useEffect(() => {
         let polylines: UserTrackingModel[][] = [];
         let poly: UserTrackingModel[] = [];
-        for (var tracking of trackings) {
-            if (tracking.latitude) {
-                poly.push(tracking);
+        for (let index = 0; index < trackings.length-1; index++) {
+            if (poly.length === 2) {
+                polylines.push(poly);
+                poly = [];
+            }
+            if (trackings[index].latitude) {
+                poly.push(trackings[index]);
+                if (trackings[index+1].latitude) {
+                    poly.push(trackings[index+1]);
+                }
             }
             else {
                 if (poly.length > 0) {
@@ -65,6 +72,7 @@ const PathDialog: React.FC<PathDialogProps> = ({ isOpen, onClose, trackings }) =
                 }
             }
         }
+        
         setTrackingPolylines(polylines);
     }, [isOpen]);
 
@@ -75,7 +83,6 @@ const PathDialog: React.FC<PathDialogProps> = ({ isOpen, onClose, trackings }) =
                 height: '500px',
                 zIndex: '0'
             }}
-            
                 center={ll.latLng(calculateCenter()[0], calculateCenter()[1])} zoom={13} scrollWheelZoom={true}>
                 <TileLayer
                     attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetPath</a> contributors'
@@ -107,10 +114,9 @@ const PathDialog: React.FC<PathDialogProps> = ({ isOpen, onClose, trackings }) =
                 }
                 {
                     trackingPolylines.map((tracking,index) => (<Polyline
-                        pathOptions={{ fillColor: calculateColorGradient(index, trackingPolylines.length), color: calculateColorGradient(index, trackingPolylines.length), }}
+                        pathOptions={{ fillColor: calculateColorGradient(index,tracking.length), color: calculateColorGradient(index, trackingPolylines.length), }}
                         positions={tracking.map((c) => ll.latLng(parseFloat(c.latitude!), parseFloat(c.longitude!)))} />))
                 }
-
             </MapContainer>
             <Button color="error" sx={{
                 backgroundColor: 'red',
