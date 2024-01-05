@@ -22,11 +22,10 @@ interface PlanTableProps {
     isLoading: boolean;
     onDisplayDetails: (date: Date) => {};
     onDisplayMap: (date: Date) => {};
-    onDisplayPath: (date: Date) => {};
     id?: string;
 }
 
-const PlanTable: React.FC<PlanTableProps> = ({ data, id, isLoading, onDisplayDetails, onDisplayMap, onDisplayPath }) => {
+const PlanTable: React.FC<PlanTableProps> = ({ data, id, isLoading, onDisplayDetails, onDisplayMap }) => {
 
 
 
@@ -99,17 +98,7 @@ const PlanTable: React.FC<PlanTableProps> = ({ data, id, isLoading, onDisplayDet
                 }} variant="text"><MapIcon /></Button>);
             },
         },
-        {
-            field: 'path', headerName: 'Trajectoire de défilement', width: 200,
-            align: 'center',
-            sortable: false,
-            filterable: false,
-            renderCell(params) {
-                return (<Button onClick={() => {
-                    onDisplayPath(params.row.date,);
-                }} variant="text"><RouteIcon /></Button>);
-            },
-        },
+       
     ];
 
 

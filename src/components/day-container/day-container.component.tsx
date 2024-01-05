@@ -34,8 +34,8 @@ class DayContainer extends Component<DayContainerProps> {
       >
         <div
           style={{
-            width: '40px',
-            height: '40px',
+            width: '21px',
+            height: '21px',
             padding: 8,
             margin: '0px 2px',
             borderRadius: 4,

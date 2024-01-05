@@ -3,7 +3,6 @@ import '../report-page/report-page.style.css';
 import MonthYearPicker from '../../components/month-year-picker/month-year-picker.component';
 import ReportTable from '../../components/report-table/report-table.component';
 import DotSpinner from '@uiball/loaders/dist/components/DotSpinner';
-import { Form } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import UserPicker from '../../components/user-picker/user-picker.component';
 import UserModel, { UserType } from '../../models/user.model';
@@ -237,8 +236,8 @@ class ReportPage extends Component<{}, ReportPageProps> {
                             </Tabs>
                         </Box>
                     </Box>
-                    <CustomTabPanel style={{ display: 'flex', flexDirection: 'row', flexGrow: '1', height: 'calc(100% - 55px)', padding: '0px' }} value={this.state.index} index={0} >
-                        <div style={{ display: 'flex', flexDirection: 'column', flexGrow: '1', height: 'calc(100% - 45px)' }}>
+                    <CustomTabPanel value={this.state.index} index={0} >
+                        <div style={{ display: 'flex', flexDirection: 'column', flexGrow: '1', height: 'calc(100vh  - 70px)' }}>
                             <div className='report-container'>
                                 <div style={{ display: 'flex', justifyContent: 'stretch', flexGrow: '1', marginTop: '16px' }}>
                                     {this.state.currentUser.type !== UserType.supervisor ?
@@ -270,7 +269,7 @@ class ReportPage extends Component<{}, ReportPageProps> {
                                     width: '100%',
                                     flexGrow: '1',
                                     display: 'flex',
-                                    height: 'calc(100% - 60px)'
+                                    height: 'calc(100% - 66px)'
                                 }} >
                                     <ReportTable
                                         total={this.state.totalDelegate}
@@ -320,8 +319,8 @@ class ReportPage extends Component<{}, ReportPageProps> {
                             </div>
                         </div>
                     </CustomTabPanel>
-                    <CustomTabPanel style={{ display: 'flex', flexDirection: 'row', flexGrow: '1', height: 'calc(100% - 55px)' }} value={this.state.index} index={1} >
-                        <div style={{ display: 'flex', flexDirection: 'column', flexGrow: '1', height: 'calc(100% - 45px)' }}>
+                    <CustomTabPanel value={this.state.index} index={1} >
+                        <div style={{ display: 'flex', flexDirection: 'column', flexGrow: '1', height: 'calc(100vh  - 65px)' }}>
                             <div className='report-container'>
                                 <div style={{ display: 'flex', justifyContent: 'stretch', flexGrow: '1', marginTop: '16px' }}>
                                     <div style={{ height: '50px', width: '150px', margin: '0px 8px' }}>
@@ -338,7 +337,7 @@ class ReportPage extends Component<{}, ReportPageProps> {
                                     width: '100%',
                                     flexGrow: '1',
                                     display: 'flex',
-                                    height: 'calc(100% - 60px)'
+                                    height: 'calc(100% - 66px)'
                                 }} key={0}>
                                     <ReportTable
                                         total={this.state.totalKam}

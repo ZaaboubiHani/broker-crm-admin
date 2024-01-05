@@ -36,7 +36,7 @@ const openGoogleMaps = (location?: string) => {
 const ReportPanel: React.FC<ReportPanelProps> = ({ report, clientType, location, showBackButton, onBackClick }) => {
     if (report) {
         return (
-            <div style={{ margin: '16px', flexGrow: '1' }}>
+            <div style={{ margin: '16px 0px 16px 16px', flexGrow: '1',flex:'1',height:'96%',overflowY:'auto',overflowX:'hidden',paddingRight:'8px' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start', marginBottom: '8px' }}>
                     <div style={{
                         display: 'flex',
@@ -47,17 +47,17 @@ const ReportPanel: React.FC<ReportPanelProps> = ({ report, clientType, location,
                         <Button style={{
                             display: showBackButton === undefined || showBackButton === false ? 'none' : 'block',
                             width: '30px',
-                            height: '35px',
                             justifyContent: 'center',
                             alignItems: 'center',
+                            margin: 'none'
                         }}
                             onClick={onBackClick}
                             variant="outlined">
                             <ArrowBackIosNewIcon style={{ width: '30px', color: 'rgb(0, 182, 182)', marginBottom: '5px' }} />
                         </Button>
-                        <div style={{ display: 'flex', height: '40px', }}>
-                            <h6 style={{ marginRight: '16px', }}>Date: {formatDateToYYYYMMDD(report.createdAt!)}</h6>
-                            <h6>Heure: {formatTime(report.createdAt!)}</h6>
+                        <div style={{ display: 'flex', margin: '0px', height: '32px', alignItems: 'center' }}>
+                            <h6 style={{ margin: '0px', marginRight: '16px', fontSize: '16px', }}>Date: {formatDateToYYYYMMDD(report.createdAt!)}</h6>
+                            <h6 style={{ fontSize: '16px', margin: '0px' }}>Heure: {formatTime(report.createdAt!)}</h6>
                         </div>
                     </div>
                     <Button style={{
@@ -69,13 +69,13 @@ const ReportPanel: React.FC<ReportPanelProps> = ({ report, clientType, location,
                 <h4 style={{ fontSize: 17 }}><InventoryIcon style={{ fontSize: 17 }} /> Produits:</h4>
                 {
                     report.products?.map((product) => (
-                        <div style={{ display: 'flex', justifyContent: 'space-between', }}>
-                            <h6 style={{ fontSize: 15, fontWeight: '400' }}>{product.name}</h6>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', margin: '0px', height: '32px' }}>
+                            <h6 style={{ fontSize: 15, fontWeight: '400', margin: '0px', height: '32px' }}>{product.name}</h6>
                             {
                                 clientType !== ClientType.doctor ? (
-                                    <div style={{ display: 'flex', justifyContent: 'space-between', width: '66%' }}>
-                                        <h6 style={{ fontSize: 15, fontWeight: '400' }}>quantité:{product.quantity}</h6>
-                                        <h6 style={{ fontSize: 15, fontWeight: '400' }}>{product.rotations}/mois</h6>
+                                    <div style={{ display: 'flex', justifyContent: 'space-between', width: '66%', margin: '0px', height: '32px' }}>
+                                        <h6 style={{ fontSize: 15, fontWeight: '400', margin: '0px', height: '32px' }}>quantité:{product.quantity}</h6>
+                                        <h6 style={{ fontSize: 15, fontWeight: '400', margin: '0px', height: '32px' }}>{product.rotations}/mois</h6>
                                     </div>
                                 ) : null
                             }
@@ -87,13 +87,13 @@ const ReportPanel: React.FC<ReportPanelProps> = ({ report, clientType, location,
                     clientType !== ClientType.doctor ?
                         (
                             <div>
-                                <h4 style={{ fontSize: 17 }}><InventoryIcon style={{ fontSize: 17 }} /> Produits concurrents:</h4>
+                                <h4 style={{ fontSize: 17, margin: '0px', height: '32px' }}><InventoryIcon style={{ fontSize: 17 }} /> Produits concurrents:</h4>
                                 {
                                     report.coproducts?.map((coproduct) => (
-                                        <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                                            <h6 style={{ fontSize: 15, fontWeight: '400' }}>{coproduct.name}</h6>
-                                            <h6 style={{ fontSize: 15, fontWeight: '400' }}>quantité: {coproduct.quantity}</h6>
-                                            <h6 style={{ fontSize: 15, fontWeight: '400' }}>{coproduct.rotations}/mois</h6>
+                                        <div style={{ display: 'flex', justifyContent: 'space-between', margin: '0px', height: '32px' }}>
+                                            <h6 style={{ fontSize: 15, fontWeight: '400', margin: '0px', height: '32px' }}>{coproduct.name}</h6>
+                                            <h6 style={{ fontSize: 15, fontWeight: '400', margin: '0px', height: '32px' }}>quantité: {coproduct.quantity}</h6>
+                                            <h6 style={{ fontSize: 15, fontWeight: '400', margin: '0px', height: '32px' }}>{coproduct.rotations}/mois</h6>
                                         </div>
                                     ))
                                 }
@@ -105,13 +105,13 @@ const ReportPanel: React.FC<ReportPanelProps> = ({ report, clientType, location,
                     clientType !== ClientType.doctor ?
                         (
                             <div>
-                                <h4 style={{ fontSize: 17 }}><HailIcon style={{ fontSize: 17 }} /> Fournisseurs:</h4>
+                                <h4 style={{ fontSize: 17, margin: '0px', height: '32px' }}><HailIcon style={{ fontSize: 17 }} /> Fournisseurs:</h4>
                                 {
                                     report.suppliers?.map((supplier) => (
-                                        <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                                            <h6 style={{ fontSize: 15, fontWeight: '400' }}>{supplier.name}</h6>
-                                            <h6 style={{ fontSize: 15, fontWeight: '400' }}>{supplier.wilaya}</h6>
-                                            <h6 style={{ fontSize: 15, fontWeight: '400' }}>{supplier.commun}</h6>
+                                        <div style={{ display: 'flex', justifyContent: 'space-between', margin: '0px', height: '32px' }}>
+                                            <h6 style={{ fontSize: 15, fontWeight: '400', margin: '0px', height: '32px' }}>{supplier.name}</h6>
+                                            <h6 style={{ fontSize: 15, fontWeight: '400', margin: '0px', height: '32px' }}>{supplier.wilaya}</h6>
+                                            <h6 style={{ fontSize: 15, fontWeight: '400', margin: '0px', height: '32px' }}>{supplier.commun}</h6>
                                         </div>
                                     ))
                                 }
@@ -123,16 +123,17 @@ const ReportPanel: React.FC<ReportPanelProps> = ({ report, clientType, location,
                     clientType == ClientType.doctor ?
                         (
                             <div>
-                                <h4 style={{ fontSize: 17 }}><CommentIcon style={{ fontSize: 17 }} /> Commentaires:</h4>
+                                <h4 style={{ fontSize: 17, margin: '0px', height: '32px' }}><CommentIcon style={{ fontSize: 17 }} /> Commentaires:</h4>
                                 {report.comments?.map((comment) => (
-                                    <div style={{ display: 'flex' }}>
+                                    <div style={{ display: 'flex', margin: '0px', height: '32px' }}>
                                         <h6 style={{
                                             fontSize: 15,
                                             fontWeight: '400',
                                             border: "solid black 1px",
                                             padding: '8px 16px',
                                             borderRadius: '8px',
-                                            margin: "4px"
+                                            margin: "4px",
+                                            height: '32px'
                                         }}
                                         >{comment.comment}</h6>
                                     </div>
@@ -146,20 +147,21 @@ const ReportPanel: React.FC<ReportPanelProps> = ({ report, clientType, location,
                 {
                     clientType == ClientType.doctor ? (
                         <div>
-                            <h4 style={{ fontSize: 17 }}><FlagIcon style={{ fontSize: 17 }} /> Objectif:</h4>
-                            <h6 style={{ fontSize: 15, fontWeight: '400' }}>{report.objectif}</h6>
+                            <h4 style={{ fontSize: 17, margin: '0px', height: '32px' }}><FlagIcon style={{ fontSize: 17 }} /> Objectif:</h4>
+                            <h6 style={{ fontSize: 15, fontWeight: '400', margin: '0px', height: '32px' }}>{report.objectif}</h6>
                             <Divider component="div" style={{ margin: '8px 0px' }} />
                         </div>
                     )
                         : null
                 }
-                <h4 style={{ fontSize: 17 }}><EditNoteIcon style={{ fontSize: 17 }} /> Remarque:</h4>
+                <h4 style={{ fontSize: 17, margin: '0px', height: '32px' }}><EditNoteIcon style={{ fontSize: 17 }} /> Remarque:</h4>
                 <h6 style={{
                     fontSize: 15, fontWeight: '400',
-                    width: '360px',
+                    width: '340px',
                     flex: '1',
                     overflowWrap: 'break-word',
-                    overflow: 'hidden'
+                    overflow: 'hidden',
+                    margin: '0px',
                 }}>{report.note}</h6>
             </div>
         );
@@ -171,6 +173,7 @@ const ReportPanel: React.FC<ReportPanelProps> = ({ report, clientType, location,
                     height: "100%",
                     display: 'grid',
                     placeItems: 'center',
+
                 }
             }>
                 Cliquez sur voir pour afficher les détails

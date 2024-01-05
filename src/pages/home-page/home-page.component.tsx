@@ -490,16 +490,8 @@ class HomePage extends Component<{}, HomePageState> {
                                 }
                             </Tabs>
                         </Box>
-                        <CustomTabPanel style={{ display: 'flex', flexDirection: 'row', flexGrow: '1', height: 'calc(100% - 50px)', width: '100%' }} value={this.state.index} index={0} >
-                            <div style={{
-                                display: 'flex',
-                                justifyContent: 'stretch',
-                                alignItems: 'stretch',
-                                flexDirection: 'column',
-                                flexGrow: '1',
-                                height: 'calc(100% - 40px)',
-                                width: '100%',
-                            }}>
+                        <CustomTabPanel value={this.state.index} index={0} >
+                            <div style={{ display: 'flex', flexDirection: 'column', flexGrow: '1', height: 'calc(100vh  - 65px)', width: '100%' }}>
                                 <div style={{ display: 'flex', justifyContent: 'stretch', flexGrow: '1', marginTop: '8px', marginBottom: '16px' }}>
                                     {
                                         this.state.currentUser.type === UserType.admin ?
@@ -542,12 +534,9 @@ class HomePage extends Component<{}, HomePageState> {
                                                 sx={{ backgroundColor: 'white', marginLeft: "8px", height: '40px' }}>
                                                 {this.state.delegateOrder ? <ArrowUpwardIcon /> : <ArrowDownwardIcon />}
                                             </Button>
-
                                         </div>
                                     </div>
-
                                 </div>
-
                                 <div style={{
                                     width: '100%',
                                     flexGrow: '1',
@@ -607,8 +596,8 @@ class HomePage extends Component<{}, HomePageState> {
                                 </div>
                             </div>
                         </CustomTabPanel>
-                        <CustomTabPanel style={{ display: 'flex', flexDirection: 'row', flexGrow: '1', height: 'calc(100% - 50px)', width: '100%' }} value={this.state.index} index={1} >
-                            <div style={{ display: 'flex', flexDirection: 'column', flexGrow: '1', height: 'calc(100% - 40px)', width: '100%', }}>
+                        <CustomTabPanel value={this.state.index} index={1} >
+                            <div style={{ display: 'flex', flexDirection: 'column', flexGrow: '1', height: 'calc(100vh  - 65px)', width: '100%', }}>
                                 <div style={{ width: '100%', position: 'relative', marginBottom: '16px' }}>
                                     <DatePickerBar onPick={this.handleOnPickDate} initialDate={this.state.selectedDate}></DatePickerBar>
                                     <div style={{ width: '300px', display: 'flex', position: 'absolute', right: "0px", top: '46px' }}>

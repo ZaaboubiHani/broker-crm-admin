@@ -27,7 +27,6 @@ import { formatDateToYYYYMMDD, formatTime } from '../../functions/date-format';
 import ReportModel from '../../models/report.model';
 import VisitModel from '../../models/visit.model';
 import UserTrackingModel from '@/src/models/user-tracking.model';
-import PathDialog from '../../components/path-dialog/path-dialog.component';
 
 interface PlanPageProps {
     selectedDate: Date;
@@ -45,7 +44,6 @@ interface PlanPageProps {
     loadingReport: boolean;
     loadingMap: boolean;
     showMap: boolean;
-    showPath: boolean;
     loadingDelegates: boolean;
     loadingVisitTaskDetails: boolean;
     delegateVisitTasks: VisitTaskModel[];
@@ -86,7 +84,6 @@ class PlanPage extends Component<{}, PlanPageProps> {
             loadingVisitTasksData: false,
             isLoading: true,
             loadingMap: false,
-            showPath:false,
             loadingVisitTaskDetails: false,
             loadingDelegates: false,
             delegateVisitTasks: [],
@@ -308,26 +305,18 @@ class PlanPage extends Component<{}, PlanPageProps> {
                 name: t.client?.name ?? ''
             };
         });
+        var trackings = await this.userTrackingService.getUserTrackingByDate(date, this.state.selectedDelegate!.id!);
 
         this.setState({
             loadingMap: false,
             showMap: true,
+            trackings:trackings,
             visitsCoordinates: visitsCoordinates,
             tasksCoordinates: tasksCoordinates,
         });
     };
 
-    handleDelegateDisplayPath = async (date: Date) => {
-        this.setState({ loadingMap: true });
-       
-        var trackings = await this.userTrackingService.getUserTrackingByDate(date, this.state.selectedDelegate!.id!);
-
-        this.setState({
-            trackings:trackings,
-            loadingMap: false,
-            showPath: true,
-        });
-    };
+ 
 
     handleKamDisplayMap = async (date: Date) => {
         this.setState({ loadingMap: true });
@@ -349,22 +338,14 @@ class PlanPage extends Component<{}, PlanPageProps> {
             };
         });
 
-        this.setState({
-            loadingMap: false,
-            showMap: true,
-            visitsCoordinates: visitsCoordinates,
-            tasksCoordinates: tasksCoordinates,
-        });
-    };
-    handleKamDisplayPath = async (date: Date) => {
-        this.setState({ loadingMap: true });
-       
         var trackings = await this.userTrackingService.getUserTrackingByDate(date, this.state.selectedDelegate!.id!);
 
         this.setState({
-            trackings:trackings,
             loadingMap: false,
-            showPath: true,
+            trackings:trackings,
+            showMap: true,
+            visitsCoordinates: visitsCoordinates,
+            tasksCoordinates: tasksCoordinates,
         });
     };
 
@@ -407,14 +388,14 @@ class PlanPage extends Component<{}, PlanPageProps> {
                                 }
                             </Tabs>
                         </Box>
-                        <CustomTabPanel style={{ display: 'flex', flexDirection: 'row', flexGrow: '1', height: 'calc(100% - 50px)', width: '100%' }} value={this.state.index} index={0} >
+                        <CustomTabPanel value={this.state.index} index={0} >
                             <div style={{
                                 display: 'flex',
                                 justifyContent: 'stretch',
                                 alignItems: 'stretch',
                                 flexDirection: 'column',
                                 flexGrow: '1',
-                                height: 'calc(100% - 40px)',
+                                height: 'calc(100vh  - 65px)',
                                 width: '100%',
                             }}>
                                 <div style={{ display: 'flex', justifyContent: 'stretch', flexGrow: '1', marginTop: '16px' }}>
@@ -462,7 +443,6 @@ class PlanPage extends Component<{}, PlanPageProps> {
                                     <PlanTable
                                         onDisplayDetails={this.handleSelectVisitTaskDate}
                                         onDisplayMap={this.handleDelegateDisplayMap}
-                                        onDisplayPath={this.handleDelegateDisplayPath}
                                         isLoading={this.state.loadingVisitTasksData}
                                         id='plantable'
                                         data={this.state.delegateVisitTasks}
@@ -509,16 +489,12 @@ class PlanPage extends Component<{}, PlanPageProps> {
                                 <MapDialog
                                     visitsCoordinates={this.state.visitsCoordinates}
                                     tasksCoordinates={this.state.tasksCoordinates}
+                                    trackings={this.state.trackings}
                                     isOpen={this.state.showMap}
                                     onClose={() => {
                                         this.setState({ showMap: false });
                                     }} />
-                                <PathDialog
-                                    isOpen={this.state.showPath}
-                                    trackings={this.state.trackings}
-                                    onClose={() => {
-                                        this.setState({ showPath: false });
-                                    }} />
+                               
                                 <div style={{
 
                                     position: 'absolute',
@@ -541,14 +517,14 @@ class PlanPage extends Component<{}, PlanPageProps> {
                                 </div>
                             </div>
                         </CustomTabPanel>
-                        <CustomTabPanel style={{ display: 'flex', flexDirection: 'row', flexGrow: '1', height: 'calc(100% - 50px)', width: '100%' }} value={this.state.index} index={1} >
+                        <CustomTabPanel value={this.state.index} index={1} >
                             <div style={{
                                 display: 'flex',
                                 justifyContent: 'stretch',
                                 alignItems: 'stretch',
                                 flexDirection: 'column',
                                 flexGrow: '1',
-                                height: 'calc(100% - 40px)',
+                                height: 'calc(100vh  - 65px)',
                                 width: '100%',
                             }}>
                                 <div style={{ display: 'flex', justifyContent: 'stretch', flexGrow: '1', marginTop: '16px' }}>
@@ -580,7 +556,6 @@ class PlanPage extends Component<{}, PlanPageProps> {
                                     <PlanTable
                                         onDisplayDetails={this.handleSelectVisitTaskDate}
                                         onDisplayMap={this.handleKamDisplayMap}
-                                        onDisplayPath={this.handleKamDisplayPath}
                                         isLoading={this.state.loadingVisitTasksData}
                                         id='plantable'
                                         data={this.state.kamVisitTasks}
@@ -627,16 +602,10 @@ class PlanPage extends Component<{}, PlanPageProps> {
                                 <MapDialog
                                     visitsCoordinates={this.state.visitsCoordinates}
                                     tasksCoordinates={this.state.tasksCoordinates}
+                                    trackings={this.state.trackings}
                                     isOpen={this.state.showMap}
                                     onClose={() => {
                                         this.setState({ showMap: false });
-                                    }} />
-                                <PathDialog
-                                   
-                                    isOpen={this.state.showPath}
-                                    trackings={this.state.trackings}
-                                    onClose={() => {
-                                        this.setState({ showPath: false });
                                     }} />
                                 <div style={{
 

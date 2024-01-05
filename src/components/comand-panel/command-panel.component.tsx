@@ -48,8 +48,8 @@ const generatePdf = (command: CommandModel) => {
     pdf.text(`Remarque:`, 10, motivationTitleY + 12);
     pdf.text(command.note || '', 12, motivationTitleY + 16);
     pdf.text(`signature:`, 160, 240);
-    pdf.addImage(command.signature?.url || '', 'JPEG', 150, 250 , 35,35);
-   
+    pdf.addImage(command.signature?.url || '', 'JPEG', 150, 250, 35, 35);
+
     var lineHeight = pdf.getLineHeight() / pdf.internal.scaleFactor;
     pdf.save(`${command?.visit?.client?.name}_${formatDateToYYYYMMDD(new Date())}.pdf`);
 };
@@ -60,30 +60,25 @@ const CommandPanel: React.FC<CommandPanelProps> = ({ command }) => {
     };
     if (command) {
         return (
-            <div style={{ margin: '8px', flexGrow: '1', overflowY: 'scroll', overflowX: 'hidden', paddingRight: '8px',height:'100%' }}>
+            <div style={{ margin: '8px 0px 8px 8px', flexGrow: '1', overflowY: 'scroll', overflowX: 'hidden', paddingRight: '8px', height: '96%' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'end' }}>
-                    <h4 style={{ fontSize: 15, fontWeight: '400' }}> Statut: {command.isHonored ? 'honoré' : 'non honoré'}</h4>
-                    <Button onClick={() => generatePdf(command)} variant="outlined"> <PictureAsPdfIcon />Télécharger PDF</Button>
+                    <h4 style={{ fontSize: 15, fontWeight: '400', margin: '0px', height: '32px' }}> Statut: {command.isHonored ? 'honoré' : 'non honoré'}</h4>
+                    <Button style={{ margin: 'none' }} onClick={() => generatePdf(command)} variant="outlined"> <PictureAsPdfIcon />Télécharger PDF</Button>
                 </div>
-                <h4 style={{ fontSize: 15, fontWeight: '400' }}> Total: {command.totalRemised?.toLocaleString('fr-DZ', { style: 'currency', currency: 'DZD' })}</h4>
-                <h4 style={{ fontSize: 15, fontWeight: '400' }}> Client: {command?.visit?.client?.name}</h4>
-                <h4 style={{ fontSize: 15, fontWeight: '400' }}> Localisation: {command?.visit?.client?.wilaya + ', ' + command?.visit?.client?.commune}</h4>
-                <h4 style={{ fontSize: 15, fontWeight: '400' }}> Téléphone: {command?.visit?.client?.phoneOne}</h4>
-                <h4 style={{ fontSize: 15, fontWeight: '400' }}> Total des vendeurs: {command?.visit?.client?.totalSellers}</h4>
-                <h4 style={{ fontSize: 15, fontWeight: '400' }}> Total post chifa: {command?.visit?.client?.totalPostChifa}</h4>
-                <h4 style={{ fontSize: 15, fontWeight: '400' }}> Potentiel: {command?.visit?.client?.potential === 0 ? 'C' : command?.visit?.client?.potential === 1 ? 'B' : 'A'}</h4>
-                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                </div>
-                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                </div>
-
+                <h4 style={{ fontSize: 15, fontWeight: '400', margin: '0px', height: '32px' }}> Total: {command.totalRemised?.toLocaleString('fr-DZ', { style: 'currency', currency: 'DZD' })}</h4>
+                <h4 style={{ fontSize: 15, fontWeight: '400', margin: '0px', height: '32px' }}> Client: {command?.visit?.client?.name}</h4>
+                <h4 style={{ fontSize: 15, fontWeight: '400', margin: '0px', height: '32px' }}> Localisation: {command?.visit?.client?.wilaya + ', ' + command?.visit?.client?.commune}</h4>
+                <h4 style={{ fontSize: 15, fontWeight: '400', margin: '0px', height: '32px' }}> Téléphone: {command?.visit?.client?.phoneOne}</h4>
+                <h4 style={{ fontSize: 15, fontWeight: '400', margin: '0px', height: '32px' }}> Total des vendeurs: {command?.visit?.client?.totalSellers}</h4>
+                <h4 style={{ fontSize: 15, fontWeight: '400', margin: '0px', height: '32px' }}> Total post chifa: {command?.visit?.client?.totalPostChifa}</h4>
+                <h4 style={{ fontSize: 15, fontWeight: '400', margin: '0px', height: '32px' }}> Potentiel: {command?.visit?.client?.potential === 0 ? 'C' : command?.visit?.client?.potential === 1 ? 'B' : 'A'}</h4>
                 <Divider component="div" style={{ margin: '8px 0px' }} />
-                <h4 style={{ fontSize: 17 }}> <InventoryIcon style={{ fontSize: 17 }} /> Produits:</h4>
+                <h4 style={{ fontSize: 17, margin: '0px', height: '32px' }}> <InventoryIcon style={{ fontSize: 17 }} /> Produits:</h4>
                 {
                     command.products?.map((product) => (
                         <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                            <h6 style={{ fontSize: 15, fontWeight: '400' }}>{product.name}</h6>
-                            <h6 style={{ fontSize: 15, fontWeight: '400' }}>quantité: {product.quantity}</h6>
+                            <h6 style={{ fontSize: 15, fontWeight: '400', margin: '0px', height: '32px' }}>{product.name}</h6>
+                            <h6 style={{ fontSize: 15, fontWeight: '400', margin: '0px', height: '32px' }}>quantité: {product.quantity}</h6>
                         </div>
                     ))
                 }
@@ -91,13 +86,13 @@ const CommandPanel: React.FC<CommandPanelProps> = ({ command }) => {
                 {
                     (
                         <div>
-                            <h4 style={{ fontSize: 17 }}><HailIcon style={{ fontSize: 17 }} />Fournisseurs:</h4>
+                            <h4 style={{ fontSize: 17, margin: '0px', height: '32px' }}><HailIcon style={{ fontSize: 17 }} />Fournisseurs:</h4>
                             {
                                 command.suppliers?.map((supplier) => (
                                     <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                                        <h6 style={{ fontSize: 15, fontWeight: '400' }}>{supplier.name}</h6>
-                                        <h6 style={{ fontSize: 15, fontWeight: '400' }}>{supplier.wilaya}</h6>
-                                        <h6 style={{ fontSize: 15, fontWeight: '400' }}>{supplier.commun}</h6>
+                                        <h6 style={{ fontSize: 15, fontWeight: '400' , margin: '0px', height: '32px'}}>{supplier.name}</h6>
+                                        <h6 style={{ fontSize: 15, fontWeight: '400' , margin: '0px', height: '32px'}}>{supplier.wilaya}</h6>
+                                        <h6 style={{ fontSize: 15, fontWeight: '400' , margin: '0px', height: '32px'}}>{supplier.commun}</h6>
                                     </div>
                                 ))
                             }
@@ -108,9 +103,9 @@ const CommandPanel: React.FC<CommandPanelProps> = ({ command }) => {
                 {
                     (
                         <div>
-                            <h4 style={{ fontSize: 17 }}><CardGiftcardIcon style={{ fontSize: 17 }} />Motivations:</h4>
+                            <h4 style={{ fontSize: 17, margin: '0px', height: '32px' }}><CardGiftcardIcon style={{ fontSize: 17 }} />Motivations:</h4>
                             {command.motivations?.map((motivation) => (
-                                <div style={{ display: 'flex' }}>
+                                <div style={{ display: 'flex', margin: '0px', }}>
                                     <h6 style={{
                                         border: "solid black 1px",
                                         padding: '8px',
@@ -128,7 +123,7 @@ const CommandPanel: React.FC<CommandPanelProps> = ({ command }) => {
                 {
                     (
                         <div>
-                            <h4 style={{ fontSize: 17 }}><CardGiftcardIcon style={{ fontSize: 17 }} />Remarque:</h4>
+                            <h4 style={{ fontSize: 17, margin: '0px', height: '32px' }}><CardGiftcardIcon style={{ fontSize: 17 }} />Remarque:</h4>
                             {command.note}
                         </div>
                     )
@@ -137,7 +132,7 @@ const CommandPanel: React.FC<CommandPanelProps> = ({ command }) => {
                 {
                     (
                         <div>
-                            <h4 style={{ fontSize: 17 }}><CardGiftcardIcon style={{ fontSize: 17 }} />Facture:</h4>
+                            <h4 style={{ fontSize: 17, margin: '0px', height: '32px' }}><CardGiftcardIcon style={{ fontSize: 17 }} />Facture:</h4>
                             <Card sx={{ maxWidth: 345, margin: '4px', borderRadius: '4px' }}>
                                 <CardActionArea onClick={() => handleDownload(command.invoice?.url)}>
                                     <CardMedia
@@ -155,7 +150,7 @@ const CommandPanel: React.FC<CommandPanelProps> = ({ command }) => {
                 {
                     (
                         <div>
-                            <h4 style={{ fontSize: 17 }}><CardGiftcardIcon style={{ fontSize: 17 }} />Signature:</h4>
+                            <h4 style={{ fontSize: 17, margin: '0px', height: '32px' }}><CardGiftcardIcon style={{ fontSize: 17 }} />Signature:</h4>
                             <Card sx={{ maxWidth: 345, margin: '4px', borderRadius: '4px' }}>
                                 <CardActionArea onClick={() => handleDownload(command.signature?.url)}>
                                     <CardMedia

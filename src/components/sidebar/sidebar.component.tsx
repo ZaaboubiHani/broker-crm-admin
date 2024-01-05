@@ -3,8 +3,6 @@ import React, { useState, useEffect } from 'react';
 import { PRIMARY_COLOR, PRIMARY_COLOR_HIGHLIGHT } from '../../theme';
 import { useNavigate } from 'react-router-dom';
 import YesNoDialog from '../../components/yes-no-dialog/yes-no-dialog.component';
-import 'bootstrap/dist/css/bootstrap.min.css';
-import { Nav, NavDropdown, Navbar } from 'react-bootstrap';
 import '../sidebar/sidebar.style.css';
 import Divider from '@mui/material/Divider';
 import HomeIcon from '@mui/icons-material/Home';
@@ -85,7 +83,7 @@ const Sidebar: React.FC = () => {
 
   return (
 
-    <Nav style={{
+    <div style={{
       overflowY: 'auto',
       overflowX: 'hidden',
       height: '100%',
@@ -300,7 +298,7 @@ const Sidebar: React.FC = () => {
           }}
           message='Vous souhaitez vous déconnecter ??'></YesNoDialog>
       </div>
-    </Nav>
+    </div>
 
   );
 };

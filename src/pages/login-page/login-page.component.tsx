@@ -11,10 +11,10 @@ import FormControl from '@mui/material/FormControl';
 import TextField from '@mui/material/TextField';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
-import Button from 'react-bootstrap/Button';
 import { DotSpinner } from '@uiball/loaders';
 import Snackbar from '@mui/material/Snackbar';
 import { UserType } from '../../models/user.model';
+import Button from '@mui/material/Button/Button';
 
 const LoginPage: React.FC = () => {
 
@@ -142,7 +142,7 @@ const LoginPage: React.FC = () => {
             label="Mot de passe"
           />
         </FormControl>
-        <Button variant="primary" onClick={handleLogin} style={{ backgroundColor: 'teal' }}>Connecter</Button>
+        <Button variant="outlined" onClick={handleLogin} style={{ backgroundColor: 'teal' }}>Connecter</Button>
 
       </div>
       <div style={{
