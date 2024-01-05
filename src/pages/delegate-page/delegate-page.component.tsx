@@ -5,7 +5,6 @@ import '../delegate-page/delegate-page.style.css';
 import ClientPicker from '../../components/user-picker/user-picker.component';
 import DelegateTable from '../../components/delegate-table/delegate-table.component';
 import MonthYearPicker from '../../components/month-year-picker/month-year-picker.component';
-import Form from 'react-bootstrap/Form';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSearch } from '@fortawesome/free-solid-svg-icons';
 import UserPicker from '../../components/user-picker/user-picker.component';

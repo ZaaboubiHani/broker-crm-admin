@@ -1,7 +1,6 @@
 
 import { Component } from 'react';
 import '../revenue-page/revenue-page.style.css';
-import { Form } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { DotSpinner } from '@uiball/loaders';
 import { faSearch } from '@fortawesome/free-solid-svg-icons';

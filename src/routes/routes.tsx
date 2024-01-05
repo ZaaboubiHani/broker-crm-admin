@@ -1,7 +1,6 @@
 
 import React from 'react';
 import { Routes, Route } from 'react-router-dom';
-import 'bootstrap/dist/css/bootstrap.min.css';
 import Sidebar from '../components/sidebar/sidebar.component';
 import HomePage from '../pages/home-page/home-page.component';
 import PlanPage from '../pages/plan-page/plan-page.component';

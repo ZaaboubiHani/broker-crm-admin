@@ -1,7 +1,6 @@
 import MonthYearPicker from '../../components/month-year-picker/month-year-picker.component';
 import React, { Component } from 'react';
 import '../clients-page/clients-page.style.css';
-import { Form } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import SearchIcon from '@mui/icons-material/Search';
 import { DotSpinner } from '@uiball/loaders';
@@ -653,8 +652,8 @@ class ClientsPage extends Component<{}, ClientsPageProps> {
                                 }
                             </Tabs>
                         </Box>
-                        <CustomTabPanel style={{ display: 'flex', flexDirection: 'row', flexGrow: '1', height: 'calc(100% - 50px)', }} value={this.state.index} index={0} >
-                            <div style={{ display: 'flex', flexDirection: 'column', flexGrow: '1', height: 'calc(100% - 40px)' }}>
+                        <CustomTabPanel value={this.state.index} index={0} >
+                            <div style={{ display: 'flex', flexDirection: 'column', flexGrow: '1', height: 'calc(100vh  - 65px)' }}>
                                 <div style={{ display: 'flex', justifyContent: 'stretch', flexGrow: '1', marginTop: '8px' }}>
                                     {
                                         this.state.currentUser.type !== UserType.supervisor ? (<div style={{ height: '50px', width: '150px', marginRight: '8px' }}>
@@ -788,8 +787,8 @@ class ClientsPage extends Component<{}, ClientsPageProps> {
                                 </div>
                             </div>
                         </CustomTabPanel>
-                        <CustomTabPanel style={{ display: 'flex', flexDirection: 'row', flexGrow: '1', height: `calc(100% - 50px)` }} value={this.state.index} index={1} >
-                            <div style={{ display: 'flex', flexDirection: 'column', flexGrow: '1', height: 'calc(100% - 40px)' }}>
+                        <CustomTabPanel value={this.state.index} index={1} >
+                            <div style={{ display: 'flex', flexDirection: 'column', flexGrow: '1', height: 'calc(100vh  - 65px)' }}>
                                 <div style={{ display: 'flex', justifyContent: 'stretch', flexGrow: '1', marginTop: '8px' }}>
                                     {
                                         this.state.currentUser.type !== UserType.supervisor ? (<div style={{ height: '50px', width: '150px', marginRight: '8px' }}>
@@ -907,8 +906,8 @@ class ClientsPage extends Component<{}, ClientsPageProps> {
                                 </div>
                             </div>
                         </CustomTabPanel>
-                        <CustomTabPanel style={{ display: 'flex', flexDirection: 'row', flexGrow: '1', height: 'calc(100% - 50px)', }} value={this.state.index} index={2} >
-                            <div style={{ display: 'flex', flexDirection: 'column', flexGrow: '1', height: 'calc(100% - 40px)' }}>
+                        <CustomTabPanel value={this.state.index} index={2} >
+                            <div style={{ display: 'flex', flexDirection: 'column', flexGrow: '1', height: 'calc(100vh  - 65px)' }}>
                                 <div style={{ display: 'flex', justifyContent: 'stretch', flexGrow: '1', marginTop: '8px', marginBottom: '8px' }}>
                                     <FormControl size="small" style={{
                                         width: '150px',

@@ -49,7 +49,6 @@ const PathDialog: React.FC<PathDialogProps> = ({ isOpen, onClose, trackings }) =
         onClose('selectedValue');
     };
 
-    const trackingColorOptions = { color: 'rgb(0,128,0)', }
 
     useEffect(() => {
         let polylines: UserTrackingModel[][] = [];

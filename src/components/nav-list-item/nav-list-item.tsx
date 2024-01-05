@@ -1,6 +1,5 @@
 import { PRIMARY_COLOR, PRIMARY_COLOR_HIGHLIGHT } from '../../theme';
 import React, { useState, useEffect } from 'react';
-import { Nav, NavDropdown, Navbar } from 'react-bootstrap';
 import { useLocation } from 'react-router-dom';
 import { styled } from '@mui/material/styles';
 import Tooltip, { TooltipProps, tooltipClasses } from '@mui/material/Tooltip';
@@ -44,7 +43,7 @@ const NavListItem: React.FC<NavListItemProps> = ({ name, route, icon, isOpen }) 
                     <Typography color="inherit">{name}</Typography>
                 </React.Fragment>
             } placement='right'>
-            <Nav.Link
+            <a 
                 onMouseEnter={() => {
                     setOnHoverBool(true);
                 }}
@@ -54,10 +53,13 @@ const NavListItem: React.FC<NavListItemProps> = ({ name, route, icon, isOpen }) 
                 style={{
                     display: 'flex',
                     backgroundColor: onHoverBool || location.pathname === route ? PRIMARY_COLOR_HIGHLIGHT : undefined,
-                    height: '45px',
-                    margin: '1px 0px',
+                    height: '32px',
+                    margin:'1px 0px',
                     transition: 'all 300ms ease',
                     position: 'relative',
+                    padding:'8px 8px 8px 16px',
+                    alignItems:'center',
+                    textDecoration:'none',
                 }} href={route}>
                 {icon}
                 <p style={{
@@ -70,7 +72,7 @@ const NavListItem: React.FC<NavListItemProps> = ({ name, route, icon, isOpen }) 
                     {name}
                 </p>
 
-            </Nav.Link>
+            </a>
         </HtmlTooltip>
     );
 }

@@ -4,7 +4,6 @@ import SearchBar from '../../components/search-bar/search-bar.component';
 import MonthYearPicker from '../../components/month-year-picker/month-year-picker.component';
 import CommandDelegateTable from '../../components/command-delegate-table/command-delegate-table.component';
 import { DotSpinner } from '@uiball/loaders';
-import { Form } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import UserService from '../../services/user.service';
 import CommandService from '../../services/command.service';
@@ -284,8 +283,8 @@ class CommandPage extends Component<{}, CommandDelegatePageProps> {
                             </Tabs>
                         </Box>
                     </Box>
-                    <CustomTabPanel style={{ display: 'flex', flexDirection: 'row', flexGrow: '1', height: 'calc(100% - 50px)', padding: '0px' }} value={this.state.index} index={0} >
-                        <div style={{ display: 'flex', flexDirection: 'column', flexGrow: '1', height: 'calc(100% - 40px)' }}>
+                    <CustomTabPanel value={this.state.index} index={0} >
+                        <div style={{ display: 'flex', flexDirection: 'column', flexGrow: '1', height: 'calc(100vh  - 65px)' }}>
                             <div style={{ display: 'flex', justifyContent: 'stretch', flexGrow: '1', marginTop: '16px' }}>
                                 {this.state.currentUser.type !== UserType.supervisor ?
                                     (<div style={{
@@ -365,8 +364,8 @@ class CommandPage extends Component<{}, CommandDelegatePageProps> {
                             <Snackbar anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }} open={this.state.showDialog} autoHideDuration={3000} onClose={this.handleCloseDialog} message={this.state.dialogMessage} />
                         </div>
                     </CustomTabPanel>
-                    <CustomTabPanel style={{ display: 'flex', flexDirection: 'row', flexGrow: '1', height: 'calc(100% - 50px)' }} value={this.state.index} index={1} >
-                        <div style={{ display: 'flex', flexDirection: 'column', flexGrow: '1', height: 'calc(100% - 40px)' }}>
+                    <CustomTabPanel value={this.state.index} index={1} >
+                        <div style={{ display: 'flex', flexDirection: 'column', flexGrow: '1', height: 'calc(100vh  - 65px)' }}>
                             <div style={{ display: 'flex', justifyContent: 'stretch', flexGrow: '1', marginTop: '16px' }}>
                                 <div style={{ height: '50px', width: '150px', margin: '0px 8px' }}>
                                     <UserDropdown

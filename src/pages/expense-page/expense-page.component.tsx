@@ -2,8 +2,6 @@ import React, { Component } from 'react';
 import '../expense-page/expense-page.style.css';
 import MonthYearPicker from '../../components/month-year-picker/month-year-picker.component';
 import ExpenseTable from '../../components/expense-table/expense-table.component';
-import 'bootstrap/dist/css/bootstrap.min.css';
-import Form from 'react-bootstrap/esm/Form';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSearch } from '@fortawesome/free-solid-svg-icons';
 import UserPicker from '../../components/user-picker/user-picker.component';
@@ -199,8 +197,8 @@ class ExpensePage extends Component<{}, ExpensePageProps> {
                                 }
                             </Tabs>
                         </Box>
-                        <CustomTabPanel style={{ display: 'flex', flexDirection: 'row', flexGrow: '1', height: 'calc(100% - 50px)', width: '100%' }} value={this.state.index} index={0} >
-                            <div style={{ display: 'flex', flexDirection: 'column', flexGrow: '1', height: 'calc(100% - 40px)', width: '100%', }}>
+                        <CustomTabPanel value={this.state.index} index={0} >
+                            <div style={{ display: 'flex', flexDirection: 'column', flexGrow: '1', height: 'calc(100vh  - 65px)', width: '100%', }}>
                                 <div style={{ display: 'flex', justifyContent: 'stretch', flexGrow: '1', marginTop: '16px' }}>
                                     {this.state.currentUser.type === UserType.admin ?
                                         (<div style={{
@@ -231,27 +229,27 @@ class ExpensePage extends Component<{}, ExpensePageProps> {
                                     width: '100%',
                                     display: 'flex',
                                     flexGrow: '1',
-                                    marginBottom: '16px',
+                                    marginBottom: '8px',
                                     height: 'calc(100% - 170px)'
                                 }} >
                                     <ExpenseTable data={this.state.delegteExpenses} isLoading={this.state.loadingExpensesData}></ExpenseTable>
                                 </div>
-                                <div style={{ display: 'flex', justifyContent: 'space-evenly', marginBottom: '8px' }}>
-                                    <h6 style={{ fontSize: '16px', marginRight: '16px' }}>
+                                <div style={{ border: 'solid #ddd 1px', borderRadius: '8px', backgroundColor: '#fff', margin: '0px 16px 8px 16px', height: '35px', display: 'flex', justifyContent: 'space-evenly', alignItems: 'center' }}>
+                                    <h6 style={{ margin: '0px', height: '32px', fontSize: '16px', marginRight: '16px', display: 'flex', alignItems: 'center' }}>
                                         état: {!this.state.delegteExpensesUser.userValidation && !this.state.delegteExpensesUser.userValidation ? 'En attente' :
                                             this.state.delegteExpensesUser.userValidation && !this.state.delegteExpensesUser.userValidation ? 'Envoyée' : 'Approuvée'
                                         }
                                     </h6>
-                                    <h6 style={{ fontSize: '16px', marginRight: '16px' }}>
+                                    <h6 style={{ margin: '0px', height: '32px', fontSize: '16px', marginRight: '16px', display: 'flex', alignItems: 'center' }}>
                                         Total Km : {this.state.delegteExpenses.map((e) => e.kmTotal || 0).reduce((sum, current) => sum + current, 0)}
                                     </h6>
-                                    <h6 style={{ fontSize: '16px', marginRight: '16px' }}>
+                                    <h6 style={{ margin: '0px', height: '32px', fontSize: '16px', marginRight: '16px', display: 'flex', alignItems: 'center' }}>
                                         Total nuitées :  {this.state.delegteExpenses.map((e) => e.nightsTotal || 0).reduce((sum, current) => sum + current, 0)}
                                     </h6>
-                                    <h6 style={{ fontSize: '16px', marginRight: '16px' }}>
+                                    <h6 style={{ margin: '0px', height: '32px', fontSize: '16px', marginRight: '16px', display: 'flex', alignItems: 'center' }}>
                                         Total autre frais : {this.state?.delegteExpenses.map((e) => e.otherExpenses || 0).reduce((sum, current) => sum + current, 0).toLocaleString('fr-DZ', { style: 'currency', currency: 'DZD' }) ?? (0).toLocaleString('fr-DZ', { style: 'currency', currency: 'DZD' })}
                                     </h6>
-                                    <h6 style={{ fontSize: '16px', marginRight: '16px' }}>
+                                    <h6 style={{ margin: '0px', height: '32px', fontSize: '16px', marginRight: '16px', display: 'flex', alignItems: 'center' }}>
                                         Total note de frais : {this.state?.delegteExpensesUser?.total?.toLocaleString('fr-DZ', { style: 'currency', currency: 'DZD' }) ?? (0).toLocaleString('fr-DZ', { style: 'currency', currency: 'DZD' })}
                                     </h6>
                                 </div>
@@ -277,8 +275,8 @@ class ExpensePage extends Component<{}, ExpensePageProps> {
                                 <ExpenseStatsDialog userId={this.state.selectedDelegate?.id} isOpen={this.state.expenseStatsDialogIsOpen} onClose={this.handleCloseExpenseStatsDialog} ></ExpenseStatsDialog>
                             </div>
                         </CustomTabPanel>
-                        <CustomTabPanel style={{ display: 'flex', flexDirection: 'row', flexGrow: '1', height: 'calc(100% - 50px)', width: '100%' }} value={this.state.index} index={1} >
-                            <div style={{ display: 'flex', flexDirection: 'column', flexGrow: '1', height: 'calc(100% - 40px)', width: '100%', }}>
+                        <CustomTabPanel value={this.state.index} index={1} >
+                            <div style={{ display: 'flex', flexDirection: 'column', flexGrow: '1', height: 'calc(100vh  - 65px)', width: '100%', }}>
                                 <div style={{ display: 'flex', justifyContent: 'stretch', flexGrow: '1', marginTop: '16px' }}>
                                     <div style={{ height: '50px', width: '150px', margin: '0px 8px' }}>
                                         <UserDropdown
@@ -292,29 +290,30 @@ class ExpensePage extends Component<{}, ExpensePageProps> {
                                 </div>
                                 <div style={{
                                     width: '100%',
-                                    marginBottom: '16px',
+                                    margin: '0px',
+                                    marginBottom: '8px',
                                     display: 'flex',
                                     flexGrow: '1',
-                                    height: 'calc(100% - 170px)'
+                                    height: 'calc(100% - 170px)',
                                 }} >
                                     <ExpenseTable data={this.state.kamExpenses} isLoading={this.state.loadingExpensesData}></ExpenseTable>
                                 </div>
-                                <div style={{ display: 'flex', justifyContent: 'space-evenly', marginBottom: '8px' }}>
-                                    <h6 style={{ fontSize: '16px', marginRight: '16px' }}>
+                                <div style={{ border: 'solid #ddd 1px', borderRadius: '8px', backgroundColor: '#fff', margin: '0px 16px 8px 16px', height: '35px', display: 'flex', justifyContent: 'space-evenly', alignItems: 'center' }}>
+                                    <h6 style={{ margin: '0px', height: '32px', fontSize: '16px', marginRight: '16px', display: 'flex', alignItems: 'center' }}>
                                         état: {!this.state.kamExpensesUser.userValidation && !this.state.kamExpensesUser.userValidation ? 'En attente' :
                                             this.state.kamExpensesUser.userValidation && !this.state.kamExpensesUser.userValidation ? 'Envoyée' : 'Approuvée'
                                         }
                                     </h6>
-                                    <h6 style={{ fontSize: '16px', marginRight: '16px' }}>
+                                    <h6 style={{ margin: '0px', height: '32px', fontSize: '16px', marginRight: '16px', display: 'flex', alignItems: 'center' }}>
                                         Total Km : {this.state.kamExpenses.map((e) => e.kmTotal || 0).reduce((sum, current) => sum + current, 0)}
                                     </h6>
-                                    <h6 style={{ fontSize: '16px', marginRight: '16px' }}>
+                                    <h6 style={{ margin: '0px', height: '32px', fontSize: '16px', marginRight: '16px', display: 'flex', alignItems: 'center' }}>
                                         Total nuitées :  {this.state.kamExpenses.map((e) => e.nightsTotal || 0).reduce((sum, current) => sum + current, 0)}
                                     </h6>
-                                    <h6 style={{ fontSize: '16px', marginRight: '16px' }}>
+                                    <h6 style={{ margin: '0px', height: '32px', fontSize: '16px', marginRight: '16px', display: 'flex', alignItems: 'center' }}>
                                         Total autre frais : {this.state?.kamExpenses.map((e) => e.otherExpenses || 0).reduce((sum, current) => sum + current, 0).toLocaleString('fr-DZ', { style: 'currency', currency: 'DZD' }) ?? (0).toLocaleString('fr-DZ', { style: 'currency', currency: 'DZD' })}
                                     </h6>
-                                    <h6 style={{ fontSize: '16px', marginRight: '16px' }}>
+                                    <h6 style={{ margin: '0px', height: '32px', fontSize: '16px', marginRight: '16px', display: 'flex', alignItems: 'center' }}>
                                         Total note de frais : {this.state?.kamExpensesUser?.total?.toLocaleString('fr-DZ', { style: 'currency', currency: 'DZD' }) ?? (0).toLocaleString('fr-DZ', { style: 'currency', currency: 'DZD' })}
                                     </h6>
                                 </div>

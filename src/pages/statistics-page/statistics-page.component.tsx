@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import '../statistics-page/statistics-page.style.css';
-import 'bootstrap/dist/css/bootstrap.min.css';
 import UserService from '../../services/user.service';
 import UserModel, { UserType } from '../../models/user.model';
 import { DotSpinner } from '@uiball/loaders';
