@@ -1,9 +1,7 @@
 
 import { Component } from 'react';
 import '../revenue-page/revenue-page.style.css';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { DotSpinner } from '@uiball/loaders';
-import { faSearch } from '@fortawesome/free-solid-svg-icons';
 import UserService from '../../services/user.service';
 import RevenueService from '../../services/revenue.service';
 import RevenueModel from '../../models/revenue.model';
@@ -13,10 +11,6 @@ import StatisticsService from '../../services/statics.service';
 import RevenuePanel from '../../components/revenue-panel/revenue-panel.component';
 import CircularProgressLabel from '../../components/circular-progress-label/circular-progress-label.component';
 import UserModel, { UserType } from '../../models/user.model';
-import InputLabel from '@mui/material/InputLabel';
-import MenuItem from '@mui/material/MenuItem';
-import FormControl from '@mui/material/FormControl';
-import Select, { SelectChangeEvent } from '@mui/material/Select';
 import UserDropdown from '../../components/user-dropdown/user-dropdown';
 
 interface RevenuePageProps {
