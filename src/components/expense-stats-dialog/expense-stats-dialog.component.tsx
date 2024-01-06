@@ -9,12 +9,11 @@ import { formatDateToYYYYMMDD, calculateDaysBetweenDates } from "../../functions
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faSearch } from "@fortawesome/free-solid-svg-icons";
 import ExpenseService from '../../services/expense.service';
 import ExpenseModel from '../../models/expense.model';
 import dayjs, { Dayjs } from "dayjs";
 import DotSpinner from "@uiball/loaders/dist/components/DotSpinner";
+import SearchIcon from '@mui/icons-material/Search';
 
 interface ExpenseStatsDialogProps {
     isOpen: boolean,
@@ -90,7 +89,7 @@ const ExpenseStatsDialog: React.FC<ExpenseStatsDialogProps> = ({ onClose, isOpen
 
                             />
                         </div>
-                        <FontAwesomeIcon icon={faSearch} style={{
+                        <SearchIcon sx={{
                             color: 'black',
                             position: 'absolute',
                             top: '75px',

@@ -1,11 +1,9 @@
 import MonthYearPicker from '../../components/month-year-picker/month-year-picker.component';
 import React, { Component } from 'react';
 import '../clients-page/clients-page.style.css';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import SearchIcon from '@mui/icons-material/Search';
 import { DotSpinner } from '@uiball/loaders';
 import UserService from '../../services/user.service';
-import { faSearch } from '@fortawesome/free-solid-svg-icons';
 import CommandService from '../../services/command.service';
 import CommandModel from '../../models/command.model';
 import CommandPanel from '../../components/comand-panel/command-panel.component';

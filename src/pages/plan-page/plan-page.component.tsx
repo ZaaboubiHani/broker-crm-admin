@@ -3,7 +3,6 @@ import '../plan-page/plan-page.style.css';
 import MonthYearPicker from '../../components/month-year-picker/month-year-picker.component';
 import PlanTable from '../../components/plan-table/plan-table.component';
 import UserModel, { UserType } from '../../models/user.model';
-
 import VisitTaskModel from '../../models/visit-task.model';
 import UserService from '../../services/user.service';
 import { DotSpinner } from '@uiball/loaders';

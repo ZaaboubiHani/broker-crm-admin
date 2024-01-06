@@ -1,25 +1,20 @@
 import React, { Component } from 'react';
 import '../command-page/command-page.style.css';
-import SearchBar from '../../components/search-bar/search-bar.component';
 import MonthYearPicker from '../../components/month-year-picker/month-year-picker.component';
 import CommandDelegateTable from '../../components/command-delegate-table/command-delegate-table.component';
 import { DotSpinner } from '@uiball/loaders';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import UserService from '../../services/user.service';
 import CommandService from '../../services/command.service';
 import UserModel, { UserType } from '../../models/user.model';
-import { faSearch } from '@fortawesome/free-solid-svg-icons';
-import UserPicker from '../../components/user-picker/user-picker.component';
 import CommandModel from '../../models/command.model';
 import CommandPanel from '../../components/comand-panel/command-panel.component';
 import Snackbar from '@mui/material/Snackbar';
-import Alert from '@mui/material/Alert';
 import Box from '@mui/material/Box';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import CustomTabPanel from '../../components/custom-tab-panel/costum-tab-panel.component';
-import CommandCamTable from '../../components/command-cam-table/command-cam-table.component';
 import UserDropdown from '../../components/user-dropdown/user-dropdown';
+import CommandCamTable from '../../components/command-cam-table/command-cam-table.component';
 
 interface CommandDelegatePageProps {
     selectedDateDelegate: Date;

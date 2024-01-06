@@ -2,8 +2,6 @@ import React, { Component } from 'react';
 import '../expense-page/expense-page.style.css';
 import MonthYearPicker from '../../components/month-year-picker/month-year-picker.component';
 import ExpenseTable from '../../components/expense-table/expense-table.component';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faSearch } from '@fortawesome/free-solid-svg-icons';
 import UserPicker from '../../components/user-picker/user-picker.component';
 import UserService from '../../services/user.service';
 import UserModel, { UserType } from '../../models/user.model';
