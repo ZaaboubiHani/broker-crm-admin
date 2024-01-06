@@ -10,9 +10,10 @@
 
 .title {
     display: flex;
-    height: 20px;
     justify-content: space-between;
-    margin: 0 16px;
+    align-items: center;
+    height: 32px;
+    margin: 0px 16px;
     color: black;
 }
 
@@ -25,5 +26,4 @@
     font-size: 17px;
     text-decoration: underline;
     cursor: pointer;
-    line-height: 5px;
 }

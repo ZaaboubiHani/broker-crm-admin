@@ -502,7 +502,7 @@ class ConfigPage extends Component<{}, ConfigPageProps> {
         }
         else {
             return (
-                <div className='clients-pharmacy-container' style={{ display: 'flex', flexDirection: 'column', alignItems: 'stretch', backgroundColor: '#eee' }}>
+                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'stretch', backgroundColor: '#eee' }}>
                     <Box sx={{ width: '100%', height: '100%' }}>
                         <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
                             <Tabs value={this.state.index} onChange={this.handleTabChange} aria-label="basic tabs example">
@@ -514,8 +514,20 @@ class ConfigPage extends Component<{}, ConfigPageProps> {
                             <div className='config-container'>
                                 <div style={{ display: 'flex', width: '100%', maxHeight: '450px', marginTop: '8px' }}>
                                     <div style={{ width: '33%', display: 'flex', flexDirection: 'column' }}>
-                                        <div style={{ display: 'flex', width: '100%', padding: '8px 8px 0px 8px' }}>
-                                            <TextField value={this.state.specialityName} onChange={this.handleSpecialityNameChange} size="small" id="outlined-basic" label="Nom de spécialité" variant="outlined" sx={{ marginRight: '8px', backgroundColor: 'white', borderRadius: '4px', height: '40px', flexGrow: '1' }} />
+                                        <div style={{ display: 'flex', padding: '8px 8px 0px 8px', }}>
+                                            <TextField
+                                                value={this.state.specialityName}
+                                                onChange={this.handleSpecialityNameChange}
+                                                size="small"
+                                                label="Nom de spécialité"
+                                                variant="outlined"
+                                                sx={{
+                                                    marginRight: '8px',
+                                                    backgroundColor: 'white',
+                                                    borderRadius: '4px',
+                                                    height: '40px',
+                                                    flex: '1',
+                                                }} />
                                             <IconButton onClick={() => this.handleCreateSpeciality()} sx={{ border: 'solid grey 1px', backgroundColor: 'white', borderRadius: '4px', height: '40px', }}>
                                                 <AddIcon />
                                             </IconButton>
@@ -537,8 +549,21 @@ class ConfigPage extends Component<{}, ConfigPageProps> {
                                     </div>
                                     <Divider orientation="vertical" flexItem component="div" style={{ width: '0.5%' }} sx={{ borderRight: 'solid grey 1px' }} />
                                     <div style={{ width: '33%', display: 'flex', flexDirection: 'column' }}>
-                                        <div style={{ display: 'flex', width: '100%', padding: '8px 8px 0px 8px' }}>
-                                            <TextField disabled={this.state.comments.length === 5} value={this.state.commentContent} onChange={this.handleCommentContentChange} size="small" id="outlined-basic" label="Contenu du commentaire" variant="outlined" sx={{ marginRight: '8px', backgroundColor: 'white', borderRadius: '4px', height: '40px', flexGrow: '1' }} />
+                                        <div style={{ display: 'flex', padding: '8px 8px 0px 16px', }}>
+                                            <TextField
+                                                disabled={this.state.comments.length === 5}
+                                                value={this.state.commentContent}
+                                                onChange={this.handleCommentContentChange}
+                                                size="small"
+                                                label="Contenu du commentaire"
+                                                variant="outlined"
+                                                sx={{
+                                                    marginRight: '8px',
+                                                    backgroundColor: 'white',
+                                                    borderRadius: '4px',
+                                                    height: '40px',
+                                                    flex: '1',
+                                                }} />
                                             <IconButton disabled={this.state.comments.length === 5} onClick={() => this.handleCreateComment()} sx={{ border: 'solid grey 1px', backgroundColor: 'white', borderRadius: '4px', height: '40px', }}>
                                                 <AddIcon />
                                             </IconButton>
@@ -589,8 +614,20 @@ class ConfigPage extends Component<{}, ConfigPageProps> {
                                     </div>
                                     <Divider orientation="vertical" flexItem component="div" style={{ width: '0.5%' }} sx={{ borderRight: 'solid grey 1px' }} />
                                     <div style={{ width: '33%', display: 'flex', flexDirection: 'column' }}>
-                                        <div style={{ display: 'flex', width: '100%', padding: '8px 8px 0px 8px' }}>
-                                            <TextField value={this.state.motivationContent} onChange={this.handleMotivationContentChange} size="small" id="outlined-basic" label="Nom de motivation" variant="outlined" sx={{ marginRight: '8px', backgroundColor: 'white', borderRadius: '4px', height: '40px', flexGrow: '1' }} />
+                                        <div style={{ display: 'flex', padding: '8px 8px 0px 16px' }}>
+                                            <TextField
+                                                value={this.state.motivationContent}
+                                                onChange={this.handleMotivationContentChange}
+                                                size="small"
+                                                label="Nom de motivation"
+                                                variant="outlined"
+                                                sx={{
+                                                    marginRight: '8px',
+                                                    backgroundColor: 'white',
+                                                    borderRadius: '4px',
+                                                    height: '40px',
+                                                    flex: '1',
+                                                }} />
                                             <IconButton onClick={() => this.handleCreateMotivation()} sx={{ border: 'solid grey 1px', backgroundColor: 'white', borderRadius: '4px', height: '40px', }}>
                                                 <AddIcon />
                                             </IconButton>
