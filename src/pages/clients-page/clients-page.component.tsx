@@ -217,17 +217,31 @@ class ClientsPage extends Component<{}, ClientsPageProps> {
 
     handlePharmPageChange = async (page: number, size: number) => {
         this.setState({ loadingVisitsData: true, pharmPage: page, sizePharm: size });
-        var { visits: pharmVisits, total: totalPharm } = await this.visitService.getAllVisitsPaginated(
-            page,
-            size,
-            this.state.pharmSearchText,
-            ClientType.pharmacy,
-            this.state.currentUser.id!,
-            this.state.pharmOrder,
-            this.state.pharmProp,
-            this.state.selectedDelegate?.id
-        );
-        this.setState({ pharmVisits: pharmVisits, totalPharm: totalPharm, loadingVisitsData: false, sizePharm: size });
+        if (this.state.currentUser.type === UserType.supervisor) {
+            var { visits: pharmVisits, total: totalPharm } = await this.visitService.getAllVisitsPaginated(
+                page,
+                size,
+                this.state.pharmSearchText,
+                ClientType.pharmacy,
+                this.state.currentUser.id!,
+                this.state.pharmOrder,
+                this.state.pharmProp,
+                this.state.selectedDelegate?.id
+            );
+            this.setState({ pharmVisits: pharmVisits, totalPharm: totalPharm, loadingVisitsData: false, sizePharm: size });
+        } else {
+            var { visits: pharmVisits, total: totalPharm } = await this.visitService.getAllVisitsPaginated(
+                page,
+                size,
+                this.state.pharmSearchText,
+                ClientType.pharmacy,
+                this.state.selectedSupervisor!.id!,
+                this.state.pharmOrder,
+                this.state.pharmProp,
+                this.state.selectedDelegate?.id
+            );
+            this.setState({ pharmVisits: pharmVisits, totalPharm: totalPharm, loadingVisitsData: false, sizePharm: size });
+        }
     }
 
     handleWholePageChange = async (page: number, size: number) => {
@@ -238,17 +252,31 @@ class ClientsPage extends Component<{}, ClientsPageProps> {
 
     handleDocPageChange = async (page: number, size: number) => {
         this.setState({ loadingVisitsData: true, docPage: page, sizeDoc: size });
-        var { visits: docVisits, total: totalDoc } = await this.visitService.getAllVisitsPaginated(
-            page,
-            size,
-            this.state.docSearchText,
-            ClientType.doctor,
-            this.state.currentUser.id!,
-            this.state.docOrder,
-            this.state.docProp,
-            this.state.selectedDelegate?.id
-        );
-        this.setState({ docVisits: docVisits, totalDoc: totalDoc, loadingVisitsData: false, sizeDoc: size });
+        if (this.state.currentUser.type === UserType.supervisor) {
+            var { visits: docVisits, total: totalDoc } = await this.visitService.getAllVisitsPaginated(
+                page,
+                size,
+                this.state.docSearchText,
+                ClientType.doctor,
+                this.state.currentUser.id!,
+                this.state.docOrder,
+                this.state.docProp,
+                this.state.selectedDelegate?.id
+            );
+            this.setState({ docVisits: docVisits, totalDoc: totalDoc, loadingVisitsData: false, sizeDoc: size });
+        } else {
+            var { visits: docVisits, total: totalDoc } = await this.visitService.getAllVisitsPaginated(
+                page,
+                size,
+                this.state.docSearchText,
+                ClientType.doctor,
+                this.state.selectedSupervisor!.id!,
+                this.state.docOrder,
+                this.state.docProp,
+                this.state.selectedDelegate?.id
+            );
+            this.setState({ docVisits: docVisits, totalDoc: totalDoc, loadingVisitsData: false, sizeDoc: size });
+        }
     }
 
     handleTabChange = (event: React.SyntheticEvent, newValue: number) => {

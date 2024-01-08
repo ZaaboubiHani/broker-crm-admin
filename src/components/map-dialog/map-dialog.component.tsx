@@ -9,8 +9,18 @@ import CloseIcon from '@mui/icons-material/Close';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Checkbox from '@mui/material/Checkbox';
 import UserTrackingModel from '@/src/models/user-tracking.model';
-import { Opacity } from '@mui/icons-material';
-
+import SwipeableDrawer from '@mui/material/SwipeableDrawer';
+import Box from '@mui/material/Box';
+import List from '@mui/material/List';
+import Divider from '@mui/material/Divider';
+import ListItem from '@mui/material/ListItem';
+import ListItemButton from '@mui/material/ListItemButton';
+import ListItemIcon from '@mui/material/ListItemIcon';
+import ListItemText from '@mui/material/ListItemText';
+import InboxIcon from '@mui/icons-material/MoveToInbox';
+import MailIcon from '@mui/icons-material/Mail';
+import ArrowCircleRightIcon from '@mui/icons-material/ArrowCircleRight';
+import ArrowCircleLeftIcon from '@mui/icons-material/ArrowCircleRight';
 
 interface MapDialogProps {
     isOpen: boolean,
@@ -23,7 +33,8 @@ interface MapDialogProps {
 const MapDialog: React.FC<MapDialogProps> = ({ isOpen, onClose, visitsCoordinates, tasksCoordinates, trackings }) => {
 
     const [showVisitPath, setShowVisitPath] = useState(true);
-    const [showtrackingPath, setShowtrackingPath] = useState(true);
+    const [showTrackingPath, setShowTrackingPath] = useState(true);
+    const [showDrawer, setShowDrawer] = useState(true);
     var [trackingPolylines, setTrackingPolylines] = useState<UserTrackingModel[][]>([]);
 
     function calculateCenter(): number[] {
@@ -61,7 +72,7 @@ const MapDialog: React.FC<MapDialogProps> = ({ isOpen, onClose, visitsCoordinate
 
     const firstVisitColorOptions = { color: showVisitPath ? 'blue' : 'rgba(0,0,255,0.2)', }
     const visitColorOptions = { color: showVisitPath ? 'black' : 'rgba(0,0,0,0.2)', }
-    const trackingColorOptions = { color: showtrackingPath ? 'black' : 'rgba(0,0,0,0.2)', }
+    const trackingColorOptions = { color: showTrackingPath ? 'black' : 'rgba(0,0,0,0.2)', }
     const taskColorOptions = { color: showVisitPath ? 'orange' : 'rgba(255,165,0,0.2)', }
 
     const calculateColorGradient = (index: number, total: number) => {
@@ -69,8 +80,11 @@ const MapDialog: React.FC<MapDialogProps> = ({ isOpen, onClose, visitsCoordinate
         const r = Math.round(255 * ratio);
         const g = Math.round(255 * (1 - ratio));
         const b = 0;
-        return `rgba(${r},${g},${b},${showtrackingPath ? 1 : 0.2})`;
+        return `rgba(${r},${g},${b},${showTrackingPath ? 1 : 0.2})`;
     };
+
+
+
 
     useEffect(() => {
         let polylines: UserTrackingModel[][] = [];
@@ -128,7 +142,7 @@ const MapDialog: React.FC<MapDialogProps> = ({ isOpen, onClose, visitsCoordinate
                 {
                     visitsCoordinates.map((c, index) => (
                         <SVGOverlay attributes={{ stroke: 'black', textAlign: 'center', Opacity: showVisitPath ? '1' : '0.2' }} bounds={ll.latLngBounds(ll.latLng(c.point[0] - 0.0002, c.point[1] - 0.0002), ll.latLng(c.point[0] + 0.0002, c.point[1] + 0.0002))}>
-                            <circle r="16" cx="50%" cy="50%" fill={showVisitPath ? "white" : 'rgba(255,255,255,0.1)'}  />
+                            <circle r="16" cx="50%" cy="50%" fill={showVisitPath ? "white" : 'rgba(255,255,255,0.1)'} />
                             <text x="50%" y="50%" style={{ transform: 'translate(-10%,5%)' }} fontSize={16} stroke={showVisitPath ? "black" : 'rgba(0,0,0,0.1)'} >
                                 {index + 1}
                             </text>
@@ -162,8 +176,8 @@ const MapDialog: React.FC<MapDialogProps> = ({ isOpen, onClose, visitsCoordinate
                     trackings.map((c, index) => {
                         return c.latitude ? (
                             <SVGOverlay attributes={{ stroke: 'black', textAlign: 'center' }} bounds={ll.latLngBounds(ll.latLng(parseFloat(c.latitude!) - 0.0002, parseFloat(c.longitude!) - 0.0002), ll.latLng(parseFloat(c.latitude!) + 0.0002, parseFloat(c.longitude!) + 0.0002))}>
-                                <circle r="16" cx="50%" cy="50%" fill={showtrackingPath ? "white" : 'rgba(255,255,255,0.1)'} />
-                                <text x="50%" y="50%" style={{ transform: 'translate(-10%,5%)', }} fontSize={16} stroke={showtrackingPath ? "black" : 'rgba(0,0,0,0.1)'} >
+                                <circle r="16" cx="50%" cy="50%" fill={showTrackingPath ? "white" : 'rgba(255,255,255,0.1)'} />
+                                <text x="50%" y="50%" style={{ transform: 'translate(-10%,5%)', }} fontSize={16} stroke={showTrackingPath ? "black" : 'rgba(0,0,0,0.1)'} >
                                     {index + 1}
                                 </text>
                             </SVGOverlay>
@@ -193,8 +207,8 @@ const MapDialog: React.FC<MapDialogProps> = ({ isOpen, onClose, visitsCoordinate
                     onChange={() => { setShowVisitPath(!showVisitPath); }}
                     defaultChecked />} label="Parcours de visite" />
                 <FormControlLabel control={<Checkbox
-                    checked={showtrackingPath}
-                    onChange={() => { setShowtrackingPath(!showtrackingPath); }}
+                    checked={showTrackingPath}
+                    onChange={() => { setShowTrackingPath(!showTrackingPath); }}
                     defaultChecked />} label="Trajectoire de défilement" />
             </div>
             <Button color="error" sx={{
@@ -212,6 +226,38 @@ const MapDialog: React.FC<MapDialogProps> = ({ isOpen, onClose, visitsCoordinate
             >
                 <CloseIcon />
             </Button>
+            <Box sx={{
+                width: '200px',
+                height: '442px',
+                position: 'absolute',
+                zIndex: '99',
+                backgroundColor: 'rgba(255,255,255,0.5)',
+                right: '8px',
+                border: 'solid #ddd 1px',
+                borderRadius: '8px',
+                top: '52px'
+            }}>
+                <button
+                    key={showDrawer.toString()}
+                    style={{
+                        opacity: showDrawer ? '1' : '0',
+                        cursor: 'pointer'
+                    }}
+                    onClick={() => { setShowDrawer(false); }} >
+
+                    <ArrowCircleRightIcon />
+                </button>
+                <button
+                    key={showDrawer.toString()}
+                    style={{
+                        opacity: showDrawer ? '0' : '1',
+                        cursor: 'pointer'
+                    }}
+                    onClick={() => { setShowDrawer(true); }}>
+
+                    <ArrowCircleLeftIcon />
+                </button>
+            </Box>
         </Dialog>
     );
 }

@@ -118,7 +118,7 @@ export default class VisitService {
                     break;
             }
         }
-        // console.log(`${Globals.apiUrl}/visits?populate[rapport][populate]=*&sort[0]=createdDate:desc&populate[client][populate]=relatedSpeciality.domainType&populate=user${textFilter}&pagination[page]=${page}&pagination[pageSize]=${size}&filters[client][relatedSpeciality][domainType][reference][$eq]=${clientType === ClientType.doctor ? `doctor&filters[user][creatorId][$eq]=${superId}` : clientType === ClientType.pharmacy ? `pharmacy&filters[user][creatorId][$eq]=${superId}` : 'wholesaler'}`);
+        console.log(`${Globals.apiUrl}/visits?populate[rapport][populate]=*${textSort}&populate[client][populate]=relatedSpeciality.domainType&populate=user${textFilter}&pagination[page]=${page}&pagination[pageSize]=${size}&filters[client][relatedSpeciality][domainType][reference][$eq]=${clientType === ClientType.doctor ? `doctor&filters[user][creatorId][$eq]=${superId}` : clientType === ClientType.pharmacy ? `pharmacy&filters[user][creatorId][$eq]=${superId}` : 'wholesaler'}${delegateFilter}`)
         var response = await axios.get(`${Globals.apiUrl}/visits?populate[rapport][populate]=*${textSort}&populate[client][populate]=relatedSpeciality.domainType&populate=user${textFilter}&pagination[page]=${page}&pagination[pageSize]=${size}&filters[client][relatedSpeciality][domainType][reference][$eq]=${clientType === ClientType.doctor ? `doctor&filters[user][creatorId][$eq]=${superId}` : clientType === ClientType.pharmacy ? `pharmacy&filters[user][creatorId][$eq]=${superId}` : 'wholesaler'}${delegateFilter}`,
             {
                 headers: {
