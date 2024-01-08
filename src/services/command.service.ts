@@ -35,7 +35,7 @@ export default class CommandService {
 
     async getAllCommandsOfDelegate(page: number, size: number, date: Date, userId: number): Promise<{ commands: CommandModel[], total: number }> {
         const token = localStorage.getItem('token');
-        var response = await axios.get(`${Globals.apiUrl}/commands?publicationState=preview&filters[visit][user][id][$eq]=${userId}&pagination[page]=${page}&pagination[pageSize]=${size}&filters[visit][createdDate][$containsi]=${formatDateToYYYYMM(date)}&populate=products.product&populate=suppliers.supplier&populate=motivations&populate=visit.client&populate=commandSupplier.supplier&populate=invoice&populate=signature`,
+        var response = await axios.get(`${Globals.apiUrl}/commands?publicationState=preview&filters[visit][user][id][$eq]=${userId}&pagination[page]=${page}&pagination[pageSize]=${size}&filters[visit][createdDate][$containsi]=${formatDateToYYYYMM(date)}&populate=products.product&populate=suppliers.supplier&populate=motivations&populate=visit.client.relatedSpeciality&populate=commandSupplier.supplier&populate=invoice&populate=signature`,
             {
                 headers: {
                     'Authorization': `Bearer ${token}`
@@ -52,11 +52,17 @@ export default class CommandService {
         return { commands: [], total: 0 };
     }
 
-    async honorCommand(commandId: number, supplierId: number): Promise<boolean> {
+    async honorCommand(commandId: number, supplierId?: number): Promise<boolean> {
         const token = localStorage.getItem('token');
-        var response = await axios.put(`${Globals.apiUrl}/honorDishonor?command=${commandId}&honor=true&supplier=${supplierId}`,
+    
+        var response = await axios.put(`${Globals.apiUrl}/honorDishonor`,
             {},
             {
+                params:{
+                    command:commandId,
+                    honor:true,
+                    supplier:supplierId,
+                },
                 headers: {
                     'Authorization': `Bearer ${token}`
                 }

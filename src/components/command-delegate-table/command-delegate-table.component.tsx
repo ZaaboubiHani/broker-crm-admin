@@ -3,20 +3,11 @@ import './command-delegate-table.style.css';
 import CommandModel from '../../models/command.model';
 import { formatDateToYYYYMMDD } from '../../functions/date-format';
 import { DotSpinner } from '@uiball/loaders';
-import Table from '@mui/material/Table';
-import TableBody from '@mui/material/TableBody';
-import TableCell from '@mui/material/TableCell';
-import TableContainer from '@mui/material/TableContainer';
-import TableHead from '@mui/material/TableHead';
-import TableRow from '@mui/material/TableRow';
-import Paper from '@mui/material/Paper';
 import Button from '@mui/material/Button';
 import Switch from '@mui/material/Switch';
-import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
-import TablePagination from '@mui/material/TablePagination';
 import { DataGrid, GridColDef, GridValueGetterParams } from '@mui/x-data-grid';
 
 interface CommandDelegateTableProps {
@@ -34,7 +25,6 @@ interface CommandDelegateTableProps {
 const CommandDelegateTable: React.FC<CommandDelegateTableProps> = ({ data, id, isLoading, displayCommand, onHonor, total, size, page, pageChange, }) => {
 
     const [rowsPerPage, setRowsPerPage] = React.useState(size);
-
 
     const [pageIndex, setPageIndex] = React.useState(page - 1);
 
@@ -87,7 +77,6 @@ const CommandDelegateTable: React.FC<CommandDelegateTableProps> = ({ data, id, i
             renderCell(params) {
                 return (<FormControl fullWidth>
                     <Select
-                        id="demo-simple-select"
                         value={params.row.finalSupplier?.id}
                         onChange={(event) => {
                             params.row.finalSupplier = params.row.suppliers?.find((s: any) => s.id === event.target.value);
@@ -164,7 +153,6 @@ const CommandDelegateTable: React.FC<CommandDelegateTableProps> = ({ data, id, i
                                     client: row.visit?.client?.name,
                                     amount: row.totalRemised?.toLocaleString('fr-DZ', { style: 'currency', currency: 'DZD' }),
                                     location: `${row.visit?.client?.wilaya}, ${row.visit?.client?.commune}`,
-
                                     command: row,
                                     finalSupplier: row.finalSupplier,
                                     suppliers: row.suppliers,

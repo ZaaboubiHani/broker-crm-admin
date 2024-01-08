@@ -142,7 +142,7 @@ const LoginPage: React.FC = () => {
             label="Mot de passe"
           />
         </FormControl>
-        <Button variant="outlined" onClick={handleLogin} style={{ backgroundColor: 'teal' }}>Connecter</Button>
+        <Button variant="outlined" onClick={handleLogin} style={{ backgroundColor: 'teal',color:'white' }}>Connecter</Button>
 
       </div>
       <div style={{

@@ -84,7 +84,14 @@ export default class CommandModel {
         }
 
         if (json?.attributes?.commandSupplier?.data?.attributes?.supplier?.data) {
-            command.finalSupplier = SupplierModel.fromJson(json?.attributes?.commandSupplier?.data?.attributes?.supplier?.data);
+            let finalSupplier = SupplierModel.fromJson(json?.attributes?.commandSupplier?.data?.attributes?.supplier?.data);
+            command.finalSupplier = finalSupplier;
+            if(command.suppliers && command.suppliers.length){
+                command.suppliers.push(finalSupplier);
+            }
+            else{
+                command.suppliers = [finalSupplier];
+            }
         }
 
         return command;
