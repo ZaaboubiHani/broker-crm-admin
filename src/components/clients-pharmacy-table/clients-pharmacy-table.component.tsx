@@ -45,7 +45,7 @@ const ClientsPharmacyTable: React.FC<ClientsPharmacyTableProps> = ({ total, size
         {
             field: 'client',
             headerName: 'Client',
-            width: 150,
+            width: 250,
             filterable: false,
             sortable: false,
         },

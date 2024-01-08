@@ -41,7 +41,7 @@ const CommandCamTable: React.FC<CommandCamTableProps> = ({ data, id, suppliers, 
     const [pageIndex, setPageIndex] = React.useState(page - 1);
     const [showDialog, setShowDialog] = React.useState(false);
     const [commandIndex, setCommandIndex] = React.useState(- 1);
-    const [supplierId, setSupplierId] = React.useState<number | undefined>();
+    const [supplierIds, setSupplierIds] = React.useState<(number| undefined)[]>([]);
 
     if (pageIndex !== (page - 1)) {
         setPageIndex(page - 1);
@@ -52,9 +52,9 @@ const CommandCamTable: React.FC<CommandCamTableProps> = ({ data, id, suppliers, 
     const [switchesEnablers, setSwitchesEnablers] = React.useState(data.map(command => command?.finalSupplier === undefined));
 
     React.useEffect(() => {
+        setSupplierIds(data.map(command => command.finalSupplier?.id));
         setSwitchesState(data.map(command => command.isHonored));
-        let swis = data.map(command => (command?.finalSupplier === undefined && command.visit?.client?.speciality === 'GROSSISTE para'));
-        setSwitchesEnablers(swis);
+        setSwitchesEnablers(data.map(command => (command?.finalSupplier === undefined && command.visit?.client?.speciality === 'GROSSISTE para')));
     }, [data]);
 
     const handleSwitchChange = (index: number) => {
@@ -63,7 +63,6 @@ const CommandCamTable: React.FC<CommandCamTableProps> = ({ data, id, suppliers, 
         data[index].isHonored = !data[index].isHonored;
         setSwitchesState(newSwitchesState);
         onHonor(data[index]);
-
     };
 
     const handleSupplierChange = (index: number) => {
@@ -98,20 +97,20 @@ const CommandCamTable: React.FC<CommandCamTableProps> = ({ data, id, suppliers, 
             renderCell(params) {
                 return params.row.speciality === 'GROSSISTE para' ? (<FormControl fullWidth>
                     <Select
-                        value={supplierId}
-                        key={supplierId}
+                        value={supplierIds[params.row.index]}
+                        key={supplierIds[params.row.index]}
                         onChange={(event) => {
                             if (event.target.value === "other") {
                                 event.preventDefault();
                                 event.target.value = "";
                                 setCommandIndex(params.row.index);
                                 setShowDialog(true);
-                                setSupplierId(-1);
+                                setSupplierIds([...supplierIds]);
                             } else {
                                 params.row.finalSupplier = params.row.suppliers?.find((s: any) => s.id === event.target.value);
                                 data[params.row.index].finalSupplier = data[params.row.index].suppliers?.find((s: any) => s.id === event.target.value);
                                 handleSupplierChange(params.row.index);
-                                setSupplierId(params.row.finalSupplier?.id);
+                                setSupplierIds(data.map(command => command.finalSupplier?.id));
                             }
                         }}
                     >
@@ -229,7 +228,8 @@ const CommandCamTable: React.FC<CommandCamTableProps> = ({ data, id, suppliers, 
                                     updatedCommands[commandIndex].finalSupplier = supplier;
                                     data = updatedCommands;
                                     setShowDialog(false);
-                                    setSupplierId(supplier.id);
+                                    setSupplierIds(data.map(command => command.finalSupplier?.id));
+                                    setSwitchesEnablers(data.map(command => (command?.finalSupplier === undefined && command.visit?.client?.speciality === 'GROSSISTE para')));
                                 }}
                             >
                                 <ListItemButton>
