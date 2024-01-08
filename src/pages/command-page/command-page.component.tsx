@@ -15,6 +15,9 @@ import Tab from '@mui/material/Tab';
 import CustomTabPanel from '../../components/custom-tab-panel/costum-tab-panel.component';
 import UserDropdown from '../../components/user-dropdown/user-dropdown';
 import CommandCamTable from '../../components/command-cam-table/command-cam-table.component';
+import SupplierModel from '../../models/supplier.model';
+import SupplierService from '../../services/supplier.service';
+
 
 interface CommandDelegatePageProps {
     selectedDateDelegate: Date;
@@ -22,6 +25,7 @@ interface CommandDelegatePageProps {
     isLoading: boolean;
     loadingDelegates: boolean;
     showDialog: boolean;
+    showSuppliersDialog: boolean;
     dialogMessage: string;
     loadingDelegateCommandsData: boolean;
     loadingKamCommandsData: boolean;
@@ -34,6 +38,7 @@ interface CommandDelegatePageProps {
     delegates: UserModel[];
     kams: UserModel[];
     supervisors: UserModel[];
+    suppliers: SupplierModel[];
     selectedSupervisor?: UserModel;
     selectedDelegate?: UserModel;
     selectedKam?: UserModel;
@@ -47,11 +52,8 @@ interface CommandDelegatePageProps {
     totalKam: number;
     sizeKam: number;
     kamPage: number;
+    commandIndex: number;
 }
-
-const kPrincipal = '#35d9da';
-const kSecondary = '#0A2C3B';
-const kTernary = '#3D7C98';
 
 class CommandPage extends Component<{}, CommandDelegatePageProps> {
     constructor({ }) {
@@ -80,11 +82,15 @@ class CommandPage extends Component<{}, CommandDelegatePageProps> {
             totalKam: 0,
             sizeKam: 25,
             kamPage: 1,
+            suppliers: [],
+            commandIndex: -1,
+            showSuppliersDialog: false,
         }
     }
 
     userService = UserService.getInstance();
     commandService = CommandService.getInstance();
+    supplierService = SupplierService.getInstance();
 
     handleCloseDialog = (event?: React.SyntheticEvent | Event, reason?: string) => {
         if (reason === 'clickaway') {
@@ -92,7 +98,6 @@ class CommandPage extends Component<{}, CommandDelegatePageProps> {
         }
         this.setState({ showDialog: false, });
     };
-
 
 
     handleSelectDelegate = async (delegate: UserModel) => {
@@ -133,12 +138,13 @@ class CommandPage extends Component<{}, CommandDelegatePageProps> {
         } else {
             var supervisors = await this.userService.getUsersByCreator(currentUser.id!, UserType.supervisor);
             var kams = await this.userService.getUsersByCreator(currentUser.id!, UserType.kam);
-
+            var suppliers = await this.supplierService.getAllSuppliers();
             this.setState({
                 currentUser: currentUser,
                 isLoading: false,
                 supervisors: supervisors,
                 kams: kams,
+                suppliers: suppliers,
             });
         }
 
@@ -160,6 +166,17 @@ class CommandPage extends Component<{}, CommandDelegatePageProps> {
         }
         else if (command.isHonored && command.finalSupplier === undefined) {
             this.setState({ showDialog: true, dialogMessage: 'Vous ne pouvez pas honorer sans un fournisseur' });
+        }
+        else if (!command.isHonored) {
+            await this.commandService.dishonorCommand(command!.id!);
+            this.setState({ showDialog: true, dialogMessage: 'Bon de commande dishonoré' });
+        }
+    }
+
+    handleHonorKamCommand = async (command: CommandModel) => {
+        if (command.isHonored) {
+            await this.commandService.honorCommand(command!.id!, command!.finalSupplier?.id);
+            this.setState({ showDialog: true, dialogMessage: 'Bon de commande honoré' });
         }
         else if (!command.isHonored) {
             await this.commandService.dishonorCommand(command!.id!);
@@ -238,6 +255,15 @@ class CommandPage extends Component<{}, CommandDelegatePageProps> {
         });
     }
 
+    handleShowSuppliersDialog = async (index: number) => {
+
+        this.setState({
+            commandIndex: index,
+            showSuppliersDialog: true,
+        });
+    }
+
+   
     componentDidMount(): void {
         if (localStorage.getItem('isLogged') === 'true') {
 
@@ -383,8 +409,10 @@ class CommandPage extends Component<{}, CommandDelegatePageProps> {
                                     total={this.state.totalKam}
                                     page={this.state.kamPage}
                                     size={this.state.sizeKam}
+                                    suppliers={this.state.suppliers}
                                     pageChange={this.handleKamPageChange}
                                     data={this.state.kamCommands}
+                                    onHonor={this.handleHonorKamCommand}
                                     isLoading={this.state.loadingKamCommandsData}
                                     displayCommand={this.handleDisplayKamCommand}
                                 ></CommandCamTable>
@@ -421,7 +449,7 @@ class CommandPage extends Component<{}, CommandDelegatePageProps> {
                                     }
                                 </div>
                             </div>
-
+                        <Snackbar anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }} open={this.state.showDialog} autoHideDuration={3000} onClose={this.handleCloseDialog} message={this.state.dialogMessage} />
                         </div>
                     </CustomTabPanel>
 

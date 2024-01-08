@@ -7,32 +7,38 @@ export default class SupplierService {
 
     private constructor() {
     }
-  
+
     static getInstance(): SupplierService {
-      if (!SupplierService._instance) {
-        SupplierService._instance = new SupplierService();
-      }
-      return SupplierService._instance;
+        if (!SupplierService._instance) {
+            SupplierService._instance = new SupplierService();
+        }
+        return SupplierService._instance;
     }
 
     async getAllSuppliers(): Promise<SupplierModel[]> {
         const token = localStorage.getItem('token');
-        var response = await axios.get(`${Globals.apiUrl}/company-suppliers`,
-            {
-                headers: {
-                    'Authorization': `Bearer ${token}`
+        var suppliers: SupplierModel[] = [];
+        let page = 1;
+        while (true) {
+            var response = await axios.get(`${Globals.apiUrl}/company-suppliers?pagination[pageSize]=100&pagination[page]=${page}`,
+                {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+            if (response.status == 200) {
+                for (let index = 0; index < response.data.data.length; index++) {
+                    var supplier = SupplierModel.fromJson(response.data.data[index]);
+                    suppliers.push(supplier);
                 }
-            });
-
-        if (response.status == 200) {
-            var suppliers: SupplierModel[] = [];
-            for (let index = 0; index < response.data.data.length; index++) {
-                var supplier = SupplierModel.fromJson(response.data.data[index]);
-                suppliers.push(supplier);
             }
-            return suppliers;
+            if (response.data.data.length === 0) {
+                break;
+            }
+            page++;
         }
-        return [];
+        return suppliers;
+
     }
     async getAllDraftedSuppliers(): Promise<SupplierModel[]> {
         const token = localStorage.getItem('token');
@@ -66,7 +72,7 @@ export default class SupplierService {
                     phoneNumberTwo: `${supplier.phone02}`,
                     email: `${supplier.email}`,
                     type: supplier.type
-                    
+
                 }
             },
             {
