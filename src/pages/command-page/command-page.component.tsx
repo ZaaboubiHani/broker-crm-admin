@@ -343,6 +343,7 @@ class CommandPage extends Component<{}, CommandDelegatePageProps> {
                                     total={this.state.totalDelegate}
                                     page={this.state.delegatePage}
                                     size={this.state.sizeDelegate}
+                                    suppliers={this.state.suppliers}
                                     pageChange={this.handleDelegatePageChange}
                                     data={this.state.delegateCommands}
                                     isLoading={this.state.loadingDelegateCommandsData}

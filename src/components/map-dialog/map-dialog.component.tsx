@@ -113,7 +113,7 @@ const MapDialog: React.FC<MapDialogProps> = ({ isOpen, onClose, visitsCoordinate
                     visitsCoordinates.map((c, index) => (
                         <CircleMarker center={ll.latLng(c.point[0], c.point[1])}
                             pathOptions={index === 0 ? firstVisitColorOptions : visitColorOptions}
-                            radius={15}>
+                            radius={5}>
                             <Popup>
                                 <div>
                                     {c.name}
@@ -138,7 +138,7 @@ const MapDialog: React.FC<MapDialogProps> = ({ isOpen, onClose, visitsCoordinate
                 {
                     tasksCoordinates.map((c) => {
                         return isNaN(c.point[0]) ? null : (
-                            <CircleMarker center={ll.latLng(c.point[0], c.point[1])} pathOptions={taskColorOptions} radius={15}>
+                            <CircleMarker center={ll.latLng(c.point[0], c.point[1])} pathOptions={taskColorOptions} radius={5}>
                                 <Popup>{c.name}</Popup>
                             </CircleMarker>
                         );
@@ -151,7 +151,7 @@ const MapDialog: React.FC<MapDialogProps> = ({ isOpen, onClose, visitsCoordinate
                     trackings.map((c, index) => {
                         return c.latitude ? (
                             <CircleMarker center={ll.latLng(parseFloat(c.latitude!), parseFloat(c.longitude!))}
-                                pathOptions={trackingColorOptions} radius={10}>
+                                pathOptions={trackingColorOptions} radius={5}>
 
                             </CircleMarker>
                         ) : null;

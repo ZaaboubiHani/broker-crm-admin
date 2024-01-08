@@ -9,9 +9,14 @@ import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 import { DataGrid, GridColDef, GridValueGetterParams } from '@mui/x-data-grid';
+import DialogTitle from '@mui/material/DialogTitle';
+import Dialog from '@mui/material/Dialog';
+import { DialogActions, List, ListItem, ListItemButton, ListItemText } from "@mui/material";
+import SupplierModel from '../../models/supplier.model';
 
 interface CommandDelegateTableProps {
     data: CommandModel[];
+    suppliers: SupplierModel[];
     displayCommand: (command: CommandModel) => {};
     onHonor: (command: CommandModel) => {};
     id?: string;
@@ -22,11 +27,13 @@ interface CommandDelegateTableProps {
     pageChange: (page: number, size: number) => void;
 }
 
-const CommandDelegateTable: React.FC<CommandDelegateTableProps> = ({ data, id, isLoading, displayCommand, onHonor, total, size, page, pageChange, }) => {
+const CommandDelegateTable: React.FC<CommandDelegateTableProps> = ({ suppliers, data, id, isLoading, displayCommand, onHonor, total, size, page, pageChange, }) => {
 
     const [rowsPerPage, setRowsPerPage] = React.useState(size);
-
     const [pageIndex, setPageIndex] = React.useState(page - 1);
+    const [showDialog, setShowDialog] = React.useState(false);
+    const [commandIndex, setCommandIndex] = React.useState(- 1);
+    const [supplierIds, setSupplierIds] = React.useState<(number | undefined)[]>([]);
 
     if (pageIndex !== (page - 1)) {
         setPageIndex(page - 1);
@@ -37,8 +44,9 @@ const CommandDelegateTable: React.FC<CommandDelegateTableProps> = ({ data, id, i
     const [switchesEnablers, setSwitchesEnablers] = React.useState(data.map(command => command?.finalSupplier === undefined));
 
     React.useEffect(() => {
+        setSupplierIds(data.map(command => command.finalSupplier?.id));
         setSwitchesState(data.map(command => command.isHonored));
-        setSwitchesEnablers(data.map(command => command?.finalSupplier === undefined));
+        setSwitchesEnablers(data.map(command => (command?.finalSupplier === undefined)));
     }, [data]);
 
     const handleSwitchChange = (index: number) => {
@@ -77,11 +85,21 @@ const CommandDelegateTable: React.FC<CommandDelegateTableProps> = ({ data, id, i
             renderCell(params) {
                 return (<FormControl fullWidth>
                     <Select
-                        value={params.row.finalSupplier?.id}
+                        value={supplierIds[params.row.index]}
+                        key={supplierIds[params.row.index]}
                         onChange={(event) => {
-                            params.row.finalSupplier = params.row.suppliers?.find((s: any) => s.id === event.target.value);
-                            data[params.row.index].finalSupplier = data[params.row.index].suppliers?.find((s: any) => s.id === event.target.value);
-                            handleSupplierChange(params.row.index);
+                            if (event.target.value === "other") {
+                                event.preventDefault();
+                                event.target.value = "";
+                                setCommandIndex(params.row.index);
+                                setShowDialog(true);
+                                setSupplierIds([...supplierIds]);
+                            } else {
+                                params.row.finalSupplier = params.row.suppliers?.find((s: any) => s.id === event.target.value);
+                                data[params.row.index].finalSupplier = data[params.row.index].suppliers?.find((s: any) => s.id === event.target.value);
+                                handleSupplierChange(params.row.index);
+                                setSupplierIds(data.map(command => command.finalSupplier?.id));
+                            }
                         }}
                     >
                         <MenuItem value="">
@@ -92,6 +110,9 @@ const CommandDelegateTable: React.FC<CommandDelegateTableProps> = ({ data, id, i
                                 {supplier.name}
                             </MenuItem>
                         ))}
+                        <MenuItem value="other">
+                            <em>autre</em>
+                        </MenuItem>
                     </Select>
                 </FormControl>);
             },
@@ -113,7 +134,9 @@ const CommandDelegateTable: React.FC<CommandDelegateTableProps> = ({ data, id, i
             },
         },
     ];
-
+    const handleClose = () => {
+        setShowDialog(false);
+    };
 
     return (
         <div id={id} style={{
@@ -123,7 +146,7 @@ const CommandDelegateTable: React.FC<CommandDelegateTableProps> = ({ data, id, i
             margin: '0px 8px 8px 8px',
             borderRadius: '8px',
             backgroundColor: 'rgba(255,255,255,0.5)',
-           
+
         }}>
             {
                 isLoading ? (<div style={{
@@ -179,102 +202,35 @@ const CommandDelegateTable: React.FC<CommandDelegateTableProps> = ({ data, id, i
                         checkboxSelection={false}
                         hideFooterSelectedRowCount={true}
                     />)}
-            {/* <TableContainer sx={{ flexGrow: '1', display: 'flex', flexDirection: 'column', borderRadius: '8px', margin: '8px', overflow: 'hidden' }} component={Paper}>
-                <Table sx={{ flexGrow: '1', display: 'flex', flexDirection: 'column', overflow: 'hidden', margin: '0px', width: "100%" }} size="small" aria-label="a dense table">
-                    <TableHead sx={{ height: '45px', marginBottom: '16px' }}>
-                        <TableRow>
-                            <TableCell sx={{ width: '150px' }}>Date</TableCell>
-                            <TableCell align="left">Client</TableCell>
-                            <TableCell align="left">Wilaya</TableCell>
-                            <TableCell align="center">Commune</TableCell>
-                            <TableCell align="center">Montant</TableCell>
-                            <TableCell sx={{ width: '20%' }} align="center">Fournisseur</TableCell>
-                            <TableCell align="center">Honore</TableCell>
-                            <TableCell align="center">Detail</TableCell>
-                        </TableRow>
-                    </TableHead>
-                    <TableBody sx={{ flexGrow: '1', overflowY: 'auto', overflowX: 'hidden', }}>
-                        {
-                            isLoading ? (<div style={{
-                                width: '100%',
-                                flexGrow: '1',
-                                overflow: 'hidden',
-                                height: '100%',
-                                display: 'flex',
-                                justifyContent: 'center',
-                                alignItems: 'center',
-                            }}>
-                                <DotSpinner
-                                    size={40}
-                                    speed={0.9}
-                                    color="black"
-                                />
-                            </div>) :
-                                data.map((row, index) => (
-                                    <TableRow
-                                        key={row.id!}
-                                        sx={{ '&:last-child td, &:last-child th': { border: 0 }, backgroundColor: selectedRow === row.id! ? 'cyan' : 'white' }}
-                                    >
-                                        <TableCell sx={{ width: '150px', whiteSpace: 'nowrap' }}>{formatDateToYYYYMMDD(row.visit?.createdDate || new Date())}</TableCell>
-                                        <TableCell align="left">{row.visit?.client?.name}</TableCell>
-                                        <TableCell align="left">{row.visit?.client?.wilaya}</TableCell>
-                                        <TableCell align="left">{row.visit?.client?.commune}</TableCell>
-                                        <TableCell align="left">{
-
-                                            row.totalRemised?.toLocaleString('fr-DZ', { style: 'currency', currency: 'DZD' })
-                                        }</TableCell>
-
-                                        <TableCell sx={{ width: '20%' }} align="left">
-                                            <FormControl fullWidth>
-                                                <InputLabel id="demo-simple-select-label">Fournisseur</InputLabel>
-                                                <Select
-                                                    labelId="demo-simple-select-label"
-                                                    id="demo-simple-select"
-                                                    value={row.finalSupplier?.id}
-                                                    label="Age"
-                                                    onChange={(event) => {
-                                                        row.finalSupplier = row.suppliers?.find(s => s.id === event.target.value);
-                                                        handleSupplierChange(index);
-                                                    }}
-                                                >
-                                                    <MenuItem value="">
-                                                        <em>None</em>
-                                                    </MenuItem>
-                                                    {row.suppliers?.map((supplier) => (
-                                                        <MenuItem key={supplier.id} value={supplier.id}>
-                                                            {supplier.name}
-                                                        </MenuItem>
-                                                    ))}
-
-                                                </Select>
-                                            </FormControl>
-                                        </TableCell>
-                                        <TableCell align="left">
-                                            <Switch disabled={switchesEnablers[index]} checked={switchesState[index]}
-                                                onChange={() => handleSwitchChange(index)}
-                                            />
-                                        </TableCell>
-                                        <TableCell align="center">
-                                            <Button onClick={() => {
-                                                displayCommand(row);
-                                            }} variant="text">Voir</Button>
-                                        </TableCell>
-                                    </TableRow>
-                                ))}
-                    </TableBody>
-                </Table>
-            </TableContainer>
-            <TablePagination
-                sx={{ minHeight: '50px', overflow: 'hidden' }}
-                labelRowsPerPage='Lignes par page'
-                rowsPerPageOptions={[5, 10, 25]}
-                component="div"
-                count={total}
-                rowsPerPage={rowsPerPage}
-                page={pageIndex}
-                onPageChange={handleChangePage}
-                onRowsPerPageChange={handleChangeRowsPerPage}
-            /> */}
+            <Dialog fullWidth={true} maxWidth='sm' onClose={handleClose} open={showDialog} >
+                <DialogTitle>Sélectionner le fournisseur</DialogTitle>
+                <List>
+                    {
+                        suppliers.filter((supplier) => !data.some((c) => c.suppliers?.some(s => s.id === supplier.id))).map((supplier) => (
+                            <ListItem
+                                key={supplier.id}
+                                disablePadding
+                                onClick={() => {
+                                    const updatedCommands = [...data];
+                                    updatedCommands[commandIndex].suppliers = [
+                                        ...updatedCommands[commandIndex].suppliers ?? [],
+                                        supplier,
+                                    ];
+                                    updatedCommands[commandIndex].finalSupplier = supplier;
+                                    data = updatedCommands;
+                                    setShowDialog(false);
+                                    setSupplierIds(data.map(command => command.finalSupplier?.id));
+                                    setSwitchesEnablers(data.map(command => (command?.finalSupplier === undefined)));
+                                }}
+                            >
+                                <ListItemButton>
+                                    <ListItemText primary={supplier.name} />
+                                </ListItemButton>
+                            </ListItem>
+                        ))
+                    }
+                </List>
+            </Dialog>
         </div >
     );
 };
