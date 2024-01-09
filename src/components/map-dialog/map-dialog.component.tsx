@@ -1,6 +1,6 @@
 
-import React, { useEffect, useState } from 'react';
-import { MapContainer, TileLayer, Polyline, CircleMarker, Popup, SVGOverlay } from 'react-leaflet'
+import React, { useEffect, useRef, useState } from 'react';
+import { MapContainer, TileLayer, Polyline, CircleMarker, Popup, SVGOverlay, Marker, useMapEvents } from 'react-leaflet'
 import * as ll from "leaflet";
 import "leaflet/dist/leaflet.css"
 import Dialog from '@mui/material/Dialog';
@@ -11,16 +11,114 @@ import Checkbox from '@mui/material/Checkbox';
 import UserTrackingModel from '@/src/models/user-tracking.model';
 import SwipeableDrawer from '@mui/material/SwipeableDrawer';
 import Box from '@mui/material/Box';
-import List from '@mui/material/List';
 import Divider from '@mui/material/Divider';
-import ListItem from '@mui/material/ListItem';
-import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
-import ListItemText from '@mui/material/ListItemText';
 import InboxIcon from '@mui/icons-material/MoveToInbox';
 import MailIcon from '@mui/icons-material/Mail';
-import ArrowCircleRightIcon from '@mui/icons-material/ArrowCircleRight';
-import ArrowCircleLeftIcon from '@mui/icons-material/ArrowCircleRight';
+import NavigateBeforeIcon from '@mui/icons-material/NavigateBefore';
+import NavigateNextIcon from '@mui/icons-material/NavigateNext';
+import { DialogActions, List, ListItem, ListItemButton, ListItemText } from "@mui/material";
+import { formatTime } from '../../functions/date-format';
+
+
+interface TrackingListProps {
+    trackings: UserTrackingModel[],
+}
+
+const TrackingList: React.FC<TrackingListProps> = ({ trackings }) => {
+    const [showDrawer, setShowDrawer] = useState(false);
+    const mapCon = useMapEvents({
+        click: () => {
+        },
+    });
+
+
+    return (
+        <>
+            <Box sx={{
+                width: showDrawer ? '200px' : '5px',
+                height: '442px',
+                position: 'absolute',
+                zIndex: '999',
+                backgroundColor: 'rgba(255,255,255,0.5)',
+                right: '8px',
+                border: 'solid #ddd 1px',
+                borderRadius: '8px',
+                top: '52px',
+                overflowY: 'scroll',
+            }}>
+                
+                    <List style={{
+                        position: 'absolute',
+                        zIndex: '999',
+                    }}>
+                        {
+                            trackings.map((track, index) => {
+                                return (
+                                    <ListItem
+                                        key={track.id}
+                                        disablePadding
+                                        onClick={() => {
+                                            const point: ll.LatLng = ll.latLng(parseFloat(track.latitude!), parseFloat(track.longitude!));
+                                            mapCon.flyTo(point, 18);
+                                        }}
+                                    >
+                                        <ListItemButton sx={{width:'180px'}}>
+                                            <ListItemText primary={`${(index + 1)}`} />
+                                            <ListItemText primary={`${formatTime(track.createdAt)}`} />
+                                        </ListItemButton>
+                                    </ListItem>
+                                );
+
+                            })
+                        }
+
+                    </List>
+
+            </Box>
+            <button
+                style={{
+                    opacity: showDrawer ? '1' : '0',
+                    display: showDrawer ? 'flex' : 'none',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    backgroundColor: 'rgba(255,255,255,0.5)',
+                    position: 'absolute',
+                    zIndex: '999',
+                    right: '210px',
+                    top: '250px',
+                    width: '16px',
+                    height: '32px',
+                    border: 'solid #ddd 1px',
+                    borderRadius: '8px 0px 0px 8px',
+                }}
+                onClick={() => { setShowDrawer(false); }}>
+                <NavigateNextIcon />
+            </button>
+            <button
+                style={{
+                    opacity: showDrawer ? '0' : '1',
+                    display: showDrawer ? 'none' : 'flex',
+                    cursor: 'pointer',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    backgroundColor: 'rgba(255,255,255,0.5)',
+                    position: 'absolute',
+                    zIndex: '999',
+                    right: '14px',
+                    top: '250px',
+                    width: '16px',
+                    height: '32px',
+                    border: 'solid #ddd 1px',
+                    borderRadius: '8px 0px 0px 8px',
+                }}
+                onClick={() => { setShowDrawer(true); }} >
+
+                <NavigateBeforeIcon />
+            </button>
+        </>
+    );
+}
 
 interface MapDialogProps {
     isOpen: boolean,
@@ -34,7 +132,7 @@ const MapDialog: React.FC<MapDialogProps> = ({ isOpen, onClose, visitsCoordinate
 
     const [showVisitPath, setShowVisitPath] = useState(true);
     const [showTrackingPath, setShowTrackingPath] = useState(true);
-    const [showDrawer, setShowDrawer] = useState(true);
+
     var [trackingPolylines, setTrackingPolylines] = useState<UserTrackingModel[][]>([]);
 
     function calculateCenter(): number[] {
@@ -65,7 +163,6 @@ const MapDialog: React.FC<MapDialogProps> = ({ isOpen, onClose, visitsCoordinate
         return [avgLat, avgLng];
     }
 
-
     const handleClose = () => {
         onClose('selectedValue');
     };
@@ -82,7 +179,6 @@ const MapDialog: React.FC<MapDialogProps> = ({ isOpen, onClose, visitsCoordinate
         const b = 0;
         return `rgba(${r},${g},${b},${showTrackingPath ? 1 : 0.2})`;
     };
-
 
 
 
@@ -118,7 +214,8 @@ const MapDialog: React.FC<MapDialogProps> = ({ isOpen, onClose, visitsCoordinate
                 height: '500px',
                 zIndex: '0'
             }}
-                center={ll.latLng(calculateCenter()[0], calculateCenter()[1])} zoom={13} scrollWheelZoom={true}>
+
+                center={ll.latLng(calculateCenter()[0], calculateCenter()[1])} zoom={13} scrollWheelZoom={false}>
                 <TileLayer
                     attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
                     url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
@@ -162,7 +259,7 @@ const MapDialog: React.FC<MapDialogProps> = ({ isOpen, onClose, visitsCoordinate
                 <Polyline pathOptions={visitColorOptions} positions={visitsCoordinates.map((c) => ll.latLng(c.point[0], c.point[1]))} />
 
                 {
-                    trackings.map((c, index) => {
+                    trackings.filter(t => t.latitude).map((c, index) => {
                         return c.latitude ? (
                             <CircleMarker center={ll.latLng(parseFloat(c.latitude!), parseFloat(c.longitude!))}
                                 pathOptions={trackingColorOptions} radius={5}>
@@ -173,7 +270,7 @@ const MapDialog: React.FC<MapDialogProps> = ({ isOpen, onClose, visitsCoordinate
                     )
                 }
                 {
-                    trackings.map((c, index) => {
+                    trackings.filter(t => t.latitude).map((c, index) => {
                         return c.latitude ? (
                             <SVGOverlay attributes={{ stroke: 'black', textAlign: 'center' }} bounds={ll.latLngBounds(ll.latLng(parseFloat(c.latitude!) - 0.0002, parseFloat(c.longitude!) - 0.0002), ll.latLng(parseFloat(c.latitude!) + 0.0002, parseFloat(c.longitude!) + 0.0002))}>
                                 <circle r="16" cx="50%" cy="50%" fill={showTrackingPath ? "white" : 'rgba(255,255,255,0.1)'} />
@@ -190,74 +287,45 @@ const MapDialog: React.FC<MapDialogProps> = ({ isOpen, onClose, visitsCoordinate
                         pathOptions={{ fillColor: calculateColorGradient(index, tracking.length), color: calculateColorGradient(index, trackingPolylines.length), }}
                         positions={tracking.map((c) => ll.latLng(parseFloat(c.latitude!), parseFloat(c.longitude!)))} />))
                 }
+                <TrackingList trackings={trackings.filter(t => t.latitude)}></TrackingList>
+
+                <div style={{
+                    position: 'absolute',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    backgroundColor: 'rgba(255,255,255,0.5)',
+                    top: "80px",
+                    paddingLeft: '8px',
+                    border: 'solid #ddd 1px',
+                    borderRadius: '8px',
+                    left: '8px',
+                    zIndex: '999'
+                }}>
+                    <FormControlLabel control={<Checkbox
+                        checked={showVisitPath}
+                        onChange={() => { setShowVisitPath(!showVisitPath); }}
+                        defaultChecked />} label="Parcours de visite" />
+                    <FormControlLabel control={<Checkbox
+                        checked={showTrackingPath}
+                        onChange={() => { setShowTrackingPath(!showTrackingPath); }}
+                        defaultChecked />} label="Trajectoire de défilement" />
+                </div>
+                <Button color="error" sx={{
+                    backgroundColor: 'red',
+                    position: 'absolute',
+                    minWidth: '32px',
+                    height: '32px',
+                    padding: '0px',
+                    right: '8px',
+                    top: "8px",
+                    zIndex: '999'
+                }}
+                    onClick={handleClose}
+                    variant="contained" disableElevation
+                >
+                    <CloseIcon />
+                </Button>
             </MapContainer>
-            <div style={{
-                position: 'absolute',
-                display: 'flex',
-                flexDirection: 'column',
-                backgroundColor: 'rgba(255,255,255,0.5)',
-                top: "80px",
-                paddingLeft: '8px',
-                border: 'solid #ddd 1px',
-                borderRadius: '8px',
-                left: '8px',
-            }}>
-                <FormControlLabel control={<Checkbox
-                    checked={showVisitPath}
-                    onChange={() => { setShowVisitPath(!showVisitPath); }}
-                    defaultChecked />} label="Parcours de visite" />
-                <FormControlLabel control={<Checkbox
-                    checked={showTrackingPath}
-                    onChange={() => { setShowTrackingPath(!showTrackingPath); }}
-                    defaultChecked />} label="Trajectoire de défilement" />
-            </div>
-            <Button color="error" sx={{
-                backgroundColor: 'red',
-                position: 'absolute',
-                minWidth: '32px',
-                height: '32px',
-                padding: '0px',
-                right: '8px',
-                top: "8px",
-                zIndex: '99'
-            }}
-                onClick={handleClose}
-                variant="contained" disableElevation
-            >
-                <CloseIcon />
-            </Button>
-            <Box sx={{
-                width: '200px',
-                height: '442px',
-                position: 'absolute',
-                zIndex: '99',
-                backgroundColor: 'rgba(255,255,255,0.5)',
-                right: '8px',
-                border: 'solid #ddd 1px',
-                borderRadius: '8px',
-                top: '52px'
-            }}>
-                <button
-                    key={showDrawer.toString()}
-                    style={{
-                        opacity: showDrawer ? '1' : '0',
-                        cursor: 'pointer'
-                    }}
-                    onClick={() => { setShowDrawer(false); }} >
-
-                    <ArrowCircleRightIcon />
-                </button>
-                <button
-                    key={showDrawer.toString()}
-                    style={{
-                        opacity: showDrawer ? '0' : '1',
-                        cursor: 'pointer'
-                    }}
-                    onClick={() => { setShowDrawer(true); }}>
-
-                    <ArrowCircleLeftIcon />
-                </button>
-            </Box>
         </Dialog>
     );
 }

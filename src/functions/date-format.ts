@@ -40,13 +40,17 @@ export function formatDateToYYYY(date: Date): string {
   return `${year}`;
 }
 
-export function formatTime(date: Date): string {
-  const hours = date.getHours();
-  const minutes = date.getMinutes();
+export function formatTime(date?: Date): string {
+  if(date){
 
-  // Ensure that the hours and minutes are always two digits
-  const formattedHours = hours < 10 ? `0${hours}` : `${hours}`;
-  const formattedMinutes = minutes < 10 ? `0${minutes}` : `${minutes}`;
-
-  return `${formattedHours}:${formattedMinutes}`;
+    const hours = date.getHours();
+    const minutes = date.getMinutes();
+    
+    // Ensure that the hours and minutes are always two digits
+    const formattedHours = hours < 10 ? `0${hours}` : `${hours}`;
+    const formattedMinutes = minutes < 10 ? `0${minutes}` : `${minutes}`;
+    
+    return `${formattedHours}:${formattedMinutes}`;
+  }
+  return '--:--'
 }
