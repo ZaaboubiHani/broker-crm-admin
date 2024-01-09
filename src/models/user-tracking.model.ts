@@ -15,7 +15,7 @@ export default class UserTrackingModel {
     static fromJson(json: any): UserTrackingModel {
         return new UserTrackingModel({
             id: json.id,
-            createdAt: json.attributes.createdAt,
+            createdAt: new Date(json.attributes.createdAt),
             latitude: json.attributes.location?.replace(/Latitude: |Longitude: /g, '').split(',')[0].trim(),
             longitude: json.attributes.location?.replace(/Latitude: |Longitude: /g, '').split(',')[1].trim(),
         });
