@@ -9,7 +9,6 @@ import FlagIcon from '@mui/icons-material/Flag';
 import EditNoteIcon from '@mui/icons-material/EditNote';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
 import Button from '@mui/material/Button/Button';
-import CommandModel from '../../models/command.model';
 import { formatDateToYYYYMMDD, formatTime } from '../../functions/date-format';
 import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
 
@@ -154,7 +153,7 @@ const ReportPanel: React.FC<ReportPanelProps> = ({ report, clientType, location,
                     )
                         : null
                 }
-                <h4 style={{ fontSize: 17, margin: '0px', height: '32px' }}><EditNoteIcon style={{ fontSize: 17 }} /> Remarque:</h4>
+                <h4 style={{ fontSize: 17, margin: '0px', height: '32px' }}><EditNoteIcon style={{ fontSize: 17 }} /> Rapport de visite:</h4>
                 <h6 style={{
                     fontSize: 15, fontWeight: '400',
                     width: '340px',
@@ -173,7 +172,6 @@ const ReportPanel: React.FC<ReportPanelProps> = ({ report, clientType, location,
                     height: "100%",
                     display: 'grid',
                     placeItems: 'center',
-
                 }
             }>
                 Cliquez sur voir pour afficher les détails

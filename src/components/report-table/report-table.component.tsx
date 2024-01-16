@@ -51,7 +51,7 @@ const ReportTable: React.FC<ReportTableProps> = ({ data, id, isLoading, displayR
             field: 'details', headerName: 'Details', width: 80,
             renderCell(params) {
                 return (<Button onClick={() => {
-                    displayReport(params.row);
+                    displayReport(params.row.visit);
                 }} variant="text">Voir</Button>);
             },
             filterable: false,
@@ -94,6 +94,7 @@ const ReportTable: React.FC<ReportTableProps> = ({ data, id, isLoading, displayR
                                     client: row.client?.name,
                                     speciality: row.client?.speciality,
                                     location: `${row.client?.wilaya}, ${row.client?.commune}`,
+                                    visit: row,
                                 };
                             })]}
                         columns={columns}
