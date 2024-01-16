@@ -309,7 +309,7 @@ class ReportPage extends Component<{}, ReportPageProps> {
                                                 )
                                                 :
                                                 (
-                                                    <ReportPanel location={this.state.selectedVisit?.visitLocation} report={this.state.reportData} ></ReportPanel>
+                                                    <ReportPanel clientType={this.state.selectedVisit?.client?.type} location={this.state.selectedVisit?.visitLocation} report={this.state.reportData} ></ReportPanel>
                                                 )
                                         }
                                     </div>

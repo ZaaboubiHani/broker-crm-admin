@@ -64,6 +64,15 @@ const ClientsPharmacyTable: React.FC<ClientsPharmacyTableProps> = ({ total, size
             sortable: false,
         },
         {
+            field: 'visitsNum',
+            headerName: 'Nombre de visites',
+            width: 150,
+            align:'center',
+            headerAlign:'center',
+            filterable: false,
+            sortable: false,
+        },
+        {
             field: 'report',
             headerName: 'Rapport',
             width: 80,
@@ -128,6 +137,7 @@ const ClientsPharmacyTable: React.FC<ClientsPharmacyTableProps> = ({ total, size
                                     location: `${row.client?.wilaya}, ${row.client?.commune}`,
                                     visitLocation: row.visitLocation,
                                     hasCommand: row.hasCommand,
+                                    visitsNum:row.client?.visitsNum,
                                 };
                             })]}
                         columns={columns}

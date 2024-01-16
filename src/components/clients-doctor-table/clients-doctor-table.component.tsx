@@ -62,10 +62,19 @@ const ClientsDoctorTable: React.FC<ClientsDoctorTableProps> = ({ total, size, pa
             sortable: false,
         },
         {
+            field: 'visitsNum',
+            headerName: 'Nombre de visites',
+            width: 150,
+            align:'center',
+            headerAlign:'center',
+            filterable: false,
+            sortable: false,
+        },
+        {
             field: 'report', headerName: 'Rapport', width: 80,
             renderCell(params) {
                 return (<Button onClick={() => {
-                    displayReport(params.row);
+                    displayReport(params.row.visit);
                 }} variant="text">Voir</Button>);
             },
             filterable: false,
@@ -114,6 +123,8 @@ const ClientsDoctorTable: React.FC<ClientsDoctorTableProps> = ({ total, size, pa
                                     speciality: row.client?.speciality,
                                     location: `${row.client?.wilaya}, ${row.client?.commune}`,
                                     visitLocation: row.visitLocation,
+                                    visit: row,
+                                    visitsNum: row.client?.visitsNum,
                                 };
                             })]}
                         columns={columns}

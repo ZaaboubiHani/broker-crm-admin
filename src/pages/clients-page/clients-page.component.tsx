@@ -149,7 +149,6 @@ class ClientsPage extends Component<{}, ClientsPageProps> {
         this.setState({ loadingReportData: true, docReportData: undefined, showReportPanel: true });
         var report = await this.reportService.getReportOfVisit(visit.id!);
         this.setState({ loadingReportData: false, docReportData: report, selectedVisit: visit, showReportPanel: true });
-
     };
 
     handleDisplayPharmCommand = async (visit: VisitModel) => {
@@ -721,6 +720,7 @@ class ClientsPage extends Component<{}, ClientsPageProps> {
                                             <MenuItem value={'delegate'}>Délégué</MenuItem>
                                             <MenuItem value={'wilaya'}>wilaya</MenuItem>
                                             <MenuItem value={'commune'}>Commune</MenuItem>
+                                            <MenuItem value={'visitsNum'}>Nombre de visites</MenuItem>
                                         </Select>
                                     </FormControl>
                                     <Button variant="outlined"
@@ -856,6 +856,7 @@ class ClientsPage extends Component<{}, ClientsPageProps> {
                                             <MenuItem value={'delegate'}>Délégué</MenuItem>
                                             <MenuItem value={'wilaya'}>wilaya</MenuItem>
                                             <MenuItem value={'commune'}>Commune</MenuItem>
+                                            <MenuItem value={'visitsNum'}>Nombre de visites</MenuItem>
                                         </Select>
                                     </FormControl>
                                     <Button variant="outlined"
@@ -954,6 +955,7 @@ class ClientsPage extends Component<{}, ClientsPageProps> {
                                             <MenuItem value={'delegate'}>Délégué</MenuItem>
                                             <MenuItem value={'wilaya'}>wilaya</MenuItem>
                                             <MenuItem value={'commune'}>Commune</MenuItem>
+                                            <MenuItem value={'visitsNum'}>Nombre de visites</MenuItem>
                                         </Select>
                                     </FormControl>
                                     <Button variant="outlined"
