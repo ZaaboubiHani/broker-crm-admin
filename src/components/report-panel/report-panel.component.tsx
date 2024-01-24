@@ -35,7 +35,7 @@ const openGoogleMaps = (location?: string) => {
 const ReportPanel: React.FC<ReportPanelProps> = ({ report, clientType, location, showBackButton, onBackClick }) => {
     if (report) {
         return (
-            <div style={{ margin: '16px 0px 16px 16px', flexGrow: '1',flex:'1',height:'96%',overflowY:'auto',overflowX:'hidden',paddingRight:'8px' }}>
+            <div style={{ margin: '16px 0px 16px 16px', flexGrow: '1', flex: '1', height: '96%', overflowY: 'auto', overflowX: 'hidden', paddingRight: '8px' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start', marginBottom: '8px' }}>
                     <div style={{
                         display: 'flex',
@@ -162,6 +162,55 @@ const ReportPanel: React.FC<ReportPanelProps> = ({ report, clientType, location,
                     overflow: 'hidden',
                     margin: '0px',
                 }}>{report.note}</h6>
+                <Divider component="div" style={{ margin: '8px 0px' }} />
+                {
+                    clientType === ClientType.doctor ?
+                        (
+                            <div>
+                                <h4 style={{ fontSize: 17, margin: '0px', height: '32px' }}><HailIcon style={{ fontSize: 17 }} /> Médecins prescripteurs:</h4>
+                                {
+                                    report.nearbyClients?.map((client, index) => (
+                                        <div style={{ backgroundColor: '#eee', margin: '0px', padding: '4px',borderRadius:'4px' }}>
+                                            <div style={{ display: 'flex', justifyContent: 'space-between', margin: '0px', height: '32px' }}>
+                                                <div>
+                                                    <h6 style={{ fontSize: 12, fontWeight: '400', margin: '0px', height: '16px' }}><b>Nom et Prénom:</b> {client.fullName ?? '_'}</h6>
+                                                    <h6 style={{ fontSize: 12, fontWeight: '400', margin: '0px', height: '16px' }}><b>Remarque:</b> {client.presence ?? '_'}</h6>
+                                                </div>
+                                            </div>
+                                            {
+                                                index !== report.nearbyClients!.length - 1 ? (
+                                                    <Divider component="div" style={{ margin: '0px', marginTop: '4px' }} />) : null
+                                            }
+                                        </div>
+                                    ))
+                                }
+                            </div>
+                        ) : (
+                            <div>
+                                <h4 style={{ fontSize: 17, margin: '0px', height: '32px' }}><HailIcon style={{ fontSize: 17 }} /> Médecins prescripteurs:</h4>
+                                {
+                                    report.nearbyClients?.map((client, index) => (
+                                        <div style={{ backgroundColor: '#eee', margin: '0px', padding: '4px',borderRadius:'4px' }}>
+                                            <div style={{ display: 'flex', justifyContent: 'space-between', margin: '0px', height: '32px' }}>
+                                                <div>
+                                                    <h6 style={{ fontSize: 12, fontWeight: '400', margin: '0px', height: '16px' }}><b>Nom et Prénom:</b> {client.fullName ?? '_'}</h6>
+                                                    <h6 style={{ fontSize: 12, fontWeight: '400', margin: '0px', height: '16px' }}><b>Remarque:</b> {client.presence ?? '_'}</h6>
+                                                </div>
+                                                <div>
+                                                    <h6 style={{ fontSize: 12, fontWeight: '400', margin: '0px', height: '16px' }}><b>Specialité:</b> {client.speciality ?? '_'}</h6>
+                                                    <h6 style={{ fontSize: 12, fontWeight: '400', margin: '0px', height: '16px' }}><b>Grade:</b> {client.grade ?? '_'}</h6>
+                                                </div>
+                                            </div>
+                                            {
+                                                index !== report.nearbyClients!.length - 1 ? (
+                                                    <Divider component="div" style={{ margin: '0px', marginTop: '4px' }} />) : null
+                                            }
+                                        </div>
+                                    ))
+                                }
+                            </div>
+                        )
+                }
             </div>
         );
     } else {

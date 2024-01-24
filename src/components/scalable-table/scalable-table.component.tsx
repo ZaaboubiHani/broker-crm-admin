@@ -22,7 +22,6 @@ const ScalableTable: React.FC<ScalableTableProps> = ({ }) => {
           const newWidths = [...prevWidths];
           newWidths[resizingColumnIndex] += widthDifference;
 
-          // Calculate the maximum width based on the percentage of the container
           const maxColumnWidth = (maxColumnWidthPercentage / 100) * containerWidth;
           newWidths[resizingColumnIndex] = Math.min(maxColumnWidth, newWidths[resizingColumnIndex]);
 
@@ -61,10 +60,16 @@ const ScalableTable: React.FC<ScalableTableProps> = ({ }) => {
   };
 
   return (
-
     <div className="resizable-table" ref={containerRef}>
-      <table style={{ margin: '0px', padding: '0px',overflow:'hidden' }}>
-        <thead>
+      <table style={{
+        margin: '0px',
+        padding: '0px',
+        overflow: 'hidden',
+        flex: "1",
+        marginRight: '16px',
+
+      }}>
+        <thead style={{ margin: '0px', padding: '0px', height: 'max-content', }}>
           <tr>
             <th
               style={{ width: `${columnWidths[0]}px` }}
@@ -80,7 +85,182 @@ const ScalableTable: React.FC<ScalableTableProps> = ({ }) => {
             </th>
           </tr>
         </thead>
-        <tbody style={{ width:'100%',backgroundColor:'green',margin: '0px', padding: '0px',overflowY:'scroll' }}>
+        <div
+          style={{ borderBottom: "1px solid #bbb" }}
+        ></div>
+        <tbody style={{ margin: '0px', padding: '0px', overflowY: 'scroll' }}>
+          <tr>
+            <td style={{ width: `${columnWidths[0]}px` }}>Data 1</td>
+            <td style={{ width: `${columnWidths[1]}px` }}>Data 2</td>
+          </tr>
+          <tr>
+            <td style={{ width: `${columnWidths[0]}px` }}>Data 1</td>
+            <td style={{ width: `${columnWidths[1]}px` }}>Data 2</td>
+          </tr>
+          <tr>
+            <td style={{ width: `${columnWidths[0]}px` }}>Data 1</td>
+            <td style={{ width: `${columnWidths[1]}px` }}>Data 2</td>
+          </tr>
+          <tr>
+            <td style={{ width: `${columnWidths[0]}px` }}>Data 1</td>
+            <td style={{ width: `${columnWidths[1]}px` }}>Data 2</td>
+          </tr>
+          <tr>
+            <td style={{ width: `${columnWidths[0]}px` }}>Data 1</td>
+            <td style={{ width: `${columnWidths[1]}px` }}>Data 2</td>
+          </tr>
+          <tr>
+            <td style={{ width: `${columnWidths[0]}px` }}>Data 1</td>
+            <td style={{ width: `${columnWidths[1]}px` }}>Data 2</td>
+          </tr>
+          <tr>
+            <td style={{ width: `${columnWidths[0]}px` }}>Data 1</td>
+            <td style={{ width: `${columnWidths[1]}px` }}>Data 2</td>
+          </tr>
+          <tr>
+            <td style={{ width: `${columnWidths[0]}px` }}>Data 1</td>
+            <td style={{ width: `${columnWidths[1]}px` }}>Data 2</td>
+          </tr>
+          <tr>
+            <td style={{ width: `${columnWidths[0]}px` }}>Data 1</td>
+            <td style={{ width: `${columnWidths[1]}px` }}>Data 2</td>
+          </tr>
+          <tr>
+            <td style={{ width: `${columnWidths[0]}px` }}>Data 1</td>
+            <td style={{ width: `${columnWidths[1]}px` }}>Data 2</td>
+          </tr>
+          <tr>
+            <td style={{ width: `${columnWidths[0]}px` }}>Data 1</td>
+            <td style={{ width: `${columnWidths[1]}px` }}>Data 2</td>
+          </tr>
+          <tr>
+            <td style={{ width: `${columnWidths[0]}px` }}>Data 1</td>
+            <td style={{ width: `${columnWidths[1]}px` }}>Data 2</td>
+          </tr>
+          <tr>
+            <td style={{ width: `${columnWidths[0]}px` }}>Data 1</td>
+            <td style={{ width: `${columnWidths[1]}px` }}>Data 2</td>
+          </tr>
+          <tr>
+            <td style={{ width: `${columnWidths[0]}px` }}>Data 1</td>
+            <td style={{ width: `${columnWidths[1]}px` }}>Data 2</td>
+          </tr>
+          <tr>
+            <td style={{ width: `${columnWidths[0]}px` }}>Data 1</td>
+            <td style={{ width: `${columnWidths[1]}px` }}>Data 2</td>
+          </tr>
+          <tr>
+            <td style={{ width: `${columnWidths[0]}px` }}>Data 1</td>
+            <td style={{ width: `${columnWidths[1]}px` }}>Data 2</td>
+          </tr>
+          <tr>
+            <td style={{ width: `${columnWidths[0]}px` }}>Data 1</td>
+            <td style={{ width: `${columnWidths[1]}px` }}>Data 2</td>
+          </tr>
+          <tr>
+            <td style={{ width: `${columnWidths[0]}px` }}>Data 1</td>
+            <td style={{ width: `${columnWidths[1]}px` }}>Data 2</td>
+          </tr>
+          <tr>
+            <td style={{ width: `${columnWidths[0]}px` }}>Data 1</td>
+            <td style={{ width: `${columnWidths[1]}px` }}>Data 2</td>
+          </tr>
+          <tr>
+            <td style={{ width: `${columnWidths[0]}px` }}>Data 1</td>
+            <td style={{ width: `${columnWidths[1]}px` }}>Data 2</td>
+          </tr>
+          <tr>
+            <td style={{ width: `${columnWidths[0]}px` }}>Data 1</td>
+            <td style={{ width: `${columnWidths[1]}px` }}>Data 2</td>
+          </tr>
+          <tr>
+            <td style={{ width: `${columnWidths[0]}px` }}>Data 1</td>
+            <td style={{ width: `${columnWidths[1]}px` }}>Data 2</td>
+          </tr>
+          <tr>
+            <td style={{ width: `${columnWidths[0]}px` }}>Data 1</td>
+            <td style={{ width: `${columnWidths[1]}px` }}>Data 2</td>
+          </tr>
+          <tr>
+            <td style={{ width: `${columnWidths[0]}px` }}>Data 1</td>
+            <td style={{ width: `${columnWidths[1]}px` }}>Data 2</td>
+          </tr>
+          <tr>
+            <td style={{ width: `${columnWidths[0]}px` }}>Data 1</td>
+            <td style={{ width: `${columnWidths[1]}px` }}>Data 2</td>
+          </tr>
+          <tr>
+            <td style={{ width: `${columnWidths[0]}px` }}>Data 1</td>
+            <td style={{ width: `${columnWidths[1]}px` }}>Data 2</td>
+          </tr>
+          <tr>
+            <td style={{ width: `${columnWidths[0]}px` }}>Data 1</td>
+            <td style={{ width: `${columnWidths[1]}px` }}>Data 2</td>
+          </tr>
+          <tr>
+            <td style={{ width: `${columnWidths[0]}px` }}>Data 1</td>
+            <td style={{ width: `${columnWidths[1]}px` }}>Data 2</td>
+          </tr>
+          <tr>
+            <td style={{ width: `${columnWidths[0]}px` }}>Data 1</td>
+            <td style={{ width: `${columnWidths[1]}px` }}>Data 2</td>
+          </tr>
+          <tr>
+            <td style={{ width: `${columnWidths[0]}px` }}>Data 1</td>
+            <td style={{ width: `${columnWidths[1]}px` }}>Data 2</td>
+          </tr>
+          <tr>
+            <td style={{ width: `${columnWidths[0]}px` }}>Data 1</td>
+            <td style={{ width: `${columnWidths[1]}px` }}>Data 2</td>
+          </tr>
+          <tr>
+            <td style={{ width: `${columnWidths[0]}px` }}>Data 1</td>
+            <td style={{ width: `${columnWidths[1]}px` }}>Data 2</td>
+          </tr>
+          <tr>
+            <td style={{ width: `${columnWidths[0]}px` }}>Data 1</td>
+            <td style={{ width: `${columnWidths[1]}px` }}>Data 2</td>
+          </tr>
+          <tr>
+            <td style={{ width: `${columnWidths[0]}px` }}>Data 1</td>
+            <td style={{ width: `${columnWidths[1]}px` }}>Data 2</td>
+          </tr>
+          <tr>
+            <td style={{ width: `${columnWidths[0]}px` }}>Data 1</td>
+            <td style={{ width: `${columnWidths[1]}px` }}>Data 2</td>
+          </tr>
+          <tr>
+            <td style={{ width: `${columnWidths[0]}px` }}>Data 1</td>
+            <td style={{ width: `${columnWidths[1]}px` }}>Data 2</td>
+          </tr>
+          <tr>
+            <td style={{ width: `${columnWidths[0]}px` }}>Data 1</td>
+            <td style={{ width: `${columnWidths[1]}px` }}>Data 2</td>
+          </tr>
+          <tr>
+            <td style={{ width: `${columnWidths[0]}px` }}>Data 1</td>
+            <td style={{ width: `${columnWidths[1]}px` }}>Data 2</td>
+          </tr>
+          <tr>
+            <td style={{ width: `${columnWidths[0]}px` }}>Data 1</td>
+            <td style={{ width: `${columnWidths[1]}px` }}>Data 2</td>
+          </tr>
+          <tr>
+            <td style={{ width: `${columnWidths[0]}px` }}>Data 1</td>
+            <td style={{ width: `${columnWidths[1]}px` }}>Data 2</td>
+          </tr>
+          <tr>
+            <td style={{ width: `${columnWidths[0]}px` }}>Data 1</td>
+            <td style={{ width: `${columnWidths[1]}px` }}>Data 2</td>
+          </tr>
+          <tr>
+            <td style={{ width: `${columnWidths[0]}px` }}>Data 1</td>
+            <td style={{ width: `${columnWidths[1]}px` }}>Data 2</td>
+          </tr>
+          <tr>
+            <td style={{ width: `${columnWidths[0]}px` }}>Data 1</td>
+            <td style={{ width: `${columnWidths[1]}px` }}>Data 2</td>
+          </tr>
           <tr>
             <td style={{ width: `${columnWidths[0]}px` }}>Data 1</td>
             <td style={{ width: `${columnWidths[1]}px` }}>Data 2</td>
