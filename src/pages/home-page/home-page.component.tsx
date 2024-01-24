@@ -26,6 +26,7 @@ import MenuItem from '@mui/material/MenuItem';
 import Button from '@mui/material/Button';
 import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
+import ScalableTable from '../../components/scalable-table/scalable-table.component';
 
 interface HomePageState {
     selectedDate: Date;
@@ -138,21 +139,6 @@ class HomePage extends Component<{}, HomePageState> {
                 delegatePage: 1,
                 totalKam: totalKam,
             });
-            // if (supervisors.length > 0) {
-            //     var { visits: kamVisits, total: totalKam } = await this.visitService.getAllVisits(1, 100, new Date(), ClientType.wholesaler, currentUser.id!);
-            //     var { visits: delegateVisits, total: totalDelegate } = await this.visitService.getAllVisits(1, 100, new Date(), ClientType.pharmacy, supervisors[0].id!);
-            //     this.setState({
-            //         isLoading: false,
-            //         delegateVisits: delegateVisits,
-            //         filteredDelegateVisits: delegateVisits,
-            //         kamVisits: kamVisits,
-            //         filteredKamVisits: kamVisits,
-            //         selectedSupervisor: supervisors[0],
-            //         supervisors: supervisors,
-            //         totalDelegate: totalDelegate,
-            //         totalKam: totalKam,
-            //     });
-            // }
         }
         else {
             var { visits: delegateVisits, total: totalDelegate } = await this.visitService.getAllVisits(1, this.state.sizeDelegate, new Date(), ClientType.pharmacy, 0, this.state.delegateOrder, this.state.delegateProp);
@@ -543,6 +529,11 @@ class HomePage extends Component<{}, HomePageState> {
                                     display: 'flex',
                                     height: 'calc(100% - 100px)'
                                 }}>
+                                    {/* <div style={{ width: '70%' ,flex:'1'}}>
+
+                                        <ScalableTable
+                                        ></ScalableTable>
+                                    </div> */}
                                     <HomeTable id='hometable'
                                         total={this.state.totalDelegate}
                                         page={this.state.delegatePage}

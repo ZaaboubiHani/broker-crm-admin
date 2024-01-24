@@ -1,0 +1,20 @@
+.resizable-table {
+    background-color: red;
+    padding: 0px;
+    overflow: hidden;
+    position: relative;
+    margin: 0px;
+    height: 400px;
+    width: 100%;
+    display: flex;
+}
+
+.resizable-table th,
+.resizable-table td {
+    border: 1px solid #ddd;
+    padding: 8px;
+}
+
+.resizable-table th {
+    background-color: #f2f2f2;
+}

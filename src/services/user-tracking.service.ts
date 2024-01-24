@@ -3,9 +3,6 @@ import Globals from "../api/globals";
 import { formatDateToYYYYMM, formatDateToYYYYMMDD } from "../functions/date-format";
 import UserTrackingModel from "../models/user-tracking.model";
 
-
-
-
 export default class UserTrackingService {
     private static _instance: UserTrackingService | null = null;
 

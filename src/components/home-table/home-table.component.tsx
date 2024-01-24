@@ -56,7 +56,7 @@ const HomeTable: React.FC<HomeTableProps> = ({ data, id, isLoading, firstHeader,
             sortable:false,
             renderCell(params) {
                 return (<Button onClick={() => {
-                    onDisplayReport(params.row);
+                    onDisplayReport(params.row.visit);
                 }} variant="text">Voir</Button>);
             },
         },
@@ -113,6 +113,7 @@ const HomeTable: React.FC<HomeTableProps> = ({ data, id, isLoading, firstHeader,
                                     location: `${row.client?.wilaya}, ${row.client?.commune}`,
                                     hasCommand: row.hasCommand,
                                     visitLocation: row.visitLocation,
+                                    visit:row,
                                 };
                             })]}
 
