@@ -144,6 +144,7 @@ const ReportPanel: React.FC<ReportPanelProps> = ({ report, clientType, location,
                         : null
                 }
                 {
+
                     clientType == ClientType.doctor ? (
                         <div>
                             <h4 style={{ fontSize: 17, margin: '0px', height: '32px' }}><FlagIcon style={{ fontSize: 17 }} /> Objectif:</h4>
@@ -164,52 +165,53 @@ const ReportPanel: React.FC<ReportPanelProps> = ({ report, clientType, location,
                 }}>{report.note}</h6>
                 <Divider component="div" style={{ margin: '8px 0px' }} />
                 {
-                    clientType === ClientType.doctor ?
-                        (
-                            <div>
-                                <h4 style={{ fontSize: 17, margin: '0px', height: '32px' }}><HailIcon style={{ fontSize: 17 }} /> Médecins prescripteurs:</h4>
-                                {
-                                    report.nearbyClients?.map((client, index) => (
-                                        <div style={{ backgroundColor: '#eee', margin: '0px', padding: '4px',borderRadius:'4px' }}>
-                                            <div style={{ display: 'flex', justifyContent: 'space-between', margin: '0px', height: '32px' }}>
-                                                <div>
-                                                    <h6 style={{ fontSize: 12, fontWeight: '400', margin: '0px', height: '16px' }}><b>Nom et Prénom:</b> {client.fullName ?? '_'}</h6>
-                                                    <h6 style={{ fontSize: 12, fontWeight: '400', margin: '0px', height: '16px' }}><b>Remarque:</b> {client.presence ?? '_'}</h6>
+                    clientType !== ClientType.wholesaler ?
+                        clientType === ClientType.doctor ?
+                            (
+                                <div>
+                                    <h4 style={{ fontSize: 17, margin: '0px', height: '32px' }}><HailIcon style={{ fontSize: 17 }} /> Pharmacies à proximité:</h4>
+                                    {
+                                        report.nearbyClients?.map((client, index) => (
+                                            <div style={{ backgroundColor: '#eee', margin: '0px', padding: '4px', borderRadius: '4px' }}>
+                                                <div style={{ display: 'flex', justifyContent: 'space-between', margin: '0px', height: '32px' }}>
+                                                    <div>
+                                                        <h6 style={{ fontSize: 12, fontWeight: '400', margin: '0px', height: '16px' }}><b>Nom et Prénom:</b> {client.fullName ?? '_'}</h6>
+                                                        <h6 style={{ fontSize: 12, fontWeight: '400', margin: '0px', height: '16px' }}><b>Remarque:</b> {client.presence ?? '_'}</h6>
+                                                    </div>
                                                 </div>
+                                                {
+                                                    index !== report.nearbyClients!.length - 1 ? (
+                                                        <Divider component="div" style={{ margin: '0px', marginTop: '4px' }} />) : null
+                                                }
                                             </div>
-                                            {
-                                                index !== report.nearbyClients!.length - 1 ? (
-                                                    <Divider component="div" style={{ margin: '0px', marginTop: '4px' }} />) : null
-                                            }
-                                        </div>
-                                    ))
-                                }
-                            </div>
-                        ) : (
-                            <div>
-                                <h4 style={{ fontSize: 17, margin: '0px', height: '32px' }}><HailIcon style={{ fontSize: 17 }} /> Médecins prescripteurs:</h4>
-                                {
-                                    report.nearbyClients?.map((client, index) => (
-                                        <div style={{ backgroundColor: '#eee', margin: '0px', padding: '4px',borderRadius:'4px' }}>
-                                            <div style={{ display: 'flex', justifyContent: 'space-between', margin: '0px', height: '32px' }}>
-                                                <div>
-                                                    <h6 style={{ fontSize: 12, fontWeight: '400', margin: '0px', height: '16px' }}><b>Nom et Prénom:</b> {client.fullName ?? '_'}</h6>
-                                                    <h6 style={{ fontSize: 12, fontWeight: '400', margin: '0px', height: '16px' }}><b>Remarque:</b> {client.presence ?? '_'}</h6>
+                                        ))
+                                    }
+                                </div>
+                            ) : (
+                                <div>
+                                    <h4 style={{ fontSize: 17, margin: '0px', height: '32px' }}><HailIcon style={{ fontSize: 17 }} /> Médecins prescripteurs:</h4>
+                                    {
+                                        report.nearbyClients?.map((client, index) => (
+                                            <div style={{ backgroundColor: '#eee', margin: '0px', padding: '4px', borderRadius: '4px' }}>
+                                                <div style={{ display: 'flex', justifyContent: 'space-between', margin: '0px', height: '32px' }}>
+                                                    <div>
+                                                        <h6 style={{ fontSize: 12, fontWeight: '400', margin: '0px', height: '16px' }}><b>Nom et Prénom:</b> {client.fullName ?? '_'}</h6>
+                                                        <h6 style={{ fontSize: 12, fontWeight: '400', margin: '0px', height: '16px' }}><b>Remarque:</b> {client.presence ?? '_'}</h6>
+                                                    </div>
+                                                    <div>
+                                                        <h6 style={{ fontSize: 12, fontWeight: '400', margin: '0px', height: '16px' }}><b>Specialité:</b> {client.speciality ?? '_'}</h6>
+                                                        <h6 style={{ fontSize: 12, fontWeight: '400', margin: '0px', height: '16px' }}><b>Grade:</b> {client.grade ?? '_'}</h6>
+                                                    </div>
                                                 </div>
-                                                <div>
-                                                    <h6 style={{ fontSize: 12, fontWeight: '400', margin: '0px', height: '16px' }}><b>Specialité:</b> {client.speciality ?? '_'}</h6>
-                                                    <h6 style={{ fontSize: 12, fontWeight: '400', margin: '0px', height: '16px' }}><b>Grade:</b> {client.grade ?? '_'}</h6>
-                                                </div>
+                                                {
+                                                    index !== report.nearbyClients!.length - 1 ? (
+                                                        <Divider component="div" style={{ margin: '0px', marginTop: '4px' }} />) : null
+                                                }
                                             </div>
-                                            {
-                                                index !== report.nearbyClients!.length - 1 ? (
-                                                    <Divider component="div" style={{ margin: '0px', marginTop: '4px' }} />) : null
-                                            }
-                                        </div>
-                                    ))
-                                }
-                            </div>
-                        )
+                                        ))
+                                    }
+                                </div>
+                            ) : null
                 }
             </div>
         );
