@@ -9,6 +9,9 @@ import Button from '@mui/material/Button/Button';
 import jsPDF from 'jspdf';
 import { formatDateToYYYYMMDD } from '../../functions/date-format';
 import { Card, CardActionArea, CardMedia, DialogActions } from "@mui/material";
+import EditNoteIcon from '@mui/icons-material/EditNote';
+import DrawIcon from '@mui/icons-material/Draw';
+import NewspaperIcon from '@mui/icons-material/Newspaper';
 
 interface CommandPanelProps {
     command?: CommandModel;
@@ -123,7 +126,7 @@ const CommandPanel: React.FC<CommandPanelProps> = ({ command }) => {
                 {
                     (
                         <div>
-                            <h4 style={{ fontSize: 17, margin: '0px', height: '32px' }}><CardGiftcardIcon style={{ fontSize: 17 }} />Remarque:</h4>
+                            <h4 style={{ fontSize: 17, margin: '0px', height: '32px' }}><EditNoteIcon style={{ fontSize: 17 }} />Remarque:</h4>
                             {command.note}
                         </div>
                     )
@@ -132,7 +135,7 @@ const CommandPanel: React.FC<CommandPanelProps> = ({ command }) => {
                 {
                     (
                         <div>
-                            <h4 style={{ fontSize: 17, margin: '0px', height: '32px' }}><CardGiftcardIcon style={{ fontSize: 17 }} />Facture:</h4>
+                            <h4 style={{ fontSize: 17, margin: '0px', height: '32px' }}><NewspaperIcon style={{ fontSize: 17 }} />Facture:</h4>
                             <Card sx={{ maxWidth: 345, margin: '4px', borderRadius: '4px' }}>
                                 <CardActionArea onClick={() => handleDownload(command.invoice?.url)}>
                                     <CardMedia
@@ -150,7 +153,7 @@ const CommandPanel: React.FC<CommandPanelProps> = ({ command }) => {
                 {
                     (
                         <div>
-                            <h4 style={{ fontSize: 17, margin: '0px', height: '32px' }}><CardGiftcardIcon style={{ fontSize: 17 }} />Signature:</h4>
+                            <h4 style={{ fontSize: 17, margin: '0px', height: '32px' }}><DrawIcon style={{ fontSize: 17 }} />Signature:</h4>
                             <Card sx={{ maxWidth: 345, margin: '4px', borderRadius: '4px' }}>
                                 <CardActionArea onClick={() => handleDownload(command.signature?.url)}>
                                     <CardMedia

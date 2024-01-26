@@ -190,16 +190,14 @@ class DelegatePage extends Component<{}, DelegatePageState> {
     }
 
     handleDelegatePageChange = async (page: number, size: number) => {
-        this.setState({ loadingVisitsData: true, delegatePage: page, selectedReport: undefined, selectedCommand: undefined, selectedVisit: undefined });
-        var { visits: visits, total: total } = await this.visitService.getAllVisitsOfDelegate(page, size, this.state.selectedDate, this.state.selectedDelegate!.id!);
-        this.setState({ visits: visits, loadingVisitsData: false, totalDelegate: total, sizeDelegate: size });
+        if (this.state.selectedDelegate) {
+            this.setState({ loadingVisitsData: true, delegatePage: page, selectedReport: undefined, selectedCommand: undefined, selectedVisit: undefined });
+            var { visits: visits, total: total } = await this.visitService.getAllVisitsOfDelegate(page, size, this.state.selectedDate, this.state.selectedDelegate!.id!);
+            this.setState({ visits: visits, loadingVisitsData: false, totalDelegate: total, sizeDelegate: size });
+        }
     }
 
-    handleDelegateRowNumChange = async (size: number) => {
-        this.setState({ loadingVisitsData: true, delegatePage: 1, sizeDelegate: size, selectedReport: undefined, selectedCommand: undefined, selectedVisit: undefined });
-        var { visits: visits, total: total } = await this.visitService.getAllVisitsOfDelegate(1, size, this.state.selectedDate, this.state.selectedDelegate!.id!);
-        this.setState({ visits: visits, loadingVisitsData: false, totalDelegate: total });
-    }
+   
 
     componentDidMount(): void {
         if (localStorage.getItem('isLogged') === 'true') {
