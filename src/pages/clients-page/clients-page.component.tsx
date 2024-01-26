@@ -229,17 +229,21 @@ class ClientsPage extends Component<{}, ClientsPageProps> {
             );
             this.setState({ pharmVisits: pharmVisits, totalPharm: totalPharm, loadingVisitsData: false, sizePharm: size });
         } else {
-            var { visits: pharmVisits, total: totalPharm } = await this.visitService.getAllVisitsPaginated(
-                page,
-                size,
-                this.state.pharmSearchText,
-                ClientType.pharmacy,
-                this.state.selectedSupervisor!.id!,
-                this.state.pharmOrder,
-                this.state.pharmProp,
-                this.state.selectedDelegate?.id
-            );
-            this.setState({ pharmVisits: pharmVisits, totalPharm: totalPharm, loadingVisitsData: false, sizePharm: size });
+            if (this.state.selectedSupervisor) {
+
+                var { visits: pharmVisits, total: totalPharm } = await this.visitService.getAllVisitsPaginated(
+                    page,
+                    size,
+                    this.state.pharmSearchText,
+                    ClientType.pharmacy,
+                    this.state.selectedSupervisor!.id!,
+                    this.state.pharmOrder,
+                    this.state.pharmProp,
+                    this.state.selectedDelegate?.id
+                );
+                this.setState({ pharmVisits: pharmVisits, totalPharm: totalPharm, });
+            }
+            this.setState({ loadingVisitsData: false, sizePharm: size });
         }
     }
 

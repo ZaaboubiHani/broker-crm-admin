@@ -147,15 +147,39 @@ class ReportPage extends Component<{}, ReportPageProps> {
     };
 
     handleDelegatePageChange = async (page: number, size: number) => {
-        this.setState({ loadingVisitsData: true, delegatePage: page, reportData: undefined, selectedVisit: undefined, sizeDelegate: size });
-        var { visits: visits, total: total } = await this.visitService.getAllVisitsOfDelegate(page, size, this.state.selectedDate, this.state.selectedDelegate!.id!);
-        this.setState({ delegateVisits: visits, loadingVisitsData: false, totalDelegate: total, sizeDelegate: size });
+        if (this.state.selectedDelegate) {
+            this.setState({ loadingVisitsData: true, delegatePage: page, reportData: undefined, selectedVisit: undefined, sizeDelegate: size });
+            var { visits: visits, total: total } = await this.visitService.getAllVisitsOfDelegate(page, size, this.state.selectedDate, this.state.selectedDelegate!.id!);
+            this.setState({
+                delegateVisits: visits,
+                loadingVisitsData: false,
+                totalDelegate: total,
+                sizeDelegate: size
+            });
+        }
+        this.setState({
+            loadingVisitsData: false,
+            sizeDelegate: size,
+            delegatePage: page,
+        });
     }
 
     handleKamPageChange = async (page: number, size: number) => {
-        this.setState({ loadingVisitsData: true, kamPage: page, reportData: undefined, selectedVisit: undefined, sizeKam: size });
-        var { visits: visits, total: total } = await this.visitService.getAllVisitsOfDelegate(page, size, this.state.selectedDate, this.state.selectedKam!.id!);
-        this.setState({ kamVisits: visits, loadingVisitsData: false, totalKam: total, sizeKam: size });
+        if (this.state.selectedKam) {
+            this.setState({ loadingVisitsData: true, kamPage: page, reportData: undefined, selectedVisit: undefined, sizeKam: size });
+            var { visits: visits, total: total } = await this.visitService.getAllVisitsOfDelegate(page, size, this.state.selectedDate, this.state.selectedKam!.id!);
+            this.setState({
+                kamVisits: visits,
+                loadingVisitsData: false,
+                totalKam: total,
+                sizeKam: size
+            });
+        }
+        this.setState({
+            loadingVisitsData: false,
+            kamPage: page,
+            sizeKam: size
+        });
     }
 
     handleDelegateRowNumChange = async (size: number) => {

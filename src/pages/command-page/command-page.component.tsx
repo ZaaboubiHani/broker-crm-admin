@@ -205,24 +205,38 @@ class CommandPage extends Component<{}, CommandDelegatePageProps> {
 
 
     handleDelegatePageChange = async (page: number, size: number) => {
-        this.setState({ loadingDelegateCommandsData: true, delegateCommandData: undefined, sizeDelegate: size });
-        var { commands: commands, total: total } = await this.commandService.getAllCommandsOfDelegate(page, size, this.state.selectedDateDelegate, this.state.selectedDelegate!.id!);
+        if (this.state.selectedDelegate) {
+            this.setState({ loadingDelegateCommandsData: true, delegateCommandData: undefined, sizeDelegate: size });
+            var { commands: commands, total: total } = await this.commandService.getAllCommandsOfDelegate(page, size, this.state.selectedDateDelegate, this.state.selectedDelegate!.id!);
+            this.setState({
+                delegatePage: page,
+                delegateCommands: commands,
+                totalDelegate: total,
+                loadingDelegateCommandsData: false,
+                sizeDelegate: size,
+            });
+        }
         this.setState({
             delegatePage: page,
-            delegateCommands: commands,
-            totalDelegate: total,
             loadingDelegateCommandsData: false,
             sizeDelegate: size,
         });
     }
 
     handleKamPageChange = async (page: number, size: number) => {
-        this.setState({ loadingKamCommandsData: true, kamCommandData: undefined, sizeKam: size });
-        var { commands: commands, total: total } = await this.commandService.getAllCommandsOfDelegate(page, size, this.state.selectedDateKam, this.state.selectedKam!.id!);
+        if (this.state.selectedKam) {
+            this.setState({ loadingKamCommandsData: true, kamCommandData: undefined, sizeKam: size });
+            var { commands: commands, total: total } = await this.commandService.getAllCommandsOfDelegate(page, size, this.state.selectedDateKam, this.state.selectedKam!.id!);
+            this.setState({
+                kamPage: page,
+                kamCommands: commands,
+                totalKam: total,
+                loadingKamCommandsData: false,
+                sizeKam: size,
+            });
+        }
         this.setState({
             kamPage: page,
-            kamCommands: commands,
-            totalKam: total,
             loadingKamCommandsData: false,
             sizeKam: size,
         });
@@ -263,7 +277,7 @@ class CommandPage extends Component<{}, CommandDelegatePageProps> {
         });
     }
 
-   
+
     componentDidMount(): void {
         if (localStorage.getItem('isLogged') === 'true') {
 
@@ -450,7 +464,7 @@ class CommandPage extends Component<{}, CommandDelegatePageProps> {
                                     }
                                 </div>
                             </div>
-                        <Snackbar anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }} open={this.state.showDialog} autoHideDuration={3000} onClose={this.handleCloseDialog} message={this.state.dialogMessage} />
+                            <Snackbar anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }} open={this.state.showDialog} autoHideDuration={3000} onClose={this.handleCloseDialog} message={this.state.dialogMessage} />
                         </div>
                     </CustomTabPanel>
 

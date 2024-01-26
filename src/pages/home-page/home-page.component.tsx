@@ -429,6 +429,11 @@ class HomePage extends Component<{}, HomePageState> {
                 totalDelegate: totalDelegate,
             });
         }
+        this.setState({
+            delegatePage: page,
+            sizeDelegate: size,
+            loadingVisitsData: false,
+        });
     }
 
     handleKamPageChange = async (page: number, size: number) => {
@@ -443,7 +448,6 @@ class HomePage extends Component<{}, HomePageState> {
             kamPage: page,
             totalKam: totalKam,
         });
-
     }
 
     render() {
@@ -530,7 +534,6 @@ class HomePage extends Component<{}, HomePageState> {
                                     height: 'calc(100% - 100px)'
                                 }}>
                                     {/* <div style={{ width: '70%' ,flex:'1'}}>
-
                                         <ScalableTable
                                         ></ScalableTable>
                                     </div> */}
