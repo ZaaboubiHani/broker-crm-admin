@@ -133,8 +133,8 @@ const ExpenseTable: React.FC<ExpenseTableProps> = ({ data, isLoading }) => {
                                 return {
                                     id: index,
                                     date: row.createdDate || new Date(),
-                                    startLocation: `${row.startWilaya ?? ''}, ${row.startCommun ?? ''}`,
-                                    endLocation: `${row.endWilaya ?? ''}, ${row.endCommun ?? ''}`,
+                                    startLocation: `${row.startCommun ?? ''}, ${row.startWilaya ?? ''}`,
+                                    endLocation: `${row.endCommun ?? ''}, ${row.endWilaya ?? ''}`,
                                     totalVisitsDoctor: row.totalVisitsDoctor,
                                     totalVisitsPharmacy: row.totalVisitsPharmacy,
                                     kmTotal: row.kmTotal,

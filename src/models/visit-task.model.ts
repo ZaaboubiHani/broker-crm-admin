@@ -29,8 +29,8 @@ export default class VisitTaskModel {
         }
         return new VisitTaskModel({
             date: parsedDate,
-            tasksWilayasCommunes: Array.from(new Set(json.wilayasCommuns.tasks.map((obj: any) => obj.wilaya + ', ' + obj.commun))),
-            visitsWilayasCommunes: Array.from(new Set(json.wilayasCommuns.visits.map((obj: any) => obj.wilaya + ', ' + obj.commun))),
+            tasksWilayasCommunes: Array.from(new Set(json.wilayasCommuns.tasks.map((obj: any) => obj.commun + ', ' + obj.wilaya))),
+            visitsWilayasCommunes: Array.from(new Set(json.wilayasCommuns.visits.map((obj: any) => obj.commun + ', ' + obj.wilaya))),
             numVisits: json.numVisits,
             numTasks: json.numTasks,
 

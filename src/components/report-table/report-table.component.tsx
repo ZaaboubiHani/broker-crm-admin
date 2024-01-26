@@ -93,7 +93,7 @@ const ReportTable: React.FC<ReportTableProps> = ({ data, id, isLoading, displayR
                                     date: row.createdDate || new Date(),
                                     client: row.client?.name,
                                     speciality: row.client?.speciality,
-                                    location: `${row.client?.wilaya}, ${row.client?.commune}`,
+                                    location: `${row.client?.commune}, ${row.client?.wilaya}`,
                                     visit: row,
                                 };
                             })]}

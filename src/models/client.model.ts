@@ -14,7 +14,6 @@ export default class ClientModel{
     speciality?: string;
     location?: string;
     potential?: number;
-    visitsNum?: number;
     totalSellers?: number;
     totalPostChifa?: number;
     sector?: string;
@@ -36,7 +35,6 @@ export default class ClientModel{
         this.totalSellers = params.totalSellers;
         this.type = params.type;
         this.sector = params.sector;
-        this.visitsNum = params.visitsNum;
     }
 
     static fromJson(json: any): ClientModel {
@@ -52,7 +50,6 @@ export default class ClientModel{
             location: json?.attributes?.localization,
             totalSellers: json?.attributes?.totalSellers,
             totalPostChifa: json?.attributes?.totalPostChifa,
-            visitsNum: json?.attributes?.visits?.data?.length,
             sector: json?.attributes?.sector === undefined || json?.attributes?.sector === null ? undefined : json?.attributes?.sector === true ? 'etatique' : 'privé',
             type: json?.attributes?.relatedSpeciality?.data?.id === 1 ? ClientType.pharmacy : json?.attributes?.relatedSpeciality?.data?.id === 2 ? ClientType.wholesaler : ClientType.doctor,
         });
