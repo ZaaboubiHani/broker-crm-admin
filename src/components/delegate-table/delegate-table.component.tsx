@@ -108,7 +108,7 @@ const DelegateTable: React.FC<DelegateTableProps> = ({ data, id, onDisplayComman
                                     date: formatDateToYYYYMMDD(row.createdDate || new Date()),
                                     client: row.client?.name,
                                     speciality: row.client?.speciality,
-                                    location: `${row.client?.wilaya}, ${row.client?.commune}`,
+                                    location: `${row.client?.commune}, ${row.client?.wilaya}`,
                                     hasCommand: row.hasCommand,
                                     visitLocation: row.visitLocation,
                                 };

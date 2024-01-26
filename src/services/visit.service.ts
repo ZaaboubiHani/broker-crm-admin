@@ -38,14 +38,14 @@ export default class VisitService {
                 case 'client':
                     textSort = `&sort[0]=client.fullName:${order ? 'asc' : 'desc'}`;
                     break;
-                case 'delegate':
+                case 'username':
                     textSort = `&sort[0]=user.username:${order ? 'asc' : 'desc'}`;
                     break;
-                case 'wilaya':
+                case 'location':
                     textSort = `&sort[0]=client.wilaya:${order ? 'asc' : 'desc'}`;
                     break;
-                case 'commune':
-                    textSort = `&sort[0]=client.commun:${order ? 'asc' : 'desc'}`;
+                case 'speciality':
+                    textSort = `&sort[0]=client.relatedSpeciality.domainType.reference:${order ? 'asc' : 'desc'}`;
                     break;
             }
         }
@@ -94,7 +94,6 @@ export default class VisitService {
         var delegateFilter = '';
         var textSort = '';
         var visits: VisitModel[] = [];
-        let getAllDB = false;
 
         if (delegateId) {
             delegateFilter = `&filters[user][id][$eq]=${delegateId}`;
@@ -121,61 +120,26 @@ export default class VisitService {
             case 'commune':
                 textSort = `&sort[0]=client.commun:${order ? 'asc' : 'desc'}`;
                 break;
-            case 'visitsNum':
-                getAllDB = true;
-                break;
+
         }
 
-        if (getAllDB) {
-            let total = 0;
-            let pageIndex = 1;
-            while (true) {
 
-                var response = await axios.get(`${Globals.apiUrl}/visits?populate[rapport][populate]=*${textSort}&populate[client][populate]=visits&populate[client][populate]=relatedSpeciality.domainType&populate=user${textFilter}&pagination[page]=${pageIndex}&pagination[pageSize]=100&filters[client][relatedSpeciality][domainType][reference][$eq]=${clientType === ClientType.doctor ? `doctor&filters[user][creatorId][$eq]=${superId}` : clientType === ClientType.pharmacy ? `pharmacy&filters[user][creatorId][$eq]=${superId}` : 'wholesaler'}${delegateFilter}`,
-                    {
-                        headers: {
-                            'Authorization': `Bearer ${token}`,
-                        },
-                    });
-
-                if (response.status == 200) {
-
-                    for (let index = 0; index < response.data['data'].length; index++) {
-                        var visit = VisitModel.fromJson(response.data['data'][index]);
-                        visits.push(visit);
-                    }
-                    total =  response.data.meta.pagination.total;
+        var response = await axios.get(`${Globals.apiUrl}/visits?populate[rapport][populate]=*${textSort}&populate[client][populate]=visits&populate[client][populate]=relatedSpeciality.domainType&populate=user${textFilter}&pagination[page]=${page}&pagination[pageSize]=${size}&filters[client][relatedSpeciality][domainType][reference][$eq]=${clientType === ClientType.doctor ? `doctor&filters[user][creatorId][$eq]=${superId}` : clientType === ClientType.pharmacy ? `pharmacy&filters[user][creatorId][$eq]=${superId}` : 'wholesaler'}${delegateFilter}`,
+            {
+                headers: {
+                    'Authorization': `Bearer ${token}`,
                 }
-                if(response.data['data'].length === 0){
-                    break;
-                }
-                pageIndex++;
-            }
+            });
 
-            if(order){
-                visits.sort((a, b) => a.client!.visitsNum! - b.client!.visitsNum!);
-            }else{
-                visits.sort((a, b) => b.client!.visitsNum! - a.client!.visitsNum!);
-            }
-            visits = visits.slice(size * (page - 1), size * page);
-            return { visits: visits, total: total };
-        } else {
-            var response = await axios.get(`${Globals.apiUrl}/visits?populate[rapport][populate]=*${textSort}&populate[client][populate]=visits&populate[client][populate]=relatedSpeciality.domainType&populate=user${textFilter}&pagination[page]=${page}&pagination[pageSize]=${size}&filters[client][relatedSpeciality][domainType][reference][$eq]=${clientType === ClientType.doctor ? `doctor&filters[user][creatorId][$eq]=${superId}` : clientType === ClientType.pharmacy ? `pharmacy&filters[user][creatorId][$eq]=${superId}` : 'wholesaler'}${delegateFilter}`,
-                {
-                    headers: {
-                        'Authorization': `Bearer ${token}`,
-                    }
-                });
+        if (response.status == 200) {
 
-            if (response.status == 200) {
-
-                for (let index = 0; index < response.data['data'].length; index++) {
-                    var visit = VisitModel.fromJson(response.data['data'][index]);
-                    visits.push(visit);
-                }
-                return { visits: visits, total: response.data.meta.pagination.total };
+            for (let index = 0; index < response.data['data'].length; index++) {
+                var visit = VisitModel.fromJson(response.data['data'][index]);
+                visits.push(visit);
             }
+            return { visits: visits, total: response.data.meta.pagination.total };
         }
+
         return { visits: [], total: 0 };
     }
 

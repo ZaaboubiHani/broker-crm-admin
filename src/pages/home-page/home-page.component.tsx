@@ -26,7 +26,6 @@ import MenuItem from '@mui/material/MenuItem';
 import Button from '@mui/material/Button';
 import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
-import ScalableTable from '../../components/scalable-table/scalable-table.component';
 
 interface HomePageState {
     selectedDate: Date;
@@ -300,18 +299,18 @@ class HomePage extends Component<{}, HomePageState> {
             totalKam: totalKam,
         });
     }
-    handleKamSort = async () => {
-        var kamOrder = !this.state.kamOrder;
+    handleKamSort = async(field: string, order: boolean) => {
         this.setState({
             loadingVisitsData: true,
             kamPage: 1,
             selectedReport: undefined,
             selectedVisit: undefined,
             selectedCommand: undefined,
-            kamOrder: kamOrder,
+            kamOrder: order,
+            kamProp:field,
         });
 
-        var { visits: kamVisits, total: totalKam } = await this.visitService.getAllVisits(1, this.state.sizeKam, this.state.selectedDate, ClientType.wholesaler, this.state.currentUser.id!, kamOrder, this.state.kamProp);
+        var { visits: kamVisits, total: totalKam } = await this.visitService.getAllVisits(1, this.state.sizeKam, this.state.selectedDate, ClientType.wholesaler, this.state.currentUser.id!, order, field);
         this.setState({
             kamVisits: kamVisits,
             filteredKamVisits: kamVisits,
@@ -320,8 +319,7 @@ class HomePage extends Component<{}, HomePageState> {
         });
     }
 
-    handleDelegateSort = async () => {
-        var delegateOrder = !this.state.delegateOrder;
+    handleDelegateSort = async (field: string, order: boolean) => {
         if (this.state.currentUser.type === UserType.supervisor) {
             this.setState({
                 loadingVisitsData: true,
@@ -329,9 +327,10 @@ class HomePage extends Component<{}, HomePageState> {
                 selectedVisit: undefined,
                 selectedCommand: undefined,
                 delegatePage: 1,
-                delegateOrder: delegateOrder
+                delegateOrder: order,
+                delegateProp: field,
             });
-            var { visits: visits, total: total } = await this.visitService.getAllVisits(1, this.state.sizeDelegate, this.state.selectedDate, ClientType.pharmacy, this.state.currentUser.id!, delegateOrder, this.state.delegateProp);
+            var { visits: visits, total: total } = await this.visitService.getAllVisits(1, this.state.sizeDelegate, this.state.selectedDate, ClientType.pharmacy, this.state.currentUser.id!, order, field);
 
             this.setState({
                 delegateVisits: visits,
@@ -348,9 +347,10 @@ class HomePage extends Component<{}, HomePageState> {
                     selectedVisit: undefined,
                     selectedCommand: undefined,
                     delegatePage: 1,
-                    delegateOrder: delegateOrder
+                    delegateOrder: order,
+                delegateProp: field,
                 });
-                var { visits: visits, total: total } = await this.visitService.getAllVisits(1, this.state.sizeDelegate, this.state.selectedDate, ClientType.pharmacy, this.state.selectedSupervisor.id!, delegateOrder, this.state.delegateProp);
+                var { visits: visits, total: total } = await this.visitService.getAllVisits(1, this.state.sizeDelegate, this.state.selectedDate, ClientType.pharmacy, this.state.selectedSupervisor.id!, order, field);
 
                 this.setState({
                     delegateVisits: visits,
@@ -367,9 +367,10 @@ class HomePage extends Component<{}, HomePageState> {
                 selectedVisit: undefined,
                 selectedCommand: undefined,
                 delegatePage: 1,
-                delegateOrder: delegateOrder
+                delegateOrder: order,
+                delegateProp: field,
             });
-            var { visits: visits, total: total } = await this.visitService.getAllVisits(1, this.state.sizeDelegate, this.state.selectedDate, ClientType.pharmacy, 0, delegateOrder, this.state.delegateProp);
+            var { visits: visits, total: total } = await this.visitService.getAllVisits(1, this.state.sizeDelegate, this.state.selectedDate, ClientType.pharmacy, 0, order, field);
 
             this.setState({
                 delegateVisits: visits,
@@ -393,7 +394,7 @@ class HomePage extends Component<{}, HomePageState> {
     };
 
     handleDelegatePageChange = async (page: number, size: number) => {
-        this.setState({ loadingVisitsData: true, selectedReport: undefined, selectedVisit: undefined, selectedCommand: undefined });
+        this.setState({ loadingVisitsData: true, selectedReport: undefined, selectedVisit: undefined, selectedCommand: undefined, filteredDelegateVisits: [], delegateVisits: [] });
         if (this.state.currentUser.type === UserType.supervisor) {
             var { visits: visits, total: total } = await this.visitService.getAllVisits(page, size, this.state.selectedDate, ClientType.pharmacy, this.state.currentUser.id!, this.state.delegateOrder, this.state.delegateProp);
             this.setState({
@@ -496,7 +497,7 @@ class HomePage extends Component<{}, HomePageState> {
                                     }
                                     <div style={{ width: '100%', position: 'relative' }}>
                                         <DatePickerBar onPick={this.handleOnPickDate} initialDate={this.state.selectedDate}></DatePickerBar>
-                                        <div style={{ width: '300px', display: 'flex', position: 'absolute', right: "0px", top: '46px' }}>
+                                        {/* <div style={{ width: '300px', display: 'flex', position: 'absolute', right: "0px", top: '46px' }}>
                                             <FormControl size="small" style={{
                                                 width: '150px',
                                                 flex: '1',
@@ -524,7 +525,7 @@ class HomePage extends Component<{}, HomePageState> {
                                                 sx={{ backgroundColor: 'white', marginLeft: "8px", height: '40px' }}>
                                                 {this.state.delegateOrder ? <ArrowUpwardIcon /> : <ArrowDownwardIcon />}
                                             </Button>
-                                        </div>
+                                        </div> */}
                                     </div>
                                 </div>
                                 <div style={{
@@ -533,10 +534,6 @@ class HomePage extends Component<{}, HomePageState> {
                                     display: 'flex',
                                     height: 'calc(100% - 100px)'
                                 }}>
-                                    {/* <div style={{ width: '70%' ,flex:'1'}}>
-                                        <ScalableTable
-                                        ></ScalableTable>
-                                    </div> */}
                                     <HomeTable id='hometable'
                                         total={this.state.totalDelegate}
                                         page={this.state.delegatePage}
@@ -547,6 +544,8 @@ class HomePage extends Component<{}, HomePageState> {
                                         data={this.state.filteredDelegateVisits}
                                         onDisplayReport={this.handleDisplayReport}
                                         onDisplayCommand={this.handleDisplayCommand}
+                                        sortChange={this.handleDelegateSort}
+                                        sorting={{field:this.state.delegateProp??'',order:this.state.delegateOrder}}
                                     ></HomeTable>
                                     <div
                                         style={{
@@ -594,7 +593,7 @@ class HomePage extends Component<{}, HomePageState> {
                             <div style={{ display: 'flex', flexDirection: 'column', flexGrow: '1', height: 'calc(100vh  - 65px)', width: '100%', }}>
                                 <div style={{ width: '100%', position: 'relative', marginBottom: '16px' }}>
                                     <DatePickerBar onPick={this.handleOnPickDate} initialDate={this.state.selectedDate}></DatePickerBar>
-                                    <div style={{ width: '300px', display: 'flex', position: 'absolute', right: "0px", top: '46px' }}>
+                                    {/* <div style={{ width: '300px', display: 'flex', position: 'absolute', right: "0px", top: '46px' }}>
                                         <FormControl size="small" style={{
                                             width: '150px',
                                             flex: '1',
@@ -623,7 +622,7 @@ class HomePage extends Component<{}, HomePageState> {
                                             {this.state.delegateOrder ? <ArrowUpwardIcon /> : <ArrowDownwardIcon />}
                                         </Button>
 
-                                    </div>
+                                    </div> */}
                                 </div>
 
                                 <div className='table-panel'>
@@ -637,6 +636,8 @@ class HomePage extends Component<{}, HomePageState> {
                                         data={this.state.filteredKamVisits}
                                         onDisplayReport={this.handleDisplayReport}
                                         onDisplayCommand={this.handleDisplayCommand}
+                                        sortChange={this.handleKamSort}
+                                        sorting={{field:this.state.kamProp ??'',order:this.state.kamOrder}}
                                     ></HomeTable>
                                     <div style={{
                                         width: '30%',

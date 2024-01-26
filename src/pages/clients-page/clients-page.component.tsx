@@ -1,4 +1,3 @@
-import MonthYearPicker from '../../components/month-year-picker/month-year-picker.component';
 import React, { Component } from 'react';
 import '../clients-page/clients-page.style.css';
 import SearchIcon from '@mui/icons-material/Search';
@@ -724,7 +723,6 @@ class ClientsPage extends Component<{}, ClientsPageProps> {
                                             <MenuItem value={'delegate'}>Délégué</MenuItem>
                                             <MenuItem value={'wilaya'}>wilaya</MenuItem>
                                             <MenuItem value={'commune'}>Commune</MenuItem>
-                                            <MenuItem value={'visitsNum'}>Nombre de visites</MenuItem>
                                         </Select>
                                     </FormControl>
                                     <Button variant="outlined"
@@ -860,7 +858,6 @@ class ClientsPage extends Component<{}, ClientsPageProps> {
                                             <MenuItem value={'delegate'}>Délégué</MenuItem>
                                             <MenuItem value={'wilaya'}>wilaya</MenuItem>
                                             <MenuItem value={'commune'}>Commune</MenuItem>
-                                            <MenuItem value={'visitsNum'}>Nombre de visites</MenuItem>
                                         </Select>
                                     </FormControl>
                                     <Button variant="outlined"

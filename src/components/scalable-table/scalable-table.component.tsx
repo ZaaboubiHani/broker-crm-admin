@@ -2,16 +2,24 @@ import React, { useState, useEffect, useRef } from 'react';
 import '../../components/scalable-table/scalable-table.style.css'
 import KeyboardArrowLeftIcon from '@mui/icons-material/KeyboardArrowLeft';
 import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
+import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
+import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 
 interface TableColDef {
-  field?: string;
-  headerName?: string;
+  field: string;
+  headerName: string;
+  sortable?: boolean;
   renderCell?: (params: any) => {};
 }
 
 interface PaginationModel {
   page: number;
   size: number;
+}
+
+interface SortModel {
+  field: string;
+  order: boolean;
 }
 
 interface ScalableTableProps {
@@ -21,10 +29,12 @@ interface ScalableTableProps {
   pageSizeOptions?: number[];
   total: number;
   pagination: PaginationModel;
+  sortModel: SortModel;
   onPaginationChange: (model: PaginationModel) => void;
+  onSortChange: (model: SortModel) => void;
 }
 
-const ScalableTable: React.FC<ScalableTableProps> = ({ columns, rows, pageSizeOptions, pagination, total, onPaginationChange }) => {
+const ScalableTable: React.FC<ScalableTableProps> = ({ columns, rows, pageSizeOptions, pagination, total, sortModel, onPaginationChange, onSortChange }) => {
   const [columnWidths, setColumnWidths] = useState<number[]>(Array.from({ length: columns.length }, (_, index) => index));
   const [isResizing, setIsResizing] = useState<boolean>(false);
   const [resizingColumnIndex, setResizingColumnIndex] = useState<number | null>(null);
@@ -78,20 +88,101 @@ const ScalableTable: React.FC<ScalableTableProps> = ({ columns, rows, pageSizeOp
   }, [isResizing, resizingColumnIndex, initialMouseX]);
 
   useEffect(() => {
+    const handleMove = (clientX: number) => {
+      if (isResizing && resizingColumnIndex !== null) {
+        const containerWidth = columnWidths.reduce((sum, current) => sum + current, 0);
+        const widthDifference = clientX - initialMouseX;
+  
+        setColumnWidths((prevWidths) => {
+          const newWidths = [...prevWidths];
+          if (resizingColumnIndex < newWidths.length - 1) {
+            if (widthDifference > 0 && newWidths[resizingColumnIndex + 1] > 50) {
+              newWidths[resizingColumnIndex] += widthDifference;
+              newWidths[resizingColumnIndex + 1] -= widthDifference;
+              newWidths[resizingColumnIndex] = Math.min(
+                Math.max(newWidths[resizingColumnIndex], 50),
+                containerWidth - newWidths.filter((_, index) => index !== resizingColumnIndex).reduce((sum, current) => sum + current, 0)
+              );
+              newWidths[resizingColumnIndex + 1] = Math.min(
+                Math.max(newWidths[resizingColumnIndex + 1], 50),
+                containerWidth - newWidths.filter((_, index) => index !== resizingColumnIndex + 1).reduce((sum, current) => sum + current, 0)
+              );
+            }
+            if (widthDifference < 0 && newWidths[resizingColumnIndex] > 50) {
+              newWidths[resizingColumnIndex] += widthDifference;
+              newWidths[resizingColumnIndex + 1] -= widthDifference;
+              newWidths[resizingColumnIndex] = Math.min(
+                Math.max(newWidths[resizingColumnIndex], 50),
+                containerWidth - newWidths.filter((_, index) => index !== resizingColumnIndex).reduce((sum, current) => sum + current, 0)
+              );
+              newWidths[resizingColumnIndex + 1] = Math.min(
+                Math.max(newWidths[resizingColumnIndex + 1], 50),
+                containerWidth - newWidths.filter((_, index) => index !== resizingColumnIndex + 1).reduce((sum, current) => sum + current, 0)
+              );
+            }
+          }
+          return newWidths;
+        });
+  
+        setInitialMouseX(clientX);
+      }
+    };
+  
+   
+  
+    const handleMoveTouch = (e: TouchEvent) => {
+      handleMove(e.touches[0].clientX);
+    };
+  
+    const handleMoveMouse = (e: MouseEvent) => {
+      handleMove(e.clientX);
+    };
+  
+    const handleEnd = () => {
+      setIsResizing(false);
+      setResizingColumnIndex(null);
+    };
+  
+    if (isResizing) {
+      window.addEventListener('touchmove', handleMoveTouch);
+      window.addEventListener('mousemove', handleMoveMouse);
+      window.addEventListener('touchend', handleEnd);
+      window.addEventListener('mouseup', handleEnd);
+    }
+  
+    return () => {
+      window.removeEventListener('touchmove', handleMoveTouch);
+      window.removeEventListener('mousemove', handleMoveMouse);
+      window.removeEventListener('touchend', handleEnd);
+      window.removeEventListener('mouseup', handleEnd);
+    };
+  }, [isResizing, resizingColumnIndex, initialMouseX,  columnWidths]);
+  
+  useEffect(() => {
     const containerWidth = (containerRef.current?.getBoundingClientRect().width || 0);
     const singleHeaderWidth = ((containerWidth - (columns.length * 16)) / columns.length);
     setColumnWidths(Array.from({ length: columns.length }, (_, index) => singleHeaderWidth));
-  }, [containerRef]);
+  }, [pagination.page]);
 
   useEffect(() => {
     setSelectedRowIndex(-1);
-  }, [columns]);
+  }, [pagination.page]);
 
   const handleMouseDown = (columnIndex: number, e: React.MouseEvent<HTMLDivElement>) => {
     e.preventDefault();
     setIsResizing(true);
     setResizingColumnIndex(columnIndex);
     setInitialMouseX(e.clientX);
+  };
+
+  const handleTouchDown = (columnIndex: number, e: React.TouchEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    setIsResizing(true);
+    setResizingColumnIndex(columnIndex);
+    const touch = e.touches[0];
+    if (touch) {
+      setInitialMouseX(touch.clientX);
+    }
   };
 
   return (
@@ -109,15 +200,35 @@ const ScalableTable: React.FC<ScalableTableProps> = ({ columns, rows, pageSizeOp
               columns.map((col, index) => (
                 <>
                   <th
-                    style={{ width: `${columnWidths[index]}px` }}
+                    style={{
+                      width: `${columnWidths[index]}px`,
+                      fontWeight: 'normal',
+                      display: 'flex',
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                    }}
+                    onClick={() => {
+                      if (col.sortable) {
+                        sortModel = { field: col.field, order: !sortModel.order, };
+                        onSortChange(sortModel);
+                      }
+                    }}
                   >
                     {col.headerName}
+                    {
+                      sortModel.field === col.field ? sortModel.order ? <ArrowUpwardIcon
+                        fontSize='small'
+                      /> : <ArrowDownwardIcon
+                        fontSize='small'
+                      /> : null
+                    }
                   </th>
                   {
                     index !== columns.length - 1 ? (
                       <div
                         className="resizable-handler"
                         onMouseDown={(e) => handleMouseDown(index, e)}
+                        onTouchStart={(e) => handleTouchDown(index, e)}
                       ></div>
                     ) : null
                   }
@@ -195,11 +306,11 @@ const ScalableTable: React.FC<ScalableTableProps> = ({ columns, rows, pageSizeOp
                 <option value={100}>100</option></>)
           }
         </select>
-        <p 
-        style={{
-          marginRight: '16px'
-        }}>
-          { rows.length > 0 ? ((pagination.page * pagination.size) + 1) : 0} - {((pagination.page * pagination.size) + rows.length)} de {total}
+        <p
+          style={{
+            marginRight: '16px'
+          }}>
+          {rows.length > 0 ? ((pagination.page * pagination.size) + 1) : 0} - {((pagination.page * pagination.size) + rows.length)} de {total}
         </p>
         <KeyboardArrowLeftIcon
           style={{

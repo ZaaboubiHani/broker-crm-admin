@@ -16,11 +16,14 @@ interface HomeTableProps {
     page: number;
     size: number;
     total: number;
+    sorting: {field:string,order:boolean};
     pageChange: (page: number, size: number) => void;
+    sortChange: (field: string, order: boolean) => void;
 }
 
-const HomeTable: React.FC<HomeTableProps> = ({ data, id, isLoading, firstHeader, onDisplayReport, onDisplayCommand, total, size, page, pageChange, }) => {
+const HomeTable: React.FC<HomeTableProps> = ({ data, id, isLoading, firstHeader, onDisplayReport, onDisplayCommand, total, size, page, sorting,pageChange, sortChange }) => {
 
+    const [sortModel, setSortModel] = React.useState<{field:string,order:boolean}>(sorting);
     const [rowsPerPage, setRowsPerPage] = React.useState(size);
 
     const [pageIndex, setPageIndex] = React.useState(page - 1);
@@ -28,52 +31,6 @@ const HomeTable: React.FC<HomeTableProps> = ({ data, id, isLoading, firstHeader,
     if (pageIndex !== (page - 1)) {
         setPageIndex(page - 1);
     }
-
-    // const columns: GridColDef[] = [
-    //     {
-    //         field: 'username',
-    //         headerName: firstHeader,
-    //         width: 150,
-    //         filterable: false,
-    //         sortable: false,
-    //     },
-    //     {
-    //         field: 'client', headerName: 'Client', width: 170,
-    //         filterable: false,
-    //         sortable: false,
-    //     },
-    //     {
-    //         field: 'speciality', headerName: 'Spécialité', width: 130,
-    //         filterable: false,
-    //         sortable: false,
-    //     },
-    //     {
-    //         field: 'location', headerName: 'Localisation', width: 200,
-    //         filterable: false,
-    //         sortable: false,
-    //     },
-    //     {
-    //         field: 'report', headerName: 'Rapport', width: 80,
-    //         filterable: false,
-    //         sortable: false,
-    //         renderCell(params) {
-    //             return (<Button onClick={() => {
-    //                 onDisplayReport(params.row.visit);
-    //             }} variant="text">Voir</Button>);
-    //         },
-    //     },
-    //     {
-    //         field: 'command', headerName: 'Bon de commande', width: 150,
-    //         align: 'center',
-    //         filterable: false,
-    //         sortable: false,
-    //         renderCell(params) {
-    //             return (<Button disabled={!params.row.hasCommand} onClick={() => {
-    //                 onDisplayCommand(params.row);
-    //             }} variant="text">Voir</Button>);
-    //         },
-    //     },
-    // ];
 
     return (
         <div id={id}
@@ -106,18 +63,22 @@ const HomeTable: React.FC<HomeTableProps> = ({ data, id, isLoading, firstHeader,
                                 {
                                     field: 'username',
                                     headerName: firstHeader,
+                                    sortable:true,
                                 },
                                 {
                                     field: 'client',
                                     headerName: 'Client',
+                                    sortable:true,
                                 },
                                 {
                                     field: 'speciality',
                                     headerName: 'Spécialité',
+                                    sortable:true,
                                 },
                                 {
                                     field: 'location',
                                     headerName: 'Localisation',
+                                    sortable:true,
                                 },
                                 {
                                     field: 'report',
@@ -130,7 +91,7 @@ const HomeTable: React.FC<HomeTableProps> = ({ data, id, isLoading, firstHeader,
                                 },
                                 {
                                     field: 'command',
-                                    headerName: 'Bon de commande',
+                                    headerName: 'BC',
                                     renderCell(params) {
                                         return (<Button disabled={!params.row.hasCommand} onClick={() => {
                                             onDisplayCommand(params.row);
@@ -146,7 +107,7 @@ const HomeTable: React.FC<HomeTableProps> = ({ data, id, isLoading, firstHeader,
                                         username: row.user?.username,
                                         client: row.client?.name,
                                         speciality: row.client?.speciality,
-                                        location: `${row.client?.wilaya}, ${row.client?.commune}`,
+                                        location: `${row.client?.commune}, ${row.client?.wilaya}`,
                                         hasCommand: row.hasCommand,
                                         visitLocation: row.visitLocation,
                                         visit: row,
@@ -162,47 +123,17 @@ const HomeTable: React.FC<HomeTableProps> = ({ data, id, isLoading, firstHeader,
                                 pageChange(model.page + 1, model.size);
                                 setRowsPerPage(model.size);
                             }}
+                            onSortChange={(model) => {
+                                sortChange(model.field, model.order);
+                                setSortModel(model);
+                            }}
+                            sortModel={sortModel}
                             total={total}
                         ></ScalableTable>
 
                     )
 
-                // <DataGrid
-                //     rows={
-                //         [...Array.from({ length: rowsPerPage * pageIndex }, (_, index) => {
-                //             return { id: index };
-                //         }), ...data.map((row) => {
-                //             return {
-                //                 id: row.id,
-                //                 username: row.user?.username,
-                //                 client: row.client?.name,
-                //                 speciality: row.client?.speciality,
-                //                 location: `${row.client?.wilaya}, ${row.client?.commune}`,
-                //                 hasCommand: row.hasCommand,
-                //                 visitLocation: row.visitLocation,
-                //                 visit:row,
-                //             };
-                //         })]}
-
-                //     columns={columns}
-                //     rowCount={total}
-                //     onPaginationModelChange={(model) => {
-                //         setPageIndex(model.page);
-                //         pageChange(model.page + 1, model.pageSize);
-                //         setRowsPerPage(model.pageSize);
-                //     }}
-                //     initialState={{
-                //         pagination: {
-                //             paginationModel: {
-                //                 pageSize: rowsPerPage,
-                //                 page: pageIndex,
-                //             },
-                //         },
-                //     }}
-                //     pageSizeOptions={[5, 10, 25, 50, 100]}
-                //     checkboxSelection={false}
-                //     hideFooterSelectedRowCount={true}
-                // />)
+               
             }
         </div>
     );

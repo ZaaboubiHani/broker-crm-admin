@@ -62,15 +62,6 @@ const ClientsDoctorTable: React.FC<ClientsDoctorTableProps> = ({ total, size, pa
             sortable: false,
         },
         {
-            field: 'visitsNum',
-            headerName: 'Nombre de visites',
-            width: 150,
-            align:'center',
-            headerAlign:'center',
-            filterable: false,
-            sortable: false,
-        },
-        {
             field: 'report', headerName: 'Rapport', width: 80,
             renderCell(params) {
                 return (<Button onClick={() => {
@@ -121,10 +112,9 @@ const ClientsDoctorTable: React.FC<ClientsDoctorTableProps> = ({ total, size, pa
                                     client: row.client?.name,
                                     delegate: row.user?.username,
                                     speciality: row.client?.speciality,
-                                    location: `${row.client?.wilaya}, ${row.client?.commune}`,
+                                    location: `${row.client?.commune}, ${row.client?.wilaya}`,
                                     visitLocation: row.visitLocation,
                                     visit: row,
-                                    visitsNum: row.client?.visitsNum,
                                 };
                             })]}
                         columns={columns}
