@@ -21,6 +21,7 @@ import DialogTitle from '@mui/material/DialogTitle';
 import Dialog from '@mui/material/Dialog';
 import { DialogActions, List, ListItem, ListItemButton, ListItemText } from "@mui/material";
 import SupplierModel from '../../models/supplier.model';
+import ScalableTable from '../scalable-table/scalable-table.component';
 
 interface CommandCamTableProps {
     data: CommandModel[];
@@ -41,7 +42,7 @@ const CommandCamTable: React.FC<CommandCamTableProps> = ({ data, id, suppliers, 
     const [pageIndex, setPageIndex] = React.useState(page - 1);
     const [showDialog, setShowDialog] = React.useState(false);
     const [commandIndex, setCommandIndex] = React.useState(- 1);
-    const [supplierIds, setSupplierIds] = React.useState<(number| undefined)[]>([]);
+    const [supplierIds, setSupplierIds] = React.useState<(number | undefined)[]>([]);
 
     if (pageIndex !== (page - 1)) {
         setPageIndex(page - 1);
@@ -83,80 +84,12 @@ const CommandCamTable: React.FC<CommandCamTableProps> = ({ data, id, suppliers, 
         setShowDialog(false);
     };
 
-    const columns: GridColDef[] = [
-        {
-            field: 'date', headerName: 'Date', width: 150, valueFormatter(params) {
-                return formatDateToYYYYMMDD(params.value);
-            },
-        },
-        { field: 'client', headerName: 'Client', width: 150 },
-        { field: 'location', headerName: 'Localisation', minWidth: 150, maxWidth: 200 },
-        { field: 'amount', headerName: 'Montant', width: 150, },
-        {
-            field: 'supplier', headerName: 'Fournisseur', width: 200,
-            renderCell(params) {
-                return params.row.speciality === 'GROSSISTE para' ? (<FormControl fullWidth>
-                    <Select
-                        value={supplierIds[params.row.index]}
-                        key={supplierIds[params.row.index]}
-                        onChange={(event) => {
-                            if (event.target.value === "other") {
-                                event.preventDefault();
-                                event.target.value = "";
-                                setCommandIndex(params.row.index);
-                                setShowDialog(true);
-                                setSupplierIds([...supplierIds]);
-                            } else {
-                                params.row.finalSupplier = params.row.suppliers?.find((s: any) => s.id === event.target.value);
-                                data[params.row.index].finalSupplier = data[params.row.index].suppliers?.find((s: any) => s.id === event.target.value);
-                                handleSupplierChange(params.row.index);
-                                setSupplierIds(data.map(command => command.finalSupplier?.id));
-                            }
-                        }}
-                    >
-                        <MenuItem value="">
-                            <em>None</em>
-                        </MenuItem>
-                        {params.row.suppliers?.map((supplier: any) => (
-                            <MenuItem key={supplier.id} value={supplier.id}>
-                                {supplier.name}
-                            </MenuItem>
-                        ))}
-                        <MenuItem value="other">
-                            <em>autre</em>
-                        </MenuItem>
-                    </Select>
-                </FormControl>) : undefined;
-            },
-        },
-        {
-            field: 'honor', headerName: 'Honorer', width: 80,
-            renderCell(params) {
-                return (<Switch disabled={switchesEnablers[params.row.index]} checked={switchesState[params.row.index]}
-                    onChange={() => handleSwitchChange(params.row.index)}
-                />);
-            },
-        },
-        {
-            field: 'details', headerName: 'Details', width: 80,
-            renderCell(params) {
-                return (<Button onClick={() => {
-                    displayCommand(params.row.command);
-                }} variant="text">Voir</Button>);
-            },
-        },
-    ];
-
-
-
     return (
         <div id={id} style={{
             display: 'flex',
             flexDirection: 'column',
             flexGrow: '1',
-            margin: '0px 8px 8px 8px',
             borderRadius: '8px',
-            backgroundColor: 'rgba(255,255,255,0.5)',
         }}>
             {isLoading ? (<div style={{
                 width: '100%',
@@ -173,11 +106,9 @@ const CommandCamTable: React.FC<CommandCamTableProps> = ({ data, id, suppliers, 
                     color="black"
                 />
             </div>) :
-                (<DataGrid
+                (<ScalableTable
                     rows={
-                        [...Array.from({ length: rowsPerPage * pageIndex }, (_, index) => {
-                            return { id: index };
-                        }), ...data.map((row, index) => {
+                        [...data.map((row, index) => {
                             return {
                                 id: row.id,
                                 index: index,
@@ -191,33 +122,107 @@ const CommandCamTable: React.FC<CommandCamTableProps> = ({ data, id, suppliers, 
                                 finalSupplier: row.finalSupplier,
                             };
                         })]}
-                    columns={columns}
-                    rowCount={total}
-                    onPaginationModelChange={(model) => {
-                        setPageIndex(model.page);
-                        pageChange(model.page + 1, model.pageSize);
-                        setRowsPerPage(model.pageSize);
-
-                    }}
-                    initialState={{
-                        pagination: {
-                            paginationModel: {
-                                pageSize: rowsPerPage,
-                                page: pageIndex,
+                    columns={[
+                        {
+                            field: 'date',
+                            headerName: 'Date',
+                            valueFormatter(params) {
+                                return formatDateToYYYYMMDD(params.value);
                             },
                         },
+                        {
+                            field: 'client',
+                            headerName: 'Client',
+                        },
+                        {
+                            field: 'location',
+                            headerName: 'Localisation',
+                        },
+                        {
+                            field: 'amount',
+                            headerName: 'Montant',
+                        },
+                        {
+                            field: 'supplier',
+                            headerName: 'Fournisseur',
+                            renderCell(params) {
+                                return params.row.speciality === 'GROSSISTE para' ? (<FormControl fullWidth>
+                                    <Select
+                                        value={supplierIds[params.row.index]}
+                                        key={supplierIds[params.row.index]}
+                                        onChange={(event) => {
+                                            if (event.target.value === "other") {
+                                                event.preventDefault();
+                                                event.target.value = "";
+                                                setCommandIndex(params.row.index);
+                                                setShowDialog(true);
+                                                setSupplierIds([...supplierIds]);
+                                            } else {
+                                                params.row.finalSupplier = params.row.suppliers?.find((s: any) => s.id === event.target.value);
+                                                data[params.row.index].finalSupplier = data[params.row.index].suppliers?.find((s: any) => s.id === event.target.value);
+                                                handleSupplierChange(params.row.index);
+                                                setSupplierIds(data.map(command => command.finalSupplier?.id));
+                                            }
+                                        }}
+                                    >
+                                        <MenuItem value="">
+                                            <em>None</em>
+                                        </MenuItem>
+                                        {params.row.suppliers?.map((supplier: any) => (
+                                            <MenuItem key={supplier.id} value={supplier.id}>
+                                                {supplier.name}
+                                            </MenuItem>
+                                        ))}
+                                        <MenuItem value="other">
+                                            <em>autre</em>
+                                        </MenuItem>
+                                    </Select>
+                                </FormControl>) : undefined;
+                            },
+                        },
+                        {
+                            field: 'honor',
+                            headerName: 'Honorer',
+                            renderCell(params) {
+                                return (<Switch disabled={switchesEnablers[params.row.index]} checked={switchesState[params.row.index]}
+                                    onChange={() => handleSwitchChange(params.row.index)}
+                                />);
+                            },
+                        },
+                        {
+                            field: 'details',
+                            headerName: 'Details',
+                            renderCell(params) {
+                                return (<Button onClick={() => {
+                                    displayCommand(params.row.command);
+                                }} variant="text">Voir</Button>);
+                            },
+                        },
+                    ]}
+                    total={total}
+                    onPaginationChange={(model) => {
+                        setPageIndex(model.page);
+                        pageChange(model.page + 1, model.size);
+                        setRowsPerPage(model.size);
+
                     }}
+
+                    pagination={
+                        {
+                            size: rowsPerPage,
+                            page: pageIndex,
+                        }
+                    }
+
                     pageSizeOptions={[5, 10, 25, 50, 100]}
-                    checkboxSelection={false}
-                    hideFooterSelectedRowCount={true}
                 />)}
             <Dialog fullWidth={true} maxWidth='sm' onClose={handleClose} open={showDialog} >
                 <DialogTitle>Sélectionner le fournisseur</DialogTitle>
                 <List>
                     {
-                        suppliers.filter((supplier)=>!data.some((c)=>c.suppliers?.some(s=>s.id === supplier.id))).map((supplier) => (
+                        suppliers.filter((supplier) => !data.some((c) => c.suppliers?.some(s => s.id === supplier.id))).map((supplier) => (
                             <ListItem
-                                key={supplier.id}  
+                                key={supplier.id}
                                 disablePadding
                                 onClick={() => {
                                     const updatedCommands = [...data];

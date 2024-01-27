@@ -98,9 +98,9 @@ class ClientsPage extends Component<{}, ClientsPageProps> {
             pharmPage: 1,
             docPage: 1,
             wholePage: 1,
-            sizeDoc: 25,
-            sizePharm: 25,
-            sizeWhole: 25,
+            sizeDoc: 100,
+            sizePharm: 100,
+            sizeWhole: 100,
             totalPharm: 0,
             totalDoc: 0,
             totalWhole: 0,
@@ -167,8 +167,8 @@ class ClientsPage extends Component<{}, ClientsPageProps> {
         var currentUser = await this.userService.getMe();
         if (currentUser.type === UserType.supervisor) {
             var { visits: pharmVisits, total: totalPharm } = await this.visitService.getAllVisitsPaginated(
-                1,
-                25,
+                this.state.pharmPage,
+                this.state.sizePharm,
                 this.state.pharmSearchText,
                 ClientType.pharmacy,
                 currentUser.id!,
@@ -177,8 +177,8 @@ class ClientsPage extends Component<{}, ClientsPageProps> {
                 this.state.selectedDelegate?.id
             );
             var { visits: docVisits, total: totalDoc } = await this.visitService.getAllVisitsPaginated(
-                1,
-                25,
+                this.state.docPage,
+                this.state.sizeDoc,
                 this.state.docSearchText,
                 ClientType.doctor,
                 currentUser.id!,
@@ -200,7 +200,7 @@ class ClientsPage extends Component<{}, ClientsPageProps> {
             });
         } else {
             var supervisors = await this.userService.getUsersByCreator(currentUser.id!, UserType.supervisor);
-            var { visits: wholeVisits, total: totalWhole } = await this.visitService.getAllVisitsPaginated(1, 25, this.state.wholeSearchText, ClientType.wholesaler, currentUser.id!, this.state.wholeOrder, this.state.wholeProp);
+            var { visits: wholeVisits, total: totalWhole } = await this.visitService.getAllVisitsPaginated(this.state.wholePage, this.state.sizeWhole, this.state.wholeSearchText, ClientType.wholesaler, currentUser.id!, this.state.wholeOrder, this.state.wholeProp);
             this.setState({
                 wholeVisits: wholeVisits,
                 totalWhole: totalWhole,

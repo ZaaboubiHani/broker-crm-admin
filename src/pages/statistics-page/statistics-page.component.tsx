@@ -638,7 +638,6 @@ class StatisticsPage extends Component<{}, StatisticsPageProps> {
             });
         } else {
 
-
             var visitStats = await this.statisticsService.getDelegateYearVisitStats(this.state.selectedDate, delegate.id!);
             var salesStats = await this.statisticsService.getDelegateYearSaleStats(this.state.selectedDate, delegate.id!);
             var successRate = await this.statisticsService.getDelegateSuccessRateYear(delegate.id!, this.state.selectedDate);

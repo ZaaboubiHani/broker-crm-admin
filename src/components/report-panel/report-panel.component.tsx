@@ -39,24 +39,28 @@ const ReportPanel: React.FC<ReportPanelProps> = ({ report, clientType, location,
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start', marginBottom: '8px' }}>
                     <div style={{
                         display: 'flex',
-                        flexDirection: 'column',
-                        alignItems: 'start',
+                        flexDirection: 'row',
+                        alignItems: 'center',
                         justifyContent: 'start',
                     }}>
                         <Button style={{
-                            display: showBackButton === undefined || showBackButton === false ? 'none' : 'block',
-                            width: '30px',
+                            display: showBackButton === undefined || showBackButton === false ? 'none' : 'flex',
+                            minWidth: '10px',
+                            height: '40px',
                             justifyContent: 'center',
                             alignItems: 'center',
-                            margin: 'none'
+                            margin: 'none',
+                            borderRadius: '50px',
+                            marginRight:'8px'
                         }}
+                            size='small'
                             onClick={onBackClick}
                             variant="outlined">
-                            <ArrowBackIosNewIcon style={{ width: '30px', color: 'rgb(0, 182, 182)', marginBottom: '5px' }} />
+                            <ArrowBackIosNewIcon style={{ width: '20px', height: '20px', color: 'rgb(0, 182, 182)' }} />
                         </Button>
                         <div style={{ display: 'flex', margin: '0px', height: '32px', alignItems: 'center' }}>
-                            <h6 style={{ margin: '0px', marginRight: '16px', fontSize: '16px', }}>Date: {formatDateToYYYYMMDD(report.createdAt!)}</h6>
-                            <h6 style={{ fontSize: '16px', margin: '0px' }}>Heure: {formatTime(report.createdAt!)}</h6>
+                            <h6 style={{ margin: '0px', marginRight: '8px', fontSize: '13px', fontWeight: 'normal' }}>Date: {formatDateToYYYYMMDD(report.createdAt!)}</h6>
+                            <h6 style={{ fontSize: '13px', margin: '0px', fontWeight: 'normal' }}>Heure: {formatTime(report.createdAt!)}</h6>
                         </div>
                     </div>
                     <Button style={{
@@ -101,7 +105,7 @@ const ReportPanel: React.FC<ReportPanelProps> = ({ report, clientType, location,
                         ) : null
                 }
                 {
-                    clientType !== ClientType.doctor ?
+                    clientType === ClientType.pharmacy ?
                         (
                             <div>
                                 <h4 style={{ fontSize: 17, margin: '0px', height: '32px' }}><HailIcon style={{ fontSize: 17 }} /> Fournisseurs:</h4>
@@ -119,7 +123,7 @@ const ReportPanel: React.FC<ReportPanelProps> = ({ report, clientType, location,
                         ) : null
                 }
                 {
-                    clientType == ClientType.doctor ?
+                    clientType === ClientType.doctor ?
                         (
                             <div>
                                 <h4 style={{ fontSize: 17, margin: '0px', height: '32px' }}><CommentIcon style={{ fontSize: 17 }} /> Commentaires:</h4>
@@ -144,11 +148,10 @@ const ReportPanel: React.FC<ReportPanelProps> = ({ report, clientType, location,
                         : null
                 }
                 {
-
                     clientType == ClientType.doctor ? (
                         <div>
                             <h4 style={{ fontSize: 17, margin: '0px', height: '32px' }}><FlagIcon style={{ fontSize: 17 }} /> Objectif:</h4>
-                            <h6 style={{ fontSize: 15, fontWeight: '400', margin: '0px', height: '32px' }}>{report.objectif}</h6>
+                            <h6 style={{ fontSize: 15, fontWeight: '400', margin: '0px', }}>{report.objectif}</h6>
                             <Divider component="div" style={{ margin: '8px 0px' }} />
                         </div>
                     )
@@ -165,7 +168,8 @@ const ReportPanel: React.FC<ReportPanelProps> = ({ report, clientType, location,
                 }}>{report.note}</h6>
                 <Divider component="div" style={{ margin: '8px 0px' }} />
                 {
-                    clientType !== ClientType.wholesaler ?
+                    clientType === ClientType.wholesaler ?
+                        null :
                         clientType === ClientType.doctor ?
                             (
                                 <div>
@@ -211,7 +215,7 @@ const ReportPanel: React.FC<ReportPanelProps> = ({ report, clientType, location,
                                         ))
                                     }
                                 </div>
-                            ) : null
+                            )
                 }
             </div>
         );

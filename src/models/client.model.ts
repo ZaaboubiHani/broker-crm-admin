@@ -51,7 +51,7 @@ export default class ClientModel{
             totalSellers: json?.attributes?.totalSellers,
             totalPostChifa: json?.attributes?.totalPostChifa,
             sector: json?.attributes?.sector === undefined || json?.attributes?.sector === null ? undefined : json?.attributes?.sector === true ? 'etatique' : 'privé',
-            type: json?.attributes?.relatedSpeciality?.data?.id === 1 ? ClientType.pharmacy : json?.attributes?.relatedSpeciality?.data?.id === 2 ? ClientType.wholesaler : ClientType.doctor,
+            type: json?.attributes?.relatedSpeciality?.data?.attributes.domainType.data.attributes.reference === 'pharmacy' ? ClientType.pharmacy : json?.attributes?.relatedSpeciality?.data?.attributes.domainType.data.attributes.reference === 'doctor' ? ClientType.doctor : ClientType.wholesaler,
         });
     }
 }

@@ -94,7 +94,7 @@ const HomeTable: React.FC<HomeTableProps> = ({ data, id, isLoading, firstHeader,
                                     headerName: 'BC',
                                     renderCell(params) {
                                         return (<Button disabled={!params.row.hasCommand} onClick={() => {
-                                            onDisplayCommand(params.row);
+                                            onDisplayCommand(params.row.visit);
                                         }} variant="text">Voir</Button>);
                                     },
                                 },

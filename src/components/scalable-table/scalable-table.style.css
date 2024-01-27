@@ -13,20 +13,26 @@
     flex-direction: column;
 }
 
-.resizable-table th,
+.resizable-table th {
+    border: none;
+    padding: 8px;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+
 .resizable-table td {
     border: none;
     padding: 8px;
-    white-space: nowrap;
     text-overflow: ellipsis;
     overflow: hidden;
+    border-top: 1px solid #e2e2e2;
 }
 
 .resizable-table th {
     background-color: #f2f2f2;
 }
 
-.resizable-handler{
+.resizable-handler {
     background-color: #e2e2e2;
     height: 26px;
     cursor: e-resize;
@@ -36,8 +42,6 @@
 }
 
 
-.resizable-handler:hover{
+.resizable-handler:hover {
     background-color: #ddd;
 }
-
-

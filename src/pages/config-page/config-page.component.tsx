@@ -205,7 +205,7 @@ class ConfigPage extends Component<{}, ConfigPageProps> {
     productService = ProductService.getInstance();
 
     loadConfigPageData = async () => {
-        var { specialities, total: specialitiesTotal } = await this.specialityService.getAllMedicalSpecialities(1, 25);
+        var { specialities, total: specialitiesTotal } = await this.specialityService.getAllMedicalSpecialities(1, 100);
         var draftedSpecialities = await this.specialityService.getAllDraftedMedicalSpecialities();
         var comments = await this.commentService.getAllComments();
         var draftedComments = await this.commentService.getDraftedComments();
@@ -1046,7 +1046,7 @@ class ConfigPage extends Component<{}, ConfigPageProps> {
                                             <div style={{ width: '100%', maxHeight: '450px' }}>
                                                 <div style={{ margin: '8px', backgroundColor: 'white', borderRadius: '4px', padding: '16px' }}>
                                                     <h4>
-                                                        Configuration des chiffres d'affaires
+                                                        Configuration des notes des frais
                                                     </h4>
                                                     <div style={{ display: 'flex', marginTop: '8px' }}>
                                                         <TextField value={this.state.expensesConfig.nightPrice} onChange={(event) => {

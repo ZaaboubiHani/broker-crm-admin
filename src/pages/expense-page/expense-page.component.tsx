@@ -112,7 +112,6 @@ class ExpensePage extends Component<{}, ExpensePageProps> {
             var kamExpenses = await this.expenseService.getAllExpensesOfUserByDateMoth(date, this.state.selectedKam!.id!);
             var kamExpensesUser = await this.expenseService.getExpensesUserByDateMoth(date, this.state.selectedKam!.id!);
             this.setState({
-
                 kamExpenses: kamExpenses,
                 kamExpensesUser: kamExpensesUser,
             });

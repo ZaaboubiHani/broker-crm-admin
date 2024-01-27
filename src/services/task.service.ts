@@ -20,7 +20,7 @@ export default class TaskService {
   
     async getAllTasksOfDelegate(date: Date,userId:number): Promise<TaskModel[]> {
         const token = localStorage.getItem('token');
-        var response = await axios.get(`${Globals.apiUrl}/task-clients?filters[visitDate][$containsi]=${formatDateToYYYYMMDD(date)}&filters[task][delegate][id][$eq]=${userId}&populate=task.delegate&populate=client.relatedSpeciality`,
+        var response = await axios.get(`${Globals.apiUrl}/task-clients?filters[visitDate][$containsi]=${formatDateToYYYYMMDD(date)}&filters[task][delegate][id][$eq]=${userId}&populate=task.delegate&populate=client.relatedSpeciality.domainType`,
             {
                 headers: {
                     'Authorization': `Bearer ${token}`

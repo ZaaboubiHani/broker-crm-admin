@@ -1,15 +1,8 @@
 import React, { useState } from 'react';
-import { DotSpinner } from '@uiball/loaders';
-import Table from '@mui/material/Table';
-import TableBody from '@mui/material/TableBody';
-import TableCell from '@mui/material/TableCell';
-import TableContainer from '@mui/material/TableContainer';
-import TableHead from '@mui/material/TableHead';
-import TableRow from '@mui/material/TableRow';
-import Paper from '@mui/material/Paper';
-import Button from '@mui/material/Button';
 import Divider from '@mui/material/Divider';
 import { DataGrid, GridColDef, GridValueGetterParams } from '@mui/x-data-grid';
+import { styled } from '@mui/material/styles';
+import LinearProgress, { linearProgressClasses } from '@mui/material/LinearProgress';
 
 interface RevenuePanelProps {
     showData: boolean;
@@ -19,6 +12,21 @@ interface RevenuePanelProps {
     wilayasRevenue: { wilaya: string, total: number, percentage: number }[];
     productsRevenue: { product: string, quantity: number, total: number, percentage: number }[];
 }
+
+
+const BorderLinearProgress = styled(LinearProgress)(({ theme }) => ({
+    height: 5,
+    borderRadius: 5,
+    [`&.${linearProgressClasses.colorPrimary}`]: {
+        backgroundColor: theme.palette.grey[theme.palette.mode === 'light' ? 200 : 800],
+    },
+    [`& .${linearProgressClasses.bar}`]: {
+        borderRadius: 5,
+
+        backgroundColor: theme.palette.mode === 'light' ? '#CC38E0' : '#308fe8',
+    },
+}));
+
 
 const RevenuePanel: React.FC<RevenuePanelProps> = ({ showData, total, totalHonored, totalNotHonored, wilayasRevenue, productsRevenue }) => {
 
@@ -66,14 +74,52 @@ const RevenuePanel: React.FC<RevenuePanelProps> = ({ showData, total, totalHonor
 
     if (showData) {
         return (
-            <div style={{ margin: '16px', flexGrow: '1' }}>
-                <div>
-                    <h6 style={{ fontSize: 15, fontWeight: '600' }}>Total : {total.toLocaleString('fr-DZ', { style: 'currency', currency: 'DZD' })}</h6>
-                    <h6 style={{ fontSize: 15, fontWeight: '600' }}>Total honore : {totalHonored.toLocaleString('fr-DZ', { style: 'currency', currency: 'DZD' })}</h6>
-                    <h6 style={{ fontSize: 15, fontWeight: '600' }}>Total non honore : {totalNotHonored.toLocaleString('fr-DZ', { style: 'currency', currency: 'DZD' })}</h6>
+            <div style={{ margin: '16px', flexGrow: '1', flex: '1', overflowY: 'auto',height:'96%', overflowX: 'hidden', }}>
+                <div style={{
+                    display: 'flex'
+                }}>
+                    <div style={{ marginRight: '8px' }}>
+                        <h6 style={{ fontSize: 15, fontWeight: '600', margin: '0px' }}>Total : {total.toLocaleString('fr-DZ', { style: 'currency', currency: 'DZD' })}</h6>
+                        <h6 style={{ fontSize: 15, fontWeight: '600', margin: '0px' }}>Total honore : {totalHonored.toLocaleString('fr-DZ', { style: 'currency', currency: 'DZD' })}</h6>
+                        <h6 style={{ fontSize: 15, fontWeight: '600', margin: '0px' }}>Total non honore : {totalNotHonored.toLocaleString('fr-DZ', { style: 'currency', currency: 'DZD' })}</h6>
+                    </div>
+                    <div style={{
+                        width: '50%',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        justifyContent: 'space-between',
+                    }}>
+                        <div style={{
+                            color: '#FC761E',
+                            display: 'flex',
+                            fontSize: 15,
+                            alignItems: 'center'
+                        }}>
+                            <LinearProgress sx={{ flex: '1', marginRight: '8px' }} color="inherit" variant="determinate" value={100} />
+                            100%
+                        </div>
+                        <div style={{
+                            color: '#CC38E0',
+                            display: 'flex',
+                            fontSize: 15,
+                            alignItems: 'center'
+                        }}>
+                            <LinearProgress sx={{ flex: '1', marginRight: '8px' }} color="inherit" variant="determinate" value={totalHonored / (total === 0 ? 1 : total) * 100} />
+                            {(totalHonored / (total === 0 ? 1 : total) * 100).toFixed(0)}%
+                        </div>
+                        <div style={{
+                            color: '#38EB5D',
+                            display: 'flex',
+                            fontSize: 15,
+                            alignItems: 'center'
+                        }}>
+                            <LinearProgress sx={{ flex: '1', marginRight: '8px' }} color="inherit" variant="determinate" value={totalNotHonored / (total === 0 ? 1 : total) * 100} />
+                            {(totalNotHonored / (total === 0 ? 1 : total) * 100).toFixed(0)}%
+                        </div>
+                    </div>
                 </div>
                 <Divider component="div" style={{ margin: '8px 0px' }} />
-                <h6 style={{ fontSize: 15, fontWeight: '600' }}>Vente par produit:</h6>
+                <h6 style={{ fontSize: 15, fontWeight: '600', margin: '0px' }}>Vente par produit:</h6>
                 <DataGrid
                     sx={{
                         flexGrow: '1',
@@ -81,7 +127,8 @@ const RevenuePanel: React.FC<RevenuePanelProps> = ({ showData, total, totalHonor
                         flexDirection: 'column',
                         borderRadius: '8px',
                         overflow: 'hidden',
-                        border: '1px solid teal'
+                        border: '1px solid teal',
+                        height:'max-content',
                     }}
                     rows={
                         [...productsRevenue.map((row, index) => {
@@ -100,7 +147,7 @@ const RevenuePanel: React.FC<RevenuePanelProps> = ({ showData, total, totalHonor
                     checkboxSelection={false}
                 />
                 <Divider component="div" style={{ margin: '8px 0px' }} />
-                <h6 style={{ fontSize: 15, fontWeight: '600' }}>Vente par wilaya:</h6>
+                <h6 style={{ fontSize: 15, fontWeight: '600', margin: '0px' }}>Vente par wilaya:</h6>
                 <DataGrid
                     sx={{
                         flexGrow: '1',
@@ -108,7 +155,8 @@ const RevenuePanel: React.FC<RevenuePanelProps> = ({ showData, total, totalHonor
                         flexDirection: 'column',
                         borderRadius: '8px',
                         overflow: 'hidden',
-                        border: '1px solid teal'
+                        border: '1px solid teal',
+                        height:'max-content',
                     }}
                     rows={
                         [...wilayasRevenue.map((row, index) => {
