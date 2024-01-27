@@ -26,13 +26,8 @@ import LogoutIcon from '@mui/icons-material/Logout';
 import { styled } from '@mui/material/styles';
 import Tooltip, { TooltipProps, tooltipClasses } from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
-import UserModel from '../../models/user.model';
-
-/*
-home page
-command page
-clients page
-*/
+import UserModel from '@/src/models/user.model';
+import UserService from '@/src/services/user.service';
 
 const HtmlTooltip = styled(({ className, ...props }: TooltipProps) => (
   <Tooltip {...props} classes={{ popper: className }} TransitionProps={{ timeout: 250 }} />
@@ -66,7 +61,7 @@ const Sidebar: React.FC = () => {
   const location = useLocation();
   const navigate = useNavigate();
 
-  const initData = () => {
+  const initData = async () => {
     if (localStorage.getItem('isLogged') !== 'true') {
       navigate('/');
     } else {
@@ -164,14 +159,12 @@ const Sidebar: React.FC = () => {
           isOpen={sidebarOpen}
           icon={<HomeIcon style={{ color: 'white', width: '30px', height: '30px', marginRight: '8px', }} />}
         />
-       
           <NavListItem
-            name='Délégués'
+            name={userType !== 'admin' ? 'Délégués' : 'Superviseurs/kam'}
             route='/delegate'
             isOpen={sidebarOpen}
             icon={<BusinessCenterIcon style={{ color: 'white', width: '30px', height: '30px', marginRight: '8px' }} />}
           />
-       
         {
           userType !== 'operator' ? (<NavListItem
             name='Plan de tournée'

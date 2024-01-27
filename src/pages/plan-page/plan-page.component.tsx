@@ -425,7 +425,7 @@ class PlanPage extends Component<{}, PlanPageProps> {
                                     <MonthYearPicker onPick={this.handleOnPickDate}></MonthYearPicker >
                                 </div>
                                 <div className='stats-panel' style={{ margin: '0px 8px 8px 8px', paddingLeft: '16px', backgroundColor: 'white' }}>
-                                    <CircularProgressLabel colorStroke='#FC761E' direction='row' secondTitle='KPI: Realisation plan de tournee' value={this.state.delegatePlanDeTournee} />
+                                    <CircularProgressLabel colorStroke='#FC761E' direction='row' secondTitle='Realisation plan de tournee' value={this.state.delegatePlanDeTournee} />
                                     <CircularProgressLabel colorStroke='#CC38E0' direction='row' secondTitle='Couverture portefeuille client' value={this.state.delegateCouverturePortfeuille} />
                                     <CircularProgressLabel colorStroke='#38EB5D' direction='row' secondTitle="Objectif chiffre d'affaire" value={this.state.delegateObjectifChiffreDaffaire} />
                                     <CircularProgressLabel colorStroke='#2FBCEB' direction='row' secondTitle='Objectif visites' value={this.state.delegateObjectifVisites * 100} />
@@ -434,7 +434,7 @@ class PlanPage extends Component<{}, PlanPageProps> {
                                 </div>
                                 <div style={{
                                     width: '100%',
-                                    flexGrow: '1',
+                                flexGrow: '1',
                                     display: 'flex',
                                     height: 'calc(100% - 220px)',
 
@@ -539,7 +539,7 @@ class PlanPage extends Component<{}, PlanPageProps> {
                                     <MonthYearPicker onPick={this.handleOnPickDate}></MonthYearPicker >
                                 </div>
                                 <div className='stats-panel' style={{ margin: '0px 8px 8px 8px', paddingLeft: '16px', backgroundColor: 'white' }}>
-                                    <CircularProgressLabel colorStroke='#FC761E' direction='row' secondTitle='KPI: Realisation plan de tournee' value={this.state.kamPlanDeTournee} />
+                                    <CircularProgressLabel colorStroke='#FC761E' direction='row' secondTitle='Realisation plan de tournee' value={this.state.kamPlanDeTournee} />
                                     <CircularProgressLabel colorStroke='#CC38E0' direction='row' secondTitle='Couverture portefeuille client' value={this.state.kamCouverturePortfeuille} />
                                     <CircularProgressLabel colorStroke='#38EB5D' direction='row' secondTitle="Objectif chiffre d'affaire" value={this.state.kamObjectifChiffreDaffaire} />
                                     <CircularProgressLabel colorStroke='#2FBCEB' direction='row' secondTitle='Objectif visites' value={this.state.kamObjectifVisites * 100} />

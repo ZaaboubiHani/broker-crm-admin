@@ -20,7 +20,7 @@ export default class CommandService {
     }
     async getCommandOfVisit(visitId: number): Promise<CommandModel> {
         const token = localStorage.getItem('token');
-        var response = await axios.get(`${Globals.apiUrl}/commands?publicationState=preview&filters[visit][id][$eq]=${visitId}&populate=products.product&populate=suppliers.supplier&populate=motivations&populate=visit.client&populate=invoice&populate=signature`,
+        var response = await axios.get(`${Globals.apiUrl}/commands?publicationState=preview&filters[visit][id][$eq]=${visitId}&populate=products.product&populate=suppliers.supplier&populate=motivations&populate=visit.client.relatedSpeciality.domainType&populate=invoice&populate=signature`,
             {
                 headers: {
                     'Authorization': `Bearer ${token}`
@@ -35,7 +35,7 @@ export default class CommandService {
 
     async getAllCommandsOfDelegate(page: number, size: number, date: Date, userId: number): Promise<{ commands: CommandModel[], total: number }> {
         const token = localStorage.getItem('token');
-        var response = await axios.get(`${Globals.apiUrl}/commands?publicationState=preview&filters[visit][user][id][$eq]=${userId}&pagination[page]=${page}&pagination[pageSize]=${size}&filters[visit][createdDate][$containsi]=${formatDateToYYYYMM(date)}&populate=products.product&populate=suppliers.supplier&populate=motivations&populate=visit.client.relatedSpeciality&populate=commandSupplier.supplier&populate=invoice&populate=signature`,
+        var response = await axios.get(`${Globals.apiUrl}/commands?publicationState=preview&filters[visit][user][id][$eq]=${userId}&pagination[page]=${page}&pagination[pageSize]=${size}&filters[visit][createdDate][$containsi]=${formatDateToYYYYMM(date)}&populate=products.product&populate=suppliers.supplier&populate=motivations&populate=visit.client.relatedSpeciality.domainType&populate=commandSupplier.supplier&populate=invoice&populate=signature`,
             {
                 headers: {
                     'Authorization': `Bearer ${token}`

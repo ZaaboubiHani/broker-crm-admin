@@ -26,6 +26,7 @@ import Input from '@mui/material/Input';
 import ExpenseModel from '../../models/expense.model';
 import { DataGrid, GridColDef, GridValueGetterParams } from '@mui/x-data-grid';
 import Button from '@mui/material/Button';
+import ScalableTable from '../scalable-table/scalable-table.component';
 
 
 export interface ExpenseTableProps {
@@ -36,79 +37,15 @@ export interface ExpenseTableProps {
 
 
 const ExpenseTable: React.FC<ExpenseTableProps> = ({ data, isLoading }) => {
-    const columns: GridColDef[] = [
-        {
-            field: 'date', headerName: 'Date', width: 100, valueFormatter(params) {
-                return formatDateToYYYYMMDD(params.value);
-            },
-            filterable: false,
-        },
-        {
-            field: 'startLocation', headerName: 'Localité départ', width: 150,
-            filterable: false,
 
-        },
-        {
-            field: 'endLocation', headerName: 'Localité arrivé', width: 150,
-            filterable: false,
-        },
-        {
-            field: 'totalVisitsDoctor', headerName: 'Total contact médcins', width: 150,
-            filterable: false,
-            align: 'center'
-        },
-        {
-            field: 'totalVisitsPharmacy', headerName: 'Total contact pharmacies', width: 150,
-            filterable: false,
-            align: 'center'
-        },
-        {
-            field: 'kmTotal', headerName: 'Total KM', width: 100,
-            filterable: false,
-            align: 'center'
-        },
-        {
-            field: 'indemnityKm', headerName: 'Indemnités KM', width: 150, valueFormatter(params) {
-                return params.value.toLocaleString('fr-DZ', { style: 'currency', currency: 'DZD' });
-            },
-            filterable: false,
-            align: 'center'
-        },
-        { field: 'nightsTotal', headerName: 'Total nuites', width: 100, align: 'center' },
-        {
-            field: 'indemnityNights', headerName: 'Indemnités nuites', width: 150, valueFormatter(params) {
-                return params.value.toLocaleString('fr-DZ', { style: 'currency', currency: 'DZD' });
-            },
-            filterable: false,
-            align: 'center'
-        },
-        {
-            field: 'otherExpenses', headerName: 'Autre frais', width: 150, valueFormatter(params) {
-                return params.value.toLocaleString('fr-DZ', { style: 'currency', currency: 'DZD' });
-            },
-            filterable: false,
-            align: 'center',
-            headerAlign: 'center'
-        },
-        {
-            field: 'totalExpense', headerName: 'Total des indemnités', width: 150, valueFormatter(params) {
-                return params.value.toLocaleString('fr-DZ', { style: 'currency', currency: 'DZD' });
-            },
-            filterable: false,
-            align: 'center'
-        },
-    ];
 
     return (
-        <div  style={{
-            flexGrow: '1',
+        <div style={{
             display: 'flex',
-            overflow: 'hidden',
-            height: '100%',
-            width: '100%',
-            margin:'0px 8px 8px 8px',
+            flexDirection: 'column',
+            flexGrow: '1',
             borderRadius: '8px',
-            backgroundColor: 'rgba(255,255,255,0.5)',
+            marginRight:'24px',
         }}>
             {
                 isLoading ? (<div style={{
@@ -126,8 +63,8 @@ const ExpenseTable: React.FC<ExpenseTableProps> = ({ data, isLoading }) => {
                         color="black"
                     />
                 </div>) :
-                    (<DataGrid
-                        sx={{ flexGrow: '1', display: 'flex', overflow: 'hidden', height: '100%', width: '10px' }}
+                    (<ScalableTable
+
                         rows={
                             [...data.map((row, index) => {
                                 return {
@@ -145,68 +82,71 @@ const ExpenseTable: React.FC<ExpenseTableProps> = ({ data, isLoading }) => {
                                     totalExpense: row.totalExpense,
                                 };
                             })]}
-                        columns={columns}
-                        hideFooterSelectedRowCount={true}
-                        hideFooterPagination={true}
-                        hideFooter={true}
+                        columns={[
+                            {
+                                field: 'date',
+                                headerName: 'Date',
+                                valueFormatter(params) {
+                                    return formatDateToYYYYMMDD(params.value);
+                                },
+                            },
+                            {
+                                field: 'startLocation',
+                                headerName: 'Localité départ',
+
+                            },
+                            {
+                                field: 'endLocation',
+                                headerName: 'Localité arrivé',
+                            },
+                            {
+                                field: 'totalVisitsDoctor',
+                                headerName: 'Total contact médcins',
+                            },
+                            {
+                                field: 'totalVisitsPharmacy',
+                                headerName: 'Total contact pharmacies',
+                            },
+                            {
+                                field: 'kmTotal',
+                                headerName: 'Total KM',
+                            },
+                            {
+                                field: 'indemnityKm',
+                                headerName: 'Indemnités KM',
+                                valueFormatter(params) {
+                                    return params.value.toLocaleString('fr-DZ', { style: 'currency', currency: 'DZD' });
+                                },
+                            },
+                            {
+                                field: 'nightsTotal',
+                                headerName: 'Total nuites',
+                            },
+                            {
+                                field: 'indemnityNights',
+                                headerName: 'Indemnités nuites',
+                                valueFormatter(params) {
+                                    return params.value.toLocaleString('fr-DZ', { style: 'currency', currency: 'DZD' });
+                                },
+                            },
+                            {
+                                field: 'otherExpenses',
+                                headerName: 'Autre frais',
+                                valueFormatter(params) {
+                                    return params.value.toLocaleString('fr-DZ', { style: 'currency', currency: 'DZD' });
+                                },
+                            },
+                            {
+                                field: 'totalExpense',
+                                headerName: 'Total des indemnités',
+                                valueFormatter(params) {
+                                    return params.value.toLocaleString('fr-DZ', { style: 'currency', currency: 'DZD' });
+                                },
+                            },
+                        ]}
+                        hidePaginationFooter={true}
                     />)}
         </div>
-        // <TableContainer sx={{ flexGrow: '1', display: 'flex', flexDirection: 'column', borderRadius: '8px', margin: '8px', overflow: 'hidden', }} component={Paper}>
-        //     <Table sx={{ flexGrow: '1', display: 'flex', flexDirection: 'column', overflow: 'hidden', margin: '0px', width: "100%" }} size="small" aria-label="a dense table">
-        //         <TableHead sx={{ display: 'flex', justifyContent: 'stretch', alignItems: 'stretch', height: '65px', width: "100%" }}>
-        //             <TableRow sx={{ flexGrow: '1' }}>
-        //                 <TableCell align='left'>Date</TableCell>
-        //                 <TableCell align='left'>Localité départ</TableCell>
-        //                 <TableCell align='left'>Localité arrivé</TableCell>
-        //                 <TableCell align="left">Total contact médcins</TableCell>
-        //                 <TableCell align="left">Total contact pharmacies</TableCell>
-        //                 <TableCell align="left">Total KM</TableCell>
-        //                 <TableCell align="left">Indemnités KM</TableCell>
-        //                 <TableCell align="left">Total nuites</TableCell>
-        //                 <TableCell align="left">Indemnités nuites</TableCell>
-        //                 <TableCell align="left">autre frais</TableCell>
-        //                 <TableCell align="left">Total des indemnités</TableCell>
-        //             </TableRow>
-        //         </TableHead>
-        //         <TableBody sx={{ flexGrow: '1', height: "1px" }}>
-        //             {
-        //                 isLoading ? (<div style={{
-        //                     width: '100%',
-        //                     flexGrow: '1',
-        //                     overflow: 'hidden',
-        //                     height: '100%',
-        //                     display: 'flex',
-        //                     justifyContent: 'center',
-        //                     alignItems: 'center',
-        //                 }}>
-        //                     <DotSpinner
-        //                         size={40}
-        //                         speed={0.9}
-        //                         color="black"
-        //                     />
-        //                 </div>) :
-        //                     data.map((row) => (
-        //                         <TableRow
-        //                             key={row.id!}
-        //                             sx={{ '&:last-child td, &:last-child th': { border: 0 }, flexGrow: '1', width: '100%' }}
-        //                         >
-        //                             <TableCell sx={{ whiteSpace: 'nowrap', width: '10px' }} >{formatDateToYYYYMMDD(row.createdDate || new Date())}</TableCell>
-        //                             <TableCell sx={{ width: '10px' }} align="left">{row.startLocation}</TableCell>
-        //                             <TableCell sx={{ width: '20%' }} align="left">{row.endLocation}</TableCell>
-        //                             <TableCell sx={{ width: '20%' }} align="center">{row.totalVisitsDoctor}</TableCell>
-        //                             <TableCell sx={{ width: '20%' }} align="center">{row.totalVisitsPharmacy}</TableCell>
-        //                             <TableCell sx={{ width: '20%' }} align="center">{row.kmTotal}km</TableCell>
-        //                             <TableCell sx={{ width: '20%' }} align="left">{row.indemnityKm?.toLocaleString('fr-DZ', { style: 'currency', currency: 'DZD' })}</TableCell>
-        //                             <TableCell sx={{ width: '20%' }} align="left">{row.nightsTotal}</TableCell>
-        //                             <TableCell sx={{ width: '20%' }} align="left">{row.indemnityNights?.toLocaleString('fr-DZ', { style: 'currency', currency: 'DZD' })}</TableCell>
-        //                             <TableCell sx={{ width: '20%' }} align="left">{row.otherExpenses?.toLocaleString('fr-DZ', { style: 'currency', currency: 'DZD' })}</TableCell>
-        //                             <TableCell sx={{ width: '20%' }} align="left">{row.totalExpense?.toLocaleString('fr-DZ', { style: 'currency', currency: 'DZD' })}</TableCell>
-        //                         </TableRow>
-        //                     ))}
-        //         </TableBody>
-        //     </Table>
-        // </TableContainer>
-
     );
 };
 

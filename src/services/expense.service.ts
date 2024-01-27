@@ -56,7 +56,7 @@ export default class ExpenseService {
 
     async getExpensesUserByDateMoth(date: Date, userId: number): Promise<ExpenseUserModel> {
         const token = localStorage.getItem('token');
-        var response = await axios.get(`${Globals.apiUrl}/expenses-users?filters[user][id][$eq]=${userId}&filters[createdDate][$containsi]=${formatDateToYYYYMM(date)}&filters[userValidation][$eq]=true&pagination[pageSize]=31`,
+        var response = await axios.get(`${Globals.apiUrl}/expenses-users?filters[user][id][$eq]=${userId}&filters[createdDate][$containsi]=${formatDateToYYYYMM(date)}&pagination[pageSize]=31`,
             {
                 headers: {
                     'Authorization': `Bearer ${token}`

@@ -120,6 +120,8 @@ const SpecialityTable: React.FC<SpecialityTableProps> = ({ data, id, isLoading, 
                         pageSizeOptions={[5, 10, 25, 50, 100]}
                         checkboxSelection={false}
                         hideFooterSelectedRowCount={true}
+                        hideFooterPagination={true}
+                        hideFooter={true}
                     />)}
         </div>
     );

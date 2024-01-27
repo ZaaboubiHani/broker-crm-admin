@@ -81,6 +81,9 @@ export default class UserService {
                     'Authorization': `Bearer ${token}`
                 }
             });
+            console.log({
+                wilayas: user.wilayas?.map<number>(w => w.id!)
+            });
 
         if (activityResponse.data.wilayaActivity) {
             await axios.put(`${Globals.apiUrl}/activities/${activityResponse.data.wilayaActivity.id}`,

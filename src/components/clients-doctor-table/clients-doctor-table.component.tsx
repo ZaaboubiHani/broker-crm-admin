@@ -4,6 +4,7 @@ import { DotSpinner } from '@uiball/loaders';
 import Button from '@mui/material/Button';
 import VisitModel from '../../models/visit.model';
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
+import ScalableTable from '../scalable-table/scalable-table.component';
 
 interface ClientsDoctorTableProps {
     data: VisitModel[];
@@ -25,63 +26,14 @@ const ClientsDoctorTable: React.FC<ClientsDoctorTableProps> = ({ total, size, pa
         setPageIndex(page - 1);
     }
 
-    const columns: GridColDef[] = [
-        {
-            field: 'date', headerName: 'Date', width: 150, valueFormatter(params) {
-                return formatDateToYYYYMMDD(params.value);
-            },
-            filterable: false,
-            sortable: false,
-        },
-        {
-            field: 'client',
-            headerName: 'Client',
-            width: 250,
-            filterable: false,
-            sortable: false,
-        },
-        {
-            field: 'delegate',
-            headerName: 'Délégué',
-            width: 150,
-            filterable: false,
-            sortable: false,
-        },
-        {
-            field: 'speciality',
-            headerName: 'Spécialité',
-            width: 150,
-            filterable: false,
-            sortable: false,
-        },
-        {
-            field: 'location',
-            headerName: 'Localisation',
-            width: 200,
-            filterable: false,
-            sortable: false,
-        },
-        {
-            field: 'report', headerName: 'Rapport', width: 80,
-            renderCell(params) {
-                return (<Button onClick={() => {
-                    displayReport(params.row.visit);
-                }} variant="text">Voir</Button>);
-            },
-            filterable: false,
-            sortable: false,
-        },
-    ];
+
 
     return (
         <div id={id} style={{
             display: 'flex',
             flexDirection: 'column',
             flexGrow: '1',
-            marginRight: '16px',
             borderRadius: '8px',
-            marginBottom: '8px',
-            backgroundColor: 'rgba(255,255,255,0.5)',
         }}>
             {
                 isLoading ? (<div style={{
@@ -100,12 +52,10 @@ const ClientsDoctorTable: React.FC<ClientsDoctorTableProps> = ({ total, size, pa
                         color="black"
                     />
                 </div>) :
-                    (<DataGrid
+                    (<ScalableTable
 
                         rows={
-                            [...Array.from({ length: rowsPerPage * pageIndex }, (_, index) => {
-                                return { id: index };
-                            }), ...data.map((row) => {
+                            [...data.map((row) => {
                                 return {
                                     id: row.id,
                                     date: row.createdDate || new Date(),
@@ -117,27 +67,56 @@ const ClientsDoctorTable: React.FC<ClientsDoctorTableProps> = ({ total, size, pa
                                     visit: row,
                                 };
                             })]}
-                        columns={columns}
-                        rowCount={total}
-                        onPaginationModelChange={(model) => {
-                            setPageIndex(model.page);
-                            pageChange(model.page + 1, model.pageSize);
-                            setRowsPerPage(model.pageSize);
-
-                        }}
-                        initialState={{
-                            pagination: {
-                                paginationModel: {
-                                    pageSize: rowsPerPage,
-                                    page: pageIndex,
+                        columns={[
+                            {
+                                field: 'date', headerName: 'Date',
+                                valueFormatter(params) {
+                                    return formatDateToYYYYMMDD(params.value);
                                 },
                             },
+                            {
+                                field: 'client',
+                                headerName: 'Client',
+                            },
+                            {
+                                field: 'delegate',
+                                headerName: 'Délégué',
+                            },
+                            {
+                                field: 'speciality',
+                                headerName: 'Spécialité',
+                            },
+                            {
+                                field: 'location',
+                                headerName: 'Localisation',
+                            },
+                            {
+                                field: 'report', headerName: 'Rapport',
+                                renderCell(params) {
+                                    return (<Button onClick={() => {
+                                        displayReport(params.row.visit);
+                                    }} variant="text">Voir</Button>);
+                                },
+                            },
+                        ]}
+                        total={total}
+                        onPaginationChange={(model) => {
+                            setPageIndex(model.page);
+                            pageChange(model.page + 1, model.size);
+                            setRowsPerPage(model.size);
+
                         }}
+
+                        pagination={
+                            {
+                                size: rowsPerPage,
+                                page: pageIndex,
+                            }
+                        }
+
                         pageSizeOptions={[5, 10, 25, 50, 100]}
-                        checkboxSelection={false}
-                        hideFooterSelectedRowCount={true}
                     />)}
-            
+
         </div>
     );
 };
