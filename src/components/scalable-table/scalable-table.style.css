@@ -3,6 +3,9 @@
     overflow: hidden;
     margin: 0px;
     height: 100%;
+    flex:1;
+    flex-grow: 1
+    ;
     border-radius: 8px;
     display: flex;
     background-color: white;

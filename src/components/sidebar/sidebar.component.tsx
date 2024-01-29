@@ -160,7 +160,7 @@ const Sidebar: React.FC = () => {
           icon={<HomeIcon style={{ color: 'white', width: '30px', height: '30px', marginRight: '8px', }} />}
         />
           <NavListItem
-            name={userType !== 'admin' ? 'Délégués' : 'Superviseurs/kam'}
+            name={userType === 'supervisor' ? 'Délégués' : 'Superviseurs/kam'}
             route='/delegate'
             isOpen={sidebarOpen}
             icon={<BusinessCenterIcon style={{ color: 'white', width: '30px', height: '30px', marginRight: '8px' }} />}

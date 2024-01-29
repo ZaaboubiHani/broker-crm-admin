@@ -29,7 +29,7 @@ export default class SpecialityService {
                 var speciality = SpecialityModel.fromJson(response.data.data[index]);
                 specialities.push(speciality);
             }
-            return { specialities: specialities, total: response.data.meta.pagination.total };;
+            return { specialities: specialities, total: response.data.meta.pagination.total };
         }
         return { specialities: [], total: 0 };
     }

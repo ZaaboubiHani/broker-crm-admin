@@ -3,12 +3,12 @@ import { formatDateToYYYYMMDD } from '../../functions/date-format';
 import { DotSpinner } from '@uiball/loaders';
 import Button from '@mui/material/Button';
 import VisitModel from '../../models/visit.model';
-import { DataGrid, GridColDef } from '@mui/x-data-grid';
 import ScalableTable from '../scalable-table/scalable-table.component';
+import ClientModel from '../../models/client.model';
 
 interface ClientsDoctorTableProps {
-    data: VisitModel[];
-    displayReport: (visit: VisitModel) => {};
+    data: ClientModel[];
+    displayVisits: (client: ClientModel) => {};
     id?: string;
     pageChange: (page: number, size: number) => void;
     page: number;
@@ -17,7 +17,7 @@ interface ClientsDoctorTableProps {
     isLoading: boolean;
 }
 
-const ClientsDoctorTable: React.FC<ClientsDoctorTableProps> = ({ total, size, page, pageChange, data, id, isLoading, displayReport }) => {
+const ClientsDoctorTable: React.FC<ClientsDoctorTableProps> = ({ total, size, page, pageChange, data, id, isLoading, displayVisits }) => {
 
     const [rowsPerPage, setRowsPerPage] = React.useState(size);
     const [pageIndex, setPageIndex] = React.useState(page - 1);
@@ -34,6 +34,8 @@ const ClientsDoctorTable: React.FC<ClientsDoctorTableProps> = ({ total, size, pa
             flexDirection: 'column',
             flexGrow: '1',
             borderRadius: '8px',
+            marginRight:'-2px',
+            height:'100%'
         }}>
             {
                 isLoading ? (<div style={{
@@ -58,43 +60,36 @@ const ClientsDoctorTable: React.FC<ClientsDoctorTableProps> = ({ total, size, pa
                             [...data.map((row) => {
                                 return {
                                     id: row.id,
-                                    date: row.createdDate || new Date(),
-                                    client: row.client?.name,
-                                    delegate: row.user?.username,
-                                    speciality: row.client?.speciality,
-                                    location: `${row.client?.commune}, ${row.client?.wilaya}`,
-                                    visitLocation: row.visitLocation,
-                                    visit: row,
+                                    name: row?.name,
+                                    location: `${row?.commune}, ${row?.wilaya}`,
+                                    numVisits: row?.numVisits,
+                                    speciality: row?.speciality,
+                                    client: row
                                 };
                             })]}
                         columns={[
                             {
-                                field: 'date', headerName: 'Date',
-                                valueFormatter(params) {
-                                    return formatDateToYYYYMMDD(params.value);
-                                },
+                                field: 'numVisits',
+                                headerName: 'Nombre de visites',
                             },
                             {
-                                field: 'client',
+                                field: 'name',
                                 headerName: 'Client',
-                            },
-                            {
-                                field: 'delegate',
-                                headerName: 'Délégué',
-                            },
-                            {
-                                field: 'speciality',
-                                headerName: 'Spécialité',
                             },
                             {
                                 field: 'location',
                                 headerName: 'Localisation',
                             },
                             {
-                                field: 'report', headerName: 'Rapport',
+                                field: 'speciality',
+                                headerName: 'Spécialité',
+                            },
+                            {
+                                field: 'visits',
+                                headerName: 'Visites',
                                 renderCell(params) {
                                     return (<Button onClick={() => {
-                                        displayReport(params.row.visit);
+                                        displayVisits(params.row.client);
                                     }} variant="text">Voir</Button>);
                                 },
                             },

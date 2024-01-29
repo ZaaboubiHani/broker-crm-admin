@@ -1,0 +1,152 @@
+"filename", "language", "JSON with Comments", "TypeScript JSX", "TypeScript", "CSS", "XML", "Markdown", "JSON", "HTML", "comment", "blank", "total"
+"f:\Projects\React\broker-crm-admin-ts\.vs\ProjectSettings.json", "JSON", 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 3
+"f:\Projects\React\broker-crm-admin-ts\.vs\VSWorkspaceState.json", "JSON", 0, 0, 0, 0, 0, 0, 8, 0, 0, 0, 8
+"f:\Projects\React\broker-crm-admin-ts\README.md", "Markdown", 0, 0, 0, 0, 0, 26, 0, 0, 0, 21, 47
+"f:\Projects\React\broker-crm-admin-ts\package-lock.json", "JSON", 0, 0, 0, 0, 0, 0, 16998, 0, 0, 1, 16999
+"f:\Projects\React\broker-crm-admin-ts\package.json", "JSON", 0, 0, 0, 0, 0, 0, 76, 0, 0, 1, 77
+"f:\Projects\React\broker-crm-admin-ts\public\data\wilayas.json", "JSON", 0, 0, 0, 0, 0, 0, 7387, 0, 0, 0, 7387
+"f:\Projects\React\broker-crm-admin-ts\public\index.html", "HTML", 0, 0, 0, 0, 0, 0, 0, 20, 23, 1, 44
+"f:\Projects\React\broker-crm-admin-ts\public\manifest.json", "JSON", 0, 0, 0, 0, 0, 0, 25, 0, 0, 1, 26
+"f:\Projects\React\broker-crm-admin-ts\src\App.css", "CSS", 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1
+"f:\Projects\React\broker-crm-admin-ts\src\App.test.tsx", "TypeScript JSX", 0, 8, 0, 0, 0, 0, 0, 0, 0, 2, 10
+"f:\Projects\React\broker-crm-admin-ts\src\App.tsx", "TypeScript JSX", 0, 13, 0, 0, 0, 0, 0, 0, 15, 4, 32
+"f:\Projects\React\broker-crm-admin-ts\src\api\globals.ts", "TypeScript", 0, 0, 6, 0, 0, 0, 0, 0, 1, 2, 9
+"f:\Projects\React\broker-crm-admin-ts\src\components\button\button.component.tsx", "TypeScript JSX", 0, 13, 0, 0, 0, 0, 0, 0, 0, 7, 20
+"f:\Projects\React\broker-crm-admin-ts\src\components\button\button.style.css", "CSS", 0, 0, 0, 11, 0, 0, 0, 0, 0, 2, 13
+"f:\Projects\React\broker-crm-admin-ts\src\components\circle-avatar\circle-avatar.component.tsx", "TypeScript JSX", 0, 13, 0, 0, 0, 0, 0, 0, 0, 8, 21
+"f:\Projects\React\broker-crm-admin-ts\src\components\circle-avatar\circle-avatar.style.css", "CSS", 0, 0, 0, 16, 0, 0, 0, 0, 0, 0, 16
+"f:\Projects\React\broker-crm-admin-ts\src\components\circular-progress-label\circular-progress-label.component.tsx", "TypeScript JSX", 0, 62, 0, 0, 0, 0, 0, 0, 0, 4, 66
+"f:\Projects\React\broker-crm-admin-ts\src\components\clients-doctor-table\clients-doctor-table.component.tsx", "TypeScript JSX", 0, 110, 0, 0, 0, 0, 0, 0, 0, 15, 125
+"f:\Projects\React\broker-crm-admin-ts\src\components\clients-pharmacy-table\clients-pharmacy-table.component.tsx", "TypeScript JSX", 0, 126, 0, 0, 0, 0, 0, 0, 0, 12, 138
+"f:\Projects\React\broker-crm-admin-ts\src\components\comand-panel\command-panel.component.tsx", "TypeScript JSX", 0, 181, 0, 0, 0, 0, 0, 0, 0, 8, 189
+"f:\Projects\React\broker-crm-admin-ts\src\components\command-cam-table\command-cam-table.component.tsx", "TypeScript JSX", 0, 236, 0, 0, 0, 0, 0, 0, 0, 17, 253
+"f:\Projects\React\broker-crm-admin-ts\src\components\command-cam-table\command-cam-table.style.css", "CSS", 0, 0, 0, 88, 0, 0, 0, 0, 8, 18, 114
+"f:\Projects\React\broker-crm-admin-ts\src\components\command-delegate-table\command-delegate-table.component.tsx", "TypeScript JSX", 0, 228, 0, 0, 0, 0, 0, 0, 0, 16, 244
+"f:\Projects\React\broker-crm-admin-ts\src\components\command-delegate-table\command-delegate-table.style.css", "CSS", 0, 0, 0, 88, 0, 0, 0, 0, 8, 18, 114
+"f:\Projects\React\broker-crm-admin-ts\src\components\comment-table\comment-table.component.tsx", "TypeScript JSX", 0, 86, 0, 0, 0, 0, 0, 0, 0, 16, 102
+"f:\Projects\React\broker-crm-admin-ts\src\components\custom-tab-panel\costum-tab-panel.component.tsx", "TypeScript JSX", 0, 26, 0, 0, 0, 0, 0, 0, 0, 6, 32
+"f:\Projects\React\broker-crm-admin-ts\src\components\date-picker\date-picker.component.tsx", "TypeScript JSX", 0, 51, 0, 0, 0, 0, 0, 0, 0, 11, 62
+"f:\Projects\React\broker-crm-admin-ts\src\components\day-container\day-container.component.tsx", "TypeScript JSX", 0, 63, 0, 0, 0, 0, 0, 0, 0, 13, 76
+"f:\Projects\React\broker-crm-admin-ts\src\components\day-picker\day-picker.component.tsx", "TypeScript JSX", 0, 88, 0, 0, 0, 0, 0, 0, 0, 13, 101
+"f:\Projects\React\broker-crm-admin-ts\src\components\day-picker\day-picker.style.css", "CSS", 0, 0, 0, 20, 0, 0, 0, 0, 6, 8, 34
+"f:\Projects\React\broker-crm-admin-ts\src\components\delegate-table\delegate-table.component.tsx", "TypeScript JSX", 0, 100, 0, 0, 0, 0, 0, 0, 1, 17, 118
+"f:\Projects\React\broker-crm-admin-ts\src\components\delegate-table\delegate-table.style.css", "CSS", 0, 0, 0, 87, 0, 0, 0, 0, 8, 19, 114
+"f:\Projects\React\broker-crm-admin-ts\src\components\expense-stats-dialog\expense-stats-dialog.component.tsx", "TypeScript JSX", 0, 117, 0, 0, 0, 0, 0, 0, 0, 12, 129
+"f:\Projects\React\broker-crm-admin-ts\src\components\expense-table\expense-table.component.tsx", "TypeScript JSX", 0, 143, 0, 0, 0, 0, 0, 0, 0, 11, 154
+"f:\Projects\React\broker-crm-admin-ts\src\components\expense-table\expense-table.style.css", "CSS", 0, 0, 0, 88, 0, 0, 0, 0, 8, 18, 114
+"f:\Projects\React\broker-crm-admin-ts\src\components\home-table\home-table.component.tsx", "TypeScript JSX", 0, 130, 0, 0, 0, 0, 0, 0, 0, 14, 144
+"f:\Projects\React\broker-crm-admin-ts\src\components\home-table\home-table.style.css", "CSS", 0, 0, 0, 86, 0, 0, 0, 0, 8, 19, 113
+"f:\Projects\React\broker-crm-admin-ts\src\components\loading-indicator\loading-indicator.component.tsx", "TypeScript JSX", 0, 13, 0, 0, 0, 0, 0, 0, 0, 4, 17
+"f:\Projects\React\broker-crm-admin-ts\src\components\loading-indicator\loading-indicator.style.css", "CSS", 0, 0, 0, 22, 0, 0, 0, 0, 0, 3, 25
+"f:\Projects\React\broker-crm-admin-ts\src\components\map-dialog\map-dialog.component.tsx", "TypeScript JSX", 0, 299, 0, 0, 0, 0, 0, 0, 0, 34, 333
+"f:\Projects\React\broker-crm-admin-ts\src\components\month-dropdown\month-dropdown.component.tsx", "TypeScript JSX", 0, 49, 0, 0, 0, 0, 0, 0, 0, 9, 58
+"f:\Projects\React\broker-crm-admin-ts\src\components\month-dropdown\month-dropdown.style.css", "CSS", 0, 0, 0, 12, 0, 0, 0, 0, 0, 0, 12
+"f:\Projects\React\broker-crm-admin-ts\src\components\month-year-picker\month-year-picker.component.tsx", "TypeScript JSX", 0, 41, 0, 0, 0, 0, 0, 0, 0, 11, 52
+"f:\Projects\React\broker-crm-admin-ts\src\components\motivation-table\motivation-table.component.tsx", "TypeScript JSX", 0, 86, 0, 0, 0, 0, 0, 0, 0, 16, 102
+"f:\Projects\React\broker-crm-admin-ts\src\components\nav-list-item\nav-list-item.tsx", "TypeScript JSX", 0, 69, 0, 0, 0, 0, 0, 0, 0, 12, 81
+"f:\Projects\React\broker-crm-admin-ts\src\components\plan-panel\plan-panel.component.tsx", "TypeScript JSX", 0, 108, 0, 0, 0, 0, 0, 0, 0, 10, 118
+"f:\Projects\React\broker-crm-admin-ts\src\components\plan-table\plan-table.component.tsx", "TypeScript JSX", 0, 120, 0, 0, 0, 0, 0, 0, 0, 14, 134
+"f:\Projects\React\broker-crm-admin-ts\src\components\plan-table\plan-table.style.css", "CSS", 0, 0, 0, 86, 0, 0, 0, 0, 8, 18, 112
+"f:\Projects\React\broker-crm-admin-ts\src\components\profile-table\profile-table.component.tsx", "TypeScript JSX", 0, 191, 0, 0, 0, 0, 0, 0, 0, 16, 207
+"f:\Projects\React\broker-crm-admin-ts\src\components\profile-table\profile-table.style.css", "CSS", 0, 0, 0, 87, 0, 0, 0, 0, 8, 18, 113
+"f:\Projects\React\broker-crm-admin-ts\src\components\proofs-dialog\proofs-dialog.component.tsx", "TypeScript JSX", 0, 71, 0, 0, 0, 0, 0, 0, 0, 13, 84
+"f:\Projects\React\broker-crm-admin-ts\src\components\report-panel\report-panel.component.tsx", "TypeScript JSX", 0, 232, 0, 0, 0, 0, 0, 0, 0, 7, 239
+"f:\Projects\React\broker-crm-admin-ts\src\components\report-table\report-table.component.tsx", "TypeScript JSX", 0, 107, 0, 0, 0, 0, 0, 0, 0, 11, 118
+"f:\Projects\React\broker-crm-admin-ts\src\components\report-table\report-table.style.css", "CSS", 0, 0, 0, 88, 0, 0, 0, 0, 8, 18, 114
+"f:\Projects\React\broker-crm-admin-ts\src\components\revenue-panel\revenue-panel.component.tsx", "TypeScript JSX", 0, 181, 0, 0, 0, 0, 0, 0, 0, 16, 197
+"f:\Projects\React\broker-crm-admin-ts\src\components\revenue-table\revenue-table.component.tsx", "TypeScript JSX", 0, 80, 0, 0, 0, 0, 0, 0, 0, 10, 90
+"f:\Projects\React\broker-crm-admin-ts\src\components\scalable-table\scalable-table.component.tsx", "TypeScript JSX", 0, 284, 0, 0, 0, 0, 0, 0, 0, 26, 310
+"f:\Projects\React\broker-crm-admin-ts\src\components\scalable-table\scalable-table.style.css", "CSS", 0, 0, 0, 44, 0, 0, 0, 0, 0, 6, 50
+"f:\Projects\React\broker-crm-admin-ts\src\components\search-bar\search-bar.component.tsx", "TypeScript JSX", 0, 31, 0, 0, 0, 0, 0, 0, 0, 7, 38
+"f:\Projects\React\broker-crm-admin-ts\src\components\search-bar\search-bar.style.css", "CSS", 0, 0, 0, 3, 0, 0, 0, 0, 0, 2, 5
+"f:\Projects\React\broker-crm-admin-ts\src\components\sidebar\sidebar.component.tsx", "TypeScript JSX", 0, 281, 0, 0, 0, 0, 0, 0, 0, 19, 300
+"f:\Projects\React\broker-crm-admin-ts\src\components\sidebar\sidebar.style.css", "CSS", 0, 0, 0, 15, 0, 0, 0, 0, 0, 5, 20
+"f:\Projects\React\broker-crm-admin-ts\src\components\speciality-table\speciality-table.component.tsx", "TypeScript JSX", 0, 86, 0, 0, 0, 0, 0, 0, 0, 15, 101
+"f:\Projects\React\broker-crm-admin-ts\src\components\supplier-table\supplier-table.component.tsx", "TypeScript JSX", 0, 95, 0, 0, 0, 0, 0, 0, 0, 15, 110
+"f:\Projects\React\broker-crm-admin-ts\src\components\user-container\user-container.component.tsx", "TypeScript JSX", 0, 39, 0, 0, 0, 0, 0, 0, 0, 9, 48
+"f:\Projects\React\broker-crm-admin-ts\src\components\user-details\user-details.component.tsx", "TypeScript JSX", 0, 21, 0, 0, 0, 0, 0, 0, 0, 9, 30
+"f:\Projects\React\broker-crm-admin-ts\src\components\user-details\user-details.style.css", "CSS", 0, 0, 0, 16, 0, 0, 0, 0, 0, 2, 18
+"f:\Projects\React\broker-crm-admin-ts\src\components\user-dialog\user-dialog.component.tsx", "TypeScript JSX", 0, 205, 0, 0, 0, 0, 0, 0, 0, 32, 237
+"f:\Projects\React\broker-crm-admin-ts\src\components\user-dialog\user-dialog.style.css", "CSS", 0, 0, 0, 50, 0, 0, 0, 0, 1, 16, 67
+"f:\Projects\React\broker-crm-admin-ts\src\components\user-dropdown\user-dropdown.tsx", "TypeScript JSX", 0, 77, 0, 0, 0, 0, 0, 0, 0, 10, 87
+"f:\Projects\React\broker-crm-admin-ts\src\components\user-picker\user-picker.component.tsx", "TypeScript JSX", 0, 62, 0, 0, 0, 0, 0, 0, 0, 12, 74
+"f:\Projects\React\broker-crm-admin-ts\src\components\user-picker\user-picker.style.css", "CSS", 0, 0, 0, 13, 0, 0, 0, 0, 7, 6, 26
+"f:\Projects\React\broker-crm-admin-ts\src\components\year-dropdown\year-dropdown.component.tsx", "TypeScript JSX", 0, 49, 0, 0, 0, 0, 0, 0, 0, 11, 60
+"f:\Projects\React\broker-crm-admin-ts\src\components\year-dropdown\year-dropdown.style.css", "CSS", 0, 0, 0, 12, 0, 0, 0, 0, 0, 0, 12
+"f:\Projects\React\broker-crm-admin-ts\src\components\year-picker\year-picker.component.tsx", "TypeScript JSX", 0, 33, 0, 0, 0, 0, 0, 0, 0, 12, 45
+"f:\Projects\React\broker-crm-admin-ts\src\components\yes-no-dialog\yes-no-dialog.component.tsx", "TypeScript JSX", 0, 31, 0, 0, 0, 0, 0, 0, 0, 7, 38
+"f:\Projects\React\broker-crm-admin-ts\src\functions\date-format.ts", "TypeScript", 0, 0, 40, 0, 0, 0, 0, 0, 1, 15, 56
+"f:\Projects\React\broker-crm-admin-ts\src\index.css", "CSS", 0, 0, 0, 12, 0, 0, 0, 0, 0, 2, 14
+"f:\Projects\React\broker-crm-admin-ts\src\index.tsx", "TypeScript JSX", 0, 13, 0, 0, 0, 0, 0, 0, 0, 7, 20
+"f:\Projects\React\broker-crm-admin-ts\src\logo.svg", "XML", 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1
+"f:\Projects\React\broker-crm-admin-ts\src\models\client.model.ts", "TypeScript", 0, 0, 53, 0, 0, 0, 0, 0, 0, 4, 57
+"f:\Projects\React\broker-crm-admin-ts\src\models\command.model.ts", "TypeScript", 0, 0, 86, 0, 0, 0, 0, 0, 0, 13, 99
+"f:\Projects\React\broker-crm-admin-ts\src\models\comment.model.ts", "TypeScript", 0, 0, 14, 0, 0, 0, 0, 0, 0, 3, 17
+"f:\Projects\React\broker-crm-admin-ts\src\models\company.model.ts", "TypeScript", 0, 0, 66, 0, 0, 0, 0, 0, 0, 5, 71
+"f:\Projects\React\broker-crm-admin-ts\src\models\expense-config.model.ts", "TypeScript", 0, 0, 20, 0, 0, 0, 0, 0, 0, 4, 24
+"f:\Projects\React\broker-crm-admin-ts\src\models\expense-user.model.ts", "TypeScript", 0, 0, 26, 0, 0, 0, 0, 0, 0, 4, 30
+"f:\Projects\React\broker-crm-admin-ts\src\models\expense.model.ts", "TypeScript", 0, 0, 64, 0, 0, 0, 0, 0, 0, 6, 70
+"f:\Projects\React\broker-crm-admin-ts\src\models\file.model.ts", "TypeScript", 0, 0, 23, 0, 0, 0, 0, 0, 0, 6, 29
+"f:\Projects\React\broker-crm-admin-ts\src\models\goal.model.ts", "TypeScript", 0, 0, 24, 0, 0, 0, 0, 0, 0, 5, 29
+"f:\Projects\React\broker-crm-admin-ts\src\models\motivation.model.ts", "TypeScript", 0, 0, 14, 0, 0, 0, 0, 0, 0, 3, 17
+"f:\Projects\React\broker-crm-admin-ts\src\models\product.model.ts", "TypeScript", 0, 0, 60, 0, 0, 0, 0, 0, 0, 5, 65
+"f:\Projects\React\broker-crm-admin-ts\src\models\report.model.ts", "TypeScript", 0, 0, 65, 0, 0, 0, 0, 0, 0, 9, 74
+"f:\Projects\React\broker-crm-admin-ts\src\models\revenue.model.ts", "TypeScript", 0, 0, 25, 0, 0, 0, 0, 0, 0, 3, 28
+"f:\Projects\React\broker-crm-admin-ts\src\models\speciality.model.ts", "TypeScript", 0, 0, 14, 0, 0, 0, 0, 0, 0, 3, 17
+"f:\Projects\React\broker-crm-admin-ts\src\models\supplier.model.ts", "TypeScript", 0, 0, 50, 0, 0, 0, 0, 0, 0, 2, 52
+"f:\Projects\React\broker-crm-admin-ts\src\models\task.model.ts", "TypeScript", 0, 0, 41, 0, 0, 0, 0, 0, 0, 7, 48
+"f:\Projects\React\broker-crm-admin-ts\src\models\user-tracking.model.ts", "TypeScript", 0, 0, 20, 0, 0, 0, 0, 0, 0, 4, 24
+"f:\Projects\React\broker-crm-admin-ts\src\models\user.model.ts", "TypeScript", 0, 0, 99, 0, 0, 0, 0, 0, 0, 11, 110
+"f:\Projects\React\broker-crm-admin-ts\src\models\visit-task.model.ts", "TypeScript", 0, 0, 35, 0, 0, 0, 0, 0, 0, 4, 39
+"f:\Projects\React\broker-crm-admin-ts\src\models\visit.model.ts", "TypeScript", 0, 0, 53, 0, 0, 0, 0, 0, 0, 6, 59
+"f:\Projects\React\broker-crm-admin-ts\src\models\wilaya.model.ts", "TypeScript", 0, 0, 20, 0, 0, 0, 0, 0, 0, 3, 23
+"f:\Projects\React\broker-crm-admin-ts\src\pages\clients-page\clients-page.component.tsx", "TypeScript JSX", 0, 992, 0, 0, 0, 0, 0, 0, 0, 58, 1050
+"f:\Projects\React\broker-crm-admin-ts\src\pages\clients-page\clients-page.style.css", "CSS", 0, 0, 0, 35, 0, 0, 0, 0, 0, 8, 43
+"f:\Projects\React\broker-crm-admin-ts\src\pages\command-page\command-page.component.tsx", "TypeScript JSX", 0, 437, 0, 0, 0, 0, 0, 0, 0, 44, 481
+"f:\Projects\React\broker-crm-admin-ts\src\pages\command-page\command-page.style.css", "CSS", 0, 0, 0, 38, 0, 0, 0, 0, 0, 9, 47
+"f:\Projects\React\broker-crm-admin-ts\src\pages\config-page\config-page.component.tsx", "TypeScript JSX", 0, 1437, 0, 0, 0, 0, 0, 0, 45, 54, 1536
+"f:\Projects\React\broker-crm-admin-ts\src\pages\config-page\config-page.style.css", "CSS", 0, 0, 0, 16, 0, 0, 0, 0, 0, 3, 19
+"f:\Projects\React\broker-crm-admin-ts\src\pages\delegate-page\delegate-page.component.tsx", "TypeScript JSX", 0, 466, 0, 0, 0, 0, 0, 0, 0, 37, 503
+"f:\Projects\React\broker-crm-admin-ts\src\pages\delegate-page\delegate-page.style.css", "CSS", 0, 0, 0, 23, 0, 0, 0, 0, 0, 4, 27
+"f:\Projects\React\broker-crm-admin-ts\src\pages\expense-page\expense-page.component.tsx", "TypeScript JSX", 0, 324, 0, 0, 0, 0, 0, 0, 0, 23, 347
+"f:\Projects\React\broker-crm-admin-ts\src\pages\expense-page\expense-page.style.css", "CSS", 0, 0, 0, 16, 0, 0, 0, 0, 0, 3, 19
+"f:\Projects\React\broker-crm-admin-ts\src\pages\home-page\home-page.component.tsx", "TypeScript JSX", 0, 524, 0, 0, 0, 0, 0, 0, 0, 49, 573
+"f:\Projects\React\broker-crm-admin-ts\src\pages\home-page\home-page.style.css", "CSS", 0, 0, 0, 22, 0, 0, 0, 0, 0, 4, 26
+"f:\Projects\React\broker-crm-admin-ts\src\pages\login-page\login-page.component.tsx", "TypeScript JSX", 0, 149, 0, 0, 0, 0, 0, 0, 0, 23, 172
+"f:\Projects\React\broker-crm-admin-ts\src\pages\login-page\login-page.style.css", "CSS", 0, 0, 0, 25, 0, 0, 0, 0, 0, 3, 28
+"f:\Projects\React\broker-crm-admin-ts\src\pages\plan-page\plan-page.component.tsx", "TypeScript JSX", 0, 586, 0, 0, 0, 0, 0, 0, 0, 55, 641
+"f:\Projects\React\broker-crm-admin-ts\src\pages\plan-page\plan-page.style.css", "CSS", 0, 0, 0, 39, 0, 0, 0, 0, 0, 8, 47
+"f:\Projects\React\broker-crm-admin-ts\src\pages\profile-page\profile-page.component.tsx", "TypeScript JSX", 0, 207, 0, 0, 0, 0, 0, 0, 0, 22, 229
+"f:\Projects\React\broker-crm-admin-ts\src\pages\profile-page\profile-page.style.css", "CSS", 0, 0, 0, 24, 0, 0, 0, 0, 0, 5, 29
+"f:\Projects\React\broker-crm-admin-ts\src\pages\report-page\report-page.component.tsx", "TypeScript JSX", 0, 392, 0, 0, 0, 0, 0, 0, 0, 29, 421
+"f:\Projects\React\broker-crm-admin-ts\src\pages\report-page\report-page.style.css", "CSS", 0, 0, 0, 32, 0, 0, 0, 0, 0, 5, 37
+"f:\Projects\React\broker-crm-admin-ts\src\pages\revenue-page\revenue-page.component.tsx", "TypeScript JSX", 0, 275, 0, 0, 0, 0, 0, 0, 0, 22, 297
+"f:\Projects\React\broker-crm-admin-ts\src\pages\revenue-page\revenue-page.style.css", "CSS", 0, 0, 0, 27, 0, 0, 0, 0, 0, 7, 34
+"f:\Projects\React\broker-crm-admin-ts\src\pages\statistics-page\statistics-page.component.tsx", "TypeScript JSX", 0, 1321, 0, 0, 0, 0, 0, 0, 0, 87, 1408
+"f:\Projects\React\broker-crm-admin-ts\src\pages\statistics-page\statistics-page.style.css", "CSS", 0, 0, 0, 16, 0, 0, 0, 0, 0, 3, 19
+"f:\Projects\React\broker-crm-admin-ts\src\react-app-env.d.ts", "TypeScript", 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 2
+"f:\Projects\React\broker-crm-admin-ts\src\reportWebVitals.ts", "TypeScript", 0, 0, 13, 0, 0, 0, 0, 0, 0, 3, 16
+"f:\Projects\React\broker-crm-admin-ts\src\routes\routes.tsx", "TypeScript JSX", 0, 53, 0, 0, 0, 0, 0, 0, 0, 6, 59
+"f:\Projects\React\broker-crm-admin-ts\src\services\auth.service.ts", "TypeScript", 0, 0, 39, 0, 0, 0, 0, 0, 0, 10, 49
+"f:\Projects\React\broker-crm-admin-ts\src\services\clients.service.ts", "TypeScript", 0, 0, 38, 0, 0, 0, 0, 0, 0, 8, 46
+"f:\Projects\React\broker-crm-admin-ts\src\services\command.service.ts", "TypeScript", 0, 0, 81, 0, 0, 0, 0, 0, 0, 12, 93
+"f:\Projects\React\broker-crm-admin-ts\src\services\comment.service.ts", "TypeScript", 0, 0, 105, 0, 0, 0, 0, 0, 0, 12, 117
+"f:\Projects\React\broker-crm-admin-ts\src\services\expense.service.ts", "TypeScript", 0, 0, 134, 0, 0, 0, 0, 0, 0, 17, 151
+"f:\Projects\React\broker-crm-admin-ts\src\services\goal.service.ts", "TypeScript", 0, 0, 51, 0, 0, 0, 0, 0, 0, 7, 58
+"f:\Projects\React\broker-crm-admin-ts\src\services\motivation.service.ts", "TypeScript", 0, 0, 105, 0, 0, 0, 0, 0, 0, 13, 118
+"f:\Projects\React\broker-crm-admin-ts\src\services\product.service.ts", "TypeScript", 0, 0, 209, 0, 0, 0, 0, 0, 0, 22, 231
+"f:\Projects\React\broker-crm-admin-ts\src\services\report.service.ts", "TypeScript", 0, 0, 43, 0, 0, 0, 0, 0, 0, 5, 48
+"f:\Projects\React\broker-crm-admin-ts\src\services\revenue.service.ts", "TypeScript", 0, 0, 32, 0, 0, 0, 0, 0, 0, 6, 38
+"f:\Projects\React\broker-crm-admin-ts\src\services\speciality.service.ts", "TypeScript", 0, 0, 105, 0, 0, 0, 0, 0, 0, 14, 119
+"f:\Projects\React\broker-crm-admin-ts\src\services\statics.service.ts", "TypeScript", 0, 0, 291, 0, 0, 0, 0, 0, 0, 97, 388
+"f:\Projects\React\broker-crm-admin-ts\src\services\supplier.service.ts", "TypeScript", 0, 0, 116, 0, 0, 0, 0, 0, 0, 13, 129
+"f:\Projects\React\broker-crm-admin-ts\src\services\task.service.ts", "TypeScript", 0, 0, 33, 0, 0, 0, 0, 0, 0, 10, 43
+"f:\Projects\React\broker-crm-admin-ts\src\services\user-tracking.service.ts", "TypeScript", 0, 0, 42, 0, 0, 0, 0, 0, 0, 6, 48
+"f:\Projects\React\broker-crm-admin-ts\src\services\user.service.ts", "TypeScript", 0, 0, 213, 0, 0, 0, 0, 0, 0, 37, 250
+"f:\Projects\React\broker-crm-admin-ts\src\services\visit-task.service.ts", "TypeScript", 0, 0, 53, 0, 0, 0, 0, 0, 1, 11, 65
+"f:\Projects\React\broker-crm-admin-ts\src\services\visit.service.ts", "TypeScript", 0, 0, 157, 0, 0, 0, 0, 0, 0, 26, 183
+"f:\Projects\React\broker-crm-admin-ts\src\services\wilaya.serivce.ts", "TypeScript", 0, 0, 64, 0, 0, 0, 0, 0, 0, 10, 74
+"f:\Projects\React\broker-crm-admin-ts\src\setupTests.ts", "TypeScript", 0, 0, 1, 0, 0, 0, 0, 0, 4, 1, 6
+"f:\Projects\React\broker-crm-admin-ts\src\theme.ts", "TypeScript", 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 2
+"f:\Projects\React\broker-crm-admin-ts\tsconfig.json", "JSON with Comments", 30, 0, 0, 0, 0, 0, 0, 0, 0, 1, 31
+"Total", "-", 30, 11911, 2845, 1257, 1, 26, 24497, 20, 170, 1844, 42601

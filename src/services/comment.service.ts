@@ -7,16 +7,16 @@ export default class CommentService {
 
     private constructor() {
     }
-  
+
     static getInstance(): CommentService {
-      if (!CommentService._instance) {
-        CommentService._instance = new CommentService();
-      }
-      return CommentService._instance;
+        if (!CommentService._instance) {
+            CommentService._instance = new CommentService();
+        }
+        return CommentService._instance;
     }
-    async getAllComments(): Promise<CommentModel[]> {
+    async getAllComments(page: number, size: number,): Promise<{ comments: CommentModel[], total: number }> {
         const token = localStorage.getItem('token');
-        var response = await axios.get(`${Globals.apiUrl}/company-comments`,
+        var response = await axios.get(`${Globals.apiUrl}/company-comments?pagination[page]=${page}&pagination[pageSize]=${size}`,
             {
                 headers: {
                     'Authorization': `Bearer ${token}`
@@ -29,9 +29,9 @@ export default class CommentService {
                 var comment = CommentModel.fromJson(response.data.data[index]);
                 comments.push(comment);
             }
-            return comments;
+            return { comments: comments, total: response.data.meta.pagination.total };
         }
-        return [];
+        return { comments: [], total: 0 };
     }
 
     async getDraftedComments(): Promise<CommentModel[]> {

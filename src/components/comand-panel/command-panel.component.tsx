@@ -12,9 +12,12 @@ import { Card, CardActionArea, CardMedia, DialogActions } from "@mui/material";
 import EditNoteIcon from '@mui/icons-material/EditNote';
 import DrawIcon from '@mui/icons-material/Draw';
 import NewspaperIcon from '@mui/icons-material/Newspaper';
+import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
 
 interface CommandPanelProps {
     command?: CommandModel;
+    showBackButton?: boolean;
+    onBackClick?: () => void;
 }
 
 const generatePdf = (command: CommandModel) => {
@@ -57,13 +60,28 @@ const generatePdf = (command: CommandModel) => {
     pdf.save(`${command?.visit?.client?.name}_${formatDateToYYYYMMDD(new Date())}.pdf`);
 };
 
-const CommandPanel: React.FC<CommandPanelProps> = ({ command }) => {
+const CommandPanel: React.FC<CommandPanelProps> = ({ command, showBackButton, onBackClick }) => {
     const handleDownload = (url?: string) => {
         window.open(url, '_blank');
     };
     if (command) {
         return (
             <div style={{ margin: '8px 0px 8px 8px', flexGrow: '1', overflowY: 'scroll', overflowX: 'hidden', paddingRight: '8px', height: '96%' }}>
+                <Button style={{
+                    display: showBackButton === undefined || showBackButton === false ? 'none' : 'flex',
+                    minWidth: '10px',
+                    height: '40px',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    margin: 'none',
+                    borderRadius: '50px',
+                    marginRight: '8px'
+                }}
+                    size='small'
+                    onClick={onBackClick}
+                    variant="outlined">
+                    <ArrowBackIosNewIcon style={{ width: '20px', height: '20px', color: 'rgb(0, 182, 182)' }} />
+                </Button>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'end' }}>
                     <h4 style={{ fontSize: 15, fontWeight: '400', margin: '0px', height: '32px' }}> Statut: {command.isHonored ? 'honoré' : 'non honoré'}</h4>
                     <Button style={{ margin: 'none' }} onClick={() => generatePdf(command)} variant="outlined"> <PictureAsPdfIcon />Télécharger PDF</Button>
@@ -93,9 +111,9 @@ const CommandPanel: React.FC<CommandPanelProps> = ({ command }) => {
                             {
                                 command.suppliers?.map((supplier) => (
                                     <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                                        <h6 style={{ fontSize: 15, fontWeight: '400' , margin: '0px', height: '32px'}}>{supplier.name}</h6>
-                                        <h6 style={{ fontSize: 15, fontWeight: '400' , margin: '0px', height: '32px'}}>{supplier.wilaya}</h6>
-                                        <h6 style={{ fontSize: 15, fontWeight: '400' , margin: '0px', height: '32px'}}>{supplier.commun}</h6>
+                                        <h6 style={{ fontSize: 15, fontWeight: '400', margin: '0px', height: '32px' }}>{supplier.name}</h6>
+                                        <h6 style={{ fontSize: 15, fontWeight: '400', margin: '0px', height: '32px' }}>{supplier.wilaya}</h6>
+                                        <h6 style={{ fontSize: 15, fontWeight: '400', margin: '0px', height: '32px' }}>{supplier.commun}</h6>
                                     </div>
                                 ))
                             }

@@ -2,11 +2,11 @@ import React, { useState } from 'react';
 import { DotSpinner } from '@uiball/loaders'
 import IconButton from '@mui/material/IconButton';
 import DeleteIcon from '@mui/icons-material/Delete';
-import SpecialityModel from '../../models/speciality.model';
+import MotivationModel from '../../models/motivation.model';
 import ScalableTable from '../scalable-table/scalable-table.component';
 
-interface SpecialityTableProps {
-    data: SpecialityModel[];
+interface MotivationTableProps {
+    data: MotivationModel[];
     isLoading: boolean;
     onRemove: (id: number) => void;
     id?: string;
@@ -16,7 +16,7 @@ interface SpecialityTableProps {
     pageChange: (page: number, size: number) => void;
 }
 
-const SpecialityTable: React.FC<SpecialityTableProps> = ({ data, id, isLoading, onRemove, total, size, page, pageChange, }) => {
+const MotivationTable: React.FC<MotivationTableProps> = ({ data, id, isLoading, onRemove, total, size, page, pageChange, }) => {
 
     const [rowsPerPage, setRowsPerPage] = React.useState(size);
 
@@ -31,6 +31,7 @@ const SpecialityTable: React.FC<SpecialityTableProps> = ({ data, id, isLoading, 
             style={{
                 borderRadius: '8px',
                 height: '400px',
+                
             }}>
             {
                 isLoading ? (<div style={{
@@ -54,15 +55,15 @@ const SpecialityTable: React.FC<SpecialityTableProps> = ({ data, id, isLoading, 
                             [...data.map((row) => {
                                 return {
                                     id: row.id,
-                                    name: row.name,
+                                    motivation: row.content,
                                     model: row,
                                 };
                             })]}
 
                         columns={[
                             {
-                                field: 'name',
-                                headerName: 'Nom de spécialité',
+                                field: 'motivation',
+                                headerName: 'Contenu du motivation',
                             },
                             {
                                 field: 'delete',
@@ -97,4 +98,4 @@ const SpecialityTable: React.FC<SpecialityTableProps> = ({ data, id, isLoading, 
     );
 };
 
-export default SpecialityTable;
+export default MotivationTable;

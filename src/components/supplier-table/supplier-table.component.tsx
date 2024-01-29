@@ -1,39 +1,37 @@
-import React from 'react';
-import { DotSpinner } from '@uiball/loaders';
-import Button from '@mui/material/Button';
-import VisitModel from '../../models/visit.model';
+import React, { useState } from 'react';
+import { DotSpinner } from '@uiball/loaders'
+import IconButton from '@mui/material/IconButton';
+import DeleteIcon from '@mui/icons-material/Delete';
+import SupplierModel from '../../models/supplier.model';
 import ScalableTable from '../scalable-table/scalable-table.component';
-import ClientModel from '@/src/models/client.model';
 
-interface ClientsPharmacyTableProps {
-    data: ClientModel[];
-    displayVisits: (client: ClientModel) => {};
-    pageChange: (page: number, size: number) => void;
+interface SupplierTableProps {
+    data: SupplierModel[];
+    isLoading: boolean;
+    onRemove: (id: number) => void;
     id?: string;
     page: number;
     size: number;
     total: number;
-    isLoading: boolean;
+    pageChange: (page: number, size: number) => void;
 }
 
-const ClientsPharmacyTable: React.FC<ClientsPharmacyTableProps> = ({ total, size, page, pageChange, data, id, isLoading, displayVisits, }) => {
+const SupplierTable: React.FC<SupplierTableProps> = ({ data, id, isLoading, onRemove, total, size, page, pageChange, }) => {
+
     const [rowsPerPage, setRowsPerPage] = React.useState(size);
+
     const [pageIndex, setPageIndex] = React.useState(page - 1);
 
     if (pageIndex !== (page - 1)) {
         setPageIndex(page - 1);
     }
 
-
     return (
-        <div id={id} style={{
-            display: 'flex',
-            flexDirection: 'column',
-            flexGrow: '1',
-            borderRadius: '8px',
-            marginRight:'-2px',
-            height:'100%'
-        }}>
+        <div id={id}
+            style={{
+                borderRadius: '8px',
+                height: '400px',
+            }}>
             {
                 isLoading ? (<div style={{
                     width: '100%',
@@ -51,60 +49,62 @@ const ClientsPharmacyTable: React.FC<ClientsPharmacyTableProps> = ({ total, size
                     />
                 </div>) :
                     (<ScalableTable
+
                         rows={
                             [...data.map((row) => {
                                 return {
                                     id: row.id,
-                                    name: row?.name,
-                                    location: `${row?.commune}, ${row?.wilaya}`,
-                                    numVisits: row?.numVisits,
-                                    client: row
+                                    name: row.name,
+                                    location: row.wilaya + ', ' + row.commun,
+                                    type: row.type ? 'Pharmacétique' : 'Parapharmacétique',
+                                    model: row,
                                 };
                             })]}
+
                         columns={[
                             {
-                                field: 'numVisits',
-                                headerName: 'Nombre de visites',
-                            },
-                            {
                                 field: 'name',
-                                headerName: 'Client',
+                                headerName: 'Nom de fournisseur',
                             },
                             {
                                 field: 'location',
-                                headerName: 'Localisation',
+                                headerName: 'Wilaya et commune',
                             },
                             {
-                                field: 'visits',
-                                headerName: 'Visites',
+                                field: 'type',
+                                headerName: 'Type',
+                            },
+                            {
+                                field: 'delete',
+                                headerName: 'Supprimer',
                                 renderCell(params) {
-                                    return (<Button onClick={() => {
-                                        displayVisits(params.row.client);
-                                    }} variant="text">Voir</Button>);
+                                    return (<IconButton onClick={() => {
+                                        onRemove(params.row.id);
+                                    }} >
+                                        <DeleteIcon />
+                                    </IconButton>);
                                 },
                             },
                         ]}
+
                         total={total}
+
                         onPaginationChange={(model) => {
                             setPageIndex(model.page);
                             pageChange(model.page + 1, model.size);
                             setRowsPerPage(model.size);
-
                         }}
 
-                        pagination={
-                            {
-                                size: rowsPerPage,
-                                page: pageIndex,
+                        pagination={{
+                            size: rowsPerPage,
+                            page: pageIndex,
+                        }}
 
-                            }
-                        }
                         pageSizeOptions={[5, 10, 25, 50, 100]}
+                        
                     />)}
-
         </div>
-
     );
 };
 
-export default ClientsPharmacyTable;
+export default SupplierTable;

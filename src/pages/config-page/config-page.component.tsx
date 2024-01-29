@@ -47,6 +47,9 @@ import CustomTabPanel from '../../components/custom-tab-panel/costum-tab-panel.c
 import RestoreIcon from '@mui/icons-material/Restore';
 import { NumericFormat, NumericFormatProps } from 'react-number-format';
 import SpecialityTable from '../../components/speciality-table/speciality-table.component';
+import CommentTable from '../../components/comment-table/comment-table.component';
+import MotivationTable from '../../components/motivation-table/motivation-table.component';
+import SupplierTable from '../../components/supplier-table/supplier-table.component';
 
 interface ConfigPageProps {
     currentUser: UserModel;
@@ -102,6 +105,15 @@ interface ConfigPageProps {
     specialityPage: number;
     specialitySize: number;
     specialitiesTotal: number;
+    commentPage: number;
+    commentSize: number;
+    commentsTotal: number;
+    motivationPage: number;
+    motivationSize: number;
+    motivationsTotal: number;
+    supplierPage: number;
+    supplierSize: number;
+    suppliersTotal: number;
     index: number;
 }
 
@@ -171,6 +183,15 @@ class ConfigPage extends Component<{}, ConfigPageProps> {
             specialityPage: 1,
             specialitySize: 25,
             specialitiesTotal: 0,
+            commentPage: 1,
+            commentSize: 25,
+            commentsTotal: 0,
+            motivationPage: 1,
+            motivationSize: 25,
+            motivationsTotal: 0,
+            supplierPage: 1,
+            supplierSize: 25,
+            suppliersTotal: 0,
             showDeleteSpecialityDialog: false,
             showRestoreSpecialityDialog: false,
             showDeleteCoProductDialog: false,
@@ -205,13 +226,13 @@ class ConfigPage extends Component<{}, ConfigPageProps> {
     productService = ProductService.getInstance();
 
     loadConfigPageData = async () => {
-        var { specialities, total: specialitiesTotal } = await this.specialityService.getAllMedicalSpecialities(1, 100);
+        var { specialities, total: specialitiesTotal } = await this.specialityService.getAllMedicalSpecialities(this.state.specialityPage, this.state.specialitySize);
         var draftedSpecialities = await this.specialityService.getAllDraftedMedicalSpecialities();
-        var comments = await this.commentService.getAllComments();
+        var { comments: comments, total: commentsTotal } = await this.commentService.getAllComments(this.state.commentPage, this.state.commentSize);
         var draftedComments = await this.commentService.getDraftedComments();
-        var motivations = await this.motivationService.getAllMotivations();
+        var { motivations: motivations, total: motivationsTotal } = await this.motivationService.getAllMotivations(this.state.motivationPage, this.state.motivationSize);
         var draftedMotivations = await this.motivationService.getAllDraftedMotivations();
-        var suppliers = await this.supplierService.getAllSuppliers();
+        var { suppliers: suppliers, total: suppliersTotal } = await this.supplierService.getSuppliersPaginated(this.state.supplierPage, this.state.supplierSize);
         var draftedSuppliers = await this.supplierService.getAllDraftedSuppliers();
         var wilayas = await this.wilayaService.getAllWilayas();
         var expensesConfig = await this.expenseService.getExpensesConfig();
@@ -228,6 +249,7 @@ class ConfigPage extends Component<{}, ConfigPageProps> {
             currentUser: currentUser,
             specialitiesTotal: specialitiesTotal,
             isLoading: false,
+            suppliersTotal: suppliersTotal,
             medicalSpecialities: specialities,
             draftedComments: draftedComments,
             draftedMotivations: draftedMotivations,
@@ -235,7 +257,9 @@ class ConfigPage extends Component<{}, ConfigPageProps> {
             draftedProducts: draftedProducts,
             draftedSuppliers: draftedSuppliers,
             motivations: motivations,
+            motivationsTotal: motivationsTotal,
             comments: comments,
+            commentsTotal: commentsTotal,
             suppliers: suppliers,
             wilayas: wilayas,
             expensesConfig: expensesConfig!,
@@ -308,6 +332,43 @@ class ConfigPage extends Component<{}, ConfigPageProps> {
         });
     }
 
+    handleCommentPageChange = async (page: number, size: number) => {
+        this.setState({ loadingCommentsData: true });
+        var { comments, total } = await this.commentService.getAllComments(page, size);
+        this.setState({
+            loadingCommentsData: false,
+            commentsTotal: total,
+            comments: comments,
+            commentPage: page,
+            commentSize: size,
+        });
+    }
+
+
+    handleMotivationPageChange = async (page: number, size: number) => {
+        this.setState({ loadingMotivationsData: true });
+        var { motivations, total } = await this.motivationService.getAllMotivations(page, size);
+        this.setState({
+            loadingMotivationsData: false,
+            motivationsTotal: total,
+            motivations: motivations,
+            motivationPage: page,
+            motivationSize: size,
+        });
+    }
+
+    handleSupplierPageChange = async (page: number, size: number) => {
+        this.setState({ loadingSuppliersData: true });
+        var { suppliers, total } = await this.supplierService.getSuppliersPaginated(page, size);
+        this.setState({
+            loadingSuppliersData: false,
+            suppliersTotal: total,
+            suppliers: suppliers,
+            supplierPage: page,
+            supplierSize: size,
+        });
+    }
+
     handleSpecialityNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         this.setState({ specialityName: event.target.value });
     }
@@ -315,9 +376,9 @@ class ConfigPage extends Component<{}, ConfigPageProps> {
     handleRemoveComment = async () => {
         this.setState({ loadingCommentsData: true, showDeleteCommentDialog: false });
         await this.commentService.draftComment(this.state.selectedCommentId);
-        var comments = await this.commentService.getAllComments();
+        var { comments, total } = await this.commentService.getAllComments(this.state.commentPage, this.state.commentSize);
         var draftedComments = await this.commentService.getDraftedComments();
-        this.setState({ loadingCommentsData: false, comments: comments, draftedComments: draftedComments });
+        this.setState({ loadingCommentsData: false, comments: comments, commentsTotal: total, draftedComments: draftedComments });
         this.setState({ showSnackbar: true, snackbarMessage: 'Commentaire supprimé' });
     }
 
@@ -325,14 +386,14 @@ class ConfigPage extends Component<{}, ConfigPageProps> {
         this.setState({ loadingCommentsData: true, showRestoreCommentDialog: false });
         if (this.state.comments.length < 5) {
             await this.commentService.publishComment(this.state.selectedCommentId);
-            var comments = await this.commentService.getAllComments();
+            var { comments, total } = await this.commentService.getAllComments(this.state.commentPage, this.state.commentSize);
             var draftedComments = await this.commentService.getDraftedComments();
-            this.setState({ loadingCommentsData: false, comments: comments, draftedComments: draftedComments });
+            this.setState({ loadingCommentsData: false, comments: comments, commentsTotal: total, draftedComments: draftedComments });
             this.setState({ showSnackbar: true, snackbarMessage: 'Commentaire restauré' });
         } else {
-            var comments = await this.commentService.getAllComments();
+            var { comments, total } = await this.commentService.getAllComments(this.state.commentPage, this.state.commentSize);
             var draftedComments = await this.commentService.getDraftedComments();
-            this.setState({ loadingCommentsData: false, comments: comments, draftedComments: draftedComments });
+            this.setState({ loadingCommentsData: false, comments: comments, commentsTotal: total, draftedComments: draftedComments });
             this.setState({ showSnackbar: true, snackbarMessage: 'Nombre de commentaires dépassés, veuillez supprimer un commentaire puis réessayer' });
         }
     }
@@ -340,8 +401,8 @@ class ConfigPage extends Component<{}, ConfigPageProps> {
     handleCreateComment = async () => {
         this.setState({ loadingCommentsData: true });
         await this.commentService.createComment(this.state.commentContent);
-        var comments = await this.commentService.getAllComments();
-        this.setState({ loadingCommentsData: false, comments: comments, commentContent: '' });
+        var { comments, total } = await this.commentService.getAllComments(this.state.commentPage, this.state.commentSize);
+        this.setState({ loadingCommentsData: false, comments: comments, commentsTotal: total, commentContent: '' });
         this.setState({ showSnackbar: true, snackbarMessage: 'Commentaire créé' });
     }
 
@@ -352,26 +413,26 @@ class ConfigPage extends Component<{}, ConfigPageProps> {
     handleRemoveMotivation = async () => {
         this.setState({ loadingMotivationsData: true, showDeleteMotivationDialog: false });
         await this.motivationService.draftMotivation(this.state.selectedMotivationId);
-        var motivations = await this.motivationService.getAllMotivations();
+        var { motivations, total } = await this.motivationService.getAllMotivations(this.state.motivationPage, this.state.motivationSize);
         var draftedMotivations = await this.motivationService.getAllDraftedMotivations();
-        this.setState({ loadingMotivationsData: false, motivations: motivations, draftedMotivations: draftedMotivations });
+        this.setState({ loadingMotivationsData: false, motivations: motivations, motivationsTotal: total, draftedMotivations: draftedMotivations });
         this.setState({ showSnackbar: true, snackbarMessage: 'Motivation supprimé' });
     }
 
     handleRestoreMotivation = async () => {
         this.setState({ loadingMotivationsData: true, showRestoreMotivationDialog: false });
         await this.motivationService.publishMotivation(this.state.selectedMotivationId);
-        var motivations = await this.motivationService.getAllMotivations();
+        var { motivations, total } = await this.motivationService.getAllMotivations(this.state.motivationPage, this.state.motivationSize);
         var draftedMotivations = await this.motivationService.getAllDraftedMotivations();
-        this.setState({ loadingMotivationsData: false, motivations: motivations, draftedMotivations: draftedMotivations });
+        this.setState({ loadingMotivationsData: false, motivations: motivations, motivationsTotal: total, draftedMotivations: draftedMotivations });
         this.setState({ showSnackbar: true, snackbarMessage: 'Motivation restauré' });
     }
 
     handleCreateMotivation = async () => {
         this.setState({ loadingMotivationsData: true });
         await this.motivationService.createMotivation(this.state.motivationContent);
-        var motivations = await this.motivationService.getAllMotivations();
-        this.setState({ loadingMotivationsData: false, motivations: motivations, motivationContent: '' });
+        var { motivations, total } = await this.motivationService.getAllMotivations(this.state.motivationPage, this.state.motivationSize);
+        this.setState({ loadingMotivationsData: false, motivations: motivations, motivationsTotal: total, motivationContent: '' });
         this.setState({ showSnackbar: true, snackbarMessage: 'Motivation créé' });
     }
 
@@ -382,8 +443,8 @@ class ConfigPage extends Component<{}, ConfigPageProps> {
     handleCreateSupplier = async () => {
         this.setState({ loadingSuppliersData: true });
         await this.supplierService.createSupplier(this.state.supplier);
-        var suppliers = await this.supplierService.getAllSuppliers();
-        this.setState({ loadingSuppliersData: false, suppliers: suppliers, supplier: new SupplierModel({}) });
+        var { suppliers, total } = await this.supplierService.getSuppliersPaginated(this.state.supplierPage, this.state.supplierSize);
+        this.setState({ loadingSuppliersData: false, suppliers: suppliers, suppliersTotal: total, supplier: new SupplierModel({}) });
         this.setState({ showSnackbar: true, snackbarMessage: 'Fournisseur créé' });
     }
 
@@ -406,18 +467,18 @@ class ConfigPage extends Component<{}, ConfigPageProps> {
     handleRemoveSupplier = async () => {
         this.setState({ loadingSuppliersData: true, showDeleteSupplierDialog: false });
         await this.supplierService.draftSupplier(this.state.selectedSupplierId);
-        var suppliers = await this.supplierService.getAllSuppliers();
+        var { suppliers, total } = await this.supplierService.getSuppliersPaginated(this.state.supplierPage, this.state.supplierSize);
         var draftedSuppliers = await this.supplierService.getAllDraftedSuppliers();
-        this.setState({ loadingSuppliersData: false, suppliers: suppliers, draftedSuppliers: draftedSuppliers });
+        this.setState({ loadingSuppliersData: false, suppliers: suppliers, suppliersTotal: total, draftedSuppliers: draftedSuppliers });
         this.setState({ showSnackbar: true, snackbarMessage: 'Fournisseur supprimé' });
     }
 
     handleRestoreSupplier = async () => {
         this.setState({ loadingSuppliersData: true, showRestoreSupplierDialog: false });
         await this.supplierService.publishSupplier(this.state.selectedSupplierId);
-        var suppliers = await this.supplierService.getAllSuppliers();
+        var { suppliers, total } = await this.supplierService.getSuppliersPaginated(this.state.supplierPage, this.state.supplierSize);
         var draftedSuppliers = await this.supplierService.getAllDraftedSuppliers();
-        this.setState({ loadingSuppliersData: false, suppliers: suppliers, draftedSuppliers: draftedSuppliers });
+        this.setState({ loadingSuppliersData: false, suppliers: suppliers, suppliersTotal: total, draftedSuppliers: draftedSuppliers });
         this.setState({ showSnackbar: true, snackbarMessage: 'Fournisseur restauré' });
     }
 
@@ -512,7 +573,12 @@ class ConfigPage extends Component<{}, ConfigPageProps> {
                         </Box>
                         <CustomTabPanel style={{ display: 'flex', flexDirection: 'row', flexGrow: '1', height: 'calc(100% - 50px)' }} value={this.state.index} index={0} >
                             <div className='config-container'>
-                                <div style={{ display: 'flex', width: '100%', maxHeight: '450px', marginTop: '8px' }}>
+                                <div style={{
+                                    display: 'flex',
+                                    width: '100%',
+                                    maxHeight: '460px',
+                                    marginTop: '8px'
+                                }}>
                                     <div style={{ width: '33%', display: 'flex', flexDirection: 'column' }}>
                                         <div style={{ display: 'flex', padding: '8px 8px 0px 8px', }}>
                                             <TextField
@@ -532,7 +598,15 @@ class ConfigPage extends Component<{}, ConfigPageProps> {
                                                 <AddIcon />
                                             </IconButton>
                                         </div>
-                                        <div style={{ display: 'flex', flexGrow: '1', padding: '8px 8px 0px 8px', marginBottom: '8px', maxHeight: '392px' }}>
+                                        <div style={{
+                                            display: 'flex',
+                                            flexDirection: 'column',
+                                            flex: '1',
+                                            alignItems: 'stretch',
+                                            padding: '8px 8px 0px 8px',
+                                            marginBottom: '8px',
+                                            height: '392px',
+                                        }}>
                                             <SpecialityTable
                                                 isLoading={this.state.loadingSpecialitiesData}
                                                 data={this.state.medicalSpecialities}
@@ -542,7 +616,6 @@ class ConfigPage extends Component<{}, ConfigPageProps> {
                                                 onRemove={(id) => {
                                                     this.setState({ showDeleteSpecialityDialog: true, selectedSpecialityId: id });
                                                 }}
-                                                onEdit={() => { }}
                                                 pageChange={this.handleSpecialityPageChange}
                                             />
                                         </div>
@@ -568,48 +641,26 @@ class ConfigPage extends Component<{}, ConfigPageProps> {
                                                 <AddIcon />
                                             </IconButton>
                                         </div>
-                                        <div style={{ display: 'flex', flexGrow: '1', padding: '8px 8px 0px 16px', marginBottom: '8px', maxHeight: '392px' }}>
-                                            <Table sx={{ flexGrow: '1', display: 'flex', flexDirection: 'column', overflow: 'hidden', margin: '0px', width: "100%", borderRadius: '4px', }} aria-label="simple table">
-                                                <TableHead sx={{ height: '45px', display: 'flex', width: '100%' }}>
-                                                    <TableRow sx={{ display: 'flex', width: '100%' }}>
-                                                        <TableCell sx={{ width: '100%' }} align="left">Contenu du commentaire</TableCell>
-                                                        <TableCell sx={{ width: '100%' }} align="right">Supprimer</TableCell>
-                                                    </TableRow>
-                                                </TableHead>
-                                                <TableBody sx={{ flexGrow: '1', overflowY: 'auto', overflowX: 'hidden', }}>
-                                                    {
-                                                        this.state.loadingCommentsData ? (<div style={{
-                                                            width: '100%',
-                                                            flexGrow: '1',
-                                                            overflow: 'hidden',
-                                                            height: '100%',
-                                                            display: 'flex',
-                                                            justifyContent: 'center',
-                                                            alignItems: 'center',
-                                                        }}>
-                                                            <DotSpinner
-                                                                size={40}
-                                                                speed={0.9}
-                                                                color="black"
-                                                            />
-                                                        </div>) :
-                                                            this.state.comments.map((row) => (
-                                                                <TableRow
-                                                                    key={row.id}
-                                                                    sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-                                                                >
-                                                                    <TableCell sx={{ width: '100%' }} align="left">{row.comment}</TableCell>
-                                                                    <TableCell sx={{ width: '100%', padding: '0px 16px 0px 0px' }} align="right">
-                                                                        <IconButton onClick={() => {
-                                                                            this.setState({ showDeleteCommentDialog: true, selectedCommentId: row.id! });
-                                                                        }}>
-                                                                            <DeleteIcon />
-                                                                        </IconButton>
-                                                                    </TableCell>
-                                                                </TableRow>
-                                                            ))}
-                                                </TableBody>
-                                            </Table>
+                                        <div style={{
+                                            display: 'flex',
+                                            flexDirection: 'column',
+                                            flex: '1',
+                                            alignItems: 'stretch',
+                                            padding: '8px 8px 0px 8px',
+                                            marginBottom: '8px',
+                                            height: '392px',
+                                        }}>
+                                            <CommentTable
+                                                isLoading={this.state.loadingCommentsData}
+                                                data={this.state.comments}
+                                                page={this.state.commentPage}
+                                                size={this.state.commentSize}
+                                                total={this.state.commentsTotal}
+                                                onRemove={(id) => {
+                                                    this.setState({ showDeleteCommentDialog: true, selectedCommentId: id });
+                                                }}
+                                                pageChange={this.handleCommentPageChange}
+                                            />
                                         </div>
                                     </div>
                                     <Divider orientation="vertical" flexItem component="div" style={{ width: '0.5%' }} sx={{ borderRight: 'solid grey 1px' }} />
@@ -632,48 +683,26 @@ class ConfigPage extends Component<{}, ConfigPageProps> {
                                                 <AddIcon />
                                             </IconButton>
                                         </div>
-                                        <div style={{ display: 'flex', flexGrow: '1', padding: '8px 8px 0px 16px', marginBottom: '8px', maxHeight: '392px' }}>
-                                            <Table sx={{ flexGrow: '1', display: 'flex', flexDirection: 'column', overflow: 'hidden', margin: '0px', width: "100%", borderRadius: '4px', }} aria-label="simple table">
-                                                <TableHead sx={{ height: '45px', display: 'flex', width: '100%' }}>
-                                                    <TableRow sx={{ display: 'flex', width: '100%' }}>
-                                                        <TableCell sx={{ width: '100%' }} align="left">Nom de motivation</TableCell>
-                                                        <TableCell sx={{ width: '100%' }} align="right">Supprimer</TableCell>
-                                                    </TableRow>
-                                                </TableHead>
-                                                <TableBody sx={{ flexGrow: '1', overflowY: 'auto', overflowX: 'hidden', }}>
-                                                    {
-                                                        this.state.loadingMotivationsData ? (<div style={{
-                                                            width: '100%',
-                                                            flexGrow: '1',
-                                                            overflow: 'hidden',
-                                                            height: '100%',
-                                                            display: 'flex',
-                                                            justifyContent: 'center',
-                                                            alignItems: 'center',
-                                                        }}>
-                                                            <DotSpinner
-                                                                size={40}
-                                                                speed={0.9}
-                                                                color="black"
-                                                            />
-                                                        </div>) :
-                                                            this.state.motivations.map((row) => (
-                                                                <TableRow
-                                                                    key={row.id}
-                                                                    sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-                                                                >
-                                                                    <TableCell sx={{ width: '100%' }} align="left">{row.content}</TableCell>
-                                                                    <TableCell sx={{ width: '100%', padding: '0px 16px 0px 0px' }} align="right">
-                                                                        <IconButton onClick={() => {
-                                                                            this.setState({ showDeleteMotivationDialog: true, selectedMotivationId: row.id! });
-                                                                        }} >
-                                                                            <DeleteIcon />
-                                                                        </IconButton>
-                                                                    </TableCell>
-                                                                </TableRow>
-                                                            ))}
-                                                </TableBody>
-                                            </Table>
+                                        <div style={{
+                                            display: 'flex',
+                                            flexDirection: 'column',
+                                            flex: '1',
+                                            alignItems: 'stretch',
+                                            padding: '8px 8px 0px 8px',
+                                            marginBottom: '8px',
+                                            height: '392px',
+                                        }}>
+                                            <MotivationTable
+                                                isLoading={this.state.loadingMotivationsData}
+                                                data={this.state.motivations}
+                                                page={this.state.motivationPage}
+                                                size={this.state.motivationSize}
+                                                total={this.state.motivationsTotal}
+                                                onRemove={(id) => {
+                                                    this.setState({ showDeleteMotivationDialog: true, selectedMotivationId: id });
+                                                }}
+                                                pageChange={this.handleMotivationPageChange}
+                                            />
                                         </div>
                                     </div>
                                 </div>
@@ -754,8 +783,7 @@ class ConfigPage extends Component<{}, ConfigPageProps> {
                                                     onChange={(event) => {
                                                         this.state.supplier.type = event.target.value === 1;
                                                         this.setState({ supplier: this.state.supplier });
-                                                    }}
-                                                >
+                                                    }}>
                                                     <MenuItem value={0}>Pharmacétique</MenuItem>
                                                     <MenuItem value={1}>Parapharmacétique</MenuItem>
                                                 </Select>
@@ -765,52 +793,28 @@ class ConfigPage extends Component<{}, ConfigPageProps> {
                                             </Button>
                                         </div>
                                     </div>
-                                    <div style={{ width: '60%', display: 'flex', flexGrow: '1', padding: '8px 8px 0px 8px', marginBottom: '8px', maxHeight: '400px' }}>
-                                        <Table sx={{ flexGrow: '1', display: 'flex', flexDirection: 'column', overflow: 'hidden', margin: '0px', width: "100%", borderRadius: '4px', }} aria-label="simple table">
-                                            <TableHead sx={{ height: '45px', display: 'flex', width: '100%' }}>
-                                                <TableRow sx={{ display: 'flex', width: '100%' }}>
-                                                    <TableCell sx={{ width: '50%' }} align="left">Nom de fournisseur</TableCell>
-                                                    <TableCell sx={{ width: '50%' }} align="left">Wilaya et commune</TableCell>
-                                                    <TableCell sx={{ width: '50%' }} align="left">Type</TableCell>
-                                                    <TableCell sx={{ width: '50%' }} align="right">Supprimer</TableCell>
-                                                </TableRow>
-                                            </TableHead>
-                                            <TableBody sx={{ flexGrow: '1', overflowY: 'auto', overflowX: 'hidden', }}>
-                                                {
-                                                    this.state.loadingSuppliersData ? (<div style={{
-                                                        width: '100%',
-                                                        flexGrow: '1',
-                                                        overflow: 'hidden',
-                                                        height: '100%',
-                                                        display: 'flex',
-                                                        justifyContent: 'center',
-                                                        alignItems: 'center',
-                                                    }}>
-                                                        <DotSpinner
-                                                            size={40}
-                                                            speed={0.9}
-                                                            color="black"
-                                                        />
-                                                    </div>) :
-                                                        this.state.suppliers.map((row) => (
-                                                            <TableRow
-                                                                key={row.id}
-                                                                sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-                                                            >
-                                                                <TableCell sx={{ width: '32%' }} align="left">{row.name}</TableCell>
-                                                                <TableCell sx={{ width: '32%' }} align="left">{row.wilaya + ', ' + row.commun}</TableCell>
-                                                                <TableCell sx={{ width: '50%' }} align="left">{row.type ? 'Pharmacétique' : 'Parapharmacétique'}</TableCell>
-                                                                <TableCell sx={{ padding: '0px 16px 0px 0px' }} align="right">
-                                                                    <IconButton onClick={() => {
-                                                                        this.setState({ showDeleteSupplierDialog: true, selectedSupplierId: row.id! });
-                                                                    }} >
-                                                                        <DeleteIcon />
-                                                                    </IconButton>
-                                                                </TableCell>
-                                                            </TableRow>
-                                                        ))}
-                                            </TableBody>
-                                        </Table>
+                                    <div style={{
+                                        display: 'flex',
+                                        flexDirection: 'column',
+                                        flex: '1',
+                                        alignItems: 'stretch',
+                                        width: '60%',
+                                        flexGrow: '1',
+                                        padding: '8px 8px 0px 8px',
+                                        marginBottom: '8px',
+                                        height: '400px'
+                                    }}>
+                                        <SupplierTable
+                                            isLoading={this.state.loadingSuppliersData}
+                                            data={this.state.suppliers}
+                                            page={this.state.supplierPage}
+                                            size={this.state.supplierSize}
+                                            total={this.state.suppliersTotal}
+                                            onRemove={(id) => {
+                                                this.setState({ showDeleteSupplierDialog: true, selectedSupplierId: id });
+                                            }}
+                                            pageChange={this.handleSupplierPageChange}
+                                        ></SupplierTable>
                                     </div>
                                 </div>
                                 <Divider component="div" style={{ margin: '0px 16px' }} sx={{ borderBottom: 'solid grey 1px' }} />

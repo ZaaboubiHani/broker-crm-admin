@@ -40,6 +40,27 @@ export default class SupplierService {
         return suppliers;
 
     }
+
+    async getSuppliersPaginated(page: number, size: number,): Promise<{ suppliers: SupplierModel[], total: number }> {
+        const token = localStorage.getItem('token');
+        var suppliers: SupplierModel[] = [];
+
+        var response = await axios.get(`${Globals.apiUrl}/company-suppliers?pagination[pageSize]=${size}&pagination[page]=${page}`,
+            {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+
+        if (response.status == 200) {
+            for (let index = 0; index < response.data.data.length; index++) {
+                var supplier = SupplierModel.fromJson(response.data.data[index]);
+                suppliers.push(supplier);
+            }
+        }
+        return { suppliers: suppliers, total: response.data.meta.pagination.total };
+    }
+
     async getAllDraftedSuppliers(): Promise<SupplierModel[]> {
         const token = localStorage.getItem('token');
         var response = await axios.get(`${Globals.apiUrl}/company-suppliers?publicationState=preview&filters[publishedAt][$null]=true`,
