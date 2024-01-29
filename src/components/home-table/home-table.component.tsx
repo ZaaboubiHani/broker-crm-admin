@@ -39,6 +39,7 @@ const HomeTable: React.FC<HomeTableProps> = ({ data, id, isLoading, firstHeader,
                 flexDirection: 'column',
                 flexGrow: '1',
                 borderRadius: '8px',
+                height:'100%'
             }}>
             {
                 isLoading ? (<div style={{

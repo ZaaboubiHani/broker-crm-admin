@@ -1,0 +1,251 @@
+Date : 2024-01-28 18:35:37
+Directory : f:\Projects\React\broker-crm-admin-ts
+Total : 150 files,  40587 codes, 170 comments, 1844 blanks, all 42601 lines
+
+Languages
++--------------------+------------+------------+------------+------------+------------+
+| language           | files      | code       | comment    | blank      | total      |
++--------------------+------------+------------+------------+------------+------------+
+| JSON               |          6 |     24,497 |          0 |          3 |     24,500 |
+| TypeScript JSX     |         60 |     11,911 |         61 |      1,089 |     13,061 |
+| TypeScript         |         46 |      2,845 |          8 |        468 |      3,321 |
+| CSS                |         34 |      1,257 |         78 |        261 |      1,596 |
+| JSON with Comments |          1 |         30 |          0 |          1 |         31 |
+| Markdown           |          1 |         26 |          0 |         21 |         47 |
+| HTML               |          1 |         20 |         23 |          1 |         44 |
+| XML                |          1 |          1 |          0 |          0 |          1 |
++--------------------+------------+------------+------------+------------+------------+
+
+Directories
++--------------------------------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| path                                                                                                               | files      | code       | comment    | blank      | total      |
++--------------------------------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| .                                                                                                                  |        150 |     40,587 |        170 |      1,844 |     42,601 |
+| . (Files)                                                                                                          |          4 |     17,130 |          0 |         24 |     17,154 |
+| .vs                                                                                                                |          2 |         11 |          0 |          0 |         11 |
+| public                                                                                                             |          3 |      7,432 |         23 |          2 |      7,457 |
+| public (Files)                                                                                                     |          2 |         45 |         23 |          2 |         70 |
+| public\data                                                                                                        |          1 |      7,387 |          0 |          0 |      7,387 |
+| src                                                                                                                |        141 |     16,014 |        147 |      1,818 |     17,979 |
+| src (Files)                                                                                                        |         10 |         63 |         20 |         21 |        104 |
+| src\api                                                                                                            |          1 |          6 |          1 |          2 |          9 |
+| src\components                                                                                                     |         64 |      5,646 |         79 |        763 |      6,488 |
+| src\components\button                                                                                              |          2 |         24 |          0 |          9 |         33 |
+| src\components\circle-avatar                                                                                       |          2 |         29 |          0 |          8 |         37 |
+| src\components\circular-progress-label                                                                             |          1 |         62 |          0 |          4 |         66 |
+| src\components\clients-doctor-table                                                                                |          1 |        110 |          0 |         15 |        125 |
+| src\components\clients-pharmacy-table                                                                              |          1 |        126 |          0 |         12 |        138 |
+| src\components\comand-panel                                                                                        |          1 |        181 |          0 |          8 |        189 |
+| src\components\command-cam-table                                                                                   |          2 |        324 |          8 |         35 |        367 |
+| src\components\command-delegate-table                                                                              |          2 |        316 |          8 |         34 |        358 |
+| src\components\comment-table                                                                                       |          1 |         86 |          0 |         16 |        102 |
+| src\components\custom-tab-panel                                                                                    |          1 |         26 |          0 |          6 |         32 |
+| src\components\date-picker                                                                                         |          1 |         51 |          0 |         11 |         62 |
+| src\components\day-container                                                                                       |          1 |         63 |          0 |         13 |         76 |
+| src\components\day-picker                                                                                          |          2 |        108 |          6 |         21 |        135 |
+| src\components\delegate-table                                                                                      |          2 |        187 |          9 |         36 |        232 |
+| src\components\expense-stats-dialog                                                                                |          1 |        117 |          0 |         12 |        129 |
+| src\components\expense-table                                                                                       |          2 |        231 |          8 |         29 |        268 |
+| src\components\home-table                                                                                          |          2 |        216 |          8 |         33 |        257 |
+| src\components\loading-indicator                                                                                   |          2 |         35 |          0 |          7 |         42 |
+| src\components\map-dialog                                                                                          |          1 |        299 |          0 |         34 |        333 |
+| src\components\month-dropdown                                                                                      |          2 |         61 |          0 |          9 |         70 |
+| src\components\month-year-picker                                                                                   |          1 |         41 |          0 |         11 |         52 |
+| src\components\motivation-table                                                                                    |          1 |         86 |          0 |         16 |        102 |
+| src\components\nav-list-item                                                                                       |          1 |         69 |          0 |         12 |         81 |
+| src\components\plan-panel                                                                                          |          1 |        108 |          0 |         10 |        118 |
+| src\components\plan-table                                                                                          |          2 |        206 |          8 |         32 |        246 |
+| src\components\profile-table                                                                                       |          2 |        278 |          8 |         34 |        320 |
+| src\components\proofs-dialog                                                                                       |          1 |         71 |          0 |         13 |         84 |
+| src\components\report-panel                                                                                        |          1 |        232 |          0 |          7 |        239 |
+| src\components\report-table                                                                                        |          2 |        195 |          8 |         29 |        232 |
+| src\components\revenue-panel                                                                                       |          1 |        181 |          0 |         16 |        197 |
+| src\components\revenue-table                                                                                       |          1 |         80 |          0 |         10 |         90 |
+| src\components\scalable-table                                                                                      |          2 |        328 |          0 |         32 |        360 |
+| src\components\search-bar                                                                                          |          2 |         34 |          0 |          9 |         43 |
+| src\components\sidebar                                                                                             |          2 |        296 |          0 |         24 |        320 |
+| src\components\speciality-table                                                                                    |          1 |         86 |          0 |         15 |        101 |
+| src\components\supplier-table                                                                                      |          1 |         95 |          0 |         15 |        110 |
+| src\components\user-container                                                                                      |          1 |         39 |          0 |          9 |         48 |
+| src\components\user-details                                                                                        |          2 |         37 |          0 |         11 |         48 |
+| src\components\user-dialog                                                                                         |          2 |        255 |          1 |         48 |        304 |
+| src\components\user-dropdown                                                                                       |          1 |         77 |          0 |         10 |         87 |
+| src\components\user-picker                                                                                         |          2 |         75 |          7 |         18 |        100 |
+| src\components\year-dropdown                                                                                       |          2 |         61 |          0 |         11 |         72 |
+| src\components\year-picker                                                                                         |          1 |         33 |          0 |         12 |         45 |
+| src\components\yes-no-dialog                                                                                       |          1 |         31 |          0 |          7 |         38 |
+| src\functions                                                                                                      |          1 |         40 |          1 |         15 |         56 |
+| src\models                                                                                                         |         21 |        872 |          0 |        110 |        982 |
+| src\pages                                                                                                          |         24 |      7,423 |         45 |        565 |      8,033 |
+| src\pages\clients-page                                                                                             |          2 |      1,027 |          0 |         66 |      1,093 |
+| src\pages\command-page                                                                                             |          2 |        475 |          0 |         53 |        528 |
+| src\pages\config-page                                                                                              |          2 |      1,453 |         45 |         57 |      1,555 |
+| src\pages\delegate-page                                                                                            |          2 |        489 |          0 |         41 |        530 |
+| src\pages\expense-page                                                                                             |          2 |        340 |          0 |         26 |        366 |
+| src\pages\home-page                                                                                                |          2 |        546 |          0 |         53 |        599 |
+| src\pages\login-page                                                                                               |          2 |        174 |          0 |         26 |        200 |
+| src\pages\plan-page                                                                                                |          2 |        625 |          0 |         63 |        688 |
+| src\pages\profile-page                                                                                             |          2 |        231 |          0 |         27 |        258 |
+| src\pages\report-page                                                                                              |          2 |        424 |          0 |         34 |        458 |
+| src\pages\revenue-page                                                                                             |          2 |        302 |          0 |         29 |        331 |
+| src\pages\statistics-page                                                                                          |          2 |      1,337 |          0 |         90 |      1,427 |
+| src\routes                                                                                                         |          1 |         53 |          0 |          6 |         59 |
+| src\services                                                                                                       |         19 |      1,911 |          1 |        336 |      2,248 |
++--------------------------------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+
+Files
++--------------------------------------------------------------------------------------------------------------------+--------------------+------------+------------+------------+------------+
+| filename                                                                                                           | language           | code       | comment    | blank      | total      |
++--------------------------------------------------------------------------------------------------------------------+--------------------+------------+------------+------------+------------+
+| f:\Projects\React\broker-crm-admin-ts\.vs\ProjectSettings.json                                                     | JSON               |          3 |          0 |          0 |          3 |
+| f:\Projects\React\broker-crm-admin-ts\.vs\VSWorkspaceState.json                                                    | JSON               |          8 |          0 |          0 |          8 |
+| f:\Projects\React\broker-crm-admin-ts\README.md                                                                    | Markdown           |         26 |          0 |         21 |         47 |
+| f:\Projects\React\broker-crm-admin-ts\package-lock.json                                                            | JSON               |     16,998 |          0 |          1 |     16,999 |
+| f:\Projects\React\broker-crm-admin-ts\package.json                                                                 | JSON               |         76 |          0 |          1 |         77 |
+| f:\Projects\React\broker-crm-admin-ts\public\data\wilayas.json                                                     | JSON               |      7,387 |          0 |          0 |      7,387 |
+| f:\Projects\React\broker-crm-admin-ts\public\index.html                                                            | HTML               |         20 |         23 |          1 |         44 |
+| f:\Projects\React\broker-crm-admin-ts\public\manifest.json                                                         | JSON               |         25 |          0 |          1 |         26 |
+| f:\Projects\React\broker-crm-admin-ts\src\App.css                                                                  | CSS                |          0 |          0 |          1 |          1 |
+| f:\Projects\React\broker-crm-admin-ts\src\App.test.tsx                                                             | TypeScript JSX     |          8 |          0 |          2 |         10 |
+| f:\Projects\React\broker-crm-admin-ts\src\App.tsx                                                                  | TypeScript JSX     |         13 |         15 |          4 |         32 |
+| f:\Projects\React\broker-crm-admin-ts\src\api\globals.ts                                                           | TypeScript         |          6 |          1 |          2 |          9 |
+| f:\Projects\React\broker-crm-admin-ts\src\components\button\button.component.tsx                                   | TypeScript JSX     |         13 |          0 |          7 |         20 |
+| f:\Projects\React\broker-crm-admin-ts\src\components\button\button.style.css                                       | CSS                |         11 |          0 |          2 |         13 |
+| f:\Projects\React\broker-crm-admin-ts\src\components\circle-avatar\circle-avatar.component.tsx                     | TypeScript JSX     |         13 |          0 |          8 |         21 |
+| f:\Projects\React\broker-crm-admin-ts\src\components\circle-avatar\circle-avatar.style.css                         | CSS                |         16 |          0 |          0 |         16 |
+| f:\Projects\React\broker-crm-admin-ts\src\components\circular-progress-label\circular-progress-label.component.tsx | TypeScript JSX     |         62 |          0 |          4 |         66 |
+| f:\Projects\React\broker-crm-admin-ts\src\components\clients-doctor-table\clients-doctor-table.component.tsx       | TypeScript JSX     |        110 |          0 |         15 |        125 |
+| f:\Projects\React\broker-crm-admin-ts\src\components\clients-pharmacy-table\clients-pharmacy-table.component.tsx   | TypeScript JSX     |        126 |          0 |         12 |        138 |
+| f:\Projects\React\broker-crm-admin-ts\src\components\comand-panel\command-panel.component.tsx                      | TypeScript JSX     |        181 |          0 |          8 |        189 |
+| f:\Projects\React\broker-crm-admin-ts\src\components\command-cam-table\command-cam-table.component.tsx             | TypeScript JSX     |        236 |          0 |         17 |        253 |
+| f:\Projects\React\broker-crm-admin-ts\src\components\command-cam-table\command-cam-table.style.css                 | CSS                |         88 |          8 |         18 |        114 |
+| f:\Projects\React\broker-crm-admin-ts\src\components\command-delegate-table\command-delegate-table.component.tsx   | TypeScript JSX     |        228 |          0 |         16 |        244 |
+| f:\Projects\React\broker-crm-admin-ts\src\components\command-delegate-table\command-delegate-table.style.css       | CSS                |         88 |          8 |         18 |        114 |
+| f:\Projects\React\broker-crm-admin-ts\src\components\comment-table\comment-table.component.tsx                     | TypeScript JSX     |         86 |          0 |         16 |        102 |
+| f:\Projects\React\broker-crm-admin-ts\src\components\custom-tab-panel\costum-tab-panel.component.tsx               | TypeScript JSX     |         26 |          0 |          6 |         32 |
+| f:\Projects\React\broker-crm-admin-ts\src\components\date-picker\date-picker.component.tsx                         | TypeScript JSX     |         51 |          0 |         11 |         62 |
+| f:\Projects\React\broker-crm-admin-ts\src\components\day-container\day-container.component.tsx                     | TypeScript JSX     |         63 |          0 |         13 |         76 |
+| f:\Projects\React\broker-crm-admin-ts\src\components\day-picker\day-picker.component.tsx                           | TypeScript JSX     |         88 |          0 |         13 |        101 |
+| f:\Projects\React\broker-crm-admin-ts\src\components\day-picker\day-picker.style.css                               | CSS                |         20 |          6 |          8 |         34 |
+| f:\Projects\React\broker-crm-admin-ts\src\components\delegate-table\delegate-table.component.tsx                   | TypeScript JSX     |        100 |          1 |         17 |        118 |
+| f:\Projects\React\broker-crm-admin-ts\src\components\delegate-table\delegate-table.style.css                       | CSS                |         87 |          8 |         19 |        114 |
+| f:\Projects\React\broker-crm-admin-ts\src\components\expense-stats-dialog\expense-stats-dialog.component.tsx       | TypeScript JSX     |        117 |          0 |         12 |        129 |
+| f:\Projects\React\broker-crm-admin-ts\src\components\expense-table\expense-table.component.tsx                     | TypeScript JSX     |        143 |          0 |         11 |        154 |
+| f:\Projects\React\broker-crm-admin-ts\src\components\expense-table\expense-table.style.css                         | CSS                |         88 |          8 |         18 |        114 |
+| f:\Projects\React\broker-crm-admin-ts\src\components\home-table\home-table.component.tsx                           | TypeScript JSX     |        130 |          0 |         14 |        144 |
+| f:\Projects\React\broker-crm-admin-ts\src\components\home-table\home-table.style.css                               | CSS                |         86 |          8 |         19 |        113 |
+| f:\Projects\React\broker-crm-admin-ts\src\components\loading-indicator\loading-indicator.component.tsx             | TypeScript JSX     |         13 |          0 |          4 |         17 |
+| f:\Projects\React\broker-crm-admin-ts\src\components\loading-indicator\loading-indicator.style.css                 | CSS                |         22 |          0 |          3 |         25 |
+| f:\Projects\React\broker-crm-admin-ts\src\components\map-dialog\map-dialog.component.tsx                           | TypeScript JSX     |        299 |          0 |         34 |        333 |
+| f:\Projects\React\broker-crm-admin-ts\src\components\month-dropdown\month-dropdown.component.tsx                   | TypeScript JSX     |         49 |          0 |          9 |         58 |
+| f:\Projects\React\broker-crm-admin-ts\src\components\month-dropdown\month-dropdown.style.css                       | CSS                |         12 |          0 |          0 |         12 |
+| f:\Projects\React\broker-crm-admin-ts\src\components\month-year-picker\month-year-picker.component.tsx             | TypeScript JSX     |         41 |          0 |         11 |         52 |
+| f:\Projects\React\broker-crm-admin-ts\src\components\motivation-table\motivation-table.component.tsx               | TypeScript JSX     |         86 |          0 |         16 |        102 |
+| f:\Projects\React\broker-crm-admin-ts\src\components\nav-list-item\nav-list-item.tsx                               | TypeScript JSX     |         69 |          0 |         12 |         81 |
+| f:\Projects\React\broker-crm-admin-ts\src\components\plan-panel\plan-panel.component.tsx                           | TypeScript JSX     |        108 |          0 |         10 |        118 |
+| f:\Projects\React\broker-crm-admin-ts\src\components\plan-table\plan-table.component.tsx                           | TypeScript JSX     |        120 |          0 |         14 |        134 |
+| f:\Projects\React\broker-crm-admin-ts\src\components\plan-table\plan-table.style.css                               | CSS                |         86 |          8 |         18 |        112 |
+| f:\Projects\React\broker-crm-admin-ts\src\components\profile-table\profile-table.component.tsx                     | TypeScript JSX     |        191 |          0 |         16 |        207 |
+| f:\Projects\React\broker-crm-admin-ts\src\components\profile-table\profile-table.style.css                         | CSS                |         87 |          8 |         18 |        113 |
+| f:\Projects\React\broker-crm-admin-ts\src\components\proofs-dialog\proofs-dialog.component.tsx                     | TypeScript JSX     |         71 |          0 |         13 |         84 |
+| f:\Projects\React\broker-crm-admin-ts\src\components\report-panel\report-panel.component.tsx                       | TypeScript JSX     |        232 |          0 |          7 |        239 |
+| f:\Projects\React\broker-crm-admin-ts\src\components\report-table\report-table.component.tsx                       | TypeScript JSX     |        107 |          0 |         11 |        118 |
+| f:\Projects\React\broker-crm-admin-ts\src\components\report-table\report-table.style.css                           | CSS                |         88 |          8 |         18 |        114 |
+| f:\Projects\React\broker-crm-admin-ts\src\components\revenue-panel\revenue-panel.component.tsx                     | TypeScript JSX     |        181 |          0 |         16 |        197 |
+| f:\Projects\React\broker-crm-admin-ts\src\components\revenue-table\revenue-table.component.tsx                     | TypeScript JSX     |         80 |          0 |         10 |         90 |
+| f:\Projects\React\broker-crm-admin-ts\src\components\scalable-table\scalable-table.component.tsx                   | TypeScript JSX     |        284 |          0 |         26 |        310 |
+| f:\Projects\React\broker-crm-admin-ts\src\components\scalable-table\scalable-table.style.css                       | CSS                |         44 |          0 |          6 |         50 |
+| f:\Projects\React\broker-crm-admin-ts\src\components\search-bar\search-bar.component.tsx                           | TypeScript JSX     |         31 |          0 |          7 |         38 |
+| f:\Projects\React\broker-crm-admin-ts\src\components\search-bar\search-bar.style.css                               | CSS                |          3 |          0 |          2 |          5 |
+| f:\Projects\React\broker-crm-admin-ts\src\components\sidebar\sidebar.component.tsx                                 | TypeScript JSX     |        281 |          0 |         19 |        300 |
+| f:\Projects\React\broker-crm-admin-ts\src\components\sidebar\sidebar.style.css                                     | CSS                |         15 |          0 |          5 |         20 |
+| f:\Projects\React\broker-crm-admin-ts\src\components\speciality-table\speciality-table.component.tsx               | TypeScript JSX     |         86 |          0 |         15 |        101 |
+| f:\Projects\React\broker-crm-admin-ts\src\components\supplier-table\supplier-table.component.tsx                   | TypeScript JSX     |         95 |          0 |         15 |        110 |
+| f:\Projects\React\broker-crm-admin-ts\src\components\user-container\user-container.component.tsx                   | TypeScript JSX     |         39 |          0 |          9 |         48 |
+| f:\Projects\React\broker-crm-admin-ts\src\components\user-details\user-details.component.tsx                       | TypeScript JSX     |         21 |          0 |          9 |         30 |
+| f:\Projects\React\broker-crm-admin-ts\src\components\user-details\user-details.style.css                           | CSS                |         16 |          0 |          2 |         18 |
+| f:\Projects\React\broker-crm-admin-ts\src\components\user-dialog\user-dialog.component.tsx                         | TypeScript JSX     |        205 |          0 |         32 |        237 |
+| f:\Projects\React\broker-crm-admin-ts\src\components\user-dialog\user-dialog.style.css                             | CSS                |         50 |          1 |         16 |         67 |
+| f:\Projects\React\broker-crm-admin-ts\src\components\user-dropdown\user-dropdown.tsx                               | TypeScript JSX     |         77 |          0 |         10 |         87 |
+| f:\Projects\React\broker-crm-admin-ts\src\components\user-picker\user-picker.component.tsx                         | TypeScript JSX     |         62 |          0 |         12 |         74 |
+| f:\Projects\React\broker-crm-admin-ts\src\components\user-picker\user-picker.style.css                             | CSS                |         13 |          7 |          6 |         26 |
+| f:\Projects\React\broker-crm-admin-ts\src\components\year-dropdown\year-dropdown.component.tsx                     | TypeScript JSX     |         49 |          0 |         11 |         60 |
+| f:\Projects\React\broker-crm-admin-ts\src\components\year-dropdown\year-dropdown.style.css                         | CSS                |         12 |          0 |          0 |         12 |
+| f:\Projects\React\broker-crm-admin-ts\src\components\year-picker\year-picker.component.tsx                         | TypeScript JSX     |         33 |          0 |         12 |         45 |
+| f:\Projects\React\broker-crm-admin-ts\src\components\yes-no-dialog\yes-no-dialog.component.tsx                     | TypeScript JSX     |         31 |          0 |          7 |         38 |
+| f:\Projects\React\broker-crm-admin-ts\src\functions\date-format.ts                                                 | TypeScript         |         40 |          1 |         15 |         56 |
+| f:\Projects\React\broker-crm-admin-ts\src\index.css                                                                | CSS                |         12 |          0 |          2 |         14 |
+| f:\Projects\React\broker-crm-admin-ts\src\index.tsx                                                                | TypeScript JSX     |         13 |          0 |          7 |         20 |
+| f:\Projects\React\broker-crm-admin-ts\src\logo.svg                                                                 | XML                |          1 |          0 |          0 |          1 |
+| f:\Projects\React\broker-crm-admin-ts\src\models\client.model.ts                                                   | TypeScript         |         53 |          0 |          4 |         57 |
+| f:\Projects\React\broker-crm-admin-ts\src\models\command.model.ts                                                  | TypeScript         |         86 |          0 |         13 |         99 |
+| f:\Projects\React\broker-crm-admin-ts\src\models\comment.model.ts                                                  | TypeScript         |         14 |          0 |          3 |         17 |
+| f:\Projects\React\broker-crm-admin-ts\src\models\company.model.ts                                                  | TypeScript         |         66 |          0 |          5 |         71 |
+| f:\Projects\React\broker-crm-admin-ts\src\models\expense-config.model.ts                                           | TypeScript         |         20 |          0 |          4 |         24 |
+| f:\Projects\React\broker-crm-admin-ts\src\models\expense-user.model.ts                                             | TypeScript         |         26 |          0 |          4 |         30 |
+| f:\Projects\React\broker-crm-admin-ts\src\models\expense.model.ts                                                  | TypeScript         |         64 |          0 |          6 |         70 |
+| f:\Projects\React\broker-crm-admin-ts\src\models\file.model.ts                                                     | TypeScript         |         23 |          0 |          6 |         29 |
+| f:\Projects\React\broker-crm-admin-ts\src\models\goal.model.ts                                                     | TypeScript         |         24 |          0 |          5 |         29 |
+| f:\Projects\React\broker-crm-admin-ts\src\models\motivation.model.ts                                               | TypeScript         |         14 |          0 |          3 |         17 |
+| f:\Projects\React\broker-crm-admin-ts\src\models\product.model.ts                                                  | TypeScript         |         60 |          0 |          5 |         65 |
+| f:\Projects\React\broker-crm-admin-ts\src\models\report.model.ts                                                   | TypeScript         |         65 |          0 |          9 |         74 |
+| f:\Projects\React\broker-crm-admin-ts\src\models\revenue.model.ts                                                  | TypeScript         |         25 |          0 |          3 |         28 |
+| f:\Projects\React\broker-crm-admin-ts\src\models\speciality.model.ts                                               | TypeScript         |         14 |          0 |          3 |         17 |
+| f:\Projects\React\broker-crm-admin-ts\src\models\supplier.model.ts                                                 | TypeScript         |         50 |          0 |          2 |         52 |
+| f:\Projects\React\broker-crm-admin-ts\src\models\task.model.ts                                                     | TypeScript         |         41 |          0 |          7 |         48 |
+| f:\Projects\React\broker-crm-admin-ts\src\models\user-tracking.model.ts                                            | TypeScript         |         20 |          0 |          4 |         24 |
+| f:\Projects\React\broker-crm-admin-ts\src\models\user.model.ts                                                     | TypeScript         |         99 |          0 |         11 |        110 |
+| f:\Projects\React\broker-crm-admin-ts\src\models\visit-task.model.ts                                               | TypeScript         |         35 |          0 |          4 |         39 |
+| f:\Projects\React\broker-crm-admin-ts\src\models\visit.model.ts                                                    | TypeScript         |         53 |          0 |          6 |         59 |
+| f:\Projects\React\broker-crm-admin-ts\src\models\wilaya.model.ts                                                   | TypeScript         |         20 |          0 |          3 |         23 |
+| f:\Projects\React\broker-crm-admin-ts\src\pages\clients-page\clients-page.component.tsx                            | TypeScript JSX     |        992 |          0 |         58 |      1,050 |
+| f:\Projects\React\broker-crm-admin-ts\src\pages\clients-page\clients-page.style.css                                | CSS                |         35 |          0 |          8 |         43 |
+| f:\Projects\React\broker-crm-admin-ts\src\pages\command-page\command-page.component.tsx                            | TypeScript JSX     |        437 |          0 |         44 |        481 |
+| f:\Projects\React\broker-crm-admin-ts\src\pages\command-page\command-page.style.css                                | CSS                |         38 |          0 |          9 |         47 |
+| f:\Projects\React\broker-crm-admin-ts\src\pages\config-page\config-page.component.tsx                              | TypeScript JSX     |      1,437 |         45 |         54 |      1,536 |
+| f:\Projects\React\broker-crm-admin-ts\src\pages\config-page\config-page.style.css                                  | CSS                |         16 |          0 |          3 |         19 |
+| f:\Projects\React\broker-crm-admin-ts\src\pages\delegate-page\delegate-page.component.tsx                          | TypeScript JSX     |        466 |          0 |         37 |        503 |
+| f:\Projects\React\broker-crm-admin-ts\src\pages\delegate-page\delegate-page.style.css                              | CSS                |         23 |          0 |          4 |         27 |
+| f:\Projects\React\broker-crm-admin-ts\src\pages\expense-page\expense-page.component.tsx                            | TypeScript JSX     |        324 |          0 |         23 |        347 |
+| f:\Projects\React\broker-crm-admin-ts\src\pages\expense-page\expense-page.style.css                                | CSS                |         16 |          0 |          3 |         19 |
+| f:\Projects\React\broker-crm-admin-ts\src\pages\home-page\home-page.component.tsx                                  | TypeScript JSX     |        524 |          0 |         49 |        573 |
+| f:\Projects\React\broker-crm-admin-ts\src\pages\home-page\home-page.style.css                                      | CSS                |         22 |          0 |          4 |         26 |
+| f:\Projects\React\broker-crm-admin-ts\src\pages\login-page\login-page.component.tsx                                | TypeScript JSX     |        149 |          0 |         23 |        172 |
+| f:\Projects\React\broker-crm-admin-ts\src\pages\login-page\login-page.style.css                                    | CSS                |         25 |          0 |          3 |         28 |
+| f:\Projects\React\broker-crm-admin-ts\src\pages\plan-page\plan-page.component.tsx                                  | TypeScript JSX     |        586 |          0 |         55 |        641 |
+| f:\Projects\React\broker-crm-admin-ts\src\pages\plan-page\plan-page.style.css                                      | CSS                |         39 |          0 |          8 |         47 |
+| f:\Projects\React\broker-crm-admin-ts\src\pages\profile-page\profile-page.component.tsx                            | TypeScript JSX     |        207 |          0 |         22 |        229 |
+| f:\Projects\React\broker-crm-admin-ts\src\pages\profile-page\profile-page.style.css                                | CSS                |         24 |          0 |          5 |         29 |
+| f:\Projects\React\broker-crm-admin-ts\src\pages\report-page\report-page.component.tsx                              | TypeScript JSX     |        392 |          0 |         29 |        421 |
+| f:\Projects\React\broker-crm-admin-ts\src\pages\report-page\report-page.style.css                                  | CSS                |         32 |          0 |          5 |         37 |
+| f:\Projects\React\broker-crm-admin-ts\src\pages\revenue-page\revenue-page.component.tsx                            | TypeScript JSX     |        275 |          0 |         22 |        297 |
+| f:\Projects\React\broker-crm-admin-ts\src\pages\revenue-page\revenue-page.style.css                                | CSS                |         27 |          0 |          7 |         34 |
+| f:\Projects\React\broker-crm-admin-ts\src\pages\statistics-page\statistics-page.component.tsx                      | TypeScript JSX     |      1,321 |          0 |         87 |      1,408 |
+| f:\Projects\React\broker-crm-admin-ts\src\pages\statistics-page\statistics-page.style.css                          | CSS                |         16 |          0 |          3 |         19 |
+| f:\Projects\React\broker-crm-admin-ts\src\react-app-env.d.ts                                                       | TypeScript         |          0 |          1 |          1 |          2 |
+| f:\Projects\React\broker-crm-admin-ts\src\reportWebVitals.ts                                                       | TypeScript         |         13 |          0 |          3 |         16 |
+| f:\Projects\React\broker-crm-admin-ts\src\routes\routes.tsx                                                        | TypeScript JSX     |         53 |          0 |          6 |         59 |
+| f:\Projects\React\broker-crm-admin-ts\src\services\auth.service.ts                                                 | TypeScript         |         39 |          0 |         10 |         49 |
+| f:\Projects\React\broker-crm-admin-ts\src\services\clients.service.ts                                              | TypeScript         |         38 |          0 |          8 |         46 |
+| f:\Projects\React\broker-crm-admin-ts\src\services\command.service.ts                                              | TypeScript         |         81 |          0 |         12 |         93 |
+| f:\Projects\React\broker-crm-admin-ts\src\services\comment.service.ts                                              | TypeScript         |        105 |          0 |         12 |        117 |
+| f:\Projects\React\broker-crm-admin-ts\src\services\expense.service.ts                                              | TypeScript         |        134 |          0 |         17 |        151 |
+| f:\Projects\React\broker-crm-admin-ts\src\services\goal.service.ts                                                 | TypeScript         |         51 |          0 |          7 |         58 |
+| f:\Projects\React\broker-crm-admin-ts\src\services\motivation.service.ts                                           | TypeScript         |        105 |          0 |         13 |        118 |
+| f:\Projects\React\broker-crm-admin-ts\src\services\product.service.ts                                              | TypeScript         |        209 |          0 |         22 |        231 |
+| f:\Projects\React\broker-crm-admin-ts\src\services\report.service.ts                                               | TypeScript         |         43 |          0 |          5 |         48 |
+| f:\Projects\React\broker-crm-admin-ts\src\services\revenue.service.ts                                              | TypeScript         |         32 |          0 |          6 |         38 |
+| f:\Projects\React\broker-crm-admin-ts\src\services\speciality.service.ts                                           | TypeScript         |        105 |          0 |         14 |        119 |
+| f:\Projects\React\broker-crm-admin-ts\src\services\statics.service.ts                                              | TypeScript         |        291 |          0 |         97 |        388 |
+| f:\Projects\React\broker-crm-admin-ts\src\services\supplier.service.ts                                             | TypeScript         |        116 |          0 |         13 |        129 |
+| f:\Projects\React\broker-crm-admin-ts\src\services\task.service.ts                                                 | TypeScript         |         33 |          0 |         10 |         43 |
+| f:\Projects\React\broker-crm-admin-ts\src\services\user-tracking.service.ts                                        | TypeScript         |         42 |          0 |          6 |         48 |
+| f:\Projects\React\broker-crm-admin-ts\src\services\user.service.ts                                                 | TypeScript         |        213 |          0 |         37 |        250 |
+| f:\Projects\React\broker-crm-admin-ts\src\services\visit-task.service.ts                                           | TypeScript         |         53 |          1 |         11 |         65 |
+| f:\Projects\React\broker-crm-admin-ts\src\services\visit.service.ts                                                | TypeScript         |        157 |          0 |         26 |        183 |
+| f:\Projects\React\broker-crm-admin-ts\src\services\wilaya.serivce.ts                                               | TypeScript         |         64 |          0 |         10 |         74 |
+| f:\Projects\React\broker-crm-admin-ts\src\setupTests.ts                                                            | TypeScript         |          1 |          4 |          1 |          6 |
+| f:\Projects\React\broker-crm-admin-ts\src\theme.ts                                                                 | TypeScript         |          2 |          0 |          0 |          2 |
+| f:\Projects\React\broker-crm-admin-ts\tsconfig.json                                                                | JSON with Comments |         30 |          0 |          1 |         31 |
+| Total                                                                                                              |                    |     40,587 |        170 |      1,844 |     42,601 |
++--------------------------------------------------------------------------------------------------------------------+--------------------+------------+------------+------------+------------+

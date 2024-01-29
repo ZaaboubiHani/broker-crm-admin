@@ -88,59 +88,47 @@ export default class VisitService {
         return [];
     }
 
-    async getAllVisitsPaginated(page: number, size: number, text: string, clientType: ClientType, superId: number, order: boolean, propname?: string, delegateId?: number): Promise<{ visits: VisitModel[], total: number }> {
+    async getAllVisitsPaginated(clientId: number, superId: number, delegateId?: number,): Promise<{ visits: VisitModel[], total: number }> {
         const token = localStorage.getItem('token');
-        var textFilter = '';
         var delegateFilter = '';
-        var textSort = '';
         var visits: VisitModel[] = [];
+        let page = 1;
+        let total = 0;
+        var clientFilter = `&filters[client][id][$eq]=${clientId}`;
 
-        if (delegateId) {
-            delegateFilter = `&filters[user][id][$eq]=${delegateId}`;
-        }
-
-        if (text.length > 0) {
-            textFilter = `&filters[client][fullName][$containsi]=${text}`;
-        }
-
-
-        switch (propname) {
-            case 'date':
-                textSort = `&sort[0]=createdDate:${order ? 'asc' : 'desc'}`;
-                break;
-            case 'client':
-                textSort = `&sort[0]=client.fullName:${order ? 'asc' : 'desc'}`;
-                break;
-            case 'delegate':
-                textSort = `&sort[0]=user.username:${order ? 'asc' : 'desc'}`;
-                break;
-            case 'wilaya':
-                textSort = `&sort[0]=client.wilaya:${order ? 'asc' : 'desc'}`;
-                break;
-            case 'commune':
-                textSort = `&sort[0]=client.commun:${order ? 'asc' : 'desc'}`;
-                break;
-
-        }
-
-
-        var response = await axios.get(`${Globals.apiUrl}/visits?populate[rapport][populate]=*${textSort}&populate[client][populate]=visits&populate[client][populate]=relatedSpeciality.domainType&populate=user${textFilter}&pagination[page]=${page}&pagination[pageSize]=${size}&filters[client][relatedSpeciality][domainType][reference][$eq]=${clientType === ClientType.doctor ? `doctor&filters[user][creatorId][$eq]=${superId}` : clientType === ClientType.pharmacy ? `pharmacy&filters[user][creatorId][$eq]=${superId}` : 'wholesaler'}${delegateFilter}`,
-            {
-                headers: {
-                    'Authorization': `Bearer ${token}`,
-                }
-            });
-
-        if (response.status == 200) {
-
-            for (let index = 0; index < response.data['data'].length; index++) {
-                var visit = VisitModel.fromJson(response.data['data'][index]);
-                visits.push(visit);
+        if (superId !== 0) {
+            if (delegateId) {
+                delegateFilter = `&filters[user][id][$eq]=${delegateId}`;
             }
-            return { visits: visits, total: response.data.meta.pagination.total };
+            else {
+                delegateFilter = `&filters[user][creatorId][$eq]=${superId}`;
+            }
         }
 
-        return { visits: [], total: 0 };
+        while (true) {
+
+            var response = await axios.get(`${Globals.apiUrl}/visits?populate=user&pagination[page]=${page}&pagination[pageSize]=100${delegateFilter}${clientFilter}`,
+                {
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                    }
+                });
+
+            if (response.status == 200) {
+
+                for (let index = 0; index < response.data['data'].length; index++) {
+                    var visit = VisitModel.fromJson(response.data['data'][index]);
+                    visits.push(visit);
+                }
+                total = response.data.meta.pagination.total;
+            }
+            page++;
+            if (response.data.data.length === 0) {
+                break;
+            }
+        }
+
+        return { visits: visits, total: total };
     }
 
     async getAllVisitsOfDelegate(page: number, size: number, date: Date, userId: number): Promise<{ visits: VisitModel[], total: number }> {

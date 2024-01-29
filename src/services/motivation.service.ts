@@ -14,9 +14,9 @@ export default class MotivationService {
       }
       return MotivationService._instance;
     }
-    async getAllMotivations(): Promise<MotivationModel[]> {
+    async getAllMotivations(page: number, size: number,): Promise<{ motivations: MotivationModel[], total: number }> {
         const token = localStorage.getItem('token');
-        var response = await axios.get(`${Globals.apiUrl}/company-motivations?filters[domainType][id][$eq]=1`,
+        var response = await axios.get(`${Globals.apiUrl}/company-motivations?filters[domainType][id][$eq]=1&pagination[page]=${page}&pagination[pageSize]=${size}`,
             {
                 headers: {
                     'Authorization': `Bearer ${token}`
@@ -29,9 +29,9 @@ export default class MotivationService {
                 var motivation = MotivationModel.fromJson(response.data.data[index]);
                 motivations.push(motivation);
             }
-            return motivations;
+            return { motivations: motivations, total: response.data.meta.pagination.total };;
         }
-        return [];
+        return { motivations: [], total: 0 };
     }
     async getAllDraftedMotivations(): Promise<MotivationModel[]> {
         const token = localStorage.getItem('token');
