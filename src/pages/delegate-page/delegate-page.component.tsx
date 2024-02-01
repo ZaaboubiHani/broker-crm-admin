@@ -169,15 +169,15 @@ class DelegatePage extends Component<{}, DelegatePageState> {
         }
     }
 
-    handleSelectDelegate = async (delegate: UserModel) => {
+    handleSelectDelegate = async (delegate?: UserModel) => {
         this.setState({ loadingVisitsData: true, selectedReport: undefined, selectedCommand: undefined, selectedVisit: undefined });
-        var { visits: delegateVisits, total: total } = await this.visitService.getAllVisitsOfDelegate(1, this.state.sizeDelegate, this.state.selectedDate, delegate.id!);
-        var planDeTournee = await this.statisticsService.getPlanDeTournee(this.state.selectedDate, delegate.id!);
-        var couverturePortfeuille = await this.statisticsService.getCouverturePortfeuille(this.state.selectedDate, delegate.id!);
-        var moyenneVisitesParJour = await this.statisticsService.getMoyenneVisitesParJour(this.state.selectedDate, delegate.id!);
-        var objectifChiffreDaffaire = await this.statisticsService.getObjectifChiffreDaffaire(this.state.selectedDate, delegate.id!);
-        var objectifVisites = await this.statisticsService.getObjectifVisites(this.state.selectedDate, delegate.id!);
-        var successRate = await this.statisticsService.getDelegateSuccessRateMonth(this.state.selectedDate, delegate.id!);
+        var { visits: delegateVisits, total: total } = await this.visitService.getAllVisitsOfDelegate(1, this.state.sizeDelegate, this.state.selectedDate, delegate!.id!);
+        var planDeTournee = await this.statisticsService.getPlanDeTournee(this.state.selectedDate, delegate!.id!);
+        var couverturePortfeuille = await this.statisticsService.getCouverturePortfeuille(this.state.selectedDate, delegate!.id!);
+        var moyenneVisitesParJour = await this.statisticsService.getMoyenneVisitesParJour(this.state.selectedDate, delegate!.id!);
+        var objectifChiffreDaffaire = await this.statisticsService.getObjectifChiffreDaffaire(this.state.selectedDate, delegate!.id!);
+        var objectifVisites = await this.statisticsService.getObjectifVisites(this.state.selectedDate, delegate!.id!);
+        var successRate = await this.statisticsService.getDelegateSuccessRateMonth(this.state.selectedDate, delegate!.id!);
 
         this.setState({
             selectedDelegate: delegate,
@@ -194,15 +194,15 @@ class DelegatePage extends Component<{}, DelegatePageState> {
         });
     }
 
-    handleSelectKam = async (kam: UserModel) => {
+    handleSelectKam = async (kam?: UserModel) => {
         this.setState({ loadingVisitsData: true, selectedReport: undefined, selectedCommand: undefined, selectedVisit: undefined });
-        var { visits: kamVisits, total: total } = await this.visitService.getAllVisitsOfDelegate(1, this.state.sizeDelegate, this.state.selectedDate, kam.id!);
-        var planDeTournee = await this.statisticsService.getPlanDeTournee(this.state.selectedDate, kam.id!);
-        var couverturePortfeuille = await this.statisticsService.getCouverturePortfeuille(this.state.selectedDate, kam.id!);
-        var moyenneVisitesParJour = await this.statisticsService.getMoyenneVisitesParJour(this.state.selectedDate, kam.id!);
-        var objectifChiffreDaffaire = await this.statisticsService.getObjectifChiffreDaffaire(this.state.selectedDate, kam.id!);
-        var objectifVisites = await this.statisticsService.getObjectifVisites(this.state.selectedDate, kam.id!);
-        var successRate = await this.statisticsService.getDelegateSuccessRateMonth(this.state.selectedDate, kam.id!);
+        var { visits: kamVisits, total: total } = await this.visitService.getAllVisitsOfDelegate(1, this.state.sizeDelegate, this.state.selectedDate, kam!.id!);
+        var planDeTournee = await this.statisticsService.getPlanDeTournee(this.state.selectedDate, kam!.id!);
+        var couverturePortfeuille = await this.statisticsService.getCouverturePortfeuille(this.state.selectedDate, kam!.id!);
+        var moyenneVisitesParJour = await this.statisticsService.getMoyenneVisitesParJour(this.state.selectedDate, kam!.id!);
+        var objectifChiffreDaffaire = await this.statisticsService.getObjectifChiffreDaffaire(this.state.selectedDate, kam!.id!);
+        var objectifVisites = await this.statisticsService.getObjectifVisites(this.state.selectedDate, kam!.id!);
+        var successRate = await this.statisticsService.getDelegateSuccessRateMonth(this.state.selectedDate, kam!.id!);
 
         this.setState({
             selectedKam: kam,
@@ -237,7 +237,7 @@ class DelegatePage extends Component<{}, DelegatePageState> {
             this.setState({
                 isLoading: false,
                 supervisors: supervisors,
-                kams:kams
+                kams: kams
             });
         }
 
@@ -246,7 +246,7 @@ class DelegatePage extends Component<{}, DelegatePageState> {
 
 
 
-    handleSelectSupervisor = async (supervisor: UserModel) => {
+    handleSelectSupervisor = async (supervisor?: UserModel) => {
         this.setState({
             selectedReport: undefined,
             selectedCommand: undefined,
@@ -256,7 +256,7 @@ class DelegatePage extends Component<{}, DelegatePageState> {
             loadingDelegates: true,
         });
 
-        var delegates = await this.userService.getUsersByCreator(supervisor.id!, UserType.delegate);
+        var delegates = await this.userService.getUsersByCreator(supervisor!.id!, UserType.delegate);
 
 
         this.setState({ delegates: delegates, loadingDelegates: false, });

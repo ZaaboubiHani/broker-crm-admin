@@ -1,8 +1,6 @@
 import React from 'react';
-import { formatDateToYYYYMMDD } from '../../functions/date-format';
 import { DotSpinner } from '@uiball/loaders';
 import Button from '@mui/material/Button';
-import VisitModel from '../../models/visit.model';
 import ScalableTable from '../scalable-table/scalable-table.component';
 import ClientModel from '../../models/client.model';
 
@@ -15,13 +13,15 @@ interface ClientsDoctorTableProps {
     size: number;
     total: number;
     isLoading: boolean;
+    sorting: { field: string, order: boolean };
+    sortChange: (field: string, order: boolean) => void;
 }
 
-const ClientsDoctorTable: React.FC<ClientsDoctorTableProps> = ({ total, size, page, pageChange, data, id, isLoading, displayVisits }) => {
+const ClientsDoctorTable: React.FC<ClientsDoctorTableProps> = ({ sorting, total, size, page, sortChange, pageChange, data, id, isLoading, displayVisits }) => {
 
     const [rowsPerPage, setRowsPerPage] = React.useState(size);
     const [pageIndex, setPageIndex] = React.useState(page - 1);
-
+    const [sortModel, setSortModel] = React.useState<{ field: string, order: boolean }>(sorting);
     if (pageIndex !== (page - 1)) {
         setPageIndex(page - 1);
     }
@@ -34,8 +34,8 @@ const ClientsDoctorTable: React.FC<ClientsDoctorTableProps> = ({ total, size, pa
             flexDirection: 'column',
             flexGrow: '1',
             borderRadius: '8px',
-            marginRight:'-2px',
-            height:'100%'
+            marginRight: '-2px',
+            height: '100%'
         }}>
             {
                 isLoading ? (<div style={{
@@ -71,14 +71,17 @@ const ClientsDoctorTable: React.FC<ClientsDoctorTableProps> = ({ total, size, pa
                             {
                                 field: 'numVisits',
                                 headerName: 'Nombre de visites',
+                                sortable: true,
                             },
                             {
                                 field: 'name',
                                 headerName: 'Client',
+                                sortable: true,
                             },
                             {
                                 field: 'location',
                                 headerName: 'Localisation',
+                                sortable: true,
                             },
                             {
                                 field: 'speciality',
@@ -101,13 +104,15 @@ const ClientsDoctorTable: React.FC<ClientsDoctorTableProps> = ({ total, size, pa
                             setRowsPerPage(model.size);
 
                         }}
-
-                        pagination={
-                            {
-                                size: rowsPerPage,
-                                page: pageIndex,
-                            }
-                        }
+                        onSortChange={(model) => {
+                            sortChange(model.field, model.order);
+                            setSortModel(model);
+                        }}
+                        sortModel={sortModel}
+                        pagination={{
+                            size: rowsPerPage,
+                            page: pageIndex,
+                        }}
 
                         pageSizeOptions={[5, 10, 25, 50, 100]}
                     />)}

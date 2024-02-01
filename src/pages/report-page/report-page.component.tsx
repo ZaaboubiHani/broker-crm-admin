@@ -76,15 +76,15 @@ class ReportPage extends Component<{}, ReportPageProps> {
     visitService = VisitService.getInstance();
     reportService = ReportService.getInstance();
 
-    handleSelectDelegate = async (delegate: UserModel) => {
+    handleSelectDelegate = async (delegate?: UserModel) => {
         this.setState({ loadingVisitsData: true, reportData: undefined, selectedVisit: undefined, });
-        var { visits: visits, total: total } = await this.visitService.getAllVisitsOfDelegate(this.state.delegatePage, this.state.sizeDelegate, this.state.selectedDate, delegate.id!);
+        var { visits: visits, total: total } = await this.visitService.getAllVisitsOfDelegate(this.state.delegatePage, this.state.sizeDelegate, this.state.selectedDate, delegate!.id!);
         this.setState({ selectedDelegate: delegate, delegateVisits: visits, loadingVisitsData: false, totalDelegate: total });
     }
 
-    handleSelectKam = async (kam: UserModel) => {
+    handleSelectKam = async (kam?: UserModel) => {
         this.setState({ loadingVisitsData: true, reportData: undefined, selectedVisit: undefined, });
-        var { visits: visits, total: total } = await this.visitService.getAllVisitsOfDelegate(this.state.kamPage, this.state.sizeKam, this.state.selectedDate, kam.id!);
+        var { visits: visits, total: total } = await this.visitService.getAllVisitsOfDelegate(this.state.kamPage, this.state.sizeKam, this.state.selectedDate, kam!.id!);
         this.setState({ selectedKam: kam, kamVisits: visits, loadingVisitsData: false, totalKam: total });
     }
 
@@ -193,7 +193,7 @@ class ReportPage extends Component<{}, ReportPageProps> {
         this.setState({ kamVisits: visits, loadingVisitsData: false, totalKam: total });
     }
 
-    handleSelectSupervisor = async (supervisor: UserModel) => {
+    handleSelectSupervisor = async (supervisor?: UserModel) => {
         this.setState({
             delegatePage: 1,
             delegates: [],
@@ -302,7 +302,6 @@ class ReportPage extends Component<{}, ReportPageProps> {
                                         id='reporttable'
                                         displayReport={this.handleDisplayReport}
                                         data={this.state.delegateVisits}
-                                        selectedId={this.state.selectedVisit?.id ?? -1}
                                     ></ReportTable>
                                     <div style={{
                                         width: '40%',
@@ -370,7 +369,6 @@ class ReportPage extends Component<{}, ReportPageProps> {
                                         id='reporttable'
                                         displayReport={this.handleDisplayReport}
                                         data={this.state.kamVisits}
-                                        selectedId={this.state.selectedVisit?.id ?? -1}
                                     ></ReportTable>
                                     <div style={{
                                         width: '40%',

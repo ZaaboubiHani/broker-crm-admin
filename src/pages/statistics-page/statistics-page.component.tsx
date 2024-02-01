@@ -437,18 +437,18 @@ class StatisticsPage extends Component<{}, StatisticsPageProps> {
     userService = UserService.getInstance();
     statisticsService = StatisticsService.getInstance();
 
-    handleSelectKam = async (kam: UserModel) => {
+    handleSelectKam = async (kam?: UserModel) => {
 
         this.setState({ loadingStatisticsData: true, });
 
-        var visitStats = await this.statisticsService.getDelegateYearVisitStats(this.state.selectedDate, kam.id!);
-        var salesStats = await this.statisticsService.getDelegateYearSaleStats(this.state.selectedDate, kam.id!);
-        var contributionStats = await this.statisticsService.getDelegateContributionStats(this.state.selectedDate, kam.id!, this.state.currentUser.id!);
-        var successRate = await this.statisticsService.getDelegateSuccessRateYear(kam.id!, this.state.selectedDate);
+        var visitStats = await this.statisticsService.getDelegateYearVisitStats(this.state.selectedDate, kam!.id!);
+        var salesStats = await this.statisticsService.getDelegateYearSaleStats(this.state.selectedDate, kam!.id!);
+        var contributionStats = await this.statisticsService.getDelegateContributionStats(this.state.selectedDate, kam!.id!, this.state.currentUser.id!);
+        var successRate = await this.statisticsService.getDelegateSuccessRateYear(kam!.id!, this.state.selectedDate);
 
         this.state.kamChartPieOptions.series = [contributionStats.delegateSales, contributionStats.teamSales - contributionStats.delegateSales];
         this.state.kamChartPieOptions.labels?.splice(0, this.state.kamChartPieOptions.labels?.length);
-        this.state.kamChartPieOptions.labels?.push(kam.username!);
+        this.state.kamChartPieOptions.labels?.push(kam!.username!);
         this.state.kamChartPieOptions.labels?.push('reste d\'equipe');
 
         this.state.kamSuccessRateAreaChart.series = [
@@ -506,18 +506,18 @@ class StatisticsPage extends Component<{}, StatisticsPageProps> {
         });
     }
 
-    handleSelectDelegate = async (delegate: UserModel) => {
+    handleSelectDelegate = async (delegate?: UserModel) => {
 
         this.setState({ loadingStatisticsData: true, });
 
         if (this.state.currentUser.type === UserType.supervisor) {
 
-            var visitStats = await this.statisticsService.getDelegateYearVisitStats(this.state.selectedDate, delegate.id!);
-            var salesStats = await this.statisticsService.getDelegateYearSaleStats(this.state.selectedDate, delegate.id!);
-            var contributionStats = await this.statisticsService.getDelegateContributionStats(this.state.selectedDate, delegate.id!, this.state.currentUser.id!);
+            var visitStats = await this.statisticsService.getDelegateYearVisitStats(this.state.selectedDate, delegate!.id!);
+            var salesStats = await this.statisticsService.getDelegateYearSaleStats(this.state.selectedDate, delegate!.id!);
+            var contributionStats = await this.statisticsService.getDelegateContributionStats(this.state.selectedDate, delegate!.id!, this.state.currentUser.id!);
             var teamVisitsData = await this.statisticsService.getTeamYearVisitStats(this.state.selectedDate, this.state.currentUser.id!);
             var teamSalesData = await this.statisticsService.getTeamYearSaleStats(this.state.selectedDate, this.state.currentUser.id!);
-            var successRate = await this.statisticsService.getDelegateSuccessRateYear(delegate.id!, this.state.selectedDate);
+            var successRate = await this.statisticsService.getDelegateSuccessRateYear(delegate!.id!, this.state.selectedDate);
 
             var teamSuccessRate = await this.statisticsService.getTeamSuccessRateYear(this.state.currentUser.id!, this.state.selectedDate);
             var delegatesContributions = await this.statisticsService.getDelegatesContributionsOfSupervisor(this.state.currentUser.id!, this.state.selectedDate,);
@@ -525,7 +525,7 @@ class StatisticsPage extends Component<{}, StatisticsPageProps> {
 
             this.state.chartPieOptions.series = [contributionStats.delegateSales, contributionStats.teamSales - contributionStats.delegateSales];
             this.state.chartPieOptions.labels?.splice(0, this.state.chartPieOptions.labels?.length);
-            this.state.chartPieOptions.labels?.push(delegate.username!);
+            this.state.chartPieOptions.labels?.push(delegate!.username!);
             this.state.chartPieOptions.labels?.push('reste d\'equipe');
 
             this.state.teamContributionPieOptions.series = [teamContribution.teamSales, teamContribution.companySales - teamContribution.teamSales];
@@ -638,10 +638,10 @@ class StatisticsPage extends Component<{}, StatisticsPageProps> {
             });
         } else {
 
-            var visitStats = await this.statisticsService.getDelegateYearVisitStats(this.state.selectedDate, delegate.id!);
-            var salesStats = await this.statisticsService.getDelegateYearSaleStats(this.state.selectedDate, delegate.id!);
-            var successRate = await this.statisticsService.getDelegateSuccessRateYear(delegate.id!, this.state.selectedDate);
-            var contributionStats = await this.statisticsService.getDelegateContributionStats(this.state.selectedDate, delegate.id!, this.state.selectedSupervisor!.id!);
+            var visitStats = await this.statisticsService.getDelegateYearVisitStats(this.state.selectedDate, delegate!.id!);
+            var salesStats = await this.statisticsService.getDelegateYearSaleStats(this.state.selectedDate, delegate!.id!);
+            var successRate = await this.statisticsService.getDelegateSuccessRateYear(delegate!.id!, this.state.selectedDate);
+            var contributionStats = await this.statisticsService.getDelegateContributionStats(this.state.selectedDate, delegate!.id!, this.state.selectedSupervisor!.id!);
             var delegatesContributions = await this.statisticsService.getDelegatesContributionsOfSupervisor(this.state.selectedSupervisor!.id!, this.state.selectedDate,);
 
             this.state.chartPieOptions.series = [contributionStats.delegateSales, contributionStats.teamSales - contributionStats.delegateSales];
@@ -650,7 +650,7 @@ class StatisticsPage extends Component<{}, StatisticsPageProps> {
                 this.state.delegatesContributionChartPie.labels?.push(e.delegateName);
             });
             this.state.chartPieOptions.labels?.splice(0, this.state.chartPieOptions.labels?.length);
-            this.state.chartPieOptions.labels?.push(delegate.username!);
+            this.state.chartPieOptions.labels?.push(delegate!.username!);
             this.state.chartPieOptions.labels?.push('reste d\'equipe');
             this.state.delegatesContributionChartPie.labels?.splice(0, this.state.chartPieOptions.labels?.length);
 
@@ -916,14 +916,14 @@ class StatisticsPage extends Component<{}, StatisticsPageProps> {
         }
     }
 
-    handleSelectSupervisor = async (supervisor: UserModel) => {
+    handleSelectSupervisor = async (supervisor?: UserModel) => {
         this.setState({ loadingDelegates: true, loadingStatisticsData: true, });
-        var delegates = await this.userService.getUsersByCreator(supervisor.id!, UserType.delegate);
-        var teamVisitsData = await this.statisticsService.getTeamYearVisitStats(this.state.selectedDate, supervisor.id!);
-        var teamSalesData = await this.statisticsService.getTeamYearSaleStats(this.state.selectedDate, supervisor.id!);
-        var teamSuccessRate = await this.statisticsService.getTeamSuccessRateYear(supervisor.id!, this.state.selectedDate);
-        var delegatesContributions = await this.statisticsService.getDelegatesContributionsOfSupervisor(supervisor.id!, this.state.selectedDate,);
-        var teamContribution = await this.statisticsService.getTeamContributionsOfSupervisor(supervisor.id!, this.state.selectedDate,);
+        var delegates = await this.userService.getUsersByCreator(supervisor!.id!, UserType.delegate);
+        var teamVisitsData = await this.statisticsService.getTeamYearVisitStats(this.state.selectedDate, supervisor!.id!);
+        var teamSalesData = await this.statisticsService.getTeamYearSaleStats(this.state.selectedDate, supervisor!.id!);
+        var teamSuccessRate = await this.statisticsService.getTeamSuccessRateYear(supervisor!.id!, this.state.selectedDate);
+        var delegatesContributions = await this.statisticsService.getDelegatesContributionsOfSupervisor(supervisor!.id!, this.state.selectedDate,);
+        var teamContribution = await this.statisticsService.getTeamContributionsOfSupervisor(supervisor!.id!, this.state.selectedDate,);
 
         this.state.teamContributionPieOptions.series = [teamContribution.teamSales, teamContribution.companySales - teamContribution.teamSales];
         this.state.delegatesContributionChartPie.series = [...delegatesContributions.map(e => e.ChiffreDaffaire)];

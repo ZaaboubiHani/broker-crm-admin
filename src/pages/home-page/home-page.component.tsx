@@ -33,8 +33,6 @@ interface HomePageState {
     filteredDelegateVisits: VisitModel[];
     kamVisits: VisitModel[];
     filteredKamVisits: VisitModel[];
-    delegateSearchText: string;
-    kamSearchText: string;
     index: number;
     currentUser: UserModel;
     supervisors: UserModel[];
@@ -67,8 +65,6 @@ class HomePage extends Component<{}, HomePageState> {
             kamVisits: [],
             filteredKamVisits: [],
             showReportPanel: true,
-            delegateSearchText: '',
-            kamSearchText: '',
             supervisors: [],
             totalDelegate: 0,
             sizeDelegate: 100,
@@ -220,9 +216,9 @@ class HomePage extends Component<{}, HomePageState> {
 
 
 
-    handleSelectSupervisor = async (supervisor: UserModel) => {
+    handleSelectSupervisor = async (supervisor?: UserModel) => {
         this.setState({ loadingVisitsData: true, selectedReport: undefined, selectedVisit: undefined, selectedCommand: undefined, delegatePage: 1 });
-        var { visits: visits, total: total } = await this.visitService.getAllVisits(1, this.state.sizeDelegate, this.state.selectedDate, ClientType.pharmacy, supervisor.id!, this.state.delegateOrder, this.state.delegateProp);
+        var { visits: visits, total: total } = await this.visitService.getAllVisits(1, this.state.sizeDelegate, this.state.selectedDate, ClientType.pharmacy, supervisor!.id!, this.state.delegateOrder, this.state.delegateProp);
 
         this.setState({
             selectedSupervisor: supervisor,
@@ -315,14 +311,6 @@ class HomePage extends Component<{}, HomePageState> {
                 totalDelegate: total,
             });
         }
-    }
-
-    handleDelegateSearchTextChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        this.setState({ delegateSearchText: event.target.value });
-    }
-
-    handleKamSearchTextChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        this.setState({ kamSearchText: event.target.value });
     }
 
     handleTabChange = (event: React.SyntheticEvent, newValue: number) => {

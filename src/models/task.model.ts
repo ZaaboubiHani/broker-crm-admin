@@ -1,6 +1,4 @@
 import ClientModel from "./client.model";
-import CommandModel from "./command.model";
-import ReportModel from "./report.model";
 import UserModel from "./user.model";
 import VisitModel from "./visit.model";
 

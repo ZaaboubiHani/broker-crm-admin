@@ -161,12 +161,12 @@ class RevenuePage extends Component<{}, RevenuePageProps> {
         this.setState({ searchText: event.target.value });
     }
 
-    handleSelectSupervisor = async (supervisor: UserModel) => {
+    handleSelectSupervisor = async (supervisor?: UserModel) => {
         this.setState({ selectedSupervisor: supervisor, loadingRevenuesData: true, showDetails: false });
-        var revenues = await this.revenueService.getAllRevenuesMonth(this.state.selectedDate, supervisor.id!);
-        var totalTeamRevenue = await this.statisticsService.getTotalTeamRevenue(this.state.selectedDate, supervisor.id!);
-        var totalTeamRevenueHonored = await this.statisticsService.getTotalTeamRevenue(this.state.selectedDate, supervisor.id!, true);
-        var totalTeamRevenueNotHonored = await this.statisticsService.getTotalTeamRevenue(this.state.selectedDate, supervisor.id!, false);
+        var revenues = await this.revenueService.getAllRevenuesMonth(this.state.selectedDate, supervisor!.id!);
+        var totalTeamRevenue = await this.statisticsService.getTotalTeamRevenue(this.state.selectedDate, supervisor!.id!);
+        var totalTeamRevenueHonored = await this.statisticsService.getTotalTeamRevenue(this.state.selectedDate, supervisor!.id!, true);
+        var totalTeamRevenueNotHonored = await this.statisticsService.getTotalTeamRevenue(this.state.selectedDate, supervisor!.id!, false);
         this.setState({
             revenues: revenues,
             loadingRevenuesData: false,
