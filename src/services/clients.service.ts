@@ -55,19 +55,15 @@ export default class ClientService {
         }
 
         switch (propname) {
-            case 'client':
+            case 'name':
                 sortFilter = `&sort[0]=fullName:${order ? 'asc' : 'desc'}`;
                 break;
             case 'numVisits':
-                sortFilter = `&sort[0]=user.username:${order ? 'asc' : 'desc'}`;
+                sortFilter = `&sort[0]=numVisits:${order ? 'asc' : 'desc'}`;
                 break;
-            case 'wilaya':
+            case 'location':
                 sortFilter = `&sort[0]=client.wilaya:${order ? 'asc' : 'desc'}`;
                 break;
-            case 'commune':
-                sortFilter = `&sort[0]=client.commun:${order ? 'asc' : 'desc'}`;
-                break;
-
         }
 
         var response = await axios.get(`${Globals.apiUrl}/clients?pagination[page]=${page}&pagination[pageSize]=${size}&populate[relatedSpeciality][populate]=domainType${clientTypeFilter}${delegateFilter}${sortFilter}`,

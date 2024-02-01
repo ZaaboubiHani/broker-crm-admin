@@ -16,11 +16,10 @@ interface ReportTableProps {
     page: number;
     size: number;
     total: number;
-    selectedId: number;
     pageChange: (page: number, size: number) => void;
 }
 
-const ReportTable: React.FC<ReportTableProps> = ({ data, id, isLoading, displayReport, total, selectedId, size, page, pageChange, }) => {
+const ReportTable: React.FC<ReportTableProps> = ({ data, id, isLoading, displayReport, total, size, page, pageChange, }) => {
     const [rowsPerPage, setRowsPerPage] = React.useState(size);
 
     const [pageIndex, setPageIndex] = React.useState(page - 1);

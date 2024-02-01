@@ -100,15 +100,15 @@ class CommandPage extends Component<{}, CommandDelegatePageProps> {
     };
 
 
-    handleSelectDelegate = async (delegate: UserModel) => {
+    handleSelectDelegate = async (delegate?: UserModel) => {
         this.setState({ loadingDelegateCommandsData: true, delegateCommandData: undefined, delegatePage: 1 });
-        var { commands: commands, total: total } = await this.commandService.getAllCommandsOfDelegate(1, this.state.sizeDelegate, this.state.selectedDateDelegate, delegate.id!);
+        var { commands: commands, total: total } = await this.commandService.getAllCommandsOfDelegate(1, this.state.sizeDelegate, this.state.selectedDateDelegate, delegate!.id!);
         this.setState({ selectedDelegate: delegate, delegateCommands: commands, delegatePage: 1, totalDelegate: total, loadingDelegateCommandsData: false, });
     }
 
-    handleSelectKam = async (kam: UserModel) => {
+    handleSelectKam = async (kam?: UserModel) => {
         this.setState({ loadingKamCommandsData: true, kamCommandData: undefined, kamPage: 1 });
-        var { commands: commands, total: total } = await this.commandService.getAllCommandsOfDelegate(1, this.state.sizeKam, this.state.selectedDateKam, kam.id!);
+        var { commands: commands, total: total } = await this.commandService.getAllCommandsOfDelegate(1, this.state.sizeKam, this.state.selectedDateKam, kam!.id!);
         this.setState({ selectedKam: kam, kamCommands: commands, kamPage: 1, totalKam: total, loadingKamCommandsData: false, });
     }
 
@@ -184,14 +184,14 @@ class CommandPage extends Component<{}, CommandDelegatePageProps> {
         }
     }
 
-    handleSelectSupervisor = async (supervisor: UserModel) => {
+    handleSelectSupervisor = async (supervisor?: UserModel) => {
         this.setState({
             delegateCommandData: undefined,
             delegates: [],
             delegateCommands: [],
             loadingDelegates: true,
         });
-        var delegates = await this.userService.getUsersByCreator(supervisor.id!, UserType.delegate);
+        var delegates = await this.userService.getUsersByCreator(supervisor!.id!, UserType.delegate);
 
         this.setState({
             delegates: delegates,

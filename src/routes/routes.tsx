@@ -15,6 +15,7 @@ import RevenuePage from '../pages/revenue-page/revenue-page.component';
 import StatisticsPage from '../pages/statistics-page/statistics-page.component';
 import ConfigPage from '../pages/config-page/config-page.component';
 import ClientsPage from '../pages/clients-page/clients-page.component';
+import TaskPage from '../pages/task-page/task-page.component';
 
 const AppRouter: React.FC = () => {
 
@@ -46,6 +47,7 @@ const AppRouter: React.FC = () => {
                   <Route path="/revenue" Component={RevenuePage} />
                   <Route path="/statistics" Component={StatisticsPage} />
                   <Route path="/config" Component={ConfigPage} />
+                  <Route path="/task" Component={TaskPage} />
                 </Routes>
               </div>
             </div>

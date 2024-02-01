@@ -12,11 +12,12 @@ interface UserDropdownProps {
     label: string;
     selectedUser?: UserModel;
     loading?: boolean;
-    onSelectUser: (user: UserModel) => void;
+    isNullable?: boolean;
+    onSelectUser: (user?: UserModel) => void;
 }
 
 
-const UserDropdown: React.FC<UserDropdownProps> = ({ users, label, onSelectUser, selectedUser, loading }) => {
+const UserDropdown: React.FC<UserDropdownProps> = ({ users, label, onSelectUser, selectedUser, loading, isNullable }) => {
 
     return (
         <div style={{
@@ -57,6 +58,11 @@ const UserDropdown: React.FC<UserDropdownProps> = ({ users, label, onSelectUser,
                         onSelectUser(user);
                     }}
                 >
+                    {
+                        isNullable ? (<MenuItem value={undefined}>
+                            <em>aucun</em>
+                        </MenuItem>) : null
+                    }
                     {
                         users.map((s) => (
                             <MenuItem value={s as any}>{s.username!}</MenuItem>

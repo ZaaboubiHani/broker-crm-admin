@@ -279,7 +279,7 @@ class ClientsPage extends Component<{}, ClientsPageProps> {
         this.setState({ index: newValue, showVisitPanel: false, });
     };
 
-    handleSelectSupervisor = async (supervisor: UserModel) => {
+    handleSelectSupervisor = async (supervisor?: UserModel) => {
         this.setState({
             loadingClientsData: true,
             docPage: 1,
@@ -303,7 +303,7 @@ class ClientsPage extends Component<{}, ClientsPageProps> {
             supervisor!.id!,
             this.state.pharmOrder,
             this.state.pharmProp);
-        var delegates = await this.userService.getUsersByCreator(supervisor.id!, UserType.delegate);
+        var delegates = await this.userService.getUsersByCreator(supervisor!.id!, UserType.delegate);
         this.setState({
             selectedSupervisor: supervisor,
             loadingClientsData: false,
@@ -316,7 +316,7 @@ class ClientsPage extends Component<{}, ClientsPageProps> {
         });
     }
 
-    handleSelectDelegate = async (delegate: UserModel | undefined) => {
+    handleSelectDelegate = async (delegate?: UserModel) => {
         this.setState({
             loadingClientsData: true,
             docPage: 1,
@@ -353,17 +353,16 @@ class ClientsPage extends Component<{}, ClientsPageProps> {
         });
     }
 
-    handleChangePharmProp = async (event: SelectChangeEvent<unknown>) => {
-        var pharmProp = event.target.value as string | undefined;
-        this.setState({ loadingClientsData: true, docPage: 1, pharmPage: 1, pharmProp: pharmProp, showVisitPanel: false, });
+    handlePharmSort = async (field: string, order: boolean) => {
+        this.setState({ loadingClientsData: true, docPage: 1, pharmPage: 1, pharmProp: field, showVisitPanel: false, pharmOrder: order });
         if (this.state.currentUser.type === UserType.supervisor) {
             var { clients: pharmClients, total: totalPharm } = await this.clientService.getClientsPaginated(
                 1,
                 this.state.sizePharm,
                 ClientType.pharmacy,
                 this.state.currentUser!.id!,
-                this.state.pharmOrder,
-                pharmProp,
+                order,
+                field,
                 this.state.selectedDelegate?.id
             );
             this.setState({
@@ -377,8 +376,8 @@ class ClientsPage extends Component<{}, ClientsPageProps> {
                     this.state.sizePharm,
                     ClientType.pharmacy,
                     this.state.selectedSupervisor!.id!,
-                    this.state.pharmOrder,
-                    pharmProp,
+                    order,
+                    field,
                     this.state.selectedDelegate?.id
                 );
                 this.setState({
@@ -393,57 +392,17 @@ class ClientsPage extends Component<{}, ClientsPageProps> {
         });
     }
 
-    handlePharmSort = async () => {
-        var pharmOrder = !this.state.pharmOrder;
-        this.setState({ loadingClientsData: true, docPage: 1, pharmPage: 1, pharmOrder: pharmOrder, showVisitPanel: false, });
-        if (this.state.currentUser.type === UserType.supervisor) {
-            var { clients: pharmClients, total: totalPharm } = await this.clientService.getClientsPaginated(
-                1,
-                this.state.sizePharm,
-                ClientType.pharmacy,
-                this.state.currentUser!.id!,
-                pharmOrder,
-                this.state.pharmProp,
-                this.state.selectedDelegate?.id
-            );
-            this.setState({
-                pharmClients: pharmClients,
-                totalPharm: totalPharm,
-            });
-        } else {
-            if (this.state.selectedSupervisor) {
-                var { clients: pharmClients, total: totalPharm } = await this.clientService.getClientsPaginated(
-                    1,
-                    this.state.sizePharm,
-                    ClientType.pharmacy,
-                    this.state.selectedSupervisor!.id!,
-                    pharmOrder,
-                    this.state.pharmProp,
-                    this.state.selectedDelegate?.id
-                );
-                this.setState({
-                    pharmClients: pharmClients,
-                    totalPharm: totalPharm,
-                });
-            }
-        }
 
-        this.setState({
-            loadingClientsData: false,
-        });
-    }
-
-    handleChangeDocProp = async (event: SelectChangeEvent<unknown>) => {
-        var docProp = event.target.value as string | undefined;
-        this.setState({ loadingClientsData: true, docPage: 1, pharmPage: 1, docProp: docProp, showVisitPanel: false, });
+    handleDocSort = async (field: string, order: boolean) => {
+        this.setState({ loadingClientsData: true, docPage: 1, pharmPage: 1, docProp: field, docOrder: order, showVisitPanel: false, });
         if (this.state.currentUser.type === UserType.supervisor) {
             var { clients: docClients, total: totalDoc } = await this.clientService.getClientsPaginated(
                 1,
                 this.state.sizeDoc,
                 ClientType.doctor,
                 this.state.currentUser!.id!,
-                this.state.docOrder,
-                docProp,
+                order,
+                field,
                 this.state.selectedDelegate?.id
             );
             this.setState({
@@ -457,8 +416,8 @@ class ClientsPage extends Component<{}, ClientsPageProps> {
                     this.state.sizeDoc,
                     ClientType.doctor,
                     this.state.selectedSupervisor!.id!,
-                    this.state.docOrder,
-                    docProp,
+                    order,
+                    field,
                     this.state.selectedDelegate?.id
                 );
                 this.setState({
@@ -473,84 +432,18 @@ class ClientsPage extends Component<{}, ClientsPageProps> {
         });
     }
 
-    handleDocSort = async () => {
-        var docOrder = !this.state.docOrder;
-        this.setState({ loadingClientsData: true, docPage: 1, pharmPage: 1, docOrder: docOrder, showVisitPanel: false, });
-        if (this.state.currentUser.type === UserType.supervisor) {
-            var { clients: docClients, total: totalDoc } = await this.clientService.getClientsPaginated(
-                1,
-                this.state.sizeDoc,
-                ClientType.doctor,
-                this.state.currentUser!.id!,
-                docOrder,
-                this.state.docProp,
-                this.state.selectedDelegate?.id
-            );
-            this.setState({
-                docClients: docClients,
-                totalDoc: totalDoc,
-            });
-        } else {
-            if (this.state.selectedSupervisor) {
-                var { clients: docClients, total: totalDoc } = await this.clientService.getClientsPaginated(
-                    1,
-                    this.state.sizeDoc,
-                    ClientType.doctor,
-                    this.state.selectedSupervisor!.id!,
-                    docOrder,
-                    this.state.docProp,
-                    this.state.selectedDelegate?.id
-                );
-                this.setState({
-                    docClients: docClients,
-                    totalDoc: totalDoc,
-                });
-            }
-        }
-
-        this.setState({
-            loadingClientsData: false,
-        });
-    }
-
-    handleChangeWholeProp = async (event: SelectChangeEvent<unknown>) => {
-        var wholeProp = event.target.value as string | undefined;
-        this.setState({ loadingClientsData: true, docPage: 1, pharmPage: 1, wholeProp: wholeProp, showVisitPanel: false, });
+    handleWholeSort = async (field: string, order: boolean) => {
+        this.setState({ loadingClientsData: true, docPage: 1, pharmPage: 1, wholeProp: field, wholeOrder: order, showVisitPanel: false, });
         var { clients: wholeClients, total: totalWhole } = await this.clientService.getClientsPaginated(
             1,
             this.state.sizeWhole,
             ClientType.wholesaler,
             this.state.currentUser!.id!,
-            this.state.wholeOrder,
-            wholeProp);
+            order,
+            field);
         this.setState({
             wholeClients: wholeClients,
             totalWhole: totalWhole,
-
-        });
-
-        this.setState({
-            loadingClientsData: false,
-        });
-    }
-
-    handleWholeSort = async () => {
-        var wholeOrder = !this.state.wholeOrder;
-        this.setState({ loadingClientsData: true, docPage: 1, pharmPage: 1, wholeOrder: wholeOrder, showVisitPanel: false, });
-        var { clients: wholeClients, total: totalWhole } = await this.clientService.getClientsPaginated(
-            1,
-            this.state.sizeWhole,
-            ClientType.wholesaler,
-            this.state.currentUser!.id!,
-            wholeOrder,
-            this.state.wholeProp);
-        this.setState({
-            wholeClients: wholeClients,
-            totalWhole: totalWhole,
-
-        });
-
-        this.setState({
             loadingClientsData: false,
         });
     }
@@ -654,41 +547,13 @@ class ClientsPage extends Component<{}, ClientsPageProps> {
                                     <div style={{ height: '50px', width: '150px', }}>
                                         <UserDropdown
                                             users={this.state.delegates}
+                                            isNullable={true}
                                             selectedUser={this.state.selectedDelegate}
                                             onSelectUser={this.handleSelectDelegate}
                                             label='Délégué'
                                             loading={this.state.loadingDelegates}
                                         />
                                     </div>
-                                    <Divider orientation="vertical" flexItem component="div" style={{ width: '0.5%' }} sx={{ borderRight: 'solid rgba(127,127,127,0.5) 1px', margin: '8px 8px 16px 8px' }} />
-                                    <FormControl size="small" style={{
-                                        width: '150px',
-                                        backgroundColor: 'white',
-                                        marginLeft: "8px",
-                                        height: '40px'
-                                    }}>
-                                        <InputLabel>Trier avec</InputLabel>
-                                        <Select
-                                            label="Trier avec"
-                                            onChange={this.handleChangePharmProp}>
-                                            <MenuItem value={undefined}>
-                                                <em>aucun</em>
-                                            </MenuItem>
-                                            <MenuItem value={'date'}>Date</MenuItem>
-                                            <MenuItem value={'client'}>Client</MenuItem>
-                                            <MenuItem value={'delegate'}>Délégué</MenuItem>
-                                            <MenuItem value={'wilaya'}>wilaya</MenuItem>
-                                            <MenuItem value={'commune'}>Commune</MenuItem>
-                                        </Select>
-                                    </FormControl>
-                                    <Button variant="outlined"
-                                        onClick={() => {
-                                            this.handlePharmSort();
-                                        }}
-                                        sx={{ backgroundColor: 'white', marginLeft: "8px", height: '40px' }}>
-                                        {this.state.pharmOrder ? <ArrowUpwardIcon /> : <ArrowDownwardIcon />}
-                                    </Button>
-
                                     {
                                         this.state.currentUser.type === UserType.admin ?
                                             (
@@ -721,6 +586,8 @@ class ClientsPage extends Component<{}, ClientsPageProps> {
                                         data={this.state.pharmClients}
                                         isLoading={this.state.loadingClientsData}
                                         displayVisits={this.handleDisplayPharmVisits}
+                                        sortChange={this.handlePharmSort}
+                                        sorting={{ field: this.state.pharmProp ?? '', order: this.state.pharmOrder }}
                                     ></ClientsPharmacyTable>
                                     <div style={{
                                         width: '30%',
@@ -778,6 +645,8 @@ class ClientsPage extends Component<{}, ClientsPageProps> {
                                                             <InputLabel>Délégués de visites</InputLabel>
                                                             <Select
                                                                 label="Trier avec"
+                                                                value={this.state.selectedDelegate?.id}
+                                                                disabled={this.state.selectedDelegate !== undefined}
                                                                 onChange={(event) => {
                                                                     var id = event.target.value as number | undefined;
                                                                     this.setState({ selectedUserId: id });
@@ -830,38 +699,6 @@ class ClientsPage extends Component<{}, ClientsPageProps> {
                                             loading={this.state.loadingDelegates}
                                         />
                                     </div>
-                                    <Divider orientation="vertical" flexItem component="div" style={{ width: '0.5%' }} sx={{ borderRight: 'solid rgba(127,127,127,0.5) 1px', margin: '8px 8px 16px 8px' }} />
-
-                                    <FormControl size="small" style={{
-                                        width: '150px',
-                                        backgroundColor: 'white',
-                                        marginLeft: "8px",
-                                        height: '40px'
-                                    }}>
-                                        <InputLabel>Trier avec</InputLabel>
-                                        <Select
-                                            label="Trier avec"
-                                            onChange={this.handleChangeDocProp}
-                                        >
-                                            <MenuItem value={undefined}>
-                                                <em>aucun</em>
-                                            </MenuItem>
-                                            <MenuItem value={'date'}>Date</MenuItem>
-                                            <MenuItem value={'client'}>Client</MenuItem>
-                                            <MenuItem value={'delegate'}>Délégué</MenuItem>
-                                            <MenuItem value={'wilaya'}>wilaya</MenuItem>
-                                            <MenuItem value={'commune'}>Commune</MenuItem>
-                                        </Select>
-                                    </FormControl>
-                                    <Button variant="outlined"
-                                        onClick={() => {
-                                            this.handleDocSort();
-                                        }}
-                                        sx={{ backgroundColor: 'white', marginLeft: "8px", height: '40px' }}>
-                                        {this.state.docOrder ? <ArrowUpwardIcon /> : <ArrowDownwardIcon />}
-                                    </Button>
-                                    <Divider orientation="vertical" flexItem component="div" style={{ width: '0.5%' }} sx={{ borderRight: 'solid rgba(127,127,127,0.5) 1px', margin: '8px 8px 16px 8px' }} />
-
                                 </div>
                                 <div style={{ width: '100%', display: 'flex', flexDirection: 'row', flexGrow: '1', height: 'calc(100% - 55px)' }}>
                                     <ClientsDoctorTable
@@ -873,6 +710,8 @@ class ClientsPage extends Component<{}, ClientsPageProps> {
                                         data={this.state.docClients}
                                         isLoading={this.state.loadingClientsData}
                                         displayVisits={this.handleDisplayDocVisits}
+                                        sortChange={this.handleDocSort}
+                                        sorting={{ field: this.state.docProp ?? '', order: this.state.docOrder }}
                                     ></ClientsDoctorTable>
                                     <div style={{
                                         width: '30%',
@@ -924,6 +763,8 @@ class ClientsPage extends Component<{}, ClientsPageProps> {
                                                                 <InputLabel>Délégués de visites</InputLabel>
                                                                 <Select
                                                                     label="Trier avec"
+                                                                    value={this.state.selectedDelegate?.id}
+                                                                    disabled={this.state.selectedDelegate !== undefined}
                                                                     onChange={(event) => {
                                                                         var id = event.target.value as number | undefined;
                                                                         this.setState({ selectedUserId: id });
@@ -955,39 +796,6 @@ class ClientsPage extends Component<{}, ClientsPageProps> {
                         </CustomTabPanel>
                         <CustomTabPanel value={this.state.index} index={2} >
                             <div style={{ display: 'flex', flexDirection: 'column', flexGrow: '1', height: 'calc(100vh  - 65px)' }}>
-                                <div style={{ display: 'flex', justifyContent: 'stretch', flexGrow: '1', marginTop: '8px', marginBottom: '8px' }}>
-                                    <FormControl size="small" style={{
-                                        width: '150px',
-                                        backgroundColor: 'white',
-                                        marginLeft: "8px",
-                                        height: '40px'
-                                    }}>
-                                        <InputLabel>Trier avec</InputLabel>
-                                        <Select
-                                            label="Trier avec"
-                                            onChange={this.handleChangeWholeProp}
-                                        >
-                                            <MenuItem value={undefined}>
-                                                <em>aucun</em>
-                                            </MenuItem>
-                                            <MenuItem value={'date'}>Date</MenuItem>
-                                            <MenuItem value={'client'}>Client</MenuItem>
-                                            <MenuItem value={'delegate'}>Délégué</MenuItem>
-                                            <MenuItem value={'wilaya'}>wilaya</MenuItem>
-                                            <MenuItem value={'commune'}>Commune</MenuItem>
-                                            <MenuItem value={'visitsNum'}>Nombre de visites</MenuItem>
-                                        </Select>
-                                    </FormControl>
-                                    <Button variant="outlined"
-                                        onClick={() => {
-                                            this.handleWholeSort();
-                                        }}
-                                        sx={{ backgroundColor: 'white', marginLeft: "8px", height: '40px' }}>
-                                        {this.state.wholeOrder ? <ArrowUpwardIcon /> : <ArrowDownwardIcon />}
-                                    </Button>
-                                    <Divider orientation="vertical" flexItem component="div" style={{ width: '0.5%' }} sx={{ borderRight: 'solid rgba(127,127,127,0.5) 1px', margin: '8px 8px 16px 8px' }} />
-
-                                </div>
                                 <div style={{ width: '100%', display: 'flex', flexDirection: 'row', flexGrow: '1', height: 'calc(100% - 55px)' }}>
                                     <ClientsPharmacyTable
                                         total={this.state.totalWhole}
@@ -998,6 +806,8 @@ class ClientsPage extends Component<{}, ClientsPageProps> {
                                         data={this.state.wholeClients}
                                         isLoading={this.state.loadingClientsData}
                                         displayVisits={this.handleDisplayWholeVisits}
+                                        sortChange={this.handleWholeSort}
+                                        sorting={{ field: this.state.wholeProp ?? '', order: this.state.wholeOrder }}
                                     ></ClientsPharmacyTable>
                                     <div style={{
                                         width: '30%',
@@ -1078,7 +888,7 @@ class ClientsPage extends Component<{}, ClientsPageProps> {
                                                             displayCommand={this.handleDisplayCommandWhole}
                                                         ></VisitTable>
                                                     </div>
-                                                ) :null
+                                                ) : null
                                         }
                                     </div>
                                 </div>

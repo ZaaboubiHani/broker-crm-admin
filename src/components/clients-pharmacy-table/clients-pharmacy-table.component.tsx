@@ -14,12 +14,14 @@ interface ClientsPharmacyTableProps {
     size: number;
     total: number;
     isLoading: boolean;
+    sorting: { field: string, order: boolean };
+    sortChange: (field: string, order: boolean) => void;
 }
 
-const ClientsPharmacyTable: React.FC<ClientsPharmacyTableProps> = ({ total, size, page, pageChange, data, id, isLoading, displayVisits, }) => {
+const ClientsPharmacyTable: React.FC<ClientsPharmacyTableProps> = ({ sorting, total, size, page, pageChange, data, id, isLoading, displayVisits, sortChange }) => {
     const [rowsPerPage, setRowsPerPage] = React.useState(size);
     const [pageIndex, setPageIndex] = React.useState(page - 1);
-
+    const [sortModel, setSortModel] = React.useState<{ field: string, order: boolean }>(sorting);
     if (pageIndex !== (page - 1)) {
         setPageIndex(page - 1);
     }
@@ -31,8 +33,8 @@ const ClientsPharmacyTable: React.FC<ClientsPharmacyTableProps> = ({ total, size
             flexDirection: 'column',
             flexGrow: '1',
             borderRadius: '8px',
-            marginRight:'-2px',
-            height:'100%'
+            marginRight: '-2px',
+            height: '100%'
         }}>
             {
                 isLoading ? (<div style={{
@@ -65,14 +67,17 @@ const ClientsPharmacyTable: React.FC<ClientsPharmacyTableProps> = ({ total, size
                             {
                                 field: 'numVisits',
                                 headerName: 'Nombre de visites',
+                                sortable: true,
                             },
                             {
                                 field: 'name',
                                 headerName: 'Client',
+                                sortable: true,
                             },
                             {
                                 field: 'location',
                                 headerName: 'Localisation',
+                                sortable: true,
                             },
                             {
                                 field: 'visits',
@@ -91,14 +96,15 @@ const ClientsPharmacyTable: React.FC<ClientsPharmacyTableProps> = ({ total, size
                             setRowsPerPage(model.size);
 
                         }}
-
-                        pagination={
-                            {
-                                size: rowsPerPage,
-                                page: pageIndex,
-
-                            }
-                        }
+                        onSortChange={(model) => {
+                            sortChange(model.field, model.order);
+                            setSortModel(model);
+                        }}
+                        sortModel={sortModel}
+                        pagination={{
+                            size: rowsPerPage,
+                            page: pageIndex,
+                        }}
                         pageSizeOptions={[5, 10, 25, 50, 100]}
                     />)}
 

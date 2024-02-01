@@ -26,6 +26,7 @@ import LogoutIcon from '@mui/icons-material/Logout';
 import { styled } from '@mui/material/styles';
 import Tooltip, { TooltipProps, tooltipClasses } from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
+import ListAltIcon from '@mui/icons-material/ListAlt';
 import UserModel from '@/src/models/user.model';
 import UserService from '@/src/services/user.service';
 
@@ -173,6 +174,12 @@ const Sidebar: React.FC = () => {
             icon={<CalendarMonthIcon style={{ color: 'white', width: '30px', height: '30px', marginRight: '8px' }} />}
           />) : undefined
         }
+        {/* <NavListItem
+            name='Tâches'
+            route='/task'
+            isOpen={sidebarOpen}
+            icon={<ListAltIcon style={{ color: 'white', width: '30px', height: '30px', marginRight: '8px' }} />}
+          /> */}
         <NavListItem
             name='Rapports des visites'
             route='/report'

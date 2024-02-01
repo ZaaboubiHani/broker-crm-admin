@@ -70,27 +70,27 @@ class ExpensePage extends Component<{}, ExpensePageProps> {
     expenseService = ExpenseService.getInstance();
 
 
-    handleSelectDelegate = async (delegate: UserModel) => {
+    handleSelectDelegate = async (delegate?: UserModel) => {
         this.setState({ loadingExpensesData: true, });
-        var delegteExpenses = await this.expenseService.getAllExpensesOfUserByDateMoth(this.state.selectedDate, delegate.id!);
-        var delegteExpensesUser = await this.expenseService.getExpensesUserByDateMoth(this.state.selectedDate, delegate.id!);
+        var delegteExpenses = await this.expenseService.getAllExpensesOfUserByDateMoth(this.state.selectedDate, delegate!.id!);
+        var delegteExpensesUser = await this.expenseService.getExpensesUserByDateMoth(this.state.selectedDate, delegate!.id!);
         this.setState({ selectedDelegate: delegate, delegteExpenses: delegteExpenses, loadingExpensesData: false, delegteExpensesUser: delegteExpensesUser });
     }
 
-    handleSelectKam = async (kam: UserModel) => {
+    handleSelectKam = async (kam?: UserModel) => {
         this.setState({ loadingExpensesData: true, });
-        var kamExpenses = await this.expenseService.getAllExpensesOfUserByDateMoth(this.state.selectedDate, kam.id!);
-        var kamExpensesUser = await this.expenseService.getExpensesUserByDateMoth(this.state.selectedDate, kam.id!);
+        var kamExpenses = await this.expenseService.getAllExpensesOfUserByDateMoth(this.state.selectedDate, kam!.id!);
+        var kamExpensesUser = await this.expenseService.getExpensesUserByDateMoth(this.state.selectedDate, kam!.id!);
         this.setState({ selectedKam: kam, kamExpenses: kamExpenses, loadingExpensesData: false, kamExpensesUser: kamExpensesUser });
     }
 
-    handleSelectSupervisor = async (supervisor: UserModel) => {
+    handleSelectSupervisor = async (supervisor?: UserModel) => {
         this.setState({
             delegates: [],
             delegteExpenses: [],
             loadingDelegates: true,
         });
-        var delegates = await this.userService.getUsersByCreator(supervisor.id!, UserType.delegate);
+        var delegates = await this.userService.getUsersByCreator(supervisor!.id!, UserType.delegate);
 
         this.setState({
             delegates: delegates,
