@@ -161,6 +161,7 @@ const ScalableTable: React.FC<ScalableTableProps> = ({ columns, rows, pageSizeOp
                       display: 'flex',
                       justifyContent: 'center',
                       alignItems: 'center',
+                      cursor: col.sortable ? 'pointer' : 'default'
                     }}
                     onClick={() => {
                       if (col.sortable && onSortChange && sortModel) {

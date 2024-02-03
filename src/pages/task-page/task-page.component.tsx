@@ -17,9 +17,10 @@ import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import AddTaskIcon from '@mui/icons-material/AddTask';
 import Button from '@mui/material/Button';
-import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
-import dayjs, { Dayjs } from 'dayjs';
+import { frFR } from '@mui/x-date-pickers/locales';
 import Snackbar from '@mui/material/Snackbar';
+import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
+import frLocale from 'date-fns/locale/fr';
 
 interface TaskPageState {
     isLoading: boolean;
@@ -210,7 +211,7 @@ class TaskPage extends Component<{}, TaskPageState> {
         }
         this.setState({
             loadingTodos: false,
-           
+
         });
     }
     handleCloseSanckbar = (event: React.SyntheticEvent | Event, reason?: string) => {
@@ -332,21 +333,20 @@ class TaskPage extends Component<{}, TaskPageState> {
                                             onChange={(event) => {
                                                 this.state.todo.region = event.target.value;
                                             }} />
-                                        <LocalizationProvider dateAdapter={AdapterDayjs}>
-                                            <DatePicker
+                                        <LocalizationProvider
+                                            dateAdapter={AdapterDayjs}>
+                                            <DateTimePicker
                                                 sx={{
                                                     margin: '8px',
                                                     width: 'calc(100% - 16px)',
                                                 }}
+
                                                 disabled={this.state.selectedDelegate === undefined}
-                                                slotProps={{
-                                                    field: {
-                                                        id: this.state.todo.remark
-                                                    }
-                                                }}
+                                                views={['year', 'month', 'day', 'hours', 'minutes']}
                                                 onChange={(date) => {
                                                     this.state.todo.startDate = new Date(date!.toString());
-                                                }} label="Date de début" />
+                                                }} label="Date de début"
+                                            />
                                         </LocalizationProvider>
                                         <LocalizationProvider
                                             dateAdapter={AdapterDayjs}>
