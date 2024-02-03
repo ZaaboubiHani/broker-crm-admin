@@ -32,6 +32,7 @@ import * as XLSX from 'xlsx';
 import ClientService from '../../services/clients.service';
 import VisitTable from '../../components/visit-table/visit-table.component';
 import ReportPanel from '../../components/report-panel/report-panel.component';
+import TextField from '@mui/material/TextField';
 
 interface ClientsPageProps {
     selectedDate: Date;
@@ -75,6 +76,9 @@ interface ClientsPageProps {
     kams: UserModel[];
     selectedDelegate?: UserModel;
     selectedSupervisor?: UserModel;
+    pharmSearchText: string;
+    docSearchText: string;
+    wholeSearchText: string;
 }
 
 class ClientsPage extends Component<{}, ClientsPageProps> {
@@ -110,6 +114,9 @@ class ClientsPage extends Component<{}, ClientsPageProps> {
             pharmOrder: false,
             docOrder: false,
             wholeOrder: false,
+            pharmSearchText: '',
+            docSearchText: '',
+            wholeSearchText: '',
         }
     }
 
@@ -157,6 +164,7 @@ class ClientsPage extends Component<{}, ClientsPageProps> {
                 this.state.pharmPage,
                 this.state.sizePharm,
                 ClientType.pharmacy,
+                this.state.pharmSearchText,
                 currentUser.id!,
                 this.state.pharmOrder,
                 this.state.pharmProp,
@@ -165,6 +173,7 @@ class ClientsPage extends Component<{}, ClientsPageProps> {
                 this.state.docPage,
                 this.state.sizeDoc,
                 ClientType.doctor,
+                this.state.docSearchText,
                 currentUser.id!,
                 this.state.docOrder,
                 this.state.docProp,
@@ -186,6 +195,7 @@ class ClientsPage extends Component<{}, ClientsPageProps> {
                 this.state.wholePage,
                 this.state.sizeWhole,
                 ClientType.wholesaler,
+                this.state.pharmSearchText,
                 currentUser.id!,
                 this.state.wholeOrder,
                 this.state.wholeProp);
@@ -208,6 +218,7 @@ class ClientsPage extends Component<{}, ClientsPageProps> {
                 page,
                 size,
                 ClientType.pharmacy,
+                this.state.pharmSearchText,
                 this.state.currentUser.id!,
                 this.state.pharmOrder,
                 this.state.pharmProp,
@@ -225,6 +236,7 @@ class ClientsPage extends Component<{}, ClientsPageProps> {
                     page,
                     size,
                     ClientType.pharmacy,
+                    this.state.pharmSearchText,
                     this.state.selectedSupervisor!.id!,
                     this.state.pharmOrder,
                     this.state.pharmProp,
@@ -242,6 +254,7 @@ class ClientsPage extends Component<{}, ClientsPageProps> {
             page,
             size,
             ClientType.wholesaler,
+            this.state.wholeSearchText,
             this.state.currentUser.id!,
             this.state.wholeOrder,
             this.state.wholeProp);
@@ -255,6 +268,7 @@ class ClientsPage extends Component<{}, ClientsPageProps> {
                 page,
                 size,
                 ClientType.doctor,
+                this.state.docSearchText,
                 this.state.currentUser.id!,
                 this.state.docOrder,
                 this.state.docProp,
@@ -266,6 +280,7 @@ class ClientsPage extends Component<{}, ClientsPageProps> {
                 page,
                 size,
                 ClientType.doctor,
+                this.state.docSearchText,
                 this.state.selectedSupervisor!.id!,
                 this.state.docOrder,
                 this.state.docProp,
@@ -293,6 +308,7 @@ class ClientsPage extends Component<{}, ClientsPageProps> {
             1,
             this.state.sizePharm,
             ClientType.pharmacy,
+            this.state.pharmSearchText,
             supervisor!.id!,
             this.state.pharmOrder,
             this.state.pharmProp);
@@ -300,6 +316,7 @@ class ClientsPage extends Component<{}, ClientsPageProps> {
             1,
             this.state.sizeDoc,
             ClientType.doctor,
+            this.state.docSearchText,
             supervisor!.id!,
             this.state.pharmOrder,
             this.state.pharmProp);
@@ -329,6 +346,7 @@ class ClientsPage extends Component<{}, ClientsPageProps> {
             1,
             this.state.sizePharm,
             ClientType.pharmacy,
+            this.state.pharmSearchText,
             this.state.selectedSupervisor!.id!,
             this.state.pharmOrder,
             this.state.pharmProp,
@@ -338,6 +356,7 @@ class ClientsPage extends Component<{}, ClientsPageProps> {
             1,
             this.state.sizeDoc,
             ClientType.doctor,
+            this.state.docSearchText,
             this.state.selectedSupervisor!.id!,
             this.state.pharmOrder,
             this.state.pharmProp,
@@ -360,6 +379,7 @@ class ClientsPage extends Component<{}, ClientsPageProps> {
                 1,
                 this.state.sizePharm,
                 ClientType.pharmacy,
+                this.state.pharmSearchText,
                 this.state.currentUser!.id!,
                 order,
                 field,
@@ -375,9 +395,51 @@ class ClientsPage extends Component<{}, ClientsPageProps> {
                     1,
                     this.state.sizePharm,
                     ClientType.pharmacy,
+                    this.state.pharmSearchText,
                     this.state.selectedSupervisor!.id!,
                     order,
                     field,
+                    this.state.selectedDelegate?.id
+                );
+                this.setState({
+                    pharmClients: pharmClients,
+                    totalPharm: totalPharm,
+                });
+            }
+        }
+
+        this.setState({
+            loadingClientsData: false,
+        });
+    }
+
+    handleSearchPharmacies = async () => {
+        this.setState({ loadingClientsData: true, pharmPage: 1, showVisitPanel: false, });
+        if (this.state.currentUser.type === UserType.supervisor) {
+            var { clients: pharmClients, total: totalPharm } = await this.clientService.getClientsPaginated(
+                1,
+                this.state.sizePharm,
+                ClientType.pharmacy,
+                this.state.pharmSearchText,
+                this.state.currentUser!.id!,
+                this.state.pharmOrder,
+                this.state.pharmProp,
+                this.state.selectedDelegate?.id
+            );
+            this.setState({
+                pharmClients: pharmClients,
+                totalPharm: totalPharm,
+            });
+        } else {
+            if (this.state.selectedSupervisor) {
+                var { clients: pharmClients, total: totalPharm } = await this.clientService.getClientsPaginated(
+                    1,
+                    this.state.sizePharm,
+                    ClientType.pharmacy,
+                    this.state.pharmSearchText,
+                    this.state.selectedSupervisor!.id!,
+                    this.state.pharmOrder,
+                    this.state.pharmProp,
                     this.state.selectedDelegate?.id
                 );
                 this.setState({
@@ -400,6 +462,7 @@ class ClientsPage extends Component<{}, ClientsPageProps> {
                 1,
                 this.state.sizeDoc,
                 ClientType.doctor,
+                this.state.docSearchText,
                 this.state.currentUser!.id!,
                 order,
                 field,
@@ -415,6 +478,7 @@ class ClientsPage extends Component<{}, ClientsPageProps> {
                     1,
                     this.state.sizeDoc,
                     ClientType.doctor,
+                    this.state.docSearchText,
                     this.state.selectedSupervisor!.id!,
                     order,
                     field,
@@ -431,16 +495,75 @@ class ClientsPage extends Component<{}, ClientsPageProps> {
             loadingClientsData: false,
         });
     }
+    handleSearchDoctors = async () => {
+        this.setState({ loadingClientsData: true, docPage: 1, showVisitPanel: false, });
+        if (this.state.currentUser.type === UserType.supervisor) {
+            var { clients: docClients, total: totalDoc } = await this.clientService.getClientsPaginated(
+                1,
+                this.state.sizeDoc,
+                ClientType.doctor,
+                this.state.docSearchText,
+                this.state.currentUser!.id!,
+                this.state.docOrder,
+                this.state.docProp,
+                this.state.selectedDelegate?.id
+            );
+            this.setState({
+                docClients: docClients,
+                totalDoc: totalDoc,
+            });
+        } else {
+            if (this.state.selectedSupervisor) {
+                var { clients: docClients, total: totalDoc } = await this.clientService.getClientsPaginated(
+                    1,
+                    this.state.sizeDoc,
+                    ClientType.doctor,
+                    this.state.docSearchText,
+                    this.state.selectedSupervisor!.id!,
+                    this.state.docOrder,
+                    this.state.docProp,
+                    this.state.selectedDelegate?.id
+                );
+                this.setState({
+                    docClients: docClients,
+                    totalDoc: totalDoc,
+                });
+            }
+        }
+
+        this.setState({
+            loadingClientsData: false,
+        });
+    }
 
     handleWholeSort = async (field: string, order: boolean) => {
-        this.setState({ loadingClientsData: true, docPage: 1, pharmPage: 1, wholeProp: field, wholeOrder: order, showVisitPanel: false, });
+        this.setState({ loadingClientsData: true, wholePage: 1, wholeProp: field, wholeOrder: order, showVisitPanel: false, });
         var { clients: wholeClients, total: totalWhole } = await this.clientService.getClientsPaginated(
             1,
             this.state.sizeWhole,
             ClientType.wholesaler,
+            this.state.wholeSearchText,
             this.state.currentUser!.id!,
             order,
             field);
+        this.setState({
+            wholeClients: wholeClients,
+            totalWhole: totalWhole,
+            loadingClientsData: false,
+        });
+    }
+
+    handleSearchWholesalers = async () => {
+        this.setState({ loadingClientsData: true, wholePage: 1, showVisitPanel: false, });
+        var { clients: wholeClients, total: totalWhole } = await this.clientService.getClientsPaginated(
+            1,
+            this.state.sizeWhole,
+            ClientType.wholesaler,
+            this.state.wholeSearchText,
+            this.state.currentUser!.id!,
+            this.state.wholeOrder,
+            this.state.wholeProp,
+        );
         this.setState({
             wholeClients: wholeClients,
             totalWhole: totalWhole,
@@ -569,6 +692,22 @@ class ClientsPage extends Component<{}, ClientsPageProps> {
                                                 </>
                                             ) : null
                                     }
+                                    <Divider orientation="vertical" flexItem component="div" style={{ width: '0.5%' }} sx={{ borderRight: 'solid rgba(127,127,127,0.5) 1px', margin: '8px 8px 16px 8px' }} />
+                                    <TextField
+                                        onChange={(event) => {
+                                            this.setState({ pharmSearchText: event.target.value })
+                                        }}
+                                        value={this.state.pharmSearchText}
+                                        sx={{ backgroundColor: 'white', marginLeft: "8px", height: '40px' }}
+                                        placeholder='Recherche'
+                                        size="small" />
+                                    <Button variant="outlined"
+                                        onClick={() => {
+                                            this.handleSearchPharmacies();
+                                        }}
+                                        sx={{ backgroundColor: 'white', marginLeft: "8px", height: '40px' }}>
+                                        <SearchIcon />
+                                    </Button>
                                 </div>
                                 <div style={{
                                     width: '100%',
@@ -699,6 +838,22 @@ class ClientsPage extends Component<{}, ClientsPageProps> {
                                             loading={this.state.loadingDelegates}
                                         />
                                     </div>
+                                    <Divider orientation="vertical" flexItem component="div" style={{ width: '0.5%' }} sx={{ borderRight: 'solid rgba(127,127,127,0.5) 1px', margin: '8px 8px 16px 8px' }} />
+                                    <TextField
+                                        onChange={(event) => {
+                                            this.setState({ docSearchText: event.target.value })
+                                        }}
+                                        value={this.state.docSearchText}
+                                        sx={{ backgroundColor: 'white', marginLeft: "8px", height: '40px' }}
+                                        placeholder='Recherche'
+                                        size="small" />
+                                    <Button variant="outlined"
+                                        onClick={() => {
+                                            this.handleSearchDoctors();
+                                        }}
+                                        sx={{ backgroundColor: 'white', marginLeft: "8px", height: '40px' }}>
+                                        <SearchIcon />
+                                    </Button>
                                 </div>
                                 <div style={{ width: '100%', display: 'flex', flexDirection: 'row', flexGrow: '1', height: 'calc(100% - 55px)' }}>
                                     <ClientsDoctorTable
@@ -796,6 +951,23 @@ class ClientsPage extends Component<{}, ClientsPageProps> {
                         </CustomTabPanel>
                         <CustomTabPanel value={this.state.index} index={2} >
                             <div style={{ display: 'flex', flexDirection: 'column', flexGrow: '1', height: 'calc(100vh  - 65px)' }}>
+                                <div style={{ display: 'flex', justifyContent: 'stretch', flexGrow: '1', marginTop: '8px' }}>
+                                    <TextField
+                                        onChange={(event) => {
+                                            this.setState({ wholeSearchText: event.target.value })
+                                        }}
+                                        value={this.state.wholeSearchText}
+                                        sx={{ backgroundColor: 'white', marginLeft: "8px", height: '40px' }}
+                                        placeholder='Recherche'
+                                        size="small" />
+                                    <Button variant="outlined"
+                                        onClick={() => {
+                                            this.handleSearchWholesalers();
+                                        }}
+                                        sx={{ backgroundColor: 'white', marginLeft: "8px", height: '40px' }}>
+                                        <SearchIcon />
+                                    </Button>
+                                </div>
                                 <div style={{ width: '100%', display: 'flex', flexDirection: 'row', flexGrow: '1', height: 'calc(100% - 55px)' }}>
                                     <ClientsPharmacyTable
                                         total={this.state.totalWhole}

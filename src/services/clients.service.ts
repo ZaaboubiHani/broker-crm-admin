@@ -43,13 +43,16 @@ export default class ClientService {
         return result;
     }
 
-    async getClientsPaginated(page: number, size: number, clientType: ClientType, superId: number, order: boolean, propname?: string, delegateId?: number): Promise<{ clients: ClientModel[], total: number }> {
+    async getClientsPaginated(page: number, size: number, clientType: ClientType, text: string, superId: number, order: boolean, propname?: string, delegateId?: number): Promise<{ clients: ClientModel[], total: number }> {
         const token = localStorage.getItem('token');
         var clients: ClientModel[] = [];
         var delegateFilter = '';
         var sortFilter = '';
         var clientTypeFilter = `&filters[relatedSpeciality][domainType][reference][$eq]=${clientType === ClientType.doctor ? `doctor&filters[visits][user][creatorId][$eq]=${superId}` : clientType === ClientType.pharmacy ? `pharmacy&filters[visits][user][creatorId][$eq]=${superId}` : 'wholesaler'}`;
-
+        var textFilter = '';
+        if (text.length > 0) {
+            textFilter = `&filters[fullName][$containsi]=${text}`;
+        }
         if (delegateId) {
             delegateFilter = `&filters[visits][user][id][$eq]=${delegateId}`;
         }
@@ -66,7 +69,7 @@ export default class ClientService {
                 break;
         }
 
-        var response = await axios.get(`${Globals.apiUrl}/clients?pagination[page]=${page}&pagination[pageSize]=${size}&populate[relatedSpeciality][populate]=domainType${clientTypeFilter}${delegateFilter}${sortFilter}`,
+        var response = await axios.get(`${Globals.apiUrl}/clients?pagination[page]=${page}&pagination[pageSize]=${size}&populate[relatedSpeciality][populate]=domainType${clientTypeFilter}${delegateFilter}${sortFilter}${textFilter}`,
             {
                 headers: {
                     'Authorization': `Bearer ${token}`
@@ -80,7 +83,7 @@ export default class ClientService {
             });
         }
 
-        return{ clients: clients, total: response.data.meta.pagination.total };
+        return { clients: clients, total: response.data.meta.pagination.total };
     }
 
 }
