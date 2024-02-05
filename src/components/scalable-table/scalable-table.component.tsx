@@ -115,9 +115,9 @@ const ScalableTable: React.FC<ScalableTableProps> = ({ columns, rows, pageSizeOp
 
   useEffect(() => {
     const containerWidth = (containerRef.current?.getBoundingClientRect().width || 0);
-    const singleHeaderWidth = ((containerWidth - (columns.length * 16) - (columns.filter((col) => col.width).map<number>((col) => col.width!).reduce((sum, num) => sum + num, 0))) / columns.filter((col) => !(col.width)).length);
+    const singleHeaderWidth = ((containerWidth - (columns.length * 20) - (columns.filter((col) => col.width).map<number>((col) => col.width!).reduce((sum, num) => sum + num, 0))) / columns.filter((col) => !(col.width)).length);
     setColumnWidths(columns.map((col, index) => col.width ? col.width : singleHeaderWidth));
-  }, [pagination?.page]);
+  }, [containerRef.current]);
 
   useEffect(() => {
     setSelectedRowIndex(-1);

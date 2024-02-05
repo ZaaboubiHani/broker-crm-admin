@@ -21,10 +21,12 @@
 
 #command-cam-table{
     width: 60%;
+    margin: 0px 8px 8px 8px;
 }
 
 #command-delegate-table{
     width: 60%;
+    margin: 0px 8px 8px 8px;
 }
 
 .command-delegate-container

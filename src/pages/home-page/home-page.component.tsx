@@ -19,6 +19,7 @@ import Box from '@mui/material/Box';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import UserDropdown from '../../components/user-dropdown/user-dropdown';
+import CompoundBox, { RenderDirection } from '../../components/compound-box/compound-box.component';
 
 interface HomePageState {
     selectedDate: Date;
@@ -428,60 +429,66 @@ class HomePage extends Component<{}, HomePageState> {
                                     width: '100%',
                                     flexGrow: '1',
                                     display: 'flex',
-                                    height: 'calc(100% - 100px)'
+                                    height: 'calc(100% - 100px)',
                                 }}>
-                                    <HomeTable id='hometable'
-                                        total={this.state.totalDelegate}
-                                        page={this.state.delegatePage}
-                                        size={this.state.sizeDelegate}
-                                        pageChange={this.handleDelegatePageChange}
-                                        firstHeader='Délégué'
-                                        isLoading={this.state.loadingVisitsData}
-                                        data={this.state.filteredDelegateVisits}
-                                        onDisplayReport={this.handleDisplayReport}
-                                        onDisplayCommand={this.handleDisplayCommand}
-                                        sortChange={this.handleDelegateSort}
-                                        sorting={{ field: this.state.delegateProp ?? '', order: this.state.delegateOrder }}
-                                    ></HomeTable>
-                                    <div
-                                        style={{
-                                            width: '30%',
-                                            backgroundColor: 'rgba(255,255,255,0.5)',
-                                            margin: '0px 0px 8px',
-                                            borderRadius: '4px',
-                                            border: '1px solid rgba(127,127,127,0.2)'
-                                        }}>
-                                        {
-                                            this.state.loadingReportData ?
-                                                (<div style={{
-                                                    width: '100%',
-                                                    height: '100%',
-                                                    overflow: 'hidden',
-                                                    flexGrow: '1',
-                                                    display: 'flex',
-                                                    flexDirection: 'column',
-                                                    justifyContent: 'center',
-                                                    alignItems: 'center',
-                                                    transition: 'all 300ms ease'
-                                                }}>
-                                                    <DotSpinner
-                                                        size={40}
-                                                        speed={0.9}
-                                                        color="black"
-                                                    />
-                                                </div>
-                                                )
-                                                :
-                                                this.state.showReportPanel ? (
-
-                                                    <ReportPanel location={this.state.selectedVisit?.visitLocation} report={this.state.selectedReport} clientType={this.state.selectedVisit?.client?.type}></ReportPanel>
-                                                ) :
-                                                    (
-                                                        <CommandPanel command={this.state.selectedCommand} ></CommandPanel>
+                                    <CompoundBox
+                                        direction={RenderDirection.horizontal}>
+                                        <HomeTable
+                                            id='hometable'
+                                            total={this.state.totalDelegate}
+                                            page={this.state.delegatePage}
+                                            size={this.state.sizeDelegate}
+                                            pageChange={this.handleDelegatePageChange}
+                                            firstHeader='Délégué'
+                                            isLoading={this.state.loadingVisitsData}
+                                            data={this.state.filteredDelegateVisits}
+                                            onDisplayReport={this.handleDisplayReport}
+                                            onDisplayCommand={this.handleDisplayCommand}
+                                            sortChange={this.handleDelegateSort}
+                                            sorting={{ field: this.state.delegateProp ?? '', order: this.state.delegateOrder }}
+                                        ></HomeTable>
+                                        <div
+                                            style={{
+                                                width: '100%',
+                                                height: '100%',
+                                                backgroundColor: 'rgba(255,255,255,0.5)',
+                                                borderRadius: '4px',
+                                                border: '1px solid rgba(127,127,127,0.2)',
+                                            }}>
+                                            {
+                                                this.state.loadingReportData ?
+                                                    (<div style={{
+                                                        width: '100%',
+                                                        height: '100%',
+                                                        overflow: 'hidden',
+                                                        flexGrow: '1',
+                                                        display: 'flex',
+                                                        flexDirection: 'column',
+                                                        justifyContent: 'center',
+                                                        alignItems: 'center',
+                                                        transition: 'all 300ms ease'
+                                                    }}>
+                                                        <DotSpinner
+                                                            size={40}
+                                                            speed={0.9}
+                                                            color="black"
+                                                        />
+                                                    </div>
                                                     )
-                                        }
+                                                    :
+                                                    this.state.showReportPanel ? (
 
-                                    </div>
+                                                        <ReportPanel location={this.state.selectedVisit?.visitLocation} report={this.state.selectedReport} clientType={this.state.selectedVisit?.client?.type}></ReportPanel>
+                                                    ) :
+                                                        (
+                                                            <CommandPanel command={this.state.selectedCommand} ></CommandPanel>
+                                                        )
+                                            }
+                                        </div>
+                                    </CompoundBox>
+
+
+
                                 </div>
                             </div>
                         </CustomTabPanel>
@@ -493,57 +500,61 @@ class HomePage extends Component<{}, HomePageState> {
                                 </div>
 
                                 <div className='table-panel'>
-                                    <HomeTable id='hometable'
-                                        firstHeader='Kam'
-                                        total={this.state.totalKam}
-                                        page={this.state.kamPage}
-                                        size={this.state.sizeKam}
-                                        pageChange={this.handleKamPageChange}
-                                        isLoading={this.state.loadingVisitsData}
-                                        data={this.state.filteredKamVisits}
-                                        onDisplayReport={this.handleDisplayReport}
-                                        onDisplayCommand={this.handleDisplayCommand}
-                                        sortChange={this.handleKamSort}
-                                        sorting={{ field: this.state.kamProp ?? '', order: this.state.kamOrder }}
-                                    ></HomeTable>
-                                    <div style={{
-                                        width: '30%',
-                                        backgroundColor: 'rgba(255,255,255,0.5)',
-                                        margin: '0px 0px 8px',
-                                        borderRadius: '4px',
-                                        border: '1px solid rgba(127,127,127,0.2)'
-                                    }}>
-                                        {
-                                            this.state.loadingReportData ?
-                                                (<div style={{
-                                                    width: '100%',
-                                                    height: '100%',
-                                                    overflow: 'hidden',
-                                                    flexGrow: '1',
-                                                    display: 'flex',
-                                                    flexDirection: 'column',
-                                                    justifyContent: 'center',
-                                                    alignItems: 'center',
-                                                    transition: 'all 300ms ease'
-                                                }}>
-                                                    <DotSpinner
-                                                        size={40}
-                                                        speed={0.9}
-                                                        color="black"
-                                                    />
-                                                </div>
-                                                )
-                                                :
-                                                this.state.showReportPanel ? (
-
-                                                    <ReportPanel location={this.state.selectedVisit?.visitLocation} report={this.state.selectedReport} clientType={this.state.selectedVisit?.client?.type}></ReportPanel>
-                                                ) :
-                                                    (
-                                                        <CommandPanel command={this.state.selectedCommand} ></CommandPanel>
+                                    <CompoundBox
+                                        direction={RenderDirection.horizontal}>
+                                        <HomeTable id='hometable'
+                                            firstHeader='Kam'
+                                            total={this.state.totalKam}
+                                            page={this.state.kamPage}
+                                            size={this.state.sizeKam}
+                                            pageChange={this.handleKamPageChange}
+                                            isLoading={this.state.loadingVisitsData}
+                                            data={this.state.filteredKamVisits}
+                                            onDisplayReport={this.handleDisplayReport}
+                                            onDisplayCommand={this.handleDisplayCommand}
+                                            sortChange={this.handleKamSort}
+                                            sorting={{ field: this.state.kamProp ?? '', order: this.state.kamOrder }}
+                                        ></HomeTable>
+                                        <div style={{
+                                            width: '100%',
+                                            height: '100%',
+                                            backgroundColor: 'rgba(255,255,255,0.5)',
+                                            margin: '0px 0px 8px',
+                                            borderRadius: '4px',
+                                            border: '1px solid rgba(127,127,127,0.2)'
+                                        }}>
+                                            {
+                                                this.state.loadingReportData ?
+                                                    (<div style={{
+                                                        width: '100%',
+                                                        height: '100%',
+                                                        overflow: 'hidden',
+                                                        flexGrow: '1',
+                                                        display: 'flex',
+                                                        flexDirection: 'column',
+                                                        justifyContent: 'center',
+                                                        alignItems: 'center',
+                                                        transition: 'all 300ms ease'
+                                                    }}>
+                                                        <DotSpinner
+                                                            size={40}
+                                                            speed={0.9}
+                                                            color="black"
+                                                        />
+                                                    </div>
                                                     )
-                                        }
+                                                    :
+                                                    this.state.showReportPanel ? (
 
-                                    </div>
+                                                        <ReportPanel location={this.state.selectedVisit?.visitLocation} report={this.state.selectedReport} clientType={this.state.selectedVisit?.client?.type}></ReportPanel>
+                                                    ) :
+                                                        (
+                                                            <CommandPanel command={this.state.selectedCommand} ></CommandPanel>
+                                                        )
+                                            }
+
+                                        </div>
+                                    </CompoundBox>
                                 </div>
                             </div>
                         </CustomTabPanel>

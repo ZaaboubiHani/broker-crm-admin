@@ -45,7 +45,6 @@ const ExpenseTable: React.FC<ExpenseTableProps> = ({ data, isLoading }) => {
             flexDirection: 'column',
             flexGrow: '1',
             borderRadius: '8px',
-            marginRight:'24px',
         }}>
             {
                 isLoading ? (<div style={{

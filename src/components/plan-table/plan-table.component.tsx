@@ -28,7 +28,7 @@ interface PlanTableProps {
 
 const PlanTable: React.FC<PlanTableProps> = ({ data, id, isLoading, onDisplayDetails, onDisplayMap }) => {
 
-    
+
 
     return (
         <div id={id} style={{
@@ -54,7 +54,6 @@ const PlanTable: React.FC<PlanTableProps> = ({ data, id, isLoading, onDisplayDet
                     />
                 </div>) :
                     (<ScalableTable
-
                         rows={
                             [...data.map((row, index) => {
                                 return {

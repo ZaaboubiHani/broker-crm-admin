@@ -1,4 +1,4 @@
-.clients-pharmacy-container{
+.clients-pharmacy-container {
     display: flex;
     flex-direction: column;
     height: 100%;
@@ -7,37 +7,29 @@
 }
 
 
-.search-bar{
+.search-bar {
     display: flex;
 }
 
-.clients-pharmacy-container
-.table-panel{
+.clients-pharmacy-container .table-panel {
     width: 100%;
     display: flex;
     height: calc(100% - 140px);
 }
 
-.clients-pharmacy-container
-#clients-pharmacy-table{
-    width: 70%;
-    margin-right: 16px;
-}
-
-.clients-pharmacy-container
-#clients-doctor-table{
+.clients-pharmacy-container #clients-doctor-table {
     width: 70%;
     margin-right: 16px;
 }
 
 
-.stats-panel{
+.stats-panel {
     display: flex;
     justify-content: space-between;
 }
 
-.stats-panel .labels{
+.stats-panel .labels {
     font-size: 17px;
-    color:  white;
+    color: white;
     margin: 8px 16px;
 }

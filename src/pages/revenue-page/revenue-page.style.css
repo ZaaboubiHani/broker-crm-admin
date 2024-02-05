@@ -18,9 +18,9 @@
     height: calc(100% - 140px);
 }
 
-.revenue-container
 #revenue-table{
     width: 60%;
+    margin: 0px 8px 8px 8px;
 }
 
 .revenue-container

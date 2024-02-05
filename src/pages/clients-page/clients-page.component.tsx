@@ -711,23 +711,28 @@ class ClientsPage extends Component<{}, ClientsPageProps> {
                                 </div>
                                 <div style={{
                                     width: '100%',
-                                    display: 'flex',
-                                    flexDirection: 'row',
                                     flexGrow: '1',
-                                    height: 'calc(100% - 55px)',
+                                    display: 'flex',
+                                    height: 'calc(100% - 50px)'
                                 }}>
-                                    <ClientsPharmacyTable
-                                        total={this.state.totalPharm}
-                                        page={this.state.pharmPage}
-                                        size={this.state.sizePharm}
-                                        pageChange={this.handlePharmPageChange}
-                                        id='clients-pharmacy-table'
-                                        data={this.state.pharmClients}
-                                        isLoading={this.state.loadingClientsData}
-                                        displayVisits={this.handleDisplayPharmVisits}
-                                        sortChange={this.handlePharmSort}
-                                        sorting={{ field: this.state.pharmProp ?? '', order: this.state.pharmOrder }}
-                                    ></ClientsPharmacyTable>
+                                    <div
+                                        style={{
+                                            width: '70%',
+                                            margin: '0px 8px 8px 8px'
+                                        }}>
+                                        <ClientsPharmacyTable
+                                            total={this.state.totalPharm}
+                                            page={this.state.pharmPage}
+                                            size={this.state.sizePharm}
+                                            pageChange={this.handlePharmPageChange}
+                                            id='clients-pharmacy-table'
+                                            data={this.state.pharmClients}
+                                            isLoading={this.state.loadingClientsData}
+                                            displayVisits={this.handleDisplayPharmVisits}
+                                            sortChange={this.handlePharmSort}
+                                            sorting={{ field: this.state.pharmProp ?? '', order: this.state.pharmOrder }}
+                                        ></ClientsPharmacyTable>
+                                    </div>
                                     <div style={{
                                         width: '30%',
                                         backgroundColor: 'rgba(255,255,255,0.5)',
@@ -856,18 +861,23 @@ class ClientsPage extends Component<{}, ClientsPageProps> {
                                     </Button>
                                 </div>
                                 <div style={{ width: '100%', display: 'flex', flexDirection: 'row', flexGrow: '1', height: 'calc(100% - 55px)' }}>
-                                    <ClientsDoctorTable
-                                        id='clients-doctor-table'
-                                        total={this.state.totalDoc}
-                                        page={this.state.docPage}
-                                        size={this.state.sizeDoc}
-                                        pageChange={this.handleDocPageChange}
-                                        data={this.state.docClients}
-                                        isLoading={this.state.loadingClientsData}
-                                        displayVisits={this.handleDisplayDocVisits}
-                                        sortChange={this.handleDocSort}
-                                        sorting={{ field: this.state.docProp ?? '', order: this.state.docOrder }}
-                                    ></ClientsDoctorTable>
+                                    <div
+                                        style={{
+                                            width: '70%',
+                                            margin: '0px 8px 8px 8px'
+                                        }}>
+                                        <ClientsDoctorTable
+                                            total={this.state.totalDoc}
+                                            page={this.state.docPage}
+                                            size={this.state.sizeDoc}
+                                            pageChange={this.handleDocPageChange}
+                                            data={this.state.docClients}
+                                            isLoading={this.state.loadingClientsData}
+                                            displayVisits={this.handleDisplayDocVisits}
+                                            sortChange={this.handleDocSort}
+                                            sorting={{ field: this.state.docProp ?? '', order: this.state.docOrder }}
+                                        ></ClientsDoctorTable>
+                                    </div>
                                     <div style={{
                                         width: '30%',
                                         backgroundColor: 'rgba(255,255,255,0.5)',
@@ -969,18 +979,23 @@ class ClientsPage extends Component<{}, ClientsPageProps> {
                                     </Button>
                                 </div>
                                 <div style={{ width: '100%', display: 'flex', flexDirection: 'row', flexGrow: '1', height: 'calc(100% - 55px)' }}>
-                                    <ClientsPharmacyTable
-                                        total={this.state.totalWhole}
-                                        page={this.state.wholePage}
-                                        size={this.state.sizeWhole}
-                                        pageChange={this.handleWholePageChange}
-                                        id='clients-pharmacy-table'
-                                        data={this.state.wholeClients}
-                                        isLoading={this.state.loadingClientsData}
-                                        displayVisits={this.handleDisplayWholeVisits}
-                                        sortChange={this.handleWholeSort}
-                                        sorting={{ field: this.state.wholeProp ?? '', order: this.state.wholeOrder }}
-                                    ></ClientsPharmacyTable>
+                                    <div
+                                        style={{
+                                            width: '70%',
+                                            margin: '0px 8px 8px 8px'
+                                        }}>
+                                        <ClientsPharmacyTable
+                                            total={this.state.totalWhole}
+                                            page={this.state.wholePage}
+                                            size={this.state.sizeWhole}
+                                            pageChange={this.handleWholePageChange}
+                                            data={this.state.wholeClients}
+                                            isLoading={this.state.loadingClientsData}
+                                            displayVisits={this.handleDisplayWholeVisits}
+                                            sortChange={this.handleWholeSort}
+                                            sorting={{ field: this.state.wholeProp ?? '', order: this.state.wholeOrder }}
+                                        ></ClientsPharmacyTable>
+                                    </div>
                                     <div style={{
                                         width: '30%',
                                         backgroundColor: 'rgba(255,255,255,0.5)',
