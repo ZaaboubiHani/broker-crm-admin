@@ -246,7 +246,13 @@ class RevenuePage extends Component<{}, RevenuePageProps> {
                             value={this.state.totalTeamRevenue !== 0 ? this.state.totalTeamRevenueNotHonored / this.state.totalTeamRevenue * 100 : 0} />
                     </div>
                     <div style={{ width: '100%', display: 'flex', flexGrow: '1', height: 'calc(100% - 500px)' }}>
-                        <RevenueTable id='revenue-table' data={this.state.filteredRevenues} isLoading={this.state.loadingRevenuesData} displayDetails={this.handleDisplayDetails}></RevenueTable>
+                        <div
+                            style={{
+                                width: '60%',
+                                margin: '8px'
+                            }}>
+                            <RevenueTable data={this.state.filteredRevenues} isLoading={this.state.loadingRevenuesData} displayDetails={this.handleDisplayDetails}></RevenueTable>
+                        </div>
                         <div style={{
                             width: '40%',
                             backgroundColor: 'rgba(255,255,255,0.5)',
@@ -287,7 +293,7 @@ class RevenuePage extends Component<{}, RevenuePageProps> {
                             }
                         </div>
                     </div>
-                </div>
+                </div >
             );
         }
     }

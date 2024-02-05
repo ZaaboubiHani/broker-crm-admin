@@ -50,27 +50,7 @@ class ProfilePage extends Component<ProfilePageProps, ProfilePageState> {
 
     userService = UserService.getInstance();
     wilayaService = WilayaService.getInstance();
-
-
-    handleSaveChanges = async () => {
-        if (this.state.users.some((u) => u.password !== undefined && u.password.length < 8 && u.password.length > 0)) {
-            this.setState({ showSnackbar: true, snackbarMessage: 'le mot de passe doit comporter au moins 8 caractères' })
-        } else {
-            this.setState({ clientDialogIsOpen: false, loadingUsers: true });
-            for (var i = 0; i < this.state.users.length; i++) {
-                await this.userService.updateUser(this.state.users[i]);
-            }
-            this.setState({ showSnackbar: true, snackbarMessage: 'Données enregistrées' });
-            if (this.state.currentUser.type === UserType.supervisor) {
-                var users = await this.userService.getUsersByCreator(this.state.currentUser.id!, UserType.delegate,);
-                this.setState({ users: users, loadingUsers: false, });
-            } else {
-                var users = await this.userService.getUsersByCreator(this.state.currentUser.id!, UserType.admin,);
-                this.setState({ users: users, loadingUsers: false, });
-            }
-        }
-    }
-
+    
     handleAddUser = async (user: UserModel) => {
         this.setState({ clientDialogIsOpen: false, loadingUsers: true, });
         await this.userService.addUser(user);
@@ -165,7 +145,6 @@ class ProfilePage extends Component<ProfilePageProps, ProfilePageState> {
                         <h3>Information d'équipe :</h3>
                         <div style={{ display: 'flex', alignItems: 'center',justifyContent:'center' }}>
                             <h4 onClick={this.handleOpenAddClientDialog}>{this.state.currentUser.type === UserType.admin ? 'Ajouter superviseur/kam' : 'Ajouter un délégué'}</h4>
-                            <Button onClick={this.handleSaveChanges} startIcon={<SaveIcon />} sx={{ marginLeft: '16px' }} variant="outlined">Enregistrer les modifications</Button>
                         </div>
                     </div>
                     <div style={{

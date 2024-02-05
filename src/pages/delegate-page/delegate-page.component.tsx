@@ -311,7 +311,6 @@ class DelegatePage extends Component<{}, DelegatePageState> {
         else {
             return (
                 <div className='delegate-container' style={{ height: '100vh' }}>
-
                     <Box sx={{ width: '100%', height: '100%' }}>
                         <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
                             <Tabs value={this.state.index} onChange={this.handleTabChange} aria-label="basic tabs example">
@@ -322,9 +321,8 @@ class DelegatePage extends Component<{}, DelegatePageState> {
                             </Tabs>
                         </Box>
                         <CustomTabPanel value={this.state.index} index={0} >
-                            <div style={{ display: 'flex', flexDirection: 'column', flexGrow: '1', height: 'calc(100vh  - 65px)', width: '100%' }}>
-                                <div style={{ display: 'flex', justifyContent: 'stretch', flexGrow: '1', marginTop: '16px', }}>
-
+                        <div style={{ display: 'flex', flexDirection: 'column', flexGrow: '1', height: 'calc(100vh  - 65px)' }}>
+                                <div style={{ display: 'flex', justifyContent: 'stretch', flexGrow: '1', marginTop: '8px' }}>
                                     {
                                         this.state.currentUser.type !== UserType.supervisor ?
                                             (<div style={{

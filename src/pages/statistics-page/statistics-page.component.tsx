@@ -1095,8 +1095,8 @@ class StatisticsPage extends Component<{}, StatisticsPageProps> {
                                             />
                                         </div>
                                     ) : (
-                                        <div style={{ marginLeft: '8px', }}>
-                                            <div style={{ display: 'flex' }}>
+                                        <div style={{ padding: '0px 8px' }}>
+                                            <div style={{ display: 'flex', paddingRight: '16px' }}>
                                                 <ReactApexChart
                                                     options={this.state.salesAreaChart}
                                                     series={this.state.salesAreaChart.series}
@@ -1104,7 +1104,7 @@ class StatisticsPage extends Component<{}, StatisticsPageProps> {
                                                     height={350}
                                                     style={{
                                                         backgroundColor: 'white',
-                                                        width: '50%',
+                                                        flex: '1',
                                                         border: 'solid rgba(0,0,0,0.2) 1px',
                                                         borderRadius: '4px 0px 0px 0px',
                                                         padding: '16px'
@@ -1117,7 +1117,7 @@ class StatisticsPage extends Component<{}, StatisticsPageProps> {
                                                     height={350}
                                                     style={{
                                                         backgroundColor: 'white',
-                                                        width: '50%',
+                                                        flex: '1',
                                                         border: 'solid rgba(0,0,0,0.2) 1px',
                                                         borderRadius: '0px 4px 0px 0px',
                                                         padding: '16px'
@@ -1132,7 +1132,7 @@ class StatisticsPage extends Component<{}, StatisticsPageProps> {
                                                     height={350}
                                                     style={{
                                                         backgroundColor: 'white',
-                                                        width: '50%',
+                                                        flex: '1',
                                                         border: 'solid rgba(0,0,0,0.2) 1px',
                                                         padding: '16px',
                                                     }}
@@ -1144,7 +1144,7 @@ class StatisticsPage extends Component<{}, StatisticsPageProps> {
                                                     height={350}
                                                     style={{
                                                         backgroundColor: 'white',
-                                                        width: '50%',
+                                                        flex: '1',
                                                         border: 'solid rgba(0,0,0,0.2) 1px',
                                                         borderRadius: '0px 0px 4px 0px',
                                                         padding: '16px',
@@ -1159,7 +1159,7 @@ class StatisticsPage extends Component<{}, StatisticsPageProps> {
                                                     height={350}
                                                     style={{
                                                         backgroundColor: 'white',
-                                                        width: '50%',
+                                                        flex: '1',
                                                         border: 'solid rgba(0,0,0,0.2) 1px',
                                                         borderRadius: '0px 0px 4px 4px',
                                                         padding: '16px',
@@ -1202,16 +1202,16 @@ class StatisticsPage extends Component<{}, StatisticsPageProps> {
                                             />
                                         </div>
                                     ) : (
-                                        <div style={{ marginLeft: '8px', backgroundColor: 'white', borderRadius: '4px' }}>
-                                            <div style={{ display: 'flex', flexGrow: '1' }}>
+                                        <div style={{ padding: '0px 8px' }}>
+                                            <div style={{ display: 'flex', paddingRight: '16px' }}>
                                                 <ReactApexChart
                                                     options={this.state.teamSalesAreaChart}
                                                     series={this.state.teamSalesAreaChart.series}
                                                     type="area"
                                                     height={350}
                                                     style={{
-
-                                                        width: '50%',
+                                                        backgroundColor: 'white',
+                                                        flex: '1',
                                                         border: 'solid rgba(0,0,0,0.2) 1px',
                                                         borderRadius: '4px 0px 0px 0px',
                                                         padding: '16px'
@@ -1223,21 +1223,23 @@ class StatisticsPage extends Component<{}, StatisticsPageProps> {
                                                     type="area"
                                                     height={350}
                                                     style={{
-                                                        width: '50%',
+                                                        backgroundColor: 'white',
+                                                        flex: '1',
                                                         border: 'solid rgba(0,0,0,0.2) 1px',
                                                         borderRadius: '0px 4px 0px 0px',
                                                         padding: '16px'
                                                     }}
                                                 />
                                             </div>
-                                            <div style={{ display: 'flex', flexGrow: '1' }}>
+                                            <div style={{ display: 'flex', }}>
                                                 <ReactApexChart
                                                     options={this.state.teamVisitTaskAreaChart}
                                                     series={this.state.teamVisitTaskAreaChart.series}
                                                     type="area"
                                                     height={350}
                                                     style={{
-                                                        width: '50%',
+                                                        backgroundColor: 'white',
+                                                        flex: '1',
                                                         border: 'solid rgba(0,0,0,0.2) 1px',
                                                         borderRadius: '0px',
                                                         padding: '16px'
@@ -1249,7 +1251,8 @@ class StatisticsPage extends Component<{}, StatisticsPageProps> {
                                                     type="pie"
                                                     height={350}
                                                     style={{
-                                                        width: '50%',
+                                                        backgroundColor: 'white',
+                                                        flex: '1',
                                                         border: 'solid rgba(0,0,0,0.2) 1px',
                                                         borderRadius: '0px',
                                                         padding: '16px'
@@ -1264,7 +1267,8 @@ class StatisticsPage extends Component<{}, StatisticsPageProps> {
                                                     type="area"
                                                     height={350}
                                                     style={{
-                                                        width: '50%',
+                                                        backgroundColor: 'white',
+                                                        flex: '1',
                                                         border: 'solid rgba(0,0,0,0.2) 1px',
                                                         borderRadius: '0px 0px 0px 4px',
                                                         padding: '16px',
@@ -1276,7 +1280,8 @@ class StatisticsPage extends Component<{}, StatisticsPageProps> {
                                                     type="pie"
                                                     height={350}
                                                     style={{
-                                                        width: '50%',
+                                                        backgroundColor: 'white',
+                                                        flex: '1',
                                                         border: 'solid rgba(0,0,0,0.2) 1px',
                                                         borderRadius: '0px 0px 4px 0px',
                                                         padding: '16px',
@@ -1319,8 +1324,8 @@ class StatisticsPage extends Component<{}, StatisticsPageProps> {
                                             />
                                         </div>
                                     ) : (
-                                        <div style={{ marginLeft: '8px', }}>
-                                            <div style={{ display: 'flex' }}>
+                                        <div style={{ padding: '0px 8px', }}>
+                                            <div style={{ display: 'flex', paddingRight: '16px' }}>
                                                 <ReactApexChart
                                                     options={this.state.kamSalesAreaChart}
                                                     series={this.state.kamSalesAreaChart.series}
@@ -1328,7 +1333,7 @@ class StatisticsPage extends Component<{}, StatisticsPageProps> {
                                                     height={350}
                                                     style={{
                                                         backgroundColor: 'white',
-                                                        width: '50%',
+                                                        flex: '1',
                                                         border: 'solid rgba(0,0,0,0.2) 1px',
                                                         borderRadius: '4px 0px 0px 0px',
                                                         padding: '16px'
@@ -1341,7 +1346,7 @@ class StatisticsPage extends Component<{}, StatisticsPageProps> {
                                                     height={350}
                                                     style={{
                                                         backgroundColor: 'white',
-                                                        width: '50%',
+                                                        flex: '1',
                                                         border: 'solid rgba(0,0,0,0.2) 1px',
                                                         borderRadius: '0px 4px 0px 0px',
                                                         padding: '16px'
@@ -1356,7 +1361,7 @@ class StatisticsPage extends Component<{}, StatisticsPageProps> {
                                                     height={350}
                                                     style={{
                                                         backgroundColor: 'white',
-                                                        width: '50%',
+                                                        flex: '1',
                                                         border: 'solid rgba(0,0,0,0.2) 1px',
                                                         padding: '16px',
                                                     }}
@@ -1368,7 +1373,7 @@ class StatisticsPage extends Component<{}, StatisticsPageProps> {
                                                     height={350}
                                                     style={{
                                                         backgroundColor: 'white',
-                                                        width: '50%',
+                                                        flex: '1',
                                                         border: 'solid rgba(0,0,0,0.2) 1px',
                                                         borderRadius: '0px 0px 4px 0px',
                                                         padding: '16px',
@@ -1383,7 +1388,7 @@ class StatisticsPage extends Component<{}, StatisticsPageProps> {
                                                     height={350}
                                                     style={{
                                                         backgroundColor: 'white',
-                                                        width: '50%',
+                                                        flex: '1',
                                                         border: 'solid rgba(0,0,0,0.2) 1px',
                                                         borderRadius: '0px 0px 4px 4px',
                                                         padding: '16px',

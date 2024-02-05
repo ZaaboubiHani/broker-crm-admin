@@ -20,7 +20,7 @@ const RevenueTable: React.FC<RevenueTableProps> = ({ data, id, isLoading, displa
             flexDirection: 'column',
             flexGrow: '1',
             borderRadius: '8px',
-            margin:'8px 0px 0px 8px'
+            height:'100%'
         }}>
             {
                 isLoading ? (<div style={{
