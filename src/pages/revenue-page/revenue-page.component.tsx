@@ -12,6 +12,7 @@ import RevenuePanel from '../../components/revenue-panel/revenue-panel.component
 import CircularProgressLabel from '../../components/circular-progress-label/circular-progress-label.component';
 import UserModel, { UserType } from '../../models/user.model';
 import UserDropdown from '../../components/user-dropdown/user-dropdown';
+import CompoundBox, { RenderDirection } from '../../components/compound-box/compound-box.component';
 
 interface RevenuePageProps {
     currentUser: UserModel;
@@ -245,53 +246,58 @@ class RevenuePage extends Component<{}, RevenuePageProps> {
                             firstTitle={this.state.totalTeamRevenueNotHonored?.toLocaleString('fr-DZ', { style: 'currency', currency: 'DZD' })}
                             value={this.state.totalTeamRevenue !== 0 ? this.state.totalTeamRevenueNotHonored / this.state.totalTeamRevenue * 100 : 0} />
                     </div>
-                    <div style={{ width: '100%', display: 'flex', flexGrow: '1', height: 'calc(100% - 500px)' }}>
-                        <div
-                            style={{
-                                width: '60%',
-                                margin: '8px'
+                    <div style={{ width: '100%', display: 'flex', flexGrow: '1', height: 'calc(100% - 500px)', }}>
+                        <CompoundBox
+                            direction={RenderDirection.horizontal}>
+                            <div
+                                style={{
+                                    width: 'calc(100% - 8px)',
+                                    height: 'calc(100% - 16px)',
+                                    margin: '8px',
+                                }}>
+                                <RevenueTable data={this.state.filteredRevenues} isLoading={this.state.loadingRevenuesData} displayDetails={this.handleDisplayDetails}></RevenueTable>
+                            </div>
+                            <div style={{
+                                width: '100%',
+                                height: 'calc(100% - 16px)',
+                                margin: '8px 0px',
+                                backgroundColor: 'rgba(255,255,255,0.5)',
+                                borderRadius: '8px'
                             }}>
-                            <RevenueTable data={this.state.filteredRevenues} isLoading={this.state.loadingRevenuesData} displayDetails={this.handleDisplayDetails}></RevenueTable>
-                        </div>
-                        <div style={{
-                            width: '40%',
-                            backgroundColor: 'rgba(255,255,255,0.5)',
-                            margin: '8px 8px 8px 0px',
-                            borderRadius: '8px'
-                        }}>
-                            {
-                                this.state.loadingRevenueData ?
-                                    (<div style={{
-                                        width: '100%',
-                                        height: '100%',
-                                        overflow: 'hidden',
-                                        flexGrow: '1',
-                                        display: 'flex',
-                                        flexDirection: 'column',
-                                        justifyContent: 'center',
-                                        alignItems: 'center',
-                                        transition: 'all 300ms ease'
-                                    }}>
-                                        <DotSpinner
-                                            size={40}
-                                            speed={0.9}
-                                            color="black"
-                                        />
-                                    </div>
-                                    )
-                                    :
-                                    (
-                                        <RevenuePanel
-                                            showData={this.state.showDetails}
-                                            total={this.state.totalDelegateRevenue}
-                                            totalHonored={this.state.totalDelegateRevenueHonored}
-                                            totalNotHonored={this.state.totalDelegateRevenueNotHonored}
-                                            wilayasRevenue={this.state.delegateWilayasRevenue}
-                                            productsRevenue={this.state.delegateProductsRevenue}
-                                        ></RevenuePanel>
-                                    )
-                            }
-                        </div>
+                                {
+                                    this.state.loadingRevenueData ?
+                                        (<div style={{
+                                            width: '100%',
+                                            height: '100%',
+                                            overflow: 'hidden',
+                                            flexGrow: '1',
+                                            display: 'flex',
+                                            flexDirection: 'column',
+                                            justifyContent: 'center',
+                                            alignItems: 'center',
+                                            transition: 'all 300ms ease'
+                                        }}>
+                                            <DotSpinner
+                                                size={40}
+                                                speed={0.9}
+                                                color="black"
+                                            />
+                                        </div>
+                                        )
+                                        :
+                                        (
+                                            <RevenuePanel
+                                                showData={this.state.showDetails}
+                                                total={this.state.totalDelegateRevenue}
+                                                totalHonored={this.state.totalDelegateRevenueHonored}
+                                                totalNotHonored={this.state.totalDelegateRevenueNotHonored}
+                                                wilayasRevenue={this.state.delegateWilayasRevenue}
+                                                productsRevenue={this.state.delegateProductsRevenue}
+                                            ></RevenuePanel>
+                                        )
+                                }
+                            </div>
+                        </CompoundBox>
                     </div>
                 </div >
             );

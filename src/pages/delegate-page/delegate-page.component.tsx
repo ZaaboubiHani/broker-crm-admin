@@ -20,6 +20,7 @@ import CustomTabPanel from '../../components/custom-tab-panel/costum-tab-panel.c
 import Box from '@mui/material/Box';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
+import CompoundBox, { RenderDirection } from '../../components/compound-box/compound-box.component';
 
 
 interface DelegatePageState {
@@ -321,7 +322,7 @@ class DelegatePage extends Component<{}, DelegatePageState> {
                             </Tabs>
                         </Box>
                         <CustomTabPanel value={this.state.index} index={0} >
-                        <div style={{ display: 'flex', flexDirection: 'column', flexGrow: '1', height: 'calc(100vh  - 65px)' }}>
+                            <div style={{ display: 'flex', flexDirection: 'column', flexGrow: '1', height: 'calc(100vh  - 65px)' }}>
                                 <div style={{ display: 'flex', justifyContent: 'stretch', flexGrow: '1', marginTop: '8px' }}>
                                     {
                                         this.state.currentUser.type !== UserType.supervisor ?
@@ -363,53 +364,57 @@ class DelegatePage extends Component<{}, DelegatePageState> {
                                     display: 'flex',
                                     height: 'calc(100% - 220px)'
                                 }}>
-
-                                    <DelegateTable
-                                        id='delegatetable'
-                                        total={this.state.totalDelegate}
-                                        page={this.state.delegatePage}
-                                        size={this.state.sizeDelegate}
-                                        pageChange={this.handleDelegatePageChange}
-                                        isLoading={this.state.loadingVisitsData}
-                                        data={this.state.delegateVisits}
-                                        onDisplayCommand={this.handleDisplayCommand}
-                                        onDisplayReport={this.handleDisplayReport}
-                                    ></DelegateTable>
-                                    <div style={{
-                                        width: '30%',
-                                        backgroundColor: 'rgba(255,255,255,0.5)',
-                                        margin: '0px 0px 8px',
-                                        borderRadius: '4px',
-                                        border: '1px solid rgba(127,127,127,0.2)'
-                                    }}>
-                                        {
-                                            this.state.loadingReportData ?
-                                                (<div style={{
-                                                    width: '100%',
-                                                    overflow: 'hidden',
-                                                    flexGrow: '1',
-                                                    display: 'flex',
-                                                    flexDirection: 'column',
-                                                    justifyContent: 'center',
-                                                    alignItems: 'center',
-                                                    transition: 'all 300ms ease'
-                                                }}>
-                                                    <DotSpinner
-                                                        size={40}
-                                                        speed={0.9}
-                                                        color="black"
-                                                    />
-                                                </div>
-                                                )
-                                                :
-                                                this.state.showReportPanel ? (
-                                                    <ReportPanel location={this.state.selectedVisit?.visitLocation} report={this.state.selectedReport} clientType={this.state.selectedVisit?.client?.type}></ReportPanel>
-                                                ) :
-                                                    (
-                                                        <CommandPanel command={this.state.selectedCommand} ></CommandPanel>
+                                    <CompoundBox
+                                        direction={RenderDirection.horizontal}>
+                                        <DelegateTable
+                                            id='delegatetable'
+                                            total={this.state.totalDelegate}
+                                            page={this.state.delegatePage}
+                                            size={this.state.sizeDelegate}
+                                            pageChange={this.handleDelegatePageChange}
+                                            isLoading={this.state.loadingVisitsData}
+                                            data={this.state.delegateVisits}
+                                            onDisplayCommand={this.handleDisplayCommand}
+                                            onDisplayReport={this.handleDisplayReport}
+                                        ></DelegateTable>
+                                        <div style={{
+                                            width: '100%',
+                                            height: '100%',
+                                            backgroundColor: 'rgba(255,255,255,0.5)',
+                                            margin: '0px 0px 8px',
+                                            borderRadius: '4px',
+                                            border: '1px solid rgba(127,127,127,0.2)'
+                                        }}>
+                                            {
+                                                this.state.loadingReportData ?
+                                                    (<div style={{
+                                                        width: '100%',
+                                                        overflow: 'hidden',
+                                                        flexGrow: '1',
+                                                        display: 'flex',
+                                                        flexDirection: 'column',
+                                                        justifyContent: 'center',
+                                                        alignItems: 'center',
+                                                        transition: 'all 300ms ease'
+                                                    }}>
+                                                        <DotSpinner
+                                                            size={40}
+                                                            speed={0.9}
+                                                            color="black"
+                                                        />
+                                                    </div>
                                                     )
-                                        }
-                                    </div>
+                                                    :
+                                                    this.state.showReportPanel ? (
+                                                        <ReportPanel location={this.state.selectedVisit?.visitLocation} report={this.state.selectedReport} clientType={this.state.selectedVisit?.client?.type}></ReportPanel>
+                                                    ) :
+                                                        (
+                                                            <CommandPanel command={this.state.selectedCommand} ></CommandPanel>
+                                                        )
+                                            }
+                                        </div>
+                                    </CompoundBox>
+
                                 </div>
                             </div>
                         </CustomTabPanel>
@@ -440,52 +445,57 @@ class DelegatePage extends Component<{}, DelegatePageState> {
                                     display: 'flex',
                                     height: 'calc(100% - 220px)'
                                 }}>
-                                    <DelegateTable
-                                        id='delegatetable'
-                                        total={this.state.totalKam}
-                                        page={this.state.kamPage}
-                                        size={this.state.sizeKam}
-                                        pageChange={this.handleKamPageChange}
-                                        isLoading={this.state.loadingVisitsData}
-                                        data={this.state.kamVisits}
-                                        onDisplayCommand={this.handleDisplayCommand}
-                                        onDisplayReport={this.handleDisplayReport}
-                                    ></DelegateTable>
-                                    <div style={{
-                                        width: '30%',
-                                        backgroundColor: 'rgba(255,255,255,0.5)',
-                                        margin: '0px 0px 8px',
-                                        borderRadius: '4px',
-                                        border: '1px solid rgba(127,127,127,0.2)'
-                                    }}>
-                                        {
-                                            this.state.loadingReportData ?
-                                                (<div style={{
-                                                    width: '100%',
-                                                    overflow: 'hidden',
-                                                    flexGrow: '1',
-                                                    display: 'flex',
-                                                    flexDirection: 'column',
-                                                    justifyContent: 'center',
-                                                    alignItems: 'center',
-                                                    transition: 'all 300ms ease'
-                                                }}>
-                                                    <DotSpinner
-                                                        size={40}
-                                                        speed={0.9}
-                                                        color="black"
-                                                    />
-                                                </div>
-                                                )
-                                                :
-                                                this.state.showReportPanel ? (
-                                                    <ReportPanel location={this.state.selectedVisit?.visitLocation} report={this.state.selectedReport} clientType={this.state.selectedVisit?.client?.type}></ReportPanel>
-                                                ) :
-                                                    (
-                                                        <CommandPanel command={this.state.selectedCommand} ></CommandPanel>
+                                    <CompoundBox
+                                        direction={RenderDirection.horizontal}>
+
+                                        <DelegateTable
+                                            id='delegatetable'
+                                            total={this.state.totalKam}
+                                            page={this.state.kamPage}
+                                            size={this.state.sizeKam}
+                                            pageChange={this.handleKamPageChange}
+                                            isLoading={this.state.loadingVisitsData}
+                                            data={this.state.kamVisits}
+                                            onDisplayCommand={this.handleDisplayCommand}
+                                            onDisplayReport={this.handleDisplayReport}
+                                        ></DelegateTable>
+                                        <div style={{
+                                            width: '100%',
+                                            height: '100%',
+                                            backgroundColor: 'rgba(255,255,255,0.5)',
+                                            margin: '0px 0px 8px',
+                                            borderRadius: '4px',
+                                            border: '1px solid rgba(127,127,127,0.2)'
+                                        }}>
+                                            {
+                                                this.state.loadingReportData ?
+                                                    (<div style={{
+                                                        width: '100%',
+                                                        overflow: 'hidden',
+                                                        flexGrow: '1',
+                                                        display: 'flex',
+                                                        flexDirection: 'column',
+                                                        justifyContent: 'center',
+                                                        alignItems: 'center',
+                                                        transition: 'all 300ms ease'
+                                                    }}>
+                                                        <DotSpinner
+                                                            size={40}
+                                                            speed={0.9}
+                                                            color="black"
+                                                        />
+                                                    </div>
                                                     )
-                                        }
-                                    </div>
+                                                    :
+                                                    this.state.showReportPanel ? (
+                                                        <ReportPanel location={this.state.selectedVisit?.visitLocation} report={this.state.selectedReport} clientType={this.state.selectedVisit?.client?.type}></ReportPanel>
+                                                    ) :
+                                                        (
+                                                            <CommandPanel command={this.state.selectedCommand} ></CommandPanel>
+                                                        )
+                                            }
+                                        </div>
+                                    </CompoundBox>
                                 </div>
                             </div>
                         </CustomTabPanel>
