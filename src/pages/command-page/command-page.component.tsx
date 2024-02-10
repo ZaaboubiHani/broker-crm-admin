@@ -17,6 +17,7 @@ import UserDropdown from '../../components/user-dropdown/user-dropdown';
 import CommandCamTable from '../../components/command-cam-table/command-cam-table.component';
 import SupplierModel from '../../models/supplier.model';
 import SupplierService from '../../services/supplier.service';
+import CompoundBox, { RenderDirection } from '../../components/compound-box/compound-box.component';
 
 
 interface CommandDelegatePageProps {
@@ -351,51 +352,55 @@ class CommandPage extends Component<{}, CommandDelegatePageProps> {
                                 flexGrow: '1',
                                 display: 'flex',
                                 height: 'calc(100% - 60px)'
-                            }} >
-                                <CommandDelegateTable
-                                    id='command-delegate-table'
-                                    total={this.state.totalDelegate}
-                                    page={this.state.delegatePage}
-                                    size={this.state.sizeDelegate}
-                                    suppliers={this.state.suppliers}
-                                    pageChange={this.handleDelegatePageChange}
-                                    data={this.state.delegateCommands}
-                                    isLoading={this.state.loadingDelegateCommandsData}
-                                    displayCommand={this.handleDisplayDelegateCommand}
-                                    onHonor={this.handleHonorDelegateCommand}
-                                ></CommandDelegateTable>
-                                <div style={{
-                                    width: '30%',
-                                    backgroundColor: 'rgba(255,255,255,0.5)',
-                                    margin: '0px 0px 8px',
-                                    borderRadius: '4px',
-                                    border: '1px solid rgba(127,127,127,0.2)'
-                                }}>
-                                    {
-                                        this.state.loadingDelegateCommandData ?
-                                            (<div style={{
-                                                width: '100%',
-                                                overflow: 'hidden',
-                                                flexGrow: '1',
-                                                display: 'flex',
-                                                flexDirection: 'column',
-                                                justifyContent: 'center',
-                                                alignItems: 'center',
-                                                transition: 'all 300ms ease'
-                                            }}>
-                                                <DotSpinner
-                                                    size={40}
-                                                    speed={0.9}
-                                                    color="black"
-                                                />
-                                            </div>
-                                            )
-                                            :
-                                            (
-                                                <CommandPanel command={this.state.delegateCommandData} ></CommandPanel>
-                                            )
-                                    }
-                                </div>
+                            }}>
+                                <CompoundBox
+                                    direction={RenderDirection.horizontal}>
+                                    <CommandDelegateTable
+                                        id='command-delegate-table'
+                                        total={this.state.totalDelegate}
+                                        page={this.state.delegatePage}
+                                        size={this.state.sizeDelegate}
+                                        suppliers={this.state.suppliers}
+                                        pageChange={this.handleDelegatePageChange}
+                                        data={this.state.delegateCommands}
+                                        isLoading={this.state.loadingDelegateCommandsData}
+                                        displayCommand={this.handleDisplayDelegateCommand}
+                                        onHonor={this.handleHonorDelegateCommand}
+                                    ></CommandDelegateTable>
+                                    <div style={{
+                                        width: '100%',
+                                        height: '100%',
+                                        backgroundColor: 'rgba(255,255,255,0.5)',
+                                        margin: '0px 0px 8px',
+                                        borderRadius: '4px',
+                                        border: '1px solid rgba(127,127,127,0.2)'
+                                    }}>
+                                        {
+                                            this.state.loadingDelegateCommandData ?
+                                                (<div style={{
+                                                    width: '100%',
+                                                    overflow: 'hidden',
+                                                    flexGrow: '1',
+                                                    display: 'flex',
+                                                    flexDirection: 'column',
+                                                    justifyContent: 'center',
+                                                    alignItems: 'center',
+                                                    transition: 'all 300ms ease'
+                                                }}>
+                                                    <DotSpinner
+                                                        size={40}
+                                                        speed={0.9}
+                                                        color="black"
+                                                    />
+                                                </div>
+                                                )
+                                                :
+                                                (
+                                                    <CommandPanel command={this.state.delegateCommandData} ></CommandPanel>
+                                                )
+                                        }
+                                    </div>
+                                </CompoundBox>
                             </div>
                             <Snackbar anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }} open={this.state.showDialog} autoHideDuration={3000} onClose={this.handleCloseDialog} message={this.state.dialogMessage} />
                         </div>
@@ -419,50 +424,54 @@ class CommandPage extends Component<{}, CommandDelegatePageProps> {
                                 display: 'flex',
                                 height: 'calc(100% - 60px)'
                             }} key={0}>
-                                <CommandCamTable
-                                    id='command-cam-table'
-                                    total={this.state.totalKam}
-                                    page={this.state.kamPage}
-                                    size={this.state.sizeKam}
-                                    suppliers={this.state.suppliers}
-                                    pageChange={this.handleKamPageChange}
-                                    data={this.state.kamCommands}
-                                    onHonor={this.handleHonorKamCommand}
-                                    isLoading={this.state.loadingKamCommandsData}
-                                    displayCommand={this.handleDisplayKamCommand}
-                                ></CommandCamTable>
-                                <div style={{
-                                    width: '40%',
-                                    backgroundColor: 'rgba(255,255,255,0.5)',
-                                    margin: '0px 0px 8px',
-                                    borderRadius: '4px',
-                                    border: '1px solid rgba(127,127,127,0.2)'
-                                }}>
-                                    {
-                                        this.state.loadingKamCommandData ?
-                                            (<div style={{
-                                                width: '100%',
-                                                overflow: 'hidden',
-                                                flexGrow: '1',
-                                                display: 'flex',
-                                                flexDirection: 'column',
-                                                justifyContent: 'center',
-                                                alignItems: 'center',
-                                                transition: 'all 300ms ease'
-                                            }}>
-                                                <DotSpinner
-                                                    size={40}
-                                                    speed={0.9}
-                                                    color="black"
-                                                />
-                                            </div>
-                                            )
-                                            :
-                                            (
-                                                <CommandPanel command={this.state.kamCommandData} ></CommandPanel>
-                                            )
-                                    }
-                                </div>
+                                <CompoundBox
+                                    direction={RenderDirection.horizontal}>
+                                    <CommandCamTable
+                                        id='command-cam-table'
+                                        total={this.state.totalKam}
+                                        page={this.state.kamPage}
+                                        size={this.state.sizeKam}
+                                        suppliers={this.state.suppliers}
+                                        pageChange={this.handleKamPageChange}
+                                        data={this.state.kamCommands}
+                                        onHonor={this.handleHonorKamCommand}
+                                        isLoading={this.state.loadingKamCommandsData}
+                                        displayCommand={this.handleDisplayKamCommand}
+                                    ></CommandCamTable>
+                                    <div style={{
+                                        width: '100%',
+                                        height: '100%',
+                                        backgroundColor: 'rgba(255,255,255,0.5)',
+                                        margin: '0px 0px 8px',
+                                        borderRadius: '4px',
+                                        border: '1px solid rgba(127,127,127,0.2)'
+                                    }}>
+                                        {
+                                            this.state.loadingKamCommandData ?
+                                                (<div style={{
+                                                    width: '100%',
+                                                    overflow: 'hidden',
+                                                    flexGrow: '1',
+                                                    display: 'flex',
+                                                    flexDirection: 'column',
+                                                    justifyContent: 'center',
+                                                    alignItems: 'center',
+                                                    transition: 'all 300ms ease'
+                                                }}>
+                                                    <DotSpinner
+                                                        size={40}
+                                                        speed={0.9}
+                                                        color="black"
+                                                    />
+                                                </div>
+                                                )
+                                                :
+                                                (
+                                                    <CommandPanel command={this.state.kamCommandData} ></CommandPanel>
+                                                )
+                                        }
+                                    </div>
+                                </CompoundBox>
                             </div>
                             <Snackbar anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }} open={this.state.showDialog} autoHideDuration={3000} onClose={this.handleCloseDialog} message={this.state.dialogMessage} />
                         </div>

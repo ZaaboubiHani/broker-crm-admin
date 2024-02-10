@@ -26,6 +26,7 @@ import { formatDateToYYYYMMDD, formatTime } from '../../functions/date-format';
 import ReportModel from '../../models/report.model';
 import VisitModel from '../../models/visit.model';
 import UserTrackingModel from '@/src/models/user-tracking.model';
+import CompoundBox, { RenderDirection } from '../../components/compound-box/compound-box.component';
 
 interface PlanPageProps {
     selectedDate: Date;
@@ -91,7 +92,7 @@ class PlanPage extends Component<{}, PlanPageProps> {
             visitsCoordinates: [],
             tasksCoordinates: [],
             showMap: false,
-            trackings:[],
+            trackings: [],
             delegatePlanDeTournee: 0,
             kamPlanDeTournee: 0,
             delegateCouverturePortfeuille: 0,
@@ -287,7 +288,7 @@ class PlanPage extends Component<{}, PlanPageProps> {
         this.setState({ loadingMap: true });
         var tasks = await this.taskService.getAllTasksOfDelegate(date, this.state.selectedDelegate!.id!);
         var visits = await this.visitService.getAllVisitsOfDelegateDay(date, this.state.selectedDelegate!.id!);
-       
+
         visits.sort(this.compareDates);
 
         let visitsCoordinates: { point: number[], name: string, time: string }[] = visits.map((v) => {
@@ -309,13 +310,13 @@ class PlanPage extends Component<{}, PlanPageProps> {
         this.setState({
             loadingMap: false,
             showMap: true,
-            trackings:trackings,
+            trackings: trackings,
             visitsCoordinates: visitsCoordinates,
             tasksCoordinates: tasksCoordinates,
         });
     };
 
- 
+
 
     handleKamDisplayMap = async (date: Date) => {
         this.setState({ loadingMap: true });
@@ -341,7 +342,7 @@ class PlanPage extends Component<{}, PlanPageProps> {
 
         this.setState({
             loadingMap: false,
-            trackings:trackings,
+            trackings: trackings,
             showMap: true,
             visitsCoordinates: visitsCoordinates,
             tasksCoordinates: tasksCoordinates,
@@ -380,7 +381,7 @@ class PlanPage extends Component<{}, PlanPageProps> {
                     <Box sx={{ width: '100%', height: '100%' }}>
                         <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
                             <Tabs value={this.state.index} onChange={this.handleTabChange} aria-label="basic tabs example">
-                              
+
                                 <Tab label="Superviseurs" />
                                 {
                                     this.state.currentUser.type === UserType.admin ? (<Tab label="Kams" />) : null
@@ -434,56 +435,61 @@ class PlanPage extends Component<{}, PlanPageProps> {
                                 </div>
                                 <div style={{
                                     width: '100%',
-                                flexGrow: '1',
+                                    flexGrow: '1',
                                     display: 'flex',
                                     height: 'calc(100% - 220px)',
 
                                 }}>
-                                    <PlanTable
-                                        onDisplayDetails={this.handleSelectVisitTaskDate}
-                                        onDisplayMap={this.handleDelegateDisplayMap}
-                                        isLoading={this.state.loadingVisitTasksData}
-                                        id='plantable'
-                                        data={this.state.delegateVisitTasks}
-                                    ></PlanTable>
-                                    <div style={{
-                                        width: '30%',
-                                        backgroundColor: 'rgba(255,255,255,0.5)',
-                                        margin: '0px 8px 8px',
-                                        borderRadius: '4px',
-                                        flexGrow: '1',
-                                        display: 'flex',
-                                        border: '1px solid rgba(127,127,127,0.2)'
-                                    }}>
-                                        {
-                                            this.state.loadingReport ?
-                                                (<div style={{
-                                                    width: '100%',
-                                                    overflow: 'hidden',
-                                                    flexGrow: '1',
-                                                    display: 'flex',
-                                                    flexDirection: 'column',
-                                                    justifyContent: 'center',
-                                                    alignItems: 'center',
-                                                    marginTop: '8px',
-                                                    transition: 'all 300ms ease'
-                                                }}>
-                                                    <DotSpinner
-                                                        size={40}
-                                                        speed={0.9}
-                                                        color="black"
-                                                    />
-                                                </div>
-                                                )
-                                                :
-                                                this.state.delegateReport ? (
-                                                    <ReportPanel onBackClick={this.handleBackReportPanel} showBackButton={true} location={this.state.delegateVisit?.visitLocation} report={this.state.delegateReport} clientType={this.state.delegateVisit?.client?.type}></ReportPanel>
-                                                ) :
-                                                    (
-                                                        <PlanPanel onTaskClick={this.handleDisplayReport} isLoading={this.state.loadingVisitTaskDetails} data={this.state.visitTaskDetails}></PlanPanel>
+                                    <CompoundBox
+                                        direction={RenderDirection.horizontal}>
+
+                                        <PlanTable
+                                            onDisplayDetails={this.handleSelectVisitTaskDate}
+                                            onDisplayMap={this.handleDelegateDisplayMap}
+                                            isLoading={this.state.loadingVisitTasksData}
+                                            id='plantable'
+                                            data={this.state.delegateVisitTasks}
+                                        ></PlanTable>
+                                        <div style={{
+                                            width: '100%',
+                                            height: '100%',
+                                            backgroundColor: 'rgba(255,255,255,0.5)',
+                                            margin: '0px',
+                                            borderRadius: '4px',
+                                            flexGrow: '1',
+                                            display: 'flex',
+                                            border: '1px solid rgba(127,127,127,0.2)'
+                                        }}>
+                                            {
+                                                this.state.loadingReport ?
+                                                    (<div style={{
+                                                        width: '100%',
+                                                        overflow: 'hidden',
+                                                        flexGrow: '1',
+                                                        display: 'flex',
+                                                        flexDirection: 'column',
+                                                        justifyContent: 'center',
+                                                        alignItems: 'center',
+                                                        marginTop: '8px',
+                                                        transition: 'all 300ms ease'
+                                                    }}>
+                                                        <DotSpinner
+                                                            size={40}
+                                                            speed={0.9}
+                                                            color="black"
+                                                        />
+                                                    </div>
                                                     )
-                                        }
-                                    </div>
+                                                    :
+                                                    this.state.delegateReport ? (
+                                                        <ReportPanel onBackClick={this.handleBackReportPanel} showBackButton={true} location={this.state.delegateVisit?.visitLocation} report={this.state.delegateReport} clientType={this.state.delegateVisit?.client?.type}></ReportPanel>
+                                                    ) :
+                                                        (
+                                                            <PlanPanel onTaskClick={this.handleDisplayReport} isLoading={this.state.loadingVisitTaskDetails} data={this.state.visitTaskDetails}></PlanPanel>
+                                                        )
+                                            }
+                                        </div>
+                                    </CompoundBox>
                                 </div>
                                 <MapDialog
                                     visitsCoordinates={this.state.visitsCoordinates}
@@ -493,7 +499,7 @@ class PlanPage extends Component<{}, PlanPageProps> {
                                     onClose={() => {
                                         this.setState({ showMap: false });
                                     }} />
-                               
+
                                 <div style={{
 
                                     position: 'absolute',
@@ -552,51 +558,55 @@ class PlanPage extends Component<{}, PlanPageProps> {
                                     display: 'flex',
                                     height: 'calc(100% - 220px)',
                                 }}>
-                                    <PlanTable
-                                        onDisplayDetails={this.handleSelectVisitTaskDate}
-                                        onDisplayMap={this.handleKamDisplayMap}
-                                        isLoading={this.state.loadingVisitTasksData}
-                                        id='plantable'
-                                        data={this.state.kamVisitTasks}
-                                    ></PlanTable>
-                                    <div style={{
-                                        width: '30%',
-                                        backgroundColor: 'rgba(255,255,255,0.5)',
-                                        margin: '0px 8px 8px',
-                                        borderRadius: '4px',
-                                        flexGrow: '1',
-                                        display: 'flex',
-                                        border: '1px solid rgba(127,127,127,0.2)'
-                                    }}>
-                                        {
-                                            this.state.loadingReport ?
-                                                (<div style={{
-                                                    width: '100%',
-                                                    overflow: 'hidden',
-                                                    flexGrow: '1',
-                                                    display: 'flex',
-                                                    flexDirection: 'column',
-                                                    justifyContent: 'center',
-                                                    alignItems: 'center',
-                                                    marginTop: '8px',
-                                                    transition: 'all 300ms ease'
-                                                }}>
-                                                    <DotSpinner
-                                                        size={40}
-                                                        speed={0.9}
-                                                        color="black"
-                                                    />
-                                                </div>
-                                                )
-                                                :
-                                                this.state.delegateReport ? (
-                                                    <ReportPanel onBackClick={this.handleBackReportPanel} showBackButton={true} location={this.state.delegateVisit?.visitLocation} report={this.state.delegateReport} clientType={this.state.delegateVisit?.client?.type}></ReportPanel>
-                                                ) :
-                                                    (
-                                                        <PlanPanel onTaskClick={this.handleDisplayReport} isLoading={this.state.loadingVisitTaskDetails} data={this.state.visitTaskDetails}></PlanPanel>
+                                    <CompoundBox
+                                        direction={RenderDirection.horizontal}>
+                                        <PlanTable
+                                            onDisplayDetails={this.handleSelectVisitTaskDate}
+                                            onDisplayMap={this.handleKamDisplayMap}
+                                            isLoading={this.state.loadingVisitTasksData}
+                                            id='plantable'
+                                            data={this.state.kamVisitTasks}
+                                        ></PlanTable>
+                                        <div style={{
+                                            width: '100%',
+                                            height: '100%',
+                                            backgroundColor: 'rgba(255,255,255,0.5)',
+                                            margin: '0px',
+                                            borderRadius: '4px',
+                                            flexGrow: '1',
+                                            display: 'flex',
+                                            border: '1px solid rgba(127,127,127,0.2)'
+                                        }}>
+                                            {
+                                                this.state.loadingReport ?
+                                                    (<div style={{
+                                                        width: '100%',
+                                                        overflow: 'hidden',
+                                                        flexGrow: '1',
+                                                        display: 'flex',
+                                                        flexDirection: 'column',
+                                                        justifyContent: 'center',
+                                                        alignItems: 'center',
+                                                        marginTop: '8px',
+                                                        transition: 'all 300ms ease'
+                                                    }}>
+                                                        <DotSpinner
+                                                            size={40}
+                                                            speed={0.9}
+                                                            color="black"
+                                                        />
+                                                    </div>
                                                     )
-                                        }
-                                    </div>
+                                                    :
+                                                    this.state.delegateReport ? (
+                                                        <ReportPanel onBackClick={this.handleBackReportPanel} showBackButton={true} location={this.state.delegateVisit?.visitLocation} report={this.state.delegateReport} clientType={this.state.delegateVisit?.client?.type}></ReportPanel>
+                                                    ) :
+                                                        (
+                                                            <PlanPanel onTaskClick={this.handleDisplayReport} isLoading={this.state.loadingVisitTaskDetails} data={this.state.visitTaskDetails}></PlanPanel>
+                                                        )
+                                            }
+                                        </div>
+                                    </CompoundBox>
                                 </div>
                                 <MapDialog
                                     visitsCoordinates={this.state.visitsCoordinates}

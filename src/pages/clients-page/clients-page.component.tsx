@@ -24,8 +24,6 @@ import FormControl from '@mui/material/FormControl';
 import InputLabel from '@mui/material/InputLabel';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
-import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
-import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 import Divider from '@mui/material/Divider';
 import StorageIcon from '@mui/icons-material/Storage';
 import * as XLSX from 'xlsx';
@@ -33,6 +31,7 @@ import ClientService from '../../services/clients.service';
 import VisitTable from '../../components/visit-table/visit-table.component';
 import ReportPanel from '../../components/report-panel/report-panel.component';
 import TextField from '@mui/material/TextField';
+import CompoundBox, { RenderDirection } from '../../components/compound-box/compound-box.component';
 
 interface ClientsPageProps {
     selectedDate: Date;
@@ -715,109 +714,112 @@ class ClientsPage extends Component<{}, ClientsPageProps> {
                                     display: 'flex',
                                     height: 'calc(100% - 50px)'
                                 }}>
-                                    <div
-                                        style={{
-                                            width: '70%',
-                                            margin: '0px 8px 8px 8px'
+                                    <CompoundBox
+                                        direction={RenderDirection.horizontal}>
+                                        <div
+                                            style={{
+                                                width: '100%',
+                                                height: '100%',
+                                            }}>
+                                            <ClientsPharmacyTable
+                                                total={this.state.totalPharm}
+                                                page={this.state.pharmPage}
+                                                size={this.state.sizePharm}
+                                                pageChange={this.handlePharmPageChange}
+                                                id='clients-pharmacy-table'
+                                                data={this.state.pharmClients}
+                                                isLoading={this.state.loadingClientsData}
+                                                displayVisits={this.handleDisplayPharmVisits}
+                                                sortChange={this.handlePharmSort}
+                                                sorting={{ field: this.state.pharmProp ?? '', order: this.state.pharmOrder }}
+                                            ></ClientsPharmacyTable>
+                                        </div>
+                                        <div style={{
+                                            width: '100%',
+                                            height: '100%',
+                                            backgroundColor: 'rgba(255,255,255,0.5)',
+                                            margin: '0px',
+                                            borderRadius: '4px',
+                                            border: '1px solid rgba(127,127,127,0.2)'
                                         }}>
-                                        <ClientsPharmacyTable
-                                            total={this.state.totalPharm}
-                                            page={this.state.pharmPage}
-                                            size={this.state.sizePharm}
-                                            pageChange={this.handlePharmPageChange}
-                                            id='clients-pharmacy-table'
-                                            data={this.state.pharmClients}
-                                            isLoading={this.state.loadingClientsData}
-                                            displayVisits={this.handleDisplayPharmVisits}
-                                            sortChange={this.handlePharmSort}
-                                            sorting={{ field: this.state.pharmProp ?? '', order: this.state.pharmOrder }}
-                                        ></ClientsPharmacyTable>
-                                    </div>
-                                    <div style={{
-                                        width: '30%',
-                                        backgroundColor: 'rgba(255,255,255,0.5)',
-                                        margin: '0px 0px 8px',
-                                        borderRadius: '4px',
-                                        border: '1px solid rgba(127,127,127,0.2)'
-                                    }}>
-                                        {
-                                            this.state.loadingVisitsData ?
-                                                (<div style={{
-                                                    width: '100%',
-                                                    height: '100%',
-                                                    overflow: 'hidden',
-                                                    flexGrow: '1',
-                                                    display: 'flex',
-                                                    flexDirection: 'column',
-                                                    justifyContent: 'center',
-                                                    alignItems: 'center',
-                                                    transition: 'all 300ms ease'
-                                                }}>
-                                                    <DotSpinner
-                                                        size={40}
-                                                        speed={0.9}
-                                                        color="black"
-                                                    />
-                                                </div>
-                                                )
-                                                :
-                                                this.state.showVisitPanel ? this.state.pharmReportData ? (
-                                                    <ReportPanel
-                                                        showBackButton={true}
-                                                        onBackClick={() => {
-                                                            this.setState({ pharmReportData: undefined });
-                                                        }}
-                                                        report={this.state.pharmReportData}
-                                                        clientType={this.state.selectedClient?.type}></ReportPanel>
-                                                ) : this.state.pharmCommandData ? (
-                                                    <CommandPanel
-                                                        showBackButton={true}
-                                                        onBackClick={() => {
-                                                            this.setState({ pharmCommandData: undefined });
-                                                        }}
-                                                        command={this.state.pharmCommandData} ></CommandPanel>
-                                                ) : (
-                                                    <div style={{
-                                                        height: '100%'
+                                            {
+                                                this.state.loadingVisitsData ?
+                                                    (<div style={{
+                                                        width: '100%',
+                                                        height: '100%',
+                                                        overflow: 'hidden',
+                                                        flexGrow: '1',
+                                                        display: 'flex',
+                                                        flexDirection: 'column',
+                                                        justifyContent: 'center',
+                                                        alignItems: 'center',
+                                                        transition: 'all 300ms ease'
                                                     }}>
-                                                        <FormControl size="small" style={{
-                                                            width: '200px',
-                                                            backgroundColor: 'white',
-                                                            margin: "8px",
-                                                            height: '40px'
-                                                        }}>
-                                                            <InputLabel>Délégués de visites</InputLabel>
-                                                            <Select
-                                                                label="Trier avec"
-                                                                value={this.state.selectedDelegate?.id}
-                                                                disabled={this.state.selectedDelegate !== undefined}
-                                                                onChange={(event) => {
-                                                                    var id = event.target.value as number | undefined;
-                                                                    this.setState({ selectedUserId: id });
-                                                                }}>
-                                                                <MenuItem value={undefined}>
-                                                                    <em>aucun</em>
-                                                                </MenuItem>
-                                                                {
-                                                                    Array.from(new Set(this.state.pharmVisits.map(visit => visit.user?.id))).map(userId => (
-                                                                        <MenuItem key={userId} value={userId}>
-                                                                            {this.state.pharmVisits.find(visit => visit.user?.id === userId)?.user?.username}
-                                                                        </MenuItem>
-                                                                    ))
-                                                                }
-                                                            </Select>
-                                                        </FormControl>
-                                                        <VisitTable
-                                                            isLoading={this.state.loadingVisitsData}
-                                                            data={this.state.selectedUserId ? this.state.pharmVisits.filter((v) => v.user?.id === this.state.selectedUserId) : this.state.pharmVisits}
-                                                            displayReport={this.handleDisplayReportPharm}
-                                                            displayCommand={this.handleDisplayCommandPharm}
-                                                        ></VisitTable>
+                                                        <DotSpinner
+                                                            size={40}
+                                                            speed={0.9}
+                                                            color="black"
+                                                        />
                                                     </div>
-                                                ) : null
-
-                                        }
-                                    </div>
+                                                    )
+                                                    :
+                                                    this.state.showVisitPanel ? this.state.pharmReportData ? (
+                                                        <ReportPanel
+                                                            showBackButton={true}
+                                                            onBackClick={() => {
+                                                                this.setState({ pharmReportData: undefined });
+                                                            }}
+                                                            report={this.state.pharmReportData}
+                                                            clientType={this.state.selectedClient?.type}></ReportPanel>
+                                                    ) : this.state.pharmCommandData ? (
+                                                        <CommandPanel
+                                                            showBackButton={true}
+                                                            onBackClick={() => {
+                                                                this.setState({ pharmCommandData: undefined });
+                                                            }}
+                                                            command={this.state.pharmCommandData} ></CommandPanel>
+                                                    ) : (
+                                                        <div style={{
+                                                            height: '100%'
+                                                        }}>
+                                                            <FormControl size="small" style={{
+                                                                width: '200px',
+                                                                backgroundColor: 'white',
+                                                                margin: "8px",
+                                                                height: '40px'
+                                                            }}>
+                                                                <InputLabel>Délégués de visites</InputLabel>
+                                                                <Select
+                                                                    label="Trier avec"
+                                                                    value={this.state.selectedDelegate?.id}
+                                                                    disabled={this.state.selectedDelegate !== undefined}
+                                                                    onChange={(event) => {
+                                                                        var id = event.target.value as number | undefined;
+                                                                        this.setState({ selectedUserId: id });
+                                                                    }}>
+                                                                    <MenuItem value={undefined}>
+                                                                        <em>aucun</em>
+                                                                    </MenuItem>
+                                                                    {
+                                                                        Array.from(new Set(this.state.pharmVisits.map(visit => visit.user?.id))).map(userId => (
+                                                                            <MenuItem key={userId} value={userId}>
+                                                                                {this.state.pharmVisits.find(visit => visit.user?.id === userId)?.user?.username}
+                                                                            </MenuItem>
+                                                                        ))
+                                                                    }
+                                                                </Select>
+                                                            </FormControl>
+                                                            <VisitTable
+                                                                isLoading={this.state.loadingVisitsData}
+                                                                data={this.state.selectedUserId ? this.state.pharmVisits.filter((v) => v.user?.id === this.state.selectedUserId) : this.state.pharmVisits}
+                                                                displayReport={this.handleDisplayReportPharm}
+                                                                displayCommand={this.handleDisplayCommandPharm}
+                                                            ></VisitTable>
+                                                        </div>
+                                                    ) : null
+                                            }
+                                        </div>
+                                    </CompoundBox>
                                 </div>
                             </div>
                         </CustomTabPanel>
@@ -861,101 +863,105 @@ class ClientsPage extends Component<{}, ClientsPageProps> {
                                     </Button>
                                 </div>
                                 <div style={{ width: '100%', display: 'flex', flexDirection: 'row', flexGrow: '1', height: 'calc(100% - 55px)' }}>
-                                    <div
-                                        style={{
-                                            width: '70%',
-                                            margin: '0px 8px 8px 8px'
+                                    <CompoundBox
+                                        direction={RenderDirection.horizontal}>
+                                        <div
+                                            style={{
+                                                width: '100%',
+                                                height: '100%',
+                                            }}>
+                                            <ClientsDoctorTable
+                                                total={this.state.totalDoc}
+                                                page={this.state.docPage}
+                                                size={this.state.sizeDoc}
+                                                pageChange={this.handleDocPageChange}
+                                                data={this.state.docClients}
+                                                isLoading={this.state.loadingClientsData}
+                                                displayVisits={this.handleDisplayDocVisits}
+                                                sortChange={this.handleDocSort}
+                                                sorting={{ field: this.state.docProp ?? '', order: this.state.docOrder }}
+                                            ></ClientsDoctorTable>
+                                        </div>
+                                        <div style={{
+                                            width: '100%',
+                                            height: '100%',
+                                            backgroundColor: 'rgba(255,255,255,0.5)',
+                                            margin: '0px',
+                                            borderRadius: '4px',
+                                            border: '1px solid rgba(127,127,127,0.2)'
                                         }}>
-                                        <ClientsDoctorTable
-                                            total={this.state.totalDoc}
-                                            page={this.state.docPage}
-                                            size={this.state.sizeDoc}
-                                            pageChange={this.handleDocPageChange}
-                                            data={this.state.docClients}
-                                            isLoading={this.state.loadingClientsData}
-                                            displayVisits={this.handleDisplayDocVisits}
-                                            sortChange={this.handleDocSort}
-                                            sorting={{ field: this.state.docProp ?? '', order: this.state.docOrder }}
-                                        ></ClientsDoctorTable>
-                                    </div>
-                                    <div style={{
-                                        width: '30%',
-                                        backgroundColor: 'rgba(255,255,255,0.5)',
-                                        margin: '0px 0px 8px',
-                                        borderRadius: '4px',
-                                        border: '1px solid rgba(127,127,127,0.2)'
-                                    }}>
-                                        {
-                                            this.state.loadingVisitsData ?
-                                                (<div style={{
-                                                    width: '100%',
-                                                    height: '100%',
-                                                    overflow: 'hidden',
-                                                    flexGrow: '1',
-                                                    display: 'flex',
-                                                    flexDirection: 'column',
-                                                    justifyContent: 'center',
-                                                    alignItems: 'center',
-                                                    transition: 'all 300ms ease'
-                                                }}>
-                                                    <DotSpinner
-                                                        size={40}
-                                                        speed={0.9}
-                                                        color="black"
-                                                    />
-                                                </div>
-                                                )
-                                                :
-                                                this.state.showVisitPanel ? this.state.docReportData ? (
-                                                    <ReportPanel
-                                                        showBackButton={true}
-                                                        onBackClick={() => {
-                                                            this.setState({ docReportData: undefined });
-                                                        }}
-                                                        report={this.state.docReportData}
-                                                        clientType={this.state.selectedClient?.type}></ReportPanel>
-                                                ) :
-                                                    (
-                                                        <div style={{
-                                                            height: '100%'
-                                                        }}>
-                                                            <FormControl size="small" style={{
-                                                                width: '200px',
-                                                                backgroundColor: 'white',
-                                                                margin: "8px",
-                                                                height: '40px'
+                                            {
+                                                this.state.loadingVisitsData ?
+                                                    (<div style={{
+                                                        width: '100%',
+                                                        height: '100%',
+                                                        overflow: 'hidden',
+                                                        flexGrow: '1',
+                                                        display: 'flex',
+                                                        flexDirection: 'column',
+                                                        justifyContent: 'center',
+                                                        alignItems: 'center',
+                                                        transition: 'all 300ms ease'
+                                                    }}>
+                                                        <DotSpinner
+                                                            size={40}
+                                                            speed={0.9}
+                                                            color="black"
+                                                        />
+                                                    </div>
+                                                    )
+                                                    :
+                                                    this.state.showVisitPanel ? this.state.docReportData ? (
+                                                        <ReportPanel
+                                                            showBackButton={true}
+                                                            onBackClick={() => {
+                                                                this.setState({ docReportData: undefined });
+                                                            }}
+                                                            report={this.state.docReportData}
+                                                            clientType={this.state.selectedClient?.type}></ReportPanel>
+                                                    ) :
+                                                        (
+                                                            <div style={{
+                                                                height: '100%'
                                                             }}>
-                                                                <InputLabel>Délégués de visites</InputLabel>
-                                                                <Select
-                                                                    label="Trier avec"
-                                                                    value={this.state.selectedDelegate?.id}
-                                                                    disabled={this.state.selectedDelegate !== undefined}
-                                                                    onChange={(event) => {
-                                                                        var id = event.target.value as number | undefined;
-                                                                        this.setState({ selectedUserId: id });
-                                                                    }}>
-                                                                    <MenuItem value={undefined}>
-                                                                        <em>aucun</em>
-                                                                    </MenuItem>
-                                                                    {
-                                                                        Array.from(new Set(this.state.docVisits.map(visit => visit.user?.id))).map(userId => (
-                                                                            <MenuItem key={userId} value={userId}>
-                                                                                {this.state.docVisits.find(visit => visit.user?.id === userId)?.user?.username}
-                                                                            </MenuItem>
-                                                                        ))
-                                                                    }
-                                                                </Select>
-                                                            </FormControl>
-                                                            <VisitTable
-                                                                isLoading={this.state.loadingVisitsData}
-                                                                isDoctor={true}
-                                                                data={this.state.selectedUserId ? this.state.docVisits.filter((v) => v.user?.id === this.state.selectedUserId) : this.state.docVisits}
-                                                                displayReport={this.handleDisplayReportDoc}
-                                                            ></VisitTable>
-                                                        </div>
-                                                    ) : null
-                                        }
-                                    </div>
+                                                                <FormControl size="small" style={{
+                                                                    width: '200px',
+                                                                    backgroundColor: 'white',
+                                                                    margin: "8px",
+                                                                    height: '40px'
+                                                                }}>
+                                                                    <InputLabel>Délégués de visites</InputLabel>
+                                                                    <Select
+                                                                        label="Trier avec"
+                                                                        value={this.state.selectedDelegate?.id}
+                                                                        disabled={this.state.selectedDelegate !== undefined}
+                                                                        onChange={(event) => {
+                                                                            var id = event.target.value as number | undefined;
+                                                                            this.setState({ selectedUserId: id });
+                                                                        }}>
+                                                                        <MenuItem value={undefined}>
+                                                                            <em>aucun</em>
+                                                                        </MenuItem>
+                                                                        {
+                                                                            Array.from(new Set(this.state.docVisits.map(visit => visit.user?.id))).map(userId => (
+                                                                                <MenuItem key={userId} value={userId}>
+                                                                                    {this.state.docVisits.find(visit => visit.user?.id === userId)?.user?.username}
+                                                                                </MenuItem>
+                                                                            ))
+                                                                        }
+                                                                    </Select>
+                                                                </FormControl>
+                                                                <VisitTable
+                                                                    isLoading={this.state.loadingVisitsData}
+                                                                    isDoctor={true}
+                                                                    data={this.state.selectedUserId ? this.state.docVisits.filter((v) => v.user?.id === this.state.selectedUserId) : this.state.docVisits}
+                                                                    displayReport={this.handleDisplayReportDoc}
+                                                                ></VisitTable>
+                                                            </div>
+                                                        ) : null
+                                            }
+                                        </div>
+                                    </CompoundBox>
                                 </div>
                             </div>
                         </CustomTabPanel>
@@ -979,105 +985,108 @@ class ClientsPage extends Component<{}, ClientsPageProps> {
                                     </Button>
                                 </div>
                                 <div style={{ width: '100%', display: 'flex', flexDirection: 'row', flexGrow: '1', height: 'calc(100% - 55px)' }}>
-                                    <div
-                                        style={{
-                                            width: '70%',
-                                            margin: '0px 8px 8px 8px'
+                                    <CompoundBox
+                                        direction={RenderDirection.horizontal}>
+                                        <div
+                                            style={{
+                                                width: '100%',
+                                                height: '100%',
+                                            }}>
+                                            <ClientsPharmacyTable
+                                                total={this.state.totalWhole}
+                                                page={this.state.wholePage}
+                                                size={this.state.sizeWhole}
+                                                pageChange={this.handleWholePageChange}
+                                                data={this.state.wholeClients}
+                                                isLoading={this.state.loadingClientsData}
+                                                displayVisits={this.handleDisplayWholeVisits}
+                                                sortChange={this.handleWholeSort}
+                                                sorting={{ field: this.state.wholeProp ?? '', order: this.state.wholeOrder }}
+                                            ></ClientsPharmacyTable>
+                                        </div>
+                                        <div style={{
+                                            width: '100%',
+                                            height: '100%',
+                                            backgroundColor: 'rgba(255,255,255,0.5)',
+                                            borderRadius: '4px',
+                                            border: '1px solid rgba(127,127,127,0.2)'
                                         }}>
-                                        <ClientsPharmacyTable
-                                            total={this.state.totalWhole}
-                                            page={this.state.wholePage}
-                                            size={this.state.sizeWhole}
-                                            pageChange={this.handleWholePageChange}
-                                            data={this.state.wholeClients}
-                                            isLoading={this.state.loadingClientsData}
-                                            displayVisits={this.handleDisplayWholeVisits}
-                                            sortChange={this.handleWholeSort}
-                                            sorting={{ field: this.state.wholeProp ?? '', order: this.state.wholeOrder }}
-                                        ></ClientsPharmacyTable>
-                                    </div>
-                                    <div style={{
-                                        width: '30%',
-                                        backgroundColor: 'rgba(255,255,255,0.5)',
-                                        margin: '0px 0px 8px',
-                                        borderRadius: '4px',
-                                        border: '1px solid rgba(127,127,127,0.2)'
-                                    }}>
-                                        {
-                                            this.state.loadingVisitsData ?
-                                                (<div style={{
-                                                    width: '100%',
-                                                    height: '100%',
-                                                    overflow: 'hidden',
-                                                    flexGrow: '1',
-                                                    display: 'flex',
-                                                    flexDirection: 'column',
-                                                    justifyContent: 'center',
-                                                    alignItems: 'center',
-                                                    transition: 'all 300ms ease'
-                                                }}>
-                                                    <DotSpinner
-                                                        size={40}
-                                                        speed={0.9}
-                                                        color="black"
-                                                    />
-                                                </div>
-                                                )
-                                                :
-                                                this.state.showVisitPanel ? this.state.wholeReportData ? (
-                                                    <ReportPanel
-                                                        showBackButton={true}
-                                                        onBackClick={() => {
-                                                            this.setState({ wholeReportData: undefined });
-                                                        }}
-                                                        report={this.state.wholeReportData}
-                                                        clientType={this.state.selectedClient?.type}></ReportPanel>
-                                                ) : this.state.wholeCommandData ? (
-                                                    <CommandPanel
-                                                        showBackButton={true}
-                                                        onBackClick={() => {
-                                                            this.setState({ wholeCommandData: undefined });
-                                                        }}
-                                                        command={this.state.wholeCommandData} ></CommandPanel>
-                                                ) : (
-                                                    <div style={{
-                                                        height: '100%'
+                                            {
+                                                this.state.loadingVisitsData ?
+                                                    (<div style={{
+                                                        width: '100%',
+                                                        height: '100%',
+                                                        overflow: 'hidden',
+                                                        flexGrow: '1',
+                                                        display: 'flex',
+                                                        flexDirection: 'column',
+                                                        justifyContent: 'center',
+                                                        alignItems: 'center',
+                                                        transition: 'all 300ms ease'
                                                     }}>
-                                                        <FormControl size="small" style={{
-                                                            width: '200px',
-                                                            backgroundColor: 'white',
-                                                            margin: "8px",
-                                                            height: '40px'
-                                                        }}>
-                                                            <InputLabel>Délégués de visites</InputLabel>
-                                                            <Select
-                                                                label="Trier avec"
-                                                                onChange={(event) => {
-                                                                    var id = event.target.value as number | undefined;
-                                                                    this.setState({ selectedUserId: id });
-                                                                }}>
-                                                                <MenuItem value={undefined}>
-                                                                    <em>aucun</em>
-                                                                </MenuItem>
-                                                                {
-                                                                    Array.from(new Set(this.state.wholeVisits.map(visit => visit.user?.id))).map(userId => (
-                                                                        <MenuItem key={userId} value={userId}>
-                                                                            {this.state.wholeVisits.find(visit => visit.user?.id === userId)?.user?.username}
-                                                                        </MenuItem>
-                                                                    ))
-                                                                }
-                                                            </Select>
-                                                        </FormControl>
-                                                        <VisitTable
-                                                            isLoading={this.state.loadingVisitsData}
-                                                            data={this.state.selectedUserId ? this.state.wholeVisits.filter((v) => v.user?.id === this.state.selectedUserId) : this.state.wholeVisits}
-                                                            displayReport={this.handleDisplayReportWhole}
-                                                            displayCommand={this.handleDisplayCommandWhole}
-                                                        ></VisitTable>
+                                                        <DotSpinner
+                                                            size={40}
+                                                            speed={0.9}
+                                                            color="black"
+                                                        />
                                                     </div>
-                                                ) : null
-                                        }
-                                    </div>
+                                                    )
+                                                    :
+                                                    this.state.showVisitPanel ? this.state.wholeReportData ? (
+                                                        <ReportPanel
+                                                            showBackButton={true}
+                                                            onBackClick={() => {
+                                                                this.setState({ wholeReportData: undefined });
+                                                            }}
+                                                            report={this.state.wholeReportData}
+                                                            clientType={this.state.selectedClient?.type}></ReportPanel>
+                                                    ) : this.state.wholeCommandData ? (
+                                                        <CommandPanel
+                                                            showBackButton={true}
+                                                            onBackClick={() => {
+                                                                this.setState({ wholeCommandData: undefined });
+                                                            }}
+                                                            command={this.state.wholeCommandData} ></CommandPanel>
+                                                    ) : (
+                                                        <div style={{
+                                                            height: '100%'
+                                                        }}>
+                                                            <FormControl size="small" style={{
+                                                                width: '200px',
+                                                                backgroundColor: 'white',
+                                                                margin: "8px",
+                                                                height: '40px'
+                                                            }}>
+                                                                <InputLabel>Délégués de visites</InputLabel>
+                                                                <Select
+                                                                    label="Trier avec"
+                                                                    onChange={(event) => {
+                                                                        var id = event.target.value as number | undefined;
+                                                                        this.setState({ selectedUserId: id });
+                                                                    }}>
+                                                                    <MenuItem value={undefined}>
+                                                                        <em>aucun</em>
+                                                                    </MenuItem>
+                                                                    {
+                                                                        Array.from(new Set(this.state.wholeVisits.map(visit => visit.user?.id))).map(userId => (
+                                                                            <MenuItem key={userId} value={userId}>
+                                                                                {this.state.wholeVisits.find(visit => visit.user?.id === userId)?.user?.username}
+                                                                            </MenuItem>
+                                                                        ))
+                                                                    }
+                                                                </Select>
+                                                            </FormControl>
+                                                            <VisitTable
+                                                                isLoading={this.state.loadingVisitsData}
+                                                                data={this.state.selectedUserId ? this.state.wholeVisits.filter((v) => v.user?.id === this.state.selectedUserId) : this.state.wholeVisits}
+                                                                displayReport={this.handleDisplayReportWhole}
+                                                                displayCommand={this.handleDisplayCommandWhole}
+                                                            ></VisitTable>
+                                                        </div>
+                                                    ) : null
+                                            }
+                                        </div>
+                                    </CompoundBox>
                                 </div>
                             </div>
                         </CustomTabPanel>

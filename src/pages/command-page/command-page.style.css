@@ -20,13 +20,13 @@
 
 
 #command-cam-table{
-    width: 60%;
-    margin: 0px 8px 8px 8px;
+    width: 100%;
+    height: 100%;
 }
 
 #command-delegate-table{
-    width: 60%;
-    margin: 0px 8px 8px 8px;
+    width: 100%;
+    height: 100%;
 }
 
 .command-delegate-container

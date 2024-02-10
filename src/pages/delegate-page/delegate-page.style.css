@@ -6,8 +6,8 @@
 }
 
 #delegatetable {
-    width: 60%;
-    margin: 0px 8px 8px 8px;
+    width: 100%;
+    height: 100%;
 }
 
 .delegate-container .user-panel {

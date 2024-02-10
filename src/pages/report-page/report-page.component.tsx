@@ -3,7 +3,6 @@ import '../report-page/report-page.style.css';
 import MonthYearPicker from '../../components/month-year-picker/month-year-picker.component';
 import ReportTable from '../../components/report-table/report-table.component';
 import DotSpinner from '@uiball/loaders/dist/components/DotSpinner';
-import UserPicker from '../../components/user-picker/user-picker.component';
 import UserModel, { UserType } from '../../models/user.model';
 import UserService from '../../services/user.service';
 import VisitModel from '../../models/visit.model';
@@ -16,6 +15,7 @@ import Box from '@mui/material/Box';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import UserDropdown from '../../components/user-dropdown/user-dropdown';
+import CompoundBox, { RenderDirection } from '../../components/compound-box/compound-box.component';
 
 interface ReportPageProps {
     selectedDate: Date;
@@ -293,49 +293,53 @@ class ReportPage extends Component<{}, ReportPageProps> {
                                     display: 'flex',
                                     height: 'calc(100% - 66px)'
                                 }} >
-                                    <ReportTable
-                                        total={this.state.totalDelegate}
-                                        page={this.state.delegatePage}
-                                        size={this.state.sizeDelegate}
-                                        pageChange={this.handleDelegatePageChange}
-                                        isLoading={this.state.loadingVisitsData}
-                                        id='reporttable'
-                                        displayReport={this.handleDisplayReport}
-                                        data={this.state.delegateVisits}
-                                    ></ReportTable>
-                                    <div style={{
-                                        width: '40%',
-                                        backgroundColor: 'rgba(255,255,255,0.5)',
-                                        margin: '0px 0px 8px',
-                                        borderRadius: '4px',
-                                        border: '1px solid rgba(127,127,127,0.2)'
-                                    }}>
-                                        {
-                                            this.state.loadingReportData ?
-                                                (<div style={{
-                                                    width: '100%',
-                                                    height: '100%',
-                                                    overflow: 'hidden',
-                                                    flexGrow: '1',
-                                                    display: 'flex',
-                                                    flexDirection: 'column',
-                                                    justifyContent: 'center',
-                                                    alignItems: 'center',
-                                                    transition: 'all 300ms ease'
-                                                }}>
-                                                    <DotSpinner
-                                                        size={40}
-                                                        speed={0.9}
-                                                        color="black"
-                                                    />
-                                                </div>
-                                                )
-                                                :
-                                                (
-                                                    <ReportPanel clientType={this.state.selectedVisit?.client?.type} location={this.state.selectedVisit?.visitLocation} report={this.state.reportData} ></ReportPanel>
-                                                )
-                                        }
-                                    </div>
+                                    <CompoundBox
+                                        direction={RenderDirection.horizontal}>
+                                        <ReportTable
+                                            id='reporttable'
+                                            total={this.state.totalDelegate}
+                                            page={this.state.delegatePage}
+                                            size={this.state.sizeDelegate}
+                                            pageChange={this.handleDelegatePageChange}
+                                            isLoading={this.state.loadingVisitsData}
+                                            displayReport={this.handleDisplayReport}
+                                            data={this.state.delegateVisits}
+                                        ></ReportTable>
+                                        <div style={{
+                                            width: '100%',
+                                            height: '100%',
+                                            backgroundColor: 'rgba(255,255,255,0.5)',
+                                            margin: '0px 0px 8px',
+                                            borderRadius: '4px',
+                                            border: '1px solid rgba(127,127,127,0.2)'
+                                        }}>
+                                            {
+                                                this.state.loadingReportData ?
+                                                    (<div style={{
+                                                        width: '100%',
+                                                        height: '100%',
+                                                        overflow: 'hidden',
+                                                        flexGrow: '1',
+                                                        display: 'flex',
+                                                        flexDirection: 'column',
+                                                        justifyContent: 'center',
+                                                        alignItems: 'center',
+                                                        transition: 'all 300ms ease'
+                                                    }}>
+                                                        <DotSpinner
+                                                            size={40}
+                                                            speed={0.9}
+                                                            color="black"
+                                                        />
+                                                    </div>
+                                                    )
+                                                    :
+                                                    (
+                                                        <ReportPanel clientType={this.state.selectedVisit?.client?.type} location={this.state.selectedVisit?.visitLocation} report={this.state.reportData} ></ReportPanel>
+                                                    )
+                                            }
+                                        </div>
+                                    </CompoundBox>
                                 </div>
                             </div>
                         </div>
@@ -360,49 +364,53 @@ class ReportPage extends Component<{}, ReportPageProps> {
                                     display: 'flex',
                                     height: 'calc(100% - 66px)'
                                 }} key={0}>
-                                    <ReportTable
-                                        total={this.state.totalKam}
-                                        page={this.state.kamPage}
-                                        size={this.state.sizeKam}
-                                        pageChange={this.handleKamPageChange}
-                                        isLoading={this.state.loadingVisitsData}
-                                        id='reporttable'
-                                        displayReport={this.handleDisplayReport}
-                                        data={this.state.kamVisits}
-                                    ></ReportTable>
-                                    <div style={{
-                                        width: '40%',
-                                        backgroundColor: 'rgba(255,255,255,0.5)',
-                                        margin: '0px 0px 8px',
-                                        borderRadius: '4px',
-                                        border: '1px solid rgba(127,127,127,0.2)'
-                                    }}>
-                                        {
-                                            this.state.loadingReportData ?
-                                                (<div style={{
-                                                    width: '100%',
-                                                    height: '100%',
-                                                    overflow: 'hidden',
-                                                    flexGrow: '1',
-                                                    display: 'flex',
-                                                    flexDirection: 'column',
-                                                    justifyContent: 'center',
-                                                    alignItems: 'center',
-                                                    transition: 'all 300ms ease'
-                                                }}>
-                                                    <DotSpinner
-                                                        size={40}
-                                                        speed={0.9}
-                                                        color="black"
-                                                    />
-                                                </div>
-                                                )
-                                                :
-                                                (
-                                                    <ReportPanel location={this.state.selectedVisit?.visitLocation} report={this.state.reportData} ></ReportPanel>
-                                                )
-                                        }
-                                    </div>
+                                    <CompoundBox
+                                        direction={RenderDirection.horizontal}>
+                                        <ReportTable
+                                            id='reporttable'
+                                            total={this.state.totalKam}
+                                            page={this.state.kamPage}
+                                            size={this.state.sizeKam}
+                                            pageChange={this.handleKamPageChange}
+                                            isLoading={this.state.loadingVisitsData}
+                                            displayReport={this.handleDisplayReport}
+                                            data={this.state.kamVisits}
+                                        ></ReportTable>
+                                        <div style={{
+                                            width: '100%',
+                                            height: '100%',
+                                            backgroundColor: 'rgba(255,255,255,0.5)',
+                                            margin: '0px 0px 8px',
+                                            borderRadius: '4px',
+                                            border: '1px solid rgba(127,127,127,0.2)'
+                                        }}>
+                                            {
+                                                this.state.loadingReportData ?
+                                                    (<div style={{
+                                                        width: '100%',
+                                                        height: '100%',
+                                                        overflow: 'hidden',
+                                                        flexGrow: '1',
+                                                        display: 'flex',
+                                                        flexDirection: 'column',
+                                                        justifyContent: 'center',
+                                                        alignItems: 'center',
+                                                        transition: 'all 300ms ease'
+                                                    }}>
+                                                        <DotSpinner
+                                                            size={40}
+                                                            speed={0.9}
+                                                            color="black"
+                                                        />
+                                                    </div>
+                                                    )
+                                                    :
+                                                    (
+                                                        <ReportPanel location={this.state.selectedVisit?.visitLocation} report={this.state.reportData} ></ReportPanel>
+                                                    )
+                                            }
+                                        </div>
+                                    </CompoundBox>
                                 </div>
                             </div>
                         </div>

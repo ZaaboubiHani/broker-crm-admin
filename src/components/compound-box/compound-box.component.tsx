@@ -81,7 +81,7 @@ const CompoundBox: React.FC<CompoundBoxProps> = ({ direction = RenderDirection.v
     setChildSizes(Array(children.length).fill(singleHeaderWidth));
   }, []);
   return (
-    <div ref={containerRef} style={{ display: 'flex', flexDirection: direction === RenderDirection.vertical ? 'column' : 'row', width: '100%' }}>
+    <div ref={containerRef} style={{ display: 'flex', flexDirection: direction === RenderDirection.vertical ? 'column' : 'row',flex:'1',width:'100%'}}>
       {children.map((child, index) => (
         <>
           <div key={index} style={{ width: `${childSizes[index]}px` }}>
