@@ -42,8 +42,41 @@ const ScalableTable: React.FC<ScalableTableProps> = ({ columns, rows, pageSizeOp
   const [resizingColumnIndex, setResizingColumnIndex] = useState<number | null>(null);
   const [initialMouseX, setInitialMouseX] = useState<number>(0);
   const [selectedRowIndex, setSelectedRowIndex] = useState<number>(1);
+  let initData = false;
   const containerRef = useRef<HTMLTableElement>(null);
- 
+
+
+  useEffect(() => {
+    const resizeObserver = new ResizeObserver(entries => {
+      for (const entry of entries) {
+        if (initData) {
+          const { width, height } = entry.contentRect;
+          const containerWidth = (containerRef.current?.getBoundingClientRect().width || 0);
+          const singleHeaderWidth = ((containerWidth - (columns.length * 20) - (columns.filter((col) => col.width).map<number>((col) => col.width!).reduce((sum, num) => sum + num, 0))) / columns.filter((col) => !(col.width)).length);
+          const fullWidth = singleHeaderWidth * columnWidths.length;
+          let widthFlexes = columnWidths.map((col) => col / fullWidth);
+          setColumnWidths(widthFlexes.map((flex, index) => flex * fullWidth));
+        }
+        else {
+          const containerWidth = (containerRef.current?.getBoundingClientRect().width || 0);
+          const singleHeaderWidth = ((containerWidth - (columns.length * 20) - (columns.filter((col) => col.width).map<number>((col) => col.width!).reduce((sum, num) => sum + num, 0))) / columns.filter((col) => !(col.width)).length);
+          setColumnWidths(columns.map((col, index) => col.width ? col.width : singleHeaderWidth));
+        }
+      }
+    });
+
+    if (containerRef.current) {
+      resizeObserver.observe(containerRef.current);
+    }
+
+    return () => {
+      if (containerRef.current) {
+        resizeObserver.unobserve(containerRef.current);
+      }
+    };
+  }, []);
+
+
   useEffect(() => {
     const handleMove = (clientX: number) => {
       if (isResizing && resizingColumnIndex !== null) {

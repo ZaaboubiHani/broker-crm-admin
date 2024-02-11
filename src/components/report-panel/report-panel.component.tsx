@@ -227,6 +227,7 @@ const ReportPanel: React.FC<ReportPanelProps> = ({ report, clientType, location,
                     height: "100%",
                     display: 'grid',
                     placeItems: 'center',
+                    textAlign:'center',
                 }
             }>
                 Cliquez sur voir pour afficher les détails

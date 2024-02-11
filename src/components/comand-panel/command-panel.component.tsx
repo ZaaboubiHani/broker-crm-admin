@@ -195,6 +195,7 @@ const CommandPanel: React.FC<CommandPanelProps> = ({ command, showBackButton, on
                     height: "100%",
                     display: 'grid',
                     placeItems: 'center',
+                    textAlign:'center',
                 }
             }>
                 Cliquez sur voir pour afficher les détails
