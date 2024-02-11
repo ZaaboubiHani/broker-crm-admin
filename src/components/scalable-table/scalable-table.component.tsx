@@ -43,7 +43,7 @@ const ScalableTable: React.FC<ScalableTableProps> = ({ columns, rows, pageSizeOp
   const [initialMouseX, setInitialMouseX] = useState<number>(0);
   const [selectedRowIndex, setSelectedRowIndex] = useState<number>(1);
   const containerRef = useRef<HTMLTableElement>(null);
-
+ 
   useEffect(() => {
     const handleMove = (clientX: number) => {
       if (isResizing && resizingColumnIndex !== null) {
@@ -141,7 +141,7 @@ const ScalableTable: React.FC<ScalableTableProps> = ({ columns, rows, pageSizeOp
   };
 
   return (
-    <div className="resizable-table" >
+    <div className="resizable-table" style={{ width: '100%' }}>
       <table ref={containerRef} style={{
         margin: '0px',
         padding: '0px',

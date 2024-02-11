@@ -248,7 +248,9 @@ class RevenuePage extends Component<{}, RevenuePageProps> {
                     </div>
                     <div style={{ width: '100%', display: 'flex', flexGrow: '1', height: 'calc(100% - 500px)', }}>
                         <CompoundBox
-                            direction={RenderDirection.horizontal}>
+                            direction={RenderDirection.horizontal}
+                            flexes={[70, 30]}
+                            >
                             <div
                                 style={{
                                     width: 'calc(100% - 8px)',

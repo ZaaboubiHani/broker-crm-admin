@@ -365,7 +365,9 @@ class DelegatePage extends Component<{}, DelegatePageState> {
                                     height: 'calc(100% - 220px)'
                                 }}>
                                     <CompoundBox
-                                        direction={RenderDirection.horizontal}>
+                                        direction={RenderDirection.horizontal}
+                                        flexes={[70, 30]}
+                                        >
                                         <DelegateTable
                                             id='delegatetable'
                                             total={this.state.totalDelegate}
@@ -446,8 +448,9 @@ class DelegatePage extends Component<{}, DelegatePageState> {
                                     height: 'calc(100% - 220px)'
                                 }}>
                                     <CompoundBox
-                                        direction={RenderDirection.horizontal}>
-
+                                        direction={RenderDirection.horizontal}
+                                        flexes={[70, 30]}
+                                        >
                                         <DelegateTable
                                             id='delegatetable'
                                             total={this.state.totalKam}

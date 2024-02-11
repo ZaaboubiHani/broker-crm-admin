@@ -715,7 +715,9 @@ class ClientsPage extends Component<{}, ClientsPageProps> {
                                     height: 'calc(100% - 50px)'
                                 }}>
                                     <CompoundBox
-                                        direction={RenderDirection.horizontal}>
+                                        direction={RenderDirection.horizontal}
+                                        flexes={[70, 30]}
+                                    >
                                         <div
                                             style={{
                                                 width: '100%',
@@ -864,7 +866,9 @@ class ClientsPage extends Component<{}, ClientsPageProps> {
                                 </div>
                                 <div style={{ width: '100%', display: 'flex', flexDirection: 'row', flexGrow: '1', height: 'calc(100% - 55px)' }}>
                                     <CompoundBox
-                                        direction={RenderDirection.horizontal}>
+                                        direction={RenderDirection.horizontal}
+                                        flexes={[70, 30]}
+                                    >
                                         <div
                                             style={{
                                                 width: '100%',
@@ -986,7 +990,9 @@ class ClientsPage extends Component<{}, ClientsPageProps> {
                                 </div>
                                 <div style={{ width: '100%', display: 'flex', flexDirection: 'row', flexGrow: '1', height: 'calc(100% - 55px)' }}>
                                     <CompoundBox
-                                        direction={RenderDirection.horizontal}>
+                                        direction={RenderDirection.horizontal}
+                                        flexes={[70, 30]}
+                                    >
                                         <div
                                             style={{
                                                 width: '100%',
