@@ -9,9 +9,10 @@ export enum RenderDirection {
 interface CompoundBoxProps {
   direction?: RenderDirection;
   children: React.ReactNode[];
+  flexes?: number[];
 }
 
-const CompoundBox: React.FC<CompoundBoxProps> = ({ direction = RenderDirection.vertical, children }) => {
+const CompoundBox: React.FC<CompoundBoxProps> = ({ direction = RenderDirection.vertical, children, flexes }) => {
   const [childSizes, setChildSizes] = useState<number[]>(Array(children.length).fill(1));
   const [isResizing, setIsResizing] = useState<boolean>(false);
   const [resizingDividerIndex, setResizingDividerIndex] = useState<number | null>(null);
@@ -77,11 +78,12 @@ const CompoundBox: React.FC<CompoundBoxProps> = ({ direction = RenderDirection.v
   }, [isResizing, resizingDividerIndex, initialMousePosition]);
   useEffect(() => {
     const containerWidth = (containerRef.current?.getBoundingClientRect().width || 0);
-    const singleHeaderWidth = ((containerWidth - (children.length * 25) ));
-    setChildSizes(Array(children.length).fill(singleHeaderWidth));
+    const singleHeaderWidth = ((containerWidth - (children.length * 25)));
+    const fullWidth = singleHeaderWidth * children.length;
+    setChildSizes(flexes?.map((flex)=>fullWidth * flex) ?? Array(children.length).fill(singleHeaderWidth));
   }, []);
   return (
-    <div ref={containerRef} style={{ display: 'flex', flexDirection: direction === RenderDirection.vertical ? 'column' : 'row',flex:'1',width:'100%'}}>
+    <div ref={containerRef} style={{ display: 'flex', flexDirection: direction === RenderDirection.vertical ? 'column' : 'row', flex: '1', width: '100%' }}>
       {children.map((child, index) => (
         <>
           <div key={index} style={{ width: `${childSizes[index]}px` }}>
@@ -91,8 +93,8 @@ const CompoundBox: React.FC<CompoundBoxProps> = ({ direction = RenderDirection.v
             <div
               style={{
                 width: '25px',
-                display:'grid',
-                placeItems:'center',
+                display: 'grid',
+                placeItems: 'center',
               }}
             >
               <SettingsEthernetIcon

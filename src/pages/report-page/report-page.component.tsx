@@ -294,7 +294,9 @@ class ReportPage extends Component<{}, ReportPageProps> {
                                     height: 'calc(100% - 66px)'
                                 }} >
                                     <CompoundBox
-                                        direction={RenderDirection.horizontal}>
+                                        direction={RenderDirection.horizontal}
+                                        flexes={[70, 30]}
+                                        >
                                         <ReportTable
                                             id='reporttable'
                                             total={this.state.totalDelegate}
@@ -365,7 +367,9 @@ class ReportPage extends Component<{}, ReportPageProps> {
                                     height: 'calc(100% - 66px)'
                                 }} key={0}>
                                     <CompoundBox
-                                        direction={RenderDirection.horizontal}>
+                                        direction={RenderDirection.horizontal}
+                                        flexes={[70, 30]}
+                                        >
                                         <ReportTable
                                             id='reporttable'
                                             total={this.state.totalKam}

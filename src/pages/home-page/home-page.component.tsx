@@ -432,7 +432,9 @@ class HomePage extends Component<{}, HomePageState> {
                                     height: 'calc(100% - 100px)',
                                 }}>
                                     <CompoundBox
-                                        direction={RenderDirection.horizontal}>
+                                        direction={RenderDirection.horizontal}
+                                        flexes={[70, 30]}
+                                    >
                                         <HomeTable
                                             id='hometable'
                                             total={this.state.totalDelegate}
@@ -486,9 +488,6 @@ class HomePage extends Component<{}, HomePageState> {
                                             }
                                         </div>
                                     </CompoundBox>
-
-
-
                                 </div>
                             </div>
                         </CustomTabPanel>
@@ -501,7 +500,9 @@ class HomePage extends Component<{}, HomePageState> {
 
                                 <div className='table-panel'>
                                     <CompoundBox
-                                        direction={RenderDirection.horizontal}>
+                                        direction={RenderDirection.horizontal}
+                                        flexes={[70, 30]}
+                                        >
                                         <HomeTable id='hometable'
                                             firstHeader='Kam'
                                             total={this.state.totalKam}

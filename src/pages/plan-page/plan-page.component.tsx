@@ -441,8 +441,9 @@ class PlanPage extends Component<{}, PlanPageProps> {
 
                                 }}>
                                     <CompoundBox
-                                        direction={RenderDirection.horizontal}>
-
+                                        direction={RenderDirection.horizontal}
+                                        flexes={[70, 30]}
+                                        >
                                         <PlanTable
                                             onDisplayDetails={this.handleSelectVisitTaskDate}
                                             onDisplayMap={this.handleDelegateDisplayMap}
@@ -559,7 +560,9 @@ class PlanPage extends Component<{}, PlanPageProps> {
                                     height: 'calc(100% - 220px)',
                                 }}>
                                     <CompoundBox
-                                        direction={RenderDirection.horizontal}>
+                                        direction={RenderDirection.horizontal}
+                                        flexes={[70, 30]}
+                                        >
                                         <PlanTable
                                             onDisplayDetails={this.handleSelectVisitTaskDate}
                                             onDisplayMap={this.handleKamDisplayMap}

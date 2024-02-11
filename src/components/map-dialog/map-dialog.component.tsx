@@ -35,7 +35,7 @@ const TrackingList: React.FC<TrackingListProps> = ({ trackings }) => {
 
     return (
         <>
-            <Box sx={{
+            <div style={{
                 width: showDrawer ? '200px' : '5px',
                 height: '442px',
                 position: 'absolute',
@@ -45,37 +45,36 @@ const TrackingList: React.FC<TrackingListProps> = ({ trackings }) => {
                 border: 'solid #ddd 1px',
                 borderRadius: '8px',
                 top: '52px',
-                overflowY: 'scroll',
+                overflowY: 'auto',
             }}>
-                
-                    <List style={{
-                        position: 'absolute',
-                        zIndex: '999',
-                    }}>
-                        {
-                            trackings.map((track, index) => {
-                                return (
-                                    <ListItem
-                                        key={track.id}
-                                        disablePadding
-                                        onClick={() => {
-                                            const point: ll.LatLng = ll.latLng(parseFloat(track.latitude!), parseFloat(track.longitude!));
-                                            mapCon.flyTo(point, 18);
-                                        }}
-                                    >
-                                        <ListItemButton sx={{width:'180px'}}>
-                                            <ListItemText primary={`${(index + 1)}`} />
-                                            <ListItemText primary={`${formatTime(track.createdAt)}`} />
-                                        </ListItemButton>
-                                    </ListItem>
-                                );
 
-                            })
-                        }
+                <List style={{
+                    position: 'absolute',
+                    zIndex: '999',
+                }}>
+                    {
+                        trackings.map((track, index) => {
+                            return (
+                                <ListItem
+                                    key={track.id}
+                                    disablePadding
+                                    onClick={() => {
+                                        const point: ll.LatLng = ll.latLng(parseFloat(track.latitude!), parseFloat(track.longitude!));
+                                        mapCon.flyTo(point, 18);
+                                    }}
+                                >
+                                    <ListItemButton sx={{ width: '180px' }}>
+                                        <ListItemText primary={`${(index + 1)}`} />
+                                        <ListItemText primary={`${formatTime(track.createdAt)}`} />
+                                    </ListItemButton>
+                                </ListItem>
+                            );
 
-                    </List>
+                        })
+                    }
 
-            </Box>
+                </List>
+            </div>
             <button
                 style={{
                     opacity: showDrawer ? '1' : '0',

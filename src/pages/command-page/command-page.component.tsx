@@ -354,7 +354,9 @@ class CommandPage extends Component<{}, CommandDelegatePageProps> {
                                 height: 'calc(100% - 60px)'
                             }}>
                                 <CompoundBox
-                                    direction={RenderDirection.horizontal}>
+                                    direction={RenderDirection.horizontal}
+                                    flexes={[70, 30]}
+                                    >
                                     <CommandDelegateTable
                                         id='command-delegate-table'
                                         total={this.state.totalDelegate}
@@ -425,7 +427,9 @@ class CommandPage extends Component<{}, CommandDelegatePageProps> {
                                 height: 'calc(100% - 60px)'
                             }} key={0}>
                                 <CompoundBox
-                                    direction={RenderDirection.horizontal}>
+                                    direction={RenderDirection.horizontal}
+                                    flexes={[70, 30]}
+                                    >
                                     <CommandCamTable
                                         id='command-cam-table'
                                         total={this.state.totalKam}
