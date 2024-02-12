@@ -20,6 +20,7 @@ import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import UserDropdown from '../../components/user-dropdown/user-dropdown';
 import CompoundBox, { RenderDirection } from '../../components/compound-box/compound-box.component';
+import Snackbar from '@mui/material/Snackbar';
 
 interface HomePageState {
     selectedDate: Date;
@@ -48,6 +49,8 @@ interface HomePageState {
     kamOrder: boolean;
     kamProp?: string;
     delegateProp?: string;
+    showSnackbar: boolean;
+    snackbarMessage: string;
 }
 
 class HomePage extends Component<{}, HomePageState> {
@@ -75,6 +78,8 @@ class HomePage extends Component<{}, HomePageState> {
             kamPage: 1,
             delegateOrder: false,
             kamOrder: false,
+            showSnackbar: false,
+            snackbarMessage:'',
         }
     }
 
@@ -183,6 +188,9 @@ class HomePage extends Component<{}, HomePageState> {
                     totalDelegate: totalDelegate,
                 });
             }
+            else{
+                this.setState({showSnackbar:true,snackbarMessage:'Sélectionner un superviseur pour voir les visites'});
+            }
             var { visits: kamVisits, total: totalKam } = await this.visitService.getAllVisits(1, this.state.sizeKam, date, ClientType.wholesaler, this.state.currentUser.id!, this.state.kamOrder, this.state.kamProp);
             this.setState({
                 selectedDate: date,
@@ -230,7 +238,10 @@ class HomePage extends Component<{}, HomePageState> {
             delegatePage: 1,
         });
     }
-
+    
+    handleCloseSanckbar = (event: React.SyntheticEvent | Event, reason?: string) => {
+        this.setState({ showSnackbar: false });
+    };
 
     handleKamSort = async (field: string, order: boolean) => {
         this.setState({
@@ -489,6 +500,7 @@ class HomePage extends Component<{}, HomePageState> {
                                         </div>
                                     </CompoundBox>
                                 </div>
+                                <Snackbar anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }} onClose={this.handleCloseSanckbar} open={this.state.showSnackbar} autoHideDuration={3000} message={this.state.snackbarMessage} />
                             </div>
                         </CustomTabPanel>
                         <CustomTabPanel value={this.state.index} index={1} >

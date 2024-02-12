@@ -50,7 +50,6 @@ const ScalableTable: React.FC<ScalableTableProps> = ({ columns, rows, pageSizeOp
     const resizeObserver = new ResizeObserver(entries => {
       for (const entry of entries) {
         if (initData) {
-          const { width, height } = entry.contentRect;
           const containerWidth = (containerRef.current?.getBoundingClientRect().width || 0);
           const singleHeaderWidth = ((containerWidth - (columns.length * 20) - (columns.filter((col) => col.width).map<number>((col) => col.width!).reduce((sum, num) => sum + num, 0))) / columns.filter((col) => !(col.width)).length);
           const fullWidth = singleHeaderWidth * columnWidths.length;

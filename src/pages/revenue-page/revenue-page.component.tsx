@@ -246,23 +246,20 @@ class RevenuePage extends Component<{}, RevenuePageProps> {
                             firstTitle={this.state.totalTeamRevenueNotHonored?.toLocaleString('fr-DZ', { style: 'currency', currency: 'DZD' })}
                             value={this.state.totalTeamRevenue !== 0 ? this.state.totalTeamRevenueNotHonored / this.state.totalTeamRevenue * 100 : 0} />
                     </div>
-                    <div style={{ width: '100%', display: 'flex', flexGrow: '1', height: 'calc(100% - 500px)', }}>
+                    <div style={{ flex:'1', display: 'flex', flexGrow: '1', height: 'calc(100% - 500px)',margin:'8px' }}>
                         <CompoundBox
                             direction={RenderDirection.horizontal}
                             flexes={[70, 30]}
-                            >
-                            <div
-                                style={{
-                                    width: 'calc(100% - 8px)',
-                                    height: 'calc(100% - 16px)',
-                                    margin: '8px',
-                                }}>
-                                <RevenueTable data={this.state.filteredRevenues} isLoading={this.state.loadingRevenuesData} displayDetails={this.handleDisplayDetails}></RevenueTable>
-                            </div>
+                        >
+                            <RevenueTable
+                                data={this.state.filteredRevenues}
+                                isLoading={this.state.loadingRevenuesData}
+                                displayDetails={this.handleDisplayDetails}></RevenueTable>
+
                             <div style={{
                                 width: '100%',
-                                height: 'calc(100% - 16px)',
-                                margin: '8px 0px',
+                                height: '100%',
+                                margin: '0px',
                                 backgroundColor: 'rgba(255,255,255,0.5)',
                                 borderRadius: '8px'
                             }}>
@@ -270,7 +267,6 @@ class RevenuePage extends Component<{}, RevenuePageProps> {
                                     this.state.loadingRevenueData ?
                                         (<div style={{
                                             width: '100%',
-                                            height: '100%',
                                             overflow: 'hidden',
                                             flexGrow: '1',
                                             display: 'flex',
