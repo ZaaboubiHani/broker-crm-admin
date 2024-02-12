@@ -21,6 +21,7 @@ import Box from '@mui/material/Box';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import CompoundBox, { RenderDirection } from '../../components/compound-box/compound-box.component';
+import Snackbar from '@mui/material/Snackbar';
 
 
 interface DelegatePageState {
@@ -245,8 +246,6 @@ class DelegatePage extends Component<{}, DelegatePageState> {
 
     };
 
-
-
     handleSelectSupervisor = async (supervisor?: UserModel) => {
         this.setState({
             selectedReport: undefined,
@@ -282,6 +281,7 @@ class DelegatePage extends Component<{}, DelegatePageState> {
     handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
         this.setState({ index: newValue, selectedReport: undefined, selectedVisit: undefined, selectedCommand: undefined });
     };
+
 
     componentDidMount(): void {
         if (localStorage.getItem('isLogged') === 'true') {
@@ -367,7 +367,7 @@ class DelegatePage extends Component<{}, DelegatePageState> {
                                     <CompoundBox
                                         direction={RenderDirection.horizontal}
                                         flexes={[70, 30]}
-                                        >
+                                    >
                                         <DelegateTable
                                             id='delegatetable'
                                             total={this.state.totalDelegate}
@@ -416,7 +416,6 @@ class DelegatePage extends Component<{}, DelegatePageState> {
                                             }
                                         </div>
                                     </CompoundBox>
-
                                 </div>
                             </div>
                         </CustomTabPanel>
@@ -450,7 +449,7 @@ class DelegatePage extends Component<{}, DelegatePageState> {
                                     <CompoundBox
                                         direction={RenderDirection.horizontal}
                                         flexes={[70, 30]}
-                                        >
+                                    >
                                         <DelegateTable
                                             id='delegatetable'
                                             total={this.state.totalKam}

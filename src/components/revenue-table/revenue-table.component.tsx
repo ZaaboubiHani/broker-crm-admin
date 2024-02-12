@@ -20,7 +20,8 @@ const RevenueTable: React.FC<RevenueTableProps> = ({ data, id, isLoading, displa
             flexDirection: 'column',
             flexGrow: '1',
             borderRadius: '8px',
-            height:'100%'
+            height: '100%',
+           
         }}>
             {
                 isLoading ? (<div style={{
@@ -31,6 +32,7 @@ const RevenueTable: React.FC<RevenueTableProps> = ({ data, id, isLoading, displa
                     display: 'flex',
                     justifyContent: 'center',
                     alignItems: 'center',
+                   
                 }}>
                     <DotSpinner
                         size={40}
