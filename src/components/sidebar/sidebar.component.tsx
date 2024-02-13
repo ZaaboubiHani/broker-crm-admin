@@ -174,12 +174,12 @@ const Sidebar: React.FC = () => {
             icon={<CalendarMonthIcon style={{ color: 'white', width: '30px', height: '30px', marginRight: '8px' }} />}
           />) : undefined
         }
-        {/* <NavListItem
+        <NavListItem
             name='Tâches'
             route='/task'
             isOpen={sidebarOpen}
             icon={<ListAltIcon style={{ color: 'white', width: '30px', height: '30px', marginRight: '8px' }} />}
-          /> */}
+          />
         <NavListItem
             name='Rapports des visites'
             route='/report'

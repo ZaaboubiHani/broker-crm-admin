@@ -3,7 +3,7 @@ import { formatDateToYYYYMMDD } from '../../functions/date-format';
 import { DotSpinner } from '@uiball/loaders';
 import Button from '@mui/material/Button';
 import ScalableTable from '../scalable-table/scalable-table.component';
-import TodoModel from '../../models/todo.model';
+import TodoModel, { TodoStatus } from '../../models/todo.model';
 import DoDisturbOnIcon from '@mui/icons-material/DoDisturbOn';
 
 interface TodoTableProps {
@@ -31,6 +31,7 @@ const TodoTable: React.FC<TodoTableProps> = ({ data, id, isLoading, total, size,
             flexDirection: 'column',
             flexGrow: '1',
             borderRadius: '8px',
+            height: '100%'
         }}>
             {
                 isLoading ? (<div style={{
@@ -87,6 +88,14 @@ const TodoTable: React.FC<TodoTableProps> = ({ data, id, isLoading, total, size,
                             {
                                 field: 'status',
                                 headerName: 'Statut',
+                                renderCell(params) {
+                                    return (<div
+                                        style={{
+                                            color: params.row.status === TodoStatus.cancelled ? 'red' : params.row.status === TodoStatus.ignored ? 'rgb(255,69,0)' : params.row.status === TodoStatus.done ? 'green' : params.row.status === TodoStatus.pending ? 'blue' : 'black',
+                                            fontWeight: '700'
+                                        }}
+                                    >{params.row.status === TodoStatus.cancelled ? 'Annulée' : params.row.status === TodoStatus.ignored ? 'Ignorée' : params.row.status === TodoStatus.done ? 'Complétée' : params.row.status === TodoStatus.pending ? 'En attente' : 'Inconnue'}</div>);
+                                },
                             },
                             {
                                 field: 'startDate',
