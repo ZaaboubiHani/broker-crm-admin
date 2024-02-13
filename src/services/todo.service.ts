@@ -22,7 +22,7 @@ export default class TodoService {
         const token = localStorage.getItem('token');
 
         var todos: TodoModel[] = [];
-        var response = await axios.get(`${Globals.apiUrl}/todos?filters[delegate][id][$eq]=${userId}&populate=delegate&populate=supervisor&pagination[page]=${page}&pagination[pageSize]=${size}`,
+        var response = await axios.get(`${Globals.apiUrl}/todos?filters[delegate][id][$eq]=${userId}&populate=delegate&populate=supervisor&pagination[page]=${page}&pagination[pageSize]=${size}&sort[0]=createdAt:desc`,
             {
                 headers: {
                     'Authorization': `Bearer ${token}`

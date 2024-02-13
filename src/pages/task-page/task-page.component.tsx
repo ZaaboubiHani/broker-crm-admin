@@ -3,7 +3,6 @@ import '../task-page/task-page.style.css';
 import UserService from '../../services/user.service';
 import UserModel, { UserType } from '../../models/user.model';
 import { DotSpinner } from '@uiball/loaders'
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import CustomTabPanel from '../../components/custom-tab-panel/costum-tab-panel.component';
 import Box from '@mui/material/Box';
 import Tabs from '@mui/material/Tabs';
@@ -12,15 +11,9 @@ import UserDropdown from '../../components/user-dropdown/user-dropdown';
 import TodoService from '../../services/todo.service';
 import TodoModel from '../../models/todo.model';
 import TodoTable from '../../components/todo-table/todo-table.component';
-import TextField from '@mui/material/TextField';
-import { DatePicker } from '@mui/x-date-pickers/DatePicker';
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import AddTaskIcon from '@mui/icons-material/AddTask';
-import Button from '@mui/material/Button';
-import { frFR } from '@mui/x-date-pickers/locales';
 import Snackbar from '@mui/material/Snackbar';
-import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
-import frLocale from 'date-fns/locale/fr';
+import CompoundBox, { RenderDirection } from '../../components/compound-box/compound-box.component';
+import TaskPanel from '../../components/task-panel/task-panel.component';
 
 interface TaskPageState {
     isLoading: boolean;
@@ -39,7 +32,6 @@ interface TaskPageState {
     delegateTotal: number;
     delegatePage: number;
     delegateSize: number;
-    todo: TodoModel;
     showSnackbar: boolean;
     snackbarMessage: string;
 }
@@ -62,7 +54,6 @@ class TaskPage extends Component<{}, TaskPageState> {
             delegatePage: 1,
             delegateTotal: 0,
             delegateSize: 100,
-            todo: new TodoModel({ startDate: undefined }),
             showSnackbar: false,
             snackbarMessage: '',
         }
@@ -160,53 +151,55 @@ class TaskPage extends Component<{}, TaskPageState> {
         });
     }
 
-    handleCreateTodo = async () => {
+    handleCreateTodo = async (todo: TodoModel) => {
         this.setState({
             loadingTodos: true,
         });
-        if (!this.state.todo.action) {
+        if (!todo.action) {
             this.setState({
                 showSnackbar: true,
                 snackbarMessage: 'champ Action requis',
             })
         }
-        else if (!this.state.todo.task) {
+        else if (!todo.task) {
             this.setState({
                 showSnackbar: true,
                 snackbarMessage: 'champ Tâche requis',
             })
         }
-        else if (!this.state.todo.region) {
+        else if (!todo.region) {
             this.setState({
                 showSnackbar: true,
                 snackbarMessage: 'champ Région requis',
             })
         }
-        else if (!this.state.todo.remark) {
+        else if (!todo.remark) {
             this.setState({
                 showSnackbar: true,
                 snackbarMessage: 'champ Remarque requis',
             })
-        } else if (!this.state.todo.startDate) {
+        } else if (!todo.startDate) {
             this.setState({
                 showSnackbar: true,
                 snackbarMessage: 'champ Date de début requis',
             })
-        } else if (!this.state.todo.endDate) {
+        } else if (!todo.endDate) {
             this.setState({
                 showSnackbar: true,
                 snackbarMessage: 'champ Date de fin requis',
             })
-        }
-        else {
-            this.state.todo.delegate = this.state.selectedDelegate;
-            await this.todoService.createTodo(this.state.todo);
+        } else if (todo.endDate <= todo.startDate) {
+            this.setState({
+                showSnackbar: true,
+                snackbarMessage: 'La date de fin doit être postérieure à la date de début',
+            });
+        } else {
+            todo.delegate = this.state.selectedDelegate;
+            await this.todoService.createTodo(todo);
             var { todos, total } = await this.todoService.getAllTodosOfDelegate(this.state.selectedDelegate!.id!, this.state.delegatePage, this.state.delegateSize);
             this.setState({
                 delegateTodos: todos,
                 delegateTotal: total,
-                todo: new TodoModel({
-                }),
             });
         }
         this.setState({
@@ -260,7 +253,13 @@ class TaskPage extends Component<{}, TaskPageState> {
                         </Box>
                         <CustomTabPanel value={this.state.index} index={0} >
                             <div style={{ display: 'flex', flexDirection: 'column', flexGrow: '1', height: 'calc(100vh  - 65px)', width: '100%' }}>
-                                <div style={{ display: 'flex', justifyContent: 'stretch', flexGrow: '1', marginTop: '8px', marginBottom: '8px' }}>
+                                <div style={{
+                                    display: 'flex',
+                                    justifyContent: 'stretch',
+                                    marginTop: '8px',
+                                    marginBottom: '8px',
+                                    height: '50px',
+                                }}>
                                     {
                                         this.state.currentUser.type === UserType.admin ?
                                             (<div style={{ height: '50px', width: '150px', marginRight: '8px' }}>
@@ -283,108 +282,31 @@ class TaskPage extends Component<{}, TaskPageState> {
                                     </div>
                                 </div>
                                 <div style={{
-                                    width: '100%',
-                                    flexGrow: '1',
+                                    flex: '1',
                                     display: 'flex',
-                                    height: 'calc(100% - 50px)'
+                                    flexGrow: '1',
                                 }}>
-                                    <TodoTable
-                                        id='todo-table'
-                                        data={this.state.delegateTodos}
-                                        isLoading={this.state.loadingTodos}
-                                        page={this.state.delegatePage}
-                                        size={this.state.delegateSize}
-                                        total={this.state.delegateTotal}
-                                        pageChange={this.handleDelegatePageChange}
-                                    ></TodoTable>
-                                    <div
-                                        style={{
-                                            width: '30%',
-                                            backgroundColor: 'rgba(255,255,255,0.5)',
-                                            margin: '0px 0px 8px',
-                                            borderRadius: '4px',
-                                            border: '1px solid rgba(127,127,127,0.2)',
-                                            padding: '8px',
-                                        }}>
-                                        <TextField
-                                            id={this.state.todo.action}
-                                            sx={{ margin: '8px', width: 'calc(100% - 16px)' }}
+                                    <CompoundBox
+                                        direction={RenderDirection.horizontal}
+                                        flexes={[70, 30]}
+                                    >
+                                        <TodoTable
+                                            id='todo-table'
+                                            data={this.state.delegateTodos}
+                                            isLoading={this.state.loadingTodos}
+                                            page={this.state.delegatePage}
+                                            size={this.state.delegateSize}
+                                            total={this.state.delegateTotal}
+                                            pageChange={this.handleDelegatePageChange}
+                                        ></TodoTable>
+                                        <TaskPanel
                                             disabled={this.state.selectedDelegate === undefined}
-                                            size='small' label="Action" variant="outlined"
-                                            value={this.state.todo.action}
-                                            onChange={(event) => {
-                                                this.state.todo.action = event.target.value;
-                                            }} />
-                                        <TextField
-                                            id={this.state.todo.task}
-                                            sx={{ margin: '8px', width: 'calc(100% - 16px)' }}
-                                            disabled={this.state.selectedDelegate === undefined}
-                                            size='small' label="Tâche" variant="outlined"
-                                            value={this.state.todo.task}
-                                            onChange={(event) => {
-                                                this.state.todo.task = event.target.value;
-                                            }} />
-                                        <TextField
-                                            id={this.state.todo.region}
-                                            sx={{ margin: '8px', width: 'calc(100% - 16px)' }}
-                                            disabled={this.state.selectedDelegate === undefined}
-                                            size='small' label="Région" variant="outlined"
-                                            value={this.state.todo.region}
-                                            onChange={(event) => {
-                                                this.state.todo.region = event.target.value;
-                                            }} />
-                                        <LocalizationProvider
-                                            dateAdapter={AdapterDayjs}>
-                                            <DateTimePicker
-                                                sx={{
-                                                    margin: '8px',
-                                                    width: 'calc(100% - 16px)',
-                                                }}
-
-                                                disabled={this.state.selectedDelegate === undefined}
-                                                views={['year', 'month', 'day', 'hours', 'minutes']}
-                                                onChange={(date) => {
-                                                    this.state.todo.startDate = new Date(date!.toString());
-                                                }} label="Date de début"
-                                            />
-                                        </LocalizationProvider>
-                                        <LocalizationProvider
-                                            dateAdapter={AdapterDayjs}>
-                                            <DatePicker
-
-                                                sx={{
-                                                    margin: '8px',
-                                                    width: 'calc(100% - 16px)',
-                                                }}
-                                                disabled={this.state.selectedDelegate === undefined}
-
-                                                onChange={(date) => {
-                                                    this.state.todo.endDate = new Date(date!.toString());
-                                                }} label="Date de fin" />
-                                        </LocalizationProvider>
-                                        <TextField
-                                            id={this.state.todo.remark}
-                                            disabled={this.state.selectedDelegate === undefined}
-                                            sx={{ margin: '8px', width: 'calc(100% - 16px)' }}
-                                            label="Remarque"
-                                            size='small'
-                                            multiline
-                                            maxRows={4}
-                                            value={this.state.todo.remark}
-                                            onChange={(event) => {
-                                                this.state.todo.remark = event.target.value;
-                                            }}
-                                        />
-                                        <Button variant="outlined"
-                                            disabled={this.state.selectedDelegate === undefined}
-                                            sx={{ margin: '8px' }}
-                                            onClick={this.handleCreateTodo}
-                                        >
-                                            <AddTaskIcon style={{ marginRight: '8px' }} /> Ajouter une tâche
-                                        </Button>
-                                    </div>
+                                            onCreateTodo={this.handleCreateTodo}
+                                        ></TaskPanel>
+                                    </CompoundBox>
                                 </div>
-                                <Snackbar anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }} onClose={this.handleCloseSanckbar} open={this.state.showSnackbar} autoHideDuration={3000} message={this.state.snackbarMessage} />
+                                <Snackbar anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+                                 onClose={this.handleCloseSanckbar} open={this.state.showSnackbar} autoHideDuration={3000} message={this.state.snackbarMessage} />
                             </div>
                         </CustomTabPanel>
                         <CustomTabPanel value={this.state.index} index={1} >
