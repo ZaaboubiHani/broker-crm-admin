@@ -179,8 +179,6 @@ const MapDialog: React.FC<MapDialogProps> = ({ isOpen, onClose, visitsCoordinate
         return `rgba(${r},${g},${b},${showTrackingPath ? 1 : 0.2})`;
     };
 
-
-
     useEffect(() => {
         let polylines: UserTrackingModel[][] = [];
         let poly: UserTrackingModel[] = [];
@@ -213,8 +211,10 @@ const MapDialog: React.FC<MapDialogProps> = ({ isOpen, onClose, visitsCoordinate
                 height: '500px',
                 zIndex: '0'
             }}
-
-                center={ll.latLng(calculateCenter()[0], calculateCenter()[1])} zoom={13} scrollWheelZoom={false}>
+            dragging={false}
+            center={ll.latLng(calculateCenter()[0], calculateCenter()[1])} 
+            zoom={13}  
+            scrollWheelZoom={true}>
                 <TileLayer
                     attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
                     url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
@@ -286,7 +286,6 @@ const MapDialog: React.FC<MapDialogProps> = ({ isOpen, onClose, visitsCoordinate
                         pathOptions={{ fillColor: calculateColorGradient(index, tracking.length), color: calculateColorGradient(index, trackingPolylines.length), }}
                         positions={tracking.map((c) => ll.latLng(parseFloat(c.latitude!), parseFloat(c.longitude!)))} />))
                 }
-                <TrackingList trackings={trackings.filter(t => t.latitude)}></TrackingList>
 
                 <div style={{
                     position: 'absolute',
@@ -324,7 +323,10 @@ const MapDialog: React.FC<MapDialogProps> = ({ isOpen, onClose, visitsCoordinate
                 >
                     <CloseIcon />
                 </Button>
+                <TrackingList trackings={trackings.filter(t => t.latitude)}></TrackingList>
             </MapContainer>
+            
+           
         </Dialog>
     );
 }
