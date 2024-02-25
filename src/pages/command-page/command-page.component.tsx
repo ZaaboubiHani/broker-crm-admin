@@ -126,30 +126,27 @@ class CommandPage extends Component<{}, CommandDelegatePageProps> {
     }
 
     loadCommandPageData = async () => {
-
-        var currentUser = await this.userService.getMe();
-        if (currentUser != undefined) {
+        if (this.state.currentUser === undefined) {
+            var currentUser = await this.userService.getMe();
             this.setState({ currentUser: currentUser });
         }
+        else {
+            if (this.state.currentUser.type === UserType.supervisor) {
+                var delegates = await this.userService.getUsersByCreator(this.state.currentUser.id!, UserType.delegate);
 
-        if (currentUser.type === UserType.supervisor) {
-            var delegates = await this.userService.getUsersByCreator(currentUser.id!, UserType.delegate);
-
-            this.setState({ currentUser: currentUser, isLoading: false, delegates: delegates, });
-        } else {
-            var supervisors = await this.userService.getUsersByCreator(currentUser.id!, UserType.supervisor);
-            var kams = await this.userService.getUsersByCreator(currentUser.id!, UserType.kam);
-            var suppliers = await this.supplierService.getAllSuppliers();
-            this.setState({
-                currentUser: currentUser,
-                isLoading: false,
-                supervisors: supervisors,
-                kams: kams,
-                suppliers: suppliers,
-            });
+                this.setState({ isLoading: false, delegates: delegates, });
+            } else {
+                var supervisors = await this.userService.getUsersByCreator(this.state.currentUser.id!, UserType.supervisor);
+                var kams = await this.userService.getUsersByCreator(this.state.currentUser.id!, UserType.kam);
+                var suppliers = await this.supplierService.getAllSuppliers();
+                this.setState({
+                    isLoading: false,
+                    supervisors: supervisors,
+                    kams: kams,
+                    suppliers: suppliers,
+                });
+            }
         }
-
-
     }
 
     handleDisplayDelegateCommand = async (command: CommandModel) => {
@@ -356,7 +353,7 @@ class CommandPage extends Component<{}, CommandDelegatePageProps> {
                                 <CompoundBox
                                     direction={RenderDirection.horizontal}
                                     flexes={[70, 30]}
-                                    >
+                                >
                                     <CommandDelegateTable
                                         id='command-delegate-table'
                                         total={this.state.totalDelegate}
@@ -429,7 +426,7 @@ class CommandPage extends Component<{}, CommandDelegatePageProps> {
                                 <CompoundBox
                                     direction={RenderDirection.horizontal}
                                     flexes={[70, 30]}
-                                    >
+                                >
                                     <CommandCamTable
                                         id='command-cam-table'
                                         total={this.state.totalKam}

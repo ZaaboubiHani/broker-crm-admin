@@ -79,7 +79,7 @@ class HomePage extends Component<{}, HomePageState> {
             delegateOrder: false,
             kamOrder: false,
             showSnackbar: false,
-            snackbarMessage:'',
+            snackbarMessage: '',
         }
     }
 
@@ -102,62 +102,61 @@ class HomePage extends Component<{}, HomePageState> {
 
     loadHomePageData = async () => {
 
-        var currentUser = await this.userService.getMe();
-
-        if (currentUser != undefined) {
+        if (this.state.currentUser === undefined) {
+            var currentUser = await this.userService.getMe();
             this.setState({ currentUser: currentUser });
         }
+        else {
+            if (this.state.currentUser.type === UserType.supervisor) {
+                var { visits: visits, total: total } = await this.visitService.getAllVisits(this.state.delegatePage,
+                    this.state.sizeDelegate,
+                    new Date(),
+                    ClientType.pharmacy,
+                    this.state.currentUser.id!,
+                    this.state.delegateOrder,
+                    this.state.delegateProp);
+                this.setState({
+                    delegateVisits: visits,
+                    filteredDelegateVisits: visits,
+                    totalDelegate: total,
+                });
+            } else if (this.state.currentUser.type === UserType.admin) {
+                var supervisors = await this.userService.getUsersByCreator(this.state.currentUser.id!, UserType.supervisor);
+                this.setState({
+                    supervisors: supervisors,
+                });
+                var { visits: kamVisits, total: totalKam } = await this.visitService.getAllVisits(this.state.kamPage, this.state.sizeKam, new Date(), ClientType.wholesaler, this.state.currentUser.id!, this.state.kamOrder, this.state.kamProp);
+                this.setState({
+                    kamVisits: kamVisits,
+                    filteredKamVisits: kamVisits,
+                    loadingVisitsData: false,
+                    kamPage: 1,
+                    delegatePage: 1,
+                    totalKam: totalKam,
+                });
+            }
+            else {
+                var { visits: delegateVisits, total: totalDelegate } = await this.visitService.getAllVisits(this.state.delegatePage, this.state.sizeDelegate, new Date(), ClientType.pharmacy, 0, this.state.delegateOrder, this.state.delegateProp);
+                this.setState({
+                    delegateVisits: delegateVisits,
+                    filteredDelegateVisits: delegateVisits,
+                    totalDelegate: totalDelegate,
+                });
 
-        if (currentUser.type === UserType.supervisor) {
-            var { visits: visits, total: total } = await this.visitService.getAllVisits(this.state.delegatePage,
-                this.state.sizeDelegate,
-                new Date(),
-                ClientType.pharmacy,
-                currentUser.id!,
-                this.state.delegateOrder,
-                this.state.delegateProp);
+                var { visits: kamVisits, total: totalKam } = await this.visitService.getAllVisits(this.state.kamPage, this.state.sizeKam, new Date(), ClientType.wholesaler, this.state.currentUser.id!, this.state.kamOrder, this.state.kamProp);
+                this.setState({
+                    kamVisits: kamVisits,
+                    filteredKamVisits: kamVisits,
+                    loadingVisitsData: false,
+                    kamPage: 1,
+                    delegatePage: 1,
+                    totalKam: totalKam,
+                });
+            }
             this.setState({
                 isLoading: false,
-                delegateVisits: visits,
-                filteredDelegateVisits: visits,
-                totalDelegate: total,
-            });
-        } else if (currentUser.type === UserType.admin) {
-            var supervisors = await this.userService.getUsersByCreator(currentUser.id!, UserType.supervisor);
-            this.setState({
-                supervisors: supervisors,
-            });
-            var { visits: kamVisits, total: totalKam } = await this.visitService.getAllVisits(this.state.kamPage, this.state.sizeKam, new Date(), ClientType.wholesaler, this.state.currentUser.id!, this.state.kamOrder, this.state.kamProp);
-            this.setState({
-                kamVisits: kamVisits,
-                filteredKamVisits: kamVisits,
-                loadingVisitsData: false,
-                kamPage: 1,
-                delegatePage: 1,
-                totalKam: totalKam,
             });
         }
-        else {
-            var { visits: delegateVisits, total: totalDelegate } = await this.visitService.getAllVisits(this.state.delegatePage, this.state.sizeDelegate, new Date(), ClientType.pharmacy, 0, this.state.delegateOrder, this.state.delegateProp);
-            this.setState({
-                delegateVisits: delegateVisits,
-                filteredDelegateVisits: delegateVisits,
-                totalDelegate: totalDelegate,
-            });
-
-            var { visits: kamVisits, total: totalKam } = await this.visitService.getAllVisits(this.state.kamPage, this.state.sizeKam, new Date(), ClientType.wholesaler, this.state.currentUser.id!, this.state.kamOrder, this.state.kamProp);
-            this.setState({
-                kamVisits: kamVisits,
-                filteredKamVisits: kamVisits,
-                loadingVisitsData: false,
-                kamPage: 1,
-                delegatePage: 1,
-                totalKam: totalKam,
-            });
-        }
-        this.setState({
-            isLoading: false,
-        });
     };
 
     componentDidMount(): void {
@@ -188,8 +187,8 @@ class HomePage extends Component<{}, HomePageState> {
                     totalDelegate: totalDelegate,
                 });
             }
-            else{
-                this.setState({showSnackbar:true,snackbarMessage:'Sélectionner un superviseur pour voir les visites'});
+            else {
+                this.setState({ showSnackbar: true, snackbarMessage: 'Sélectionner un superviseur pour voir les visites' });
             }
             var { visits: kamVisits, total: totalKam } = await this.visitService.getAllVisits(1, this.state.sizeKam, date, ClientType.wholesaler, this.state.currentUser.id!, this.state.kamOrder, this.state.kamProp);
             this.setState({
@@ -238,7 +237,7 @@ class HomePage extends Component<{}, HomePageState> {
             delegatePage: 1,
         });
     }
-    
+
     handleCloseSanckbar = (event: React.SyntheticEvent | Event, reason?: string) => {
         this.setState({ showSnackbar: false });
     };
@@ -514,7 +513,7 @@ class HomePage extends Component<{}, HomePageState> {
                                     <CompoundBox
                                         direction={RenderDirection.horizontal}
                                         flexes={[70, 30]}
-                                        >
+                                    >
                                         <HomeTable id='hometable'
                                             firstHeader='Kam'
                                             total={this.state.totalKam}
