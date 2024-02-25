@@ -22,11 +22,11 @@ export default class UserService {
         var activityResponse: AxiosResponse;
         var currentUser = await this.getMe();
         var companyResponse = await axios.get(`${Globals.apiUrl}/companies`,
-           {
-            headers: {
-                'Authorization': `Bearer ${token}`
-            }
-        });
+            {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
 
         if (user.type !== UserType.supervisor) {
             activityResponse = await axios.post(`${Globals.apiUrl}/activities`,
@@ -34,7 +34,7 @@ export default class UserService {
                     data: {
                         delegate: user.id,
                         wilayas: user.wilayas?.map<number>(w => w.id!),
-                        
+
                     }
                 }, {
                 headers: {
@@ -43,7 +43,7 @@ export default class UserService {
             });
         }
 
-        
+
 
         var response = await axios.post(`${Globals.apiUrl}/users`,
             {
@@ -55,7 +55,7 @@ export default class UserService {
                 creatorId: currentUser.id,
                 confirmed: true,
                 role: 1,
-                company: companyResponse.data.data[0].id ,
+                company: companyResponse.data.data[0].id,
                 relatedType: user.type === UserType.delegate ? 3 : user.type === UserType.supervisor ? 2 : 4,
                 wilayaActivity: user.type !== UserType.supervisor ? activityResponse!.data.data.id : null
             }, {
@@ -81,9 +81,9 @@ export default class UserService {
                     'Authorization': `Bearer ${token}`
                 }
             });
-            console.log({
-                wilayas: user.wilayas?.map<number>(w => w.id!)
-            });
+        console.log({
+            wilayas: user.wilayas?.map<number>(w => w.id!)
+        });
 
         if (activityResponse.data.wilayaActivity) {
             await axios.put(`${Globals.apiUrl}/activities/${activityResponse.data.wilayaActivity.id}`,
@@ -226,7 +226,7 @@ export default class UserService {
 
     async getMe(): Promise<UserModel> {
         const token = localStorage.getItem('token');
-
+        
         try {
             var response = await axios.get(`${Globals.apiUrl}/users/me?populate=*`,
                 {
