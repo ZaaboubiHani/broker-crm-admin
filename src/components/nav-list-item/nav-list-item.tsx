@@ -53,7 +53,7 @@ const NavListItem: React.FC<NavListItemProps> = ({ name, route, icon, isOpen }) 
                 style={{
                     display: 'flex',
                     backgroundColor: onHoverBool || location.pathname === route ? PRIMARY_COLOR_HIGHLIGHT : undefined,
-                    height: '26px',
+                    height: '24px',
                     margin:'1px 0px',
                     transition: 'all 300ms ease',
                     position: 'relative',
