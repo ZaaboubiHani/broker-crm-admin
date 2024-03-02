@@ -139,8 +139,8 @@ class ClientsPage extends Component<{}, ClientsPageProps> {
 
     handleDisplayPharmVisits = async (client: ClientModel) => {
         this.setState({ loadingVisitsData: true, pharmReportData: undefined, showVisitPanel: true });
-        var { visits, total } = await this.visitService.getAllVisitsPaginated(client.id!, this.state.selectedSupervisor?.id ?? this.state.currentUser!.id!, this.state.selectedDelegate?.id);
-        this.setState({ loadingVisitsData: false, pharmVisits: visits, selectedClient: client, showVisitPanel: true });
+        var { visits, total } = await this.visitService.getAllVisitsPaginated(client.id!, this.state.selectedSupervisor?.id ?? this.state.currentUser!.id!);
+        this.setState({ loadingVisitsData: false, pharmVisits: visits, selectedClient: client, showVisitPanel: true, selectedUserId: this.state.selectedDelegate?.id });
     };
 
     handleDisplayWholeVisits = async (client: ClientModel) => {
@@ -153,7 +153,7 @@ class ClientsPage extends Component<{}, ClientsPageProps> {
     handleDisplayDocVisits = async (client: ClientModel) => {
         this.setState({ loadingVisitsData: true, docReportData: undefined, showVisitPanel: true });
         var { visits, total } = await this.visitService.getAllVisitsPaginated(client.id!, this.state.selectedSupervisor?.id ?? this.state.currentUser!.id!, this.state.selectedDelegate?.id);
-        this.setState({ loadingVisitsData: false, docVisits: visits, selectedClient: client, showVisitPanel: true });
+        this.setState({ loadingVisitsData: false, docVisits: visits, selectedClient: client, showVisitPanel: true, selectedUserId: this.state.selectedDelegate?.id });
     };
 
     loadClientsPageData = async () => {
@@ -793,8 +793,7 @@ class ClientsPage extends Component<{}, ClientsPageProps> {
                                                                 <InputLabel>Délégués de visites</InputLabel>
                                                                 <Select
                                                                     label="Trier avec"
-                                                                    value={this.state.selectedDelegate?.id}
-                                                                    disabled={this.state.selectedDelegate !== undefined}
+                                                                    value={this.state.selectedUserId}
                                                                     onChange={(event) => {
                                                                         var id = event.target.value as number | undefined;
                                                                         this.setState({ selectedUserId: id });
@@ -867,8 +866,7 @@ class ClientsPage extends Component<{}, ClientsPageProps> {
                                 <div style={{ width: '100%', display: 'flex', flexDirection: 'row', flexGrow: '1', height: 'calc(100% - 55px)' }}>
                                     <CompoundBox
                                         direction={RenderDirection.horizontal}
-                                        flexes={[70, 30]}
-                                    >
+                                        flexes={[70, 30]}>
                                         <div
                                             style={{
                                                 width: '100%',
@@ -937,8 +935,7 @@ class ClientsPage extends Component<{}, ClientsPageProps> {
                                                                     <InputLabel>Délégués de visites</InputLabel>
                                                                     <Select
                                                                         label="Trier avec"
-                                                                        value={this.state.selectedDelegate?.id}
-                                                                        disabled={this.state.selectedDelegate !== undefined}
+                                                                        value={this.state.selectedUserId}
                                                                         onChange={(event) => {
                                                                             var id = event.target.value as number | undefined;
                                                                             this.setState({ selectedUserId: id });
@@ -991,8 +988,7 @@ class ClientsPage extends Component<{}, ClientsPageProps> {
                                 <div style={{ width: '100%', display: 'flex', flexDirection: 'row', flexGrow: '1', height: 'calc(100% - 55px)' }}>
                                     <CompoundBox
                                         direction={RenderDirection.horizontal}
-                                        flexes={[70, 30]}
-                                    >
+                                        flexes={[70, 30]}>
                                         <div
                                             style={{
                                                 width: '100%',
@@ -1035,8 +1031,7 @@ class ClientsPage extends Component<{}, ClientsPageProps> {
                                                             speed={0.9}
                                                             color="black"
                                                         />
-                                                    </div>
-                                                    )
+                                                    </div>)
                                                     :
                                                     this.state.showVisitPanel ? this.state.wholeReportData ? (
                                                         <ReportPanel
