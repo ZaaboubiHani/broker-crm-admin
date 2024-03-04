@@ -31,10 +31,11 @@ export default class VisitTaskService {
         if (response.status == 200) {
             const visitTasks: VisitTaskModel[] = [];
             const lastDayOfMonth = new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate();
-            const today = new Date();
-            // Create an array with days up to today
-            const allDays = Array.from({ length: today.getDate() <= lastDayOfMonth ? today.getDate() : lastDayOfMonth }, (_, index) => index + 1);
-
+            const firstDayOfMonth = new Date(date.getFullYear(), date.getMonth(), 1).getDate();
+            const allDays = Array.from(
+                { length: lastDayOfMonth - firstDayOfMonth + 1 },
+                (_, index) => firstDayOfMonth + index
+            );
             for (let i = 0; i < response.data.finalResult.resultArray.length; i++) {
                 const visitTask = VisitTaskModel.fromJson(response.data.finalResult.resultArray[i]);
                 const visitDay = visitTask.date!.getDate();
