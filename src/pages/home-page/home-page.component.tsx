@@ -102,11 +102,11 @@ class HomePage extends Component<{}, HomePageState> {
 
     loadHomePageData = async () => {
 
-        if (this.state.currentUser === undefined) {
+       
             var currentUser = await this.userService.getMe();
             this.setState({ currentUser: currentUser });
-        }
-        else {
+        
+      
             if (this.state.currentUser.type === UserType.supervisor) {
                 var { visits: visits, total: total } = await this.visitService.getAllVisits(this.state.delegatePage,
                     this.state.sizeDelegate,
@@ -156,7 +156,7 @@ class HomePage extends Component<{}, HomePageState> {
             this.setState({
                 isLoading: false,
             });
-        }
+        
     };
 
     componentDidMount(): void {

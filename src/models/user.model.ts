@@ -18,6 +18,7 @@ class UserModel {
     phoneOne?: string;
     wilaya?: string;
     commune?: string;
+    fcmToken?: string;
     type?: UserType;
     createdAt?: Date;
     isBlocked?: boolean;
@@ -34,6 +35,7 @@ class UserModel {
         phoneOne?: string,
         wilaya?: string,
         commune?: string,
+        fcmToken?: string,
         type?: UserType,
         createdAt?: Date,
         isBlocked?: boolean,
@@ -55,6 +57,7 @@ class UserModel {
         this.isBlocked = params?.isBlocked;
         this.company = params?.company;
         this.wilayas = params?.wilayas;
+        this.fcmToken = params?.fcmToken;
         this.creatorId = params?.creatorId;
     }
 
@@ -81,6 +84,7 @@ class UserModel {
             isBlocked: json?.blocked || json?.attributes?.blocked,
             wilayas: wilayas,
             creatorId: json.creatorId,
+            fcmToken: json.fcmToken,
             company: json.company != null && json.company != undefined ? Company.fromJson(json.company) : undefined
         });
     }

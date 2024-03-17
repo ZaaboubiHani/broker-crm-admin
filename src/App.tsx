@@ -1,16 +1,17 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import './App.css';
 import AppRouter from './routes/routes';
 import { BrowserRouter, } from 'react-router-dom';
 
 
 function App() {
+
   return (
-   
-      <BrowserRouter>
-        <AppRouter />
-      </BrowserRouter>
+    <BrowserRouter>
+      <AppRouter />
+    </BrowserRouter>
   );
 }
+
 
 export default App;

@@ -121,6 +121,7 @@ export default class UserService {
                     username: user.username,
                     email: user.email,
                     phoneOne: user.phoneOne,
+                    fcmToken: user.phoneOne,
                 }
             }, {
             headers: {
@@ -131,6 +132,7 @@ export default class UserService {
 
         return true;
     }
+   
 
     async getUser(userId: number): Promise<UserModel> {
         var token = localStorage.getItem('token');
