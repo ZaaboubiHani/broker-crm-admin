@@ -22,11 +22,13 @@ import CustomTabPanel from '../../components/custom-tab-panel/costum-tab-panel.c
 import Box from '@mui/material/Box';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
-import { formatDateToYYYYMMDD, formatTime } from '../../functions/date-format';
+import { formatTime } from '../../functions/date-format';
 import ReportModel from '../../models/report.model';
 import VisitModel from '../../models/visit.model';
 import UserTrackingModel from '@/src/models/user-tracking.model';
 import CompoundBox, { RenderDirection } from '../../components/compound-box/compound-box.component';
+import TrackChangesIcon from '@mui/icons-material/TrackChanges';
+import Button from '@mui/material/Button/Button';
 
 interface PlanPageProps {
     selectedDate: Date;
@@ -127,6 +129,16 @@ class PlanPage extends Component<{}, PlanPageProps> {
     handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
         this.setState({ index: newValue, delegateReport: undefined, visitTaskDetails: [] });
     };
+    handleRequestInstantTrackingDelegate = async () => {
+        if (this.state.currentUser.type === UserType.supervisor) {
+            await this.userTrackingService.requestInstantTracking(this.state.currentUser.id!, this.state.selectedDelegate!.id!);
+        } else {
+            await this.userTrackingService.requestInstantTracking(this.state.selectedSupervisor!.id!, this.state.selectedDelegate!.id!);
+        }
+    };
+    handleRequestInstantTrackingKam = async () => {
+        await this.userTrackingService.requestInstantTracking(this.state.selectedSupervisor!.id!, this.state.selectedKam!.id!);
+    };
 
 
     handleBackReportPanel = () => {
@@ -167,7 +179,7 @@ class PlanPage extends Component<{}, PlanPageProps> {
         var successRate = await this.statisticsService.getDelegateSuccessRateMonth(this.state.selectedDate, kam!.id!);
 
         this.setState({
-            selectedDelegate: kam,
+            selectedKam: kam,
             kamPlanDeTournee: planDeTournee,
             kamCouverturePortfeuille: couverturePortfeuille,
             kamMoyenneVisitesParJour: moyenneVisitesParJour,
@@ -252,6 +264,7 @@ class PlanPage extends Component<{}, PlanPageProps> {
             selectedSupervisor: supervisor,
             delegateVisitTasks: [],
             loadingDelegates: true,
+            selectedDelegate: undefined,
         });
 
         var delegates = await this.userService.getUsersByCreator(supervisor!.id!, UserType.delegate);
@@ -266,6 +279,7 @@ class PlanPage extends Component<{}, PlanPageProps> {
             delegateVisitTasks: [],
             loadingDelegates: false,
             delegates: delegates,
+
         });
     }
 
@@ -424,6 +438,22 @@ class PlanPage extends Component<{}, PlanPageProps> {
                                         />
                                     </div>
                                     <MonthYearPicker onPick={this.handleOnPickDate}></MonthYearPicker >
+                                    {
+                                        this.state.currentUser.type !== UserType.operator ?
+                                            (<div style={{
+                                                height: '50px',
+                                                width: '150px',
+                                                marginLeft: '8px'
+                                            }}>
+                                                <Button variant="contained"
+                                                    disabled={this.state.selectedDelegate === undefined}
+                                                    sx={{ margin: '0px', height: '40px', }}
+                                                    onClick={this.handleRequestInstantTrackingDelegate}
+                                                >
+                                                    <TrackChangesIcon style={{}} />
+                                                </Button>
+                                            </div>) : null
+                                    }
                                 </div>
                                 <div className='stats-panel' style={{ margin: '0px 8px 8px 8px', paddingLeft: '16px', backgroundColor: 'white' }}>
                                     <CircularProgressLabel colorStroke='#FC761E' direction='row' secondTitle='Realisation plan de tournee' value={this.state.delegatePlanDeTournee} />
@@ -443,7 +473,7 @@ class PlanPage extends Component<{}, PlanPageProps> {
                                     <CompoundBox
                                         direction={RenderDirection.horizontal}
                                         flexes={[70, 30]}
-                                        >
+                                    >
                                         <PlanTable
                                             onDisplayDetails={this.handleSelectVisitTaskDate}
                                             onDisplayMap={this.handleDelegateDisplayMap}
@@ -544,6 +574,22 @@ class PlanPage extends Component<{}, PlanPageProps> {
                                         />
                                     </div>
                                     <MonthYearPicker onPick={this.handleOnPickDate}></MonthYearPicker >
+                                    {
+                                        this.state.currentUser.type !== UserType.operator ?
+                                            (<div style={{
+                                                height: '50px',
+                                                width: '150px',
+                                                marginLeft: '8px'
+                                            }}>
+                                                <Button variant="contained"
+                                                    disabled={this.state.selectedKam === undefined}
+                                                    sx={{ margin: '0px', height: '40px', }}
+                                                    onClick={this.handleRequestInstantTrackingKam}
+                                                >
+                                                    <TrackChangesIcon style={{}} />
+                                                </Button>
+                                            </div>) : null
+                                    }
                                 </div>
                                 <div className='stats-panel' style={{ margin: '0px 8px 8px 8px', paddingLeft: '16px', backgroundColor: 'white' }}>
                                     <CircularProgressLabel colorStroke='#FC761E' direction='row' secondTitle='Realisation plan de tournee' value={this.state.kamPlanDeTournee} />
@@ -562,7 +608,7 @@ class PlanPage extends Component<{}, PlanPageProps> {
                                     <CompoundBox
                                         direction={RenderDirection.horizontal}
                                         flexes={[70, 30]}
-                                        >
+                                    >
                                         <PlanTable
                                             onDisplayDetails={this.handleSelectVisitTaskDate}
                                             onDisplayMap={this.handleKamDisplayMap}

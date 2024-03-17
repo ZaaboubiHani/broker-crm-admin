@@ -30,36 +30,73 @@ export default class VisitTaskService {
 
         if (response.status == 200) {
             const visitTasks: VisitTaskModel[] = [];
-            const lastDayOfMonth = new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate();
-            const firstDayOfMonth = new Date(date.getFullYear(), date.getMonth(), 1).getDate();
-            const allDays = Array.from(
-                { length: lastDayOfMonth - firstDayOfMonth + 1 },
-                (_, index) => firstDayOfMonth + index
-            );
-            for (let i = 0; i < response.data.finalResult.resultArray.length; i++) {
-                const visitTask = VisitTaskModel.fromJson(response.data.finalResult.resultArray[i]);
-                const visitDay = visitTask.date!.getDate();
-                const index = allDays.indexOf(visitDay);
-                if (index !== -1) {
-                    allDays.splice(index, 1);
+            if (date.getFullYear() > new Date().getFullYear() || date.getMonth() > new Date().getMonth()) {
+                return visitTasks;
+            } else if (date.getFullYear() === new Date().getFullYear() && date.getMonth() === new Date().getMonth()) {
+                const currentDayOfMonth = date.getDate();
+                const firstDayOfMonth = new Date(date.getFullYear(), date.getMonth(), 1).getDate();
+                const allDays = Array.from(
+                    { length: currentDayOfMonth - firstDayOfMonth + 1 },
+                    (_, index) => firstDayOfMonth + index
+                );
+                for (let i = 0; i < response.data.finalResult.resultArray.length; i++) {
+                    const visitTask = VisitTaskModel.fromJson(response.data.finalResult.resultArray[i]);
+                    const visitDay = visitTask.date!.getDate();
+                    const index = allDays.indexOf(visitDay);
+                    if (index !== -1) {
+                        allDays.splice(index, 1);
+                    }
+
+                    visitTasks.push(visitTask);
                 }
 
-                visitTasks.push(visitTask);
+                allDays.forEach(day => {
+                    const defaultVisitTask = new VisitTaskModel({
+                        date: new Date(date.getFullYear(), date.getMonth(), day),
+                        tasksWilayasCommunes: [],
+                        visitsWilayasCommunes: [],
+                        numTasks: 0,
+                        numVisits: 0,
+                    });
+                    visitTasks.push(defaultVisitTask);
+                });
+                visitTasks.sort((a, b) => b.date!.getTime() - a.date!.getTime());
+
+                return visitTasks;
+            }
+            else {
+                const lastDayOfMonth = new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate();
+                const firstDayOfMonth = new Date(date.getFullYear(), date.getMonth(), 1).getDate();
+                const allDays = Array.from(
+                    { length: lastDayOfMonth - firstDayOfMonth + 1 },
+                    (_, index) => firstDayOfMonth + index
+                );
+                for (let i = 0; i < response.data.finalResult.resultArray.length; i++) {
+                    const visitTask = VisitTaskModel.fromJson(response.data.finalResult.resultArray[i]);
+                    const visitDay = visitTask.date!.getDate();
+                    const index = allDays.indexOf(visitDay);
+                    if (index !== -1) {
+                        allDays.splice(index, 1);
+                    }
+
+                    visitTasks.push(visitTask);
+                }
+
+                allDays.forEach(day => {
+                    const defaultVisitTask = new VisitTaskModel({
+                        date: new Date(date.getFullYear(), date.getMonth(), day),
+                        tasksWilayasCommunes: [],
+                        visitsWilayasCommunes: [],
+                        numTasks: 0,
+                        numVisits: 0,
+                    });
+                    visitTasks.push(defaultVisitTask);
+                });
+                visitTasks.sort((a, b) => b.date!.getTime() - a.date!.getTime());
+
+                return visitTasks;
             }
 
-            allDays.forEach(day => {
-                const defaultVisitTask = new VisitTaskModel({
-                    date: new Date(date.getFullYear(), date.getMonth(), day),
-                    tasksWilayasCommunes: [],
-                    visitsWilayasCommunes: [],
-                    numTasks: 0,
-                    numVisits: 0,
-                });
-                visitTasks.push(defaultVisitTask);
-            });
-            visitTasks.sort((a, b) => b.date!.getTime() - a.date!.getTime());
-
-            return visitTasks;
         }
         return [];
     }

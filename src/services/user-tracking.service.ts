@@ -33,7 +33,7 @@ export default class UserTrackingService {
                         uerTrackings.push(userTracking);
                     }
                 }
-                if(response.data['data'].length === 0){
+                if (response.data['data'].length === 0) {
                     break;
                 }
                 page++;
@@ -41,6 +41,24 @@ export default class UserTrackingService {
             return uerTrackings;
         } catch (error) {
             return [];
+        }
+
+    }
+
+    async requestInstantTracking(superId: number, userId: number): Promise<void> {
+        try {
+            const token = localStorage.getItem('token');
+
+            await axios.post(`${Globals.apiUrl}/instantTracking`, {
+                user: userId,
+                supervisor: superId
+            }, {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+        } catch (error) {
+
         }
 
     }
