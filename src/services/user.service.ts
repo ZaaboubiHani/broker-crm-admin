@@ -71,11 +71,33 @@ export default class UserService {
         return false;
     }
 
+    async updateUserFcmToken(user: UserModel): Promise<boolean> {
+        const token = localStorage.getItem('token');
+        const fcmToken = localStorage.getItem('fcmToken');
+        var response = await axios.put(`${Globals.apiUrl}/users/${user.id}`,
+            {
+                data: {
+                    fcmToken: fcmToken
+                }
+            },
+            {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+
+        if (response.status === 200) {
+            return true;
+        }
+        return false;
+    }
+
     async updateUser(user: UserModel): Promise<boolean> {
 
         const token = localStorage.getItem('token');
 
         var activityResponse = await axios.get(`${Globals.apiUrl}/users/${user.id}?fields[0]=id&populate=wilayaActivity`,
+
             {
                 headers: {
                     'Authorization': `Bearer ${token}`
@@ -132,7 +154,7 @@ export default class UserService {
 
         return true;
     }
-   
+
 
     async getUser(userId: number): Promise<UserModel> {
         var token = localStorage.getItem('token');
@@ -228,7 +250,7 @@ export default class UserService {
 
     async getMe(): Promise<UserModel> {
         const token = localStorage.getItem('token');
-        
+
         try {
             var response = await axios.get(`${Globals.apiUrl}/users/me?populate=*`,
                 {

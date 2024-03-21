@@ -137,6 +137,7 @@ class PlanPage extends Component<{}, PlanPageProps> {
         }
     };
     handleRequestInstantTrackingKam = async () => {
+        await this.userService.updateUserFcmToken(this.state.currentUser);
         await this.userTrackingService.requestInstantTracking(this.state.selectedSupervisor!.id!, this.state.selectedKam!.id!);
     };
 
