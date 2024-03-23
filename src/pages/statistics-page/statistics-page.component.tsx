@@ -534,6 +534,7 @@ class StatisticsPage extends Component<{}, StatisticsPageProps> {
             this.state.teamContributionPieOptions.labels?.push('entreprise');
 
             this.state.delegatesContributionChartPie.series = [...delegatesContributions.map(e => e.ChiffreDaffaire)];
+            this.state.delegatesContributionChartPie.labels = [];
             this.state.delegatesContributionChartPie.labels?.splice(0, this.state.chartPieOptions.labels?.length);
             delegatesContributions.forEach(e => {
                 this.state.delegatesContributionChartPie.labels?.push(e.delegateName);
@@ -647,13 +648,13 @@ class StatisticsPage extends Component<{}, StatisticsPageProps> {
             this.state.chartPieOptions.series = [contributionStats.delegateSales, contributionStats.teamSales - contributionStats.delegateSales];
             this.state.delegatesContributionChartPie.series = [...delegatesContributions.map(e => e.ChiffreDaffaire)];
             this.state.delegatesContributionChartPie.labels = [];
+            this.state.delegatesContributionChartPie.labels?.splice(0, this.state.chartPieOptions.labels?.length);
             delegatesContributions.forEach(e => {
                 this.state.delegatesContributionChartPie.labels?.push(e.delegateName);
             });
             this.state.chartPieOptions.labels?.splice(0, this.state.chartPieOptions.labels?.length);
             this.state.chartPieOptions.labels?.push(delegate!.username!);
             this.state.chartPieOptions.labels?.push('reste d\'equipe');
-            this.state.delegatesContributionChartPie.labels?.splice(0, this.state.chartPieOptions.labels?.length);
 
             this.state.delegateSuccessRateAreaChart.series = [
                 {
@@ -720,29 +721,11 @@ class StatisticsPage extends Component<{}, StatisticsPageProps> {
                 var visitStats = await this.statisticsService.getDelegateYearVisitStats(date, this.state.selectedDelegate!.id!);
                 var salesStats = await this.statisticsService.getDelegateYearSaleStats(date, this.state.selectedDelegate!.id!);
                 var contributionStats = await this.statisticsService.getDelegateContributionStats(date, this.state.selectedDelegate!.id!, this.state.currentUser.id!);
-                var teamVisitsData = await this.statisticsService.getTeamYearVisitStats(date, this.state.currentUser.id!);
-                var teamSalesData = await this.statisticsService.getTeamYearSaleStats(date, this.state.currentUser.id!);
                 var successRate = await this.statisticsService.getDelegateSuccessRateYear(this.state.selectedDelegate!.id!, date);
-
-                var teamSuccessRate = await this.statisticsService.getTeamSuccessRateYear(this.state.currentUser.id!, date);
-                var delegatesContributions = await this.statisticsService.getDelegatesContributionsOfSupervisor(this.state.currentUser.id!, date,);
-                var teamContribution = await this.statisticsService.getTeamContributionsOfSupervisor(this.state.currentUser.id!, date,);
-
                 this.state.chartPieOptions.series = [contributionStats.delegateSales, contributionStats.teamSales - contributionStats.delegateSales];
                 this.state.chartPieOptions.labels?.splice(0, this.state.chartPieOptions.labels?.length);
                 this.state.chartPieOptions.labels?.push(this.state.selectedDelegate!.username!);
                 this.state.chartPieOptions.labels?.push('reste d\'equipe');
-
-                this.state.teamContributionPieOptions.series = [teamContribution.teamSales, teamContribution.companySales - teamContribution.teamSales];
-                this.state.teamContributionPieOptions.labels?.splice(0, this.state.teamContributionPieOptions.labels?.length);
-                this.state.teamContributionPieOptions.labels?.push('equipe');
-                this.state.teamContributionPieOptions.labels?.push('entreprise');
-
-                this.state.delegatesContributionChartPie.series = [...delegatesContributions.map(e => e.ChiffreDaffaire)];
-                this.state.delegatesContributionChartPie.labels?.splice(0, this.state.chartPieOptions.labels?.length);
-                delegatesContributions.forEach(e => {
-                    this.state.delegatesContributionChartPie.labels?.push(e.delegateName);
-                });
 
                 this.state.delegateSuccessRateAreaChart.series = [
                     {
@@ -752,49 +735,6 @@ class StatisticsPage extends Component<{}, StatisticsPageProps> {
                     {
                         name: 'Total visites',
                         data: successRate.map(e => e.totalVisits),
-                    },
-                ];
-
-                this.state.teamSuccessRateAreaChart.series = [
-                    {
-                        name: 'Total de bon de commandes honores',
-                        data: teamSuccessRate.map(e => e.honoredCommands),
-                    },
-                    {
-                        name: 'Total visites',
-                        data: teamSuccessRate.map(e => e.totalVisits),
-                    },
-                ];
-
-                this.state.teamSalesAreaChart.series = [
-                    {
-                        name: 'Total des ventes',
-                        data: teamSalesData.map(e => e.totalSales),
-                    },
-                    {
-                        name: 'Objectifs chiffre d\'affaire',
-                        data: teamSalesData.map(e => e.salesGoal),
-                    },
-                ];
-
-                this.state.teamVisitGoalAreaChart.series = [
-                    {
-                        name: 'Total visites',
-                        data: teamVisitsData.map(e => e.numberOfVisits),
-                    },
-                    {
-                        name: 'Objectifs de visites',
-                        data: teamVisitsData.map(e => e.visitsGoal),
-                    },
-                ];
-                this.state.teamVisitTaskAreaChart.series = [
-                    {
-                        name: 'Visites réalisées',
-                        data: teamVisitsData.map(e => e.numberOfVisits),
-                    },
-                    {
-                        name: 'Visites programmées',
-                        data: teamVisitsData.map(e => e.numberOfTasks),
                     },
                 ];
 
@@ -831,7 +771,68 @@ class StatisticsPage extends Component<{}, StatisticsPageProps> {
                     },
                 ];
             }
+            var teamVisitsData = await this.statisticsService.getTeamYearVisitStats(date, this.state.currentUser!.id!);
+            var teamSalesData = await this.statisticsService.getTeamYearSaleStats(date, this.state.currentUser!.id!);
+            var teamSuccessRate = await this.statisticsService.getTeamSuccessRateYear(this.state.currentUser!.id!, date);
+            var delegatesContributions = await this.statisticsService.getDelegatesContributionsOfSupervisor(this.state.currentUser!.id!, date);
+            var teamContribution = await this.statisticsService.getTeamContributionsOfSupervisor(this.state.currentUser!.id!, date);
 
+            this.state.teamContributionPieOptions.series = [teamContribution.teamSales, teamContribution.companySales - teamContribution.teamSales];
+            this.state.delegatesContributionChartPie.series = [...delegatesContributions.map(e => e.ChiffreDaffaire)];
+            this.state.delegatesContributionChartPie.labels = [];
+            this.state.delegatesContributionChartPie.labels?.splice(0, this.state.chartPieOptions.labels?.length);
+            delegatesContributions.forEach(e => {
+                this.state.delegatesContributionChartPie.labels?.push(e.delegateName);
+            });
+
+
+            this.state.teamContributionPieOptions.labels?.splice(0, this.state.teamContributionPieOptions.labels?.length);
+            this.state.teamContributionPieOptions.labels?.push('equipe');
+            this.state.teamContributionPieOptions.labels?.push('entreprise');
+
+
+            this.state.teamSuccessRateAreaChart.series = [
+                {
+                    name: 'Total de bon de commandes honores',
+                    data: teamSuccessRate.map(e => e.honoredCommands),
+                },
+                {
+                    name: 'Total visites',
+                    data: teamSuccessRate.map(e => e.totalVisits),
+                },
+            ];
+
+            this.state.teamSalesAreaChart.series = [
+                {
+                    name: 'Total des ventes',
+                    data: teamSalesData.map(e => e.totalSales),
+                },
+                {
+                    name: 'Objectifs chiffre d\'affaire',
+                    data: teamSalesData.map(e => e.salesGoal),
+                },
+            ];
+
+            this.state.teamVisitGoalAreaChart.series = [
+                {
+                    name: 'Total visites',
+                    data: teamVisitsData.map(e => e.numberOfVisits),
+                },
+                {
+                    name: 'Objectifs de visites',
+                    data: teamVisitsData.map(e => e.visitsGoal),
+                },
+            ];
+            this.state.teamVisitTaskAreaChart.series = [
+                {
+                    name: 'Visites réalisées',
+                    data: teamVisitsData.map(e => e.numberOfVisits),
+                },
+                {
+                    name: 'Visites programmées',
+                    data: teamVisitsData.map(e => e.numberOfTasks),
+                },
+            ];
 
             this.setState({
                 selectedDate: date,
@@ -854,13 +855,13 @@ class StatisticsPage extends Component<{}, StatisticsPageProps> {
                 this.state.chartPieOptions.series = [contributionStats.delegateSales, contributionStats.teamSales - contributionStats.delegateSales];
                 this.state.delegatesContributionChartPie.series = [...delegatesContributions.map(e => e.ChiffreDaffaire)];
                 this.state.delegatesContributionChartPie.labels = [];
+                this.state.delegatesContributionChartPie.labels?.splice(0, this.state.chartPieOptions.labels?.length);
                 delegatesContributions.forEach(e => {
                     this.state.delegatesContributionChartPie.labels?.push(e.delegateName);
                 });
                 this.state.chartPieOptions.labels?.splice(0, this.state.chartPieOptions.labels?.length);
                 this.state.chartPieOptions.labels?.push(this.state.selectedDelegate!.username!);
                 this.state.chartPieOptions.labels?.push('reste d\'equipe');
-                this.state.delegatesContributionChartPie.labels?.splice(0, this.state.chartPieOptions.labels?.length);
 
                 this.state.delegateSuccessRateAreaChart.series = [
                     {
@@ -930,6 +931,7 @@ class StatisticsPage extends Component<{}, StatisticsPageProps> {
         this.state.teamContributionPieOptions.series = [teamContribution.teamSales, teamContribution.companySales - teamContribution.teamSales];
         this.state.delegatesContributionChartPie.series = [...delegatesContributions.map(e => e.ChiffreDaffaire)];
         this.state.delegatesContributionChartPie.labels = [];
+        this.state.delegatesContributionChartPie.labels?.splice(0, this.state.chartPieOptions.labels?.length);
         delegatesContributions.forEach(e => {
             this.state.delegatesContributionChartPie.labels?.push(e.delegateName);
         });
@@ -1001,6 +1003,68 @@ class StatisticsPage extends Component<{}, StatisticsPageProps> {
 
         if (currentUser.type === UserType.supervisor) {
             var delegates = await this.userService.getUsersByCreator(currentUser.id!, UserType.delegate);
+            var teamVisitsData = await this.statisticsService.getTeamYearVisitStats(this.state.selectedDate, this.state.currentUser!.id!);
+            var teamSalesData = await this.statisticsService.getTeamYearSaleStats(this.state.selectedDate, this.state.currentUser!.id!);
+            var teamSuccessRate = await this.statisticsService.getTeamSuccessRateYear(this.state.currentUser!.id!, this.state.selectedDate);
+            var delegatesContributions = await this.statisticsService.getDelegatesContributionsOfSupervisor(this.state.currentUser!.id!, this.state.selectedDate);
+            var teamContribution = await this.statisticsService.getTeamContributionsOfSupervisor(this.state.currentUser!.id!, this.state.selectedDate);
+
+            this.state.teamContributionPieOptions.series = [teamContribution.teamSales, teamContribution.companySales - teamContribution.teamSales];
+            this.state.delegatesContributionChartPie.series = [...delegatesContributions.map(e => e.ChiffreDaffaire)];
+            this.state.delegatesContributionChartPie.labels = [];
+            this.state.delegatesContributionChartPie.labels?.splice(0, this.state.chartPieOptions.labels?.length);
+            delegatesContributions.forEach(e => {
+                this.state.delegatesContributionChartPie.labels?.push(e.delegateName);
+            });
+
+
+            this.state.teamContributionPieOptions.labels?.splice(0, this.state.teamContributionPieOptions.labels?.length);
+            this.state.teamContributionPieOptions.labels?.push('equipe');
+            this.state.teamContributionPieOptions.labels?.push('entreprise');
+
+
+            this.state.teamSuccessRateAreaChart.series = [
+                {
+                    name: 'Total de bon de commandes honores',
+                    data: teamSuccessRate.map(e => e.honoredCommands),
+                },
+                {
+                    name: 'Total visites',
+                    data: teamSuccessRate.map(e => e.totalVisits),
+                },
+            ];
+
+            this.state.teamSalesAreaChart.series = [
+                {
+                    name: 'Total des ventes',
+                    data: teamSalesData.map(e => e.totalSales),
+                },
+                {
+                    name: 'Objectifs chiffre d\'affaire',
+                    data: teamSalesData.map(e => e.salesGoal),
+                },
+            ];
+
+            this.state.teamVisitGoalAreaChart.series = [
+                {
+                    name: 'Total visites',
+                    data: teamVisitsData.map(e => e.numberOfVisits),
+                },
+                {
+                    name: 'Objectifs de visites',
+                    data: teamVisitsData.map(e => e.visitsGoal),
+                },
+            ];
+            this.state.teamVisitTaskAreaChart.series = [
+                {
+                    name: 'Visites réalisées',
+                    data: teamVisitsData.map(e => e.numberOfVisits),
+                },
+                {
+                    name: 'Visites programmées',
+                    data: teamVisitsData.map(e => e.numberOfTasks),
+                },
+            ];
             this.setState({ delegates: delegates, });
         } else {
             var supervisors = await this.userService.getUsersByCreator(currentUser.id!, UserType.supervisor);
