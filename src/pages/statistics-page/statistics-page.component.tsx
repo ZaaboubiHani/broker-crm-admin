@@ -646,6 +646,7 @@ class StatisticsPage extends Component<{}, StatisticsPageProps> {
 
             this.state.chartPieOptions.series = [contributionStats.delegateSales, contributionStats.teamSales - contributionStats.delegateSales];
             this.state.delegatesContributionChartPie.series = [...delegatesContributions.map(e => e.ChiffreDaffaire)];
+            this.state.delegatesContributionChartPie.labels = [];
             delegatesContributions.forEach(e => {
                 this.state.delegatesContributionChartPie.labels?.push(e.delegateName);
             });
@@ -852,6 +853,7 @@ class StatisticsPage extends Component<{}, StatisticsPageProps> {
 
                 this.state.chartPieOptions.series = [contributionStats.delegateSales, contributionStats.teamSales - contributionStats.delegateSales];
                 this.state.delegatesContributionChartPie.series = [...delegatesContributions.map(e => e.ChiffreDaffaire)];
+                this.state.delegatesContributionChartPie.labels = [];
                 delegatesContributions.forEach(e => {
                     this.state.delegatesContributionChartPie.labels?.push(e.delegateName);
                 });
@@ -927,6 +929,7 @@ class StatisticsPage extends Component<{}, StatisticsPageProps> {
 
         this.state.teamContributionPieOptions.series = [teamContribution.teamSales, teamContribution.companySales - teamContribution.teamSales];
         this.state.delegatesContributionChartPie.series = [...delegatesContributions.map(e => e.ChiffreDaffaire)];
+        this.state.delegatesContributionChartPie.labels = [];
         delegatesContributions.forEach(e => {
             this.state.delegatesContributionChartPie.labels?.push(e.delegateName);
         });
