@@ -18,6 +18,12 @@ import CommandCamTable from '../../components/command-cam-table/command-cam-tabl
 import SupplierModel from '../../models/supplier.model';
 import SupplierService from '../../services/supplier.service';
 import CompoundBox, { RenderDirection } from '../../components/compound-box/compound-box.component';
+import Button from '@mui/material/Button/Button';
+import StorageIcon from '@mui/icons-material/Storage';
+import * as XLSX from 'xlsx';
+import ProductModel from '@/src/models/product.model';
+import ClientModel from '@/src/models/client.model';
+import { formatDateToYYYYMMDD } from '../../functions/date-format';
 
 
 interface CommandDelegatePageProps {
@@ -275,6 +281,96 @@ class CommandPage extends Component<{}, CommandDelegatePageProps> {
         });
     }
 
+    exportToExcel = (data: any[], fileName: string) => {
+        const ws = XLSX.utils.json_to_sheet(data);
+        const wb = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, ws, 'Sheet1');
+        XLSX.writeFile(wb, `${fileName}.xlsx`);
+    };
+
+
+    handleExportExcelData = async () => {
+        var { commands: commands, total: total } = await this.commandService.getAllCommandsOfDelegate(1, 100, this.state.selectedDateDelegate, this.state.selectedDelegate!.id!);
+        let clientsSet = new Set<number>();
+        let productsSet = new Set<number>();
+        commands.forEach((c) => {
+            if (c.visit?.client && c.isHonored) {
+                clientsSet.add(c.visit.client.id!);
+                c.products?.forEach((p) => {
+                    productsSet.add(p.id!);
+                });
+            }
+        });
+
+        let clients = Array.from(clientsSet).map((clientId) => {
+            return commands.find((c) => c.visit!.client!.id! === clientId)!.visit!.client;
+        });
+        let products = Array.from(productsSet).map((productId) => {
+            return commands.find((c) => c.products!.some((p) => p.id === productId))!.products!.find((p) => p.id === productId);
+        });
+        let filteredCommands: any[] = clients.map((c) => {
+            let coms = commands.filter((com) => com.visit?.client?.id === c!.id);
+            let dates = coms.map((com) => com.visit?.createdDate);
+            let obj: any = {
+                client: c!.name,
+                wilaya: c!.wilaya,
+                commune: c!.commune,
+                commandsNum: coms.length,
+                dates: dates,
+            };
+            products.forEach((p) => {
+                let quantities: number[] = [];
+                dates.forEach((d) => {
+                    quantities.push(coms.find((com) => com.visit?.createdDate === d)?.products?.find((pro) => pro.id === p?.id)?.quantity ?? 0);
+                });
+                obj[`${p!.name}`] = quantities;
+
+            });
+
+            return obj;
+        });
+
+        const alphabet = ['F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'];
+        const workbook = XLSX.utils.book_new();
+        const sheetName = 'Sheet1';
+        const worksheet = XLSX.utils.aoa_to_sheet([[]]);
+        XLSX.utils.book_append_sheet(workbook, worksheet, sheetName);
+
+        let index = 2;
+        let proLen = 0;
+        XLSX.utils.sheet_add_aoa(worksheet, [["Client"]], { origin: 'A1' });
+        XLSX.utils.sheet_add_aoa(worksheet, [["Wilaya"]], { origin: 'B1' });
+        XLSX.utils.sheet_add_aoa(worksheet, [["Commune"]], { origin: 'C1' });
+        XLSX.utils.sheet_add_aoa(worksheet, [["Nombre de commandes"]], { origin: 'D1' });
+        XLSX.utils.sheet_add_aoa(worksheet, [["Dates"]], { origin: 'E1' });
+        while (index - 2 < filteredCommands.length) {
+            XLSX.utils.sheet_add_aoa(worksheet, [[filteredCommands[index - 2].client ?? '']], { origin: `A${index + proLen}` });
+            XLSX.utils.sheet_add_aoa(worksheet, [[filteredCommands[index - 2].wilaya ?? '']], { origin: `B${index + proLen}` });
+            XLSX.utils.sheet_add_aoa(worksheet, [[filteredCommands[index - 2].commune ?? '']], { origin: `C${index + proLen}` });
+            XLSX.utils.sheet_add_aoa(worksheet, [[filteredCommands[index - 2].commandsNum ?? '']], { origin: `D${index + proLen}` });
+            const { client, wilaya, commune, commandsNum, dates, ...others } = filteredCommands[index - 2];
+            let j = 0;
+            for (let key in others) {
+                XLSX.utils.sheet_add_aoa(worksheet, [[key]], { origin: `${alphabet[j]}1` });
+                j++;
+            }
+            for (let i = 1; i <= filteredCommands[index - 2]!.dates!.length; i++) {
+                XLSX.utils.sheet_add_aoa(worksheet, [[formatDateToYYYYMMDD(filteredCommands[index - 2]!.dates[i - 1])]], { origin: `E${index + i + proLen - 1}` });
+                let k = 0;
+                for (let key in others) {
+                    XLSX.utils.sheet_add_aoa(worksheet, [[others[key][i - 1]]], { origin: `${alphabet[k]}${index + i + proLen - 1}` });
+                    k++;
+                }
+            }
+            proLen += filteredCommands[index - 2]!.dates!.length - 1;
+            index++
+        }
+       
+        XLSX.writeFile(workbook, 'your-output-file.xlsx');
+
+
+    };
+
 
     componentDidMount(): void {
         if (localStorage.getItem('isLogged') === 'true') {
@@ -343,6 +439,22 @@ class CommandPage extends Component<{}, CommandDelegatePageProps> {
                                     />
                                 </div>
                                 <MonthYearPicker initialDate={this.state.selectedDateDelegate} onPick={this.handleOnPickDateDelegate}></MonthYearPicker >
+                                {
+                                    this.state.currentUser.type !== UserType.operator ?
+                                        (<div style={{
+                                            height: '50px',
+                                            width: '150px',
+                                            marginLeft: '8px'
+                                        }}>
+                                            <Button variant="contained"
+                                                disabled={this.state.selectedDelegate === undefined}
+                                                sx={{ margin: '0px', height: '40px', }}
+                                                onClick={this.handleExportExcelData}
+                                            >
+                                                <StorageIcon />
+                                            </Button>
+                                        </div>) : null
+                                }
                             </div>
                             <div style={{
                                 width: '100%',
