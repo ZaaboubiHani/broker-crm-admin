@@ -1,7 +1,7 @@
 import axios from "axios";
 import CommandModel from "../models/command.model";
 import Globals from "../api/globals";
-import { formatDateToYYYYMM, formatDateToYYYYMMDD } from "../functions/date-format";
+import { formatDateToYYYY, formatDateToYYYYMM, formatDateToYYYYMMDD } from "../functions/date-format";
 
 
 
@@ -11,12 +11,12 @@ export default class CommandService {
 
     private constructor() {
     }
-  
+
     static getInstance(): CommandService {
-      if (!CommandService._instance) {
-        CommandService._instance = new CommandService();
-      }
-      return CommandService._instance;
+        if (!CommandService._instance) {
+            CommandService._instance = new CommandService();
+        }
+        return CommandService._instance;
     }
     async getCommandOfVisit(visitId: number): Promise<CommandModel> {
         const token = localStorage.getItem('token');
@@ -51,17 +51,44 @@ export default class CommandService {
         }
         return { commands: [], total: 0 };
     }
+    async getAllCommandsOfYear(userId: number): Promise<{ commands: CommandModel[], total: number }> {
+        const token = localStorage.getItem('token');
+        var commands: CommandModel[] = [];
+        let page = 1;
+        let total = 0;
+        while (true) {
+            var response = await axios.get(`${Globals.apiUrl}/commands?publicationState=preview&filters[visit][user][id][$eq]=${userId}&pagination[page]=${page}&pagination[pageSize]=100&populate=products.product&populate=suppliers.supplier&populate=motivations&populate=visit.client.relatedSpeciality.domainType&populate=commandSupplier.supplier&populate=invoice&populate=signature`,
+                {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+            if (response.status == 200 && response.data.data.length > 0) {
+                for (let index = 0; index < response.data['data'].length; index++) {
+                    var command = CommandModel.fromJson(response.data['data'][index]);
+                    commands.push(command);
+                }
+                total = response.data.meta.pagination.total;
+                
+            }
+            if (response.data['data'].length === 0) {
+                break;
+            }
+            page++;
+        }
+        return { commands: commands, total: total };
+    }
 
     async honorCommand(commandId: number, supplierId?: number): Promise<boolean> {
         const token = localStorage.getItem('token');
-    
+
         var response = await axios.put(`${Globals.apiUrl}/honorDishonor`,
             {},
             {
-                params:{
-                    command:commandId,
-                    honor:true,
-                    supplier:supplierId,
+                params: {
+                    command: commandId,
+                    honor: true,
+                    supplier: supplierId,
                 },
                 headers: {
                     'Authorization': `Bearer ${token}`

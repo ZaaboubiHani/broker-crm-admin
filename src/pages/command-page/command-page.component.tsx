@@ -60,6 +60,7 @@ interface CommandDelegatePageProps {
     sizeKam: number;
     kamPage: number;
     commandIndex: number;
+    loadingExcelData: boolean;
 }
 
 class CommandPage extends Component<{}, CommandDelegatePageProps> {
@@ -92,6 +93,7 @@ class CommandPage extends Component<{}, CommandDelegatePageProps> {
             suppliers: [],
             commandIndex: -1,
             showSuppliersDialog: false,
+            loadingExcelData: false,
         }
     }
 
@@ -290,7 +292,8 @@ class CommandPage extends Component<{}, CommandDelegatePageProps> {
 
 
     handleExportExcelData = async () => {
-        var { commands: commands, total: total } = await this.commandService.getAllCommandsOfDelegate(1, 100, this.state.selectedDateDelegate, this.state.selectedDelegate!.id!);
+        this.setState({ loadingExcelData: true });
+        var { commands: commands, total: total } = await this.commandService.getAllCommandsOfYear(this.state.selectedDelegate!.id!);
         let clientsSet = new Set<number>();
         let productsSet = new Set<number>();
         commands.forEach((c) => {
@@ -362,12 +365,12 @@ class CommandPage extends Component<{}, CommandDelegatePageProps> {
                     k++;
                 }
             }
-            proLen += filteredCommands[index - 2]!.dates!.length - 1;
+            proLen += filteredCommands[index - 2]!.dates!.length;
             index++
         }
-       
-        XLSX.writeFile(workbook, 'your-output-file.xlsx');
 
+        XLSX.writeFile(workbook, `Données_excel_des_commandes_${this.state.selectedDelegate?.username}.xlsx`);
+        this.setState({ loadingExcelData: false });
 
     };
 
@@ -444,15 +447,27 @@ class CommandPage extends Component<{}, CommandDelegatePageProps> {
                                         (<div style={{
                                             height: '50px',
                                             width: '150px',
-                                            marginLeft: '8px'
+                                            marginLeft: '8px',
+                                            display: 'flex'
                                         }}>
                                             <Button variant="contained"
-                                                disabled={this.state.selectedDelegate === undefined}
+                                                disabled={this.state.selectedDelegate === undefined || this.state.loadingExcelData}
                                                 sx={{ margin: '0px', height: '40px', }}
                                                 onClick={this.handleExportExcelData}
                                             >
                                                 <StorageIcon />
                                             </Button>
+                                            <div style={{
+                                                marginLeft: '8px',
+                                                display: this.state.loadingExcelData ? "block" : 'none'
+                                            }}>
+
+                                                <DotSpinner
+                                                    size={40}
+                                                    speed={0.9}
+                                                    color="black"
+                                                />
+                                            </div>
                                         </div>) : null
                                 }
                             </div>
