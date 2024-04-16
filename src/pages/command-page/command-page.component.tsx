@@ -442,34 +442,33 @@ class CommandPage extends Component<{}, CommandDelegatePageProps> {
                                     />
                                 </div>
                                 <MonthYearPicker initialDate={this.state.selectedDateDelegate} onPick={this.handleOnPickDateDelegate}></MonthYearPicker >
-                                {
-                                    this.state.currentUser.type !== UserType.operator ?
-                                        (<div style={{
-                                            height: '50px',
-                                            width: '150px',
-                                            marginLeft: '8px',
-                                            display: 'flex'
-                                        }}>
-                                            <Button variant="contained"
-                                                disabled={this.state.selectedDelegate === undefined || this.state.loadingExcelData}
-                                                sx={{ margin: '0px', height: '40px', }}
-                                                onClick={this.handleExportExcelData}
-                                            >
-                                                <StorageIcon />
-                                            </Button>
-                                            <div style={{
-                                                marginLeft: '8px',
-                                                display: this.state.loadingExcelData ? "block" : 'none'
-                                            }}>
 
-                                                <DotSpinner
-                                                    size={40}
-                                                    speed={0.9}
-                                                    color="black"
-                                                />
-                                            </div>
-                                        </div>) : null
-                                }
+                                <div style={{
+                                    height: '50px',
+                                    width: '150px',
+                                    marginLeft: '8px',
+                                    display: 'flex'
+                                }}>
+                                    <Button variant="contained"
+                                        disabled={this.state.selectedDelegate === undefined || this.state.loadingExcelData}
+                                        sx={{ margin: '0px', height: '40px', }}
+                                        onClick={this.handleExportExcelData}
+                                    >
+                                        <StorageIcon />
+                                    </Button>
+                                    <div style={{
+                                        marginLeft: '8px',
+                                        display: this.state.loadingExcelData ? "block" : 'none'
+                                    }}>
+
+                                        <DotSpinner
+                                            size={40}
+                                            speed={0.9}
+                                            color="black"
+                                        />
+                                    </div>
+                                </div>
+
                             </div>
                             <div style={{
                                 width: '100%',
