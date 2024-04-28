@@ -65,7 +65,7 @@ export default class ClientService {
                 sortFilter = `&sort[0]=numVisits:${order ? 'asc' : 'desc'}`;
                 break;
             case 'location':
-                sortFilter = `&sort[0]=client.wilaya:${order ? 'asc' : 'desc'}`;
+                sortFilter = `&sort[0]=wilaya:${order ? 'asc' : 'desc'}`;
                 break;
         }
 
