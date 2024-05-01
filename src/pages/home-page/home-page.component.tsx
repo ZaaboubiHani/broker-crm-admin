@@ -107,12 +107,12 @@ class HomePage extends Component<{}, HomePageState> {
             this.setState({ currentUser: currentUser });
         
       
-            if (this.state.currentUser.type === UserType.supervisor) {
+            if (currentUser.type === UserType.supervisor) {
                 var { visits: visits, total: total } = await this.visitService.getAllVisits(this.state.delegatePage,
                     this.state.sizeDelegate,
                     new Date(),
                     ClientType.pharmacy,
-                    this.state.currentUser.id!,
+                    currentUser.id!,
                     this.state.delegateOrder,
                     this.state.delegateProp);
                 this.setState({
@@ -120,12 +120,12 @@ class HomePage extends Component<{}, HomePageState> {
                     filteredDelegateVisits: visits,
                     totalDelegate: total,
                 });
-            } else if (this.state.currentUser.type === UserType.admin) {
-                var supervisors = await this.userService.getUsersByCreator(this.state.currentUser.id!, UserType.supervisor);
+            } else if (currentUser.type === UserType.admin) {
+                var supervisors = await this.userService.getUsersByCreator(currentUser.id!, UserType.supervisor);
                 this.setState({
                     supervisors: supervisors,
                 });
-                var { visits: kamVisits, total: totalKam } = await this.visitService.getAllVisits(this.state.kamPage, this.state.sizeKam, new Date(), ClientType.wholesaler, this.state.currentUser.id!, this.state.kamOrder, this.state.kamProp);
+                var { visits: kamVisits, total: totalKam } = await this.visitService.getAllVisits(this.state.kamPage, this.state.sizeKam, new Date(), ClientType.wholesaler, currentUser.id!, this.state.kamOrder, this.state.kamProp);
                 this.setState({
                     kamVisits: kamVisits,
                     filteredKamVisits: kamVisits,

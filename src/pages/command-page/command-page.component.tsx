@@ -134,27 +134,27 @@ class CommandPage extends Component<{}, CommandDelegatePageProps> {
     }
 
     loadCommandPageData = async () => {
-        if (this.state.currentUser === undefined) {
-            var currentUser = await this.userService.getMe();
-            this.setState({ currentUser: currentUser });
-        }
-        else {
-            if (this.state.currentUser.type === UserType.supervisor) {
-                var delegates = await this.userService.getUsersByCreator(this.state.currentUser.id!, UserType.delegate);
 
-                this.setState({ isLoading: false, delegates: delegates, });
-            } else {
-                var supervisors = await this.userService.getUsersByCreator(this.state.currentUser.id!, UserType.supervisor);
-                var kams = await this.userService.getUsersByCreator(this.state.currentUser.id!, UserType.kam);
-                var suppliers = await this.supplierService.getAllSuppliers();
-                this.setState({
-                    isLoading: false,
-                    supervisors: supervisors,
-                    kams: kams,
-                    suppliers: suppliers,
-                });
-            }
+        var currentUser = await this.userService.getMe();
+        this.setState({ currentUser: currentUser });
+
+
+        if (currentUser.type === UserType.supervisor) {
+            var delegates = await this.userService.getUsersByCreator(currentUser.id!, UserType.delegate);
+
+            this.setState({ isLoading: false, delegates: delegates, });
+        } else {
+            var supervisors = await this.userService.getUsersByCreator(currentUser.id!, UserType.supervisor);
+            var kams = await this.userService.getUsersByCreator(currentUser.id!, UserType.kam);
+            var suppliers = await this.supplierService.getAllSuppliers();
+            this.setState({
+                isLoading: false,
+                supervisors: supervisors,
+                kams: kams,
+                suppliers: suppliers,
+            });
         }
+
     }
 
     handleDisplayDelegateCommand = async (command: CommandModel) => {

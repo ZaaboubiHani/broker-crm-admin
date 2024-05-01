@@ -1003,11 +1003,11 @@ class StatisticsPage extends Component<{}, StatisticsPageProps> {
 
         if (currentUser.type === UserType.supervisor) {
             var delegates = await this.userService.getUsersByCreator(currentUser.id!, UserType.delegate);
-            var teamVisitsData = await this.statisticsService.getTeamYearVisitStats(this.state.selectedDate, this.state.currentUser!.id!);
-            var teamSalesData = await this.statisticsService.getTeamYearSaleStats(this.state.selectedDate, this.state.currentUser!.id!);
-            var teamSuccessRate = await this.statisticsService.getTeamSuccessRateYear(this.state.currentUser!.id!, this.state.selectedDate);
-            var delegatesContributions = await this.statisticsService.getDelegatesContributionsOfSupervisor(this.state.currentUser!.id!, this.state.selectedDate);
-            var teamContribution = await this.statisticsService.getTeamContributionsOfSupervisor(this.state.currentUser!.id!, this.state.selectedDate);
+            var teamVisitsData = await this.statisticsService.getTeamYearVisitStats(this.state.selectedDate, currentUser.id!);
+            var teamSalesData = await this.statisticsService.getTeamYearSaleStats(this.state.selectedDate, currentUser!.id!);
+            var teamSuccessRate = await this.statisticsService.getTeamSuccessRateYear(currentUser.id!, this.state.selectedDate);
+            var delegatesContributions = await this.statisticsService.getDelegatesContributionsOfSupervisor(currentUser.id!, this.state.selectedDate);
+            var teamContribution = await this.statisticsService.getTeamContributionsOfSupervisor(currentUser.id!, this.state.selectedDate);
 
             this.state.teamContributionPieOptions.series = [teamContribution.teamSales, teamContribution.companySales - teamContribution.teamSales];
             this.state.delegatesContributionChartPie.series = [...delegatesContributions.map(e => e.ChiffreDaffaire)];
