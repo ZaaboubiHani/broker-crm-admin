@@ -112,29 +112,28 @@ class ReportPage extends Component<{}, ReportPageProps> {
 
     loadRepportPageData = async () => {
 
-        if (this.state.currentUser === undefined) {
-            var currentUser = await this.userService.getMe();
-            this.setState({ currentUser: currentUser });
+
+        var currentUser = await this.userService.getMe();
+        this.setState({ currentUser: currentUser });
+
+        if (currentUser.type === UserType.supervisor) {
+            var delegates = await this.userService.getUsersByCreator(currentUser.id!, UserType.delegate);
+            this.setState({ delegates: delegates, });
         }
         else {
-            if (this.state.currentUser.type === UserType.supervisor) {
-                var delegates = await this.userService.getUsersByCreator(this.state.currentUser.id!, UserType.delegate);
-                this.setState({ delegates: delegates, });
-            }
-            else {
-                var supervisors = await this.userService.getUsersByCreator(this.state.currentUser.id!, UserType.supervisor);
-                var kams = await this.userService.getUsersByCreator(this.state.currentUser.id!, UserType.kam);
-
-                this.setState({
-                    supervisors: supervisors,
-                    kams: kams,
-                });
-            }
+            var supervisors = await this.userService.getUsersByCreator(currentUser.id!, UserType.supervisor);
+            var kams = await this.userService.getUsersByCreator(currentUser.id!, UserType.kam);
 
             this.setState({
-                isLoading: false,
+                supervisors: supervisors,
+                kams: kams,
             });
         }
+
+        this.setState({
+            isLoading: false,
+        });
+
 
     }
 

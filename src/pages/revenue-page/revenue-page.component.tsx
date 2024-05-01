@@ -81,9 +81,9 @@ class RevenuePage extends Component<{}, RevenuePageProps> {
 
     loadRevenuePageData = async () => {
         var currentUser = await this.userService.getMe();
-        if (currentUser != undefined) {
-            this.setState({ currentUser: currentUser });
-        }
+
+        this.setState({ currentUser: currentUser });
+
         if (currentUser.type === UserType.supervisor) {
             var revenues = await this.revenueService.getAllRevenuesMonth(new Date(), currentUser.id!);
             var totalTeamRevenue = await this.statisticsService.getTotalTeamRevenue(new Date(), currentUser.id!);
@@ -246,7 +246,7 @@ class RevenuePage extends Component<{}, RevenuePageProps> {
                             firstTitle={this.state.totalTeamRevenueNotHonored?.toLocaleString('fr-DZ', { style: 'currency', currency: 'DZD' })}
                             value={this.state.totalTeamRevenue !== 0 ? this.state.totalTeamRevenueNotHonored / this.state.totalTeamRevenue * 100 : 0} />
                     </div>
-                    <div style={{ flex:'1', display: 'flex', flexGrow: '1', height: 'calc(100% - 500px)',margin:'8px' }}>
+                    <div style={{ flex: '1', display: 'flex', flexGrow: '1', height: 'calc(100% - 500px)', margin: '8px' }}>
                         <CompoundBox
                             direction={RenderDirection.horizontal}
                             flexes={[70, 30]}
