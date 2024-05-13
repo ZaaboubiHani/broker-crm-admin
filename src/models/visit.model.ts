@@ -8,6 +8,7 @@ export default class VisitModel {
     reference?: string;
     visitLocation?: string;
     hasCommand?: boolean;
+    isGov?: boolean;
     createdDate?: Date;
     client?: ClientModel;
     report?: ReportModel;
@@ -19,6 +20,7 @@ export default class VisitModel {
         reference?: string,
         visitLocation?: string,
         hasCommand?: boolean,
+        isGov?: boolean,
         createdDate?: Date,
         client?: ClientModel,
         report?: ReportModel,
@@ -30,6 +32,7 @@ export default class VisitModel {
         this.reference = params.reference;
         this.visitLocation = params.visitLocation;
         this.hasCommand = params.hasCommand;
+        this.isGov = params.isGov;
         this.createdDate = params.createdDate;
         this.client = params.client;
         this.report = params.report;
@@ -51,6 +54,7 @@ export default class VisitModel {
             reference: json.attributes.reference,
             visitLocation: json.attributes.visitLocation,
             hasCommand: json.attributes.hasCommand,
+            isGov: json.attributes.isGov,
             createdDate: parsedDate,
             client: json?.attributes?.client?.data !== null && json?.attributes?.client?.data !== undefined ? ClientModel.fromJson(json.attributes.client.data) : undefined,
             user: json?.attributes?.user?.data !== null && json?.attributes?.user?.data !== undefined ? UserModel.fromJson(json.attributes.user.data) : undefined,
