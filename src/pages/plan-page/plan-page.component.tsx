@@ -473,8 +473,7 @@ class PlanPage extends Component<{}, PlanPageProps> {
                                 }}>
                                     <CompoundBox
                                         direction={RenderDirection.horizontal}
-                                        flexes={[70, 30]}
-                                    >
+                                        flexes={[70, 30]}>
                                         <PlanTable
                                             onDisplayDetails={this.handleSelectVisitTaskDate}
                                             onDisplayMap={this.handleDelegateDisplayMap}

@@ -105,6 +105,25 @@ const PlanPanel: React.FC<PlanPanelProps> = ({ id, data, isLoading, onTaskClick 
                             {
                                 e.isDone ? (<CheckCircleIcon style={{ display: 'block', position: 'absolute', color: 'lime', right: 8, top: 8 }} />) : (<HourglassBottomIcon style={{ display: 'block', position: 'absolute', color: 'orange', right: 8, top: 8 }} />)
                             }
+                            {
+                                e.visit?.isGov ? (<div style={{
+                                    right: 10,
+                                    top: 32,
+                                    borderRadius: '4px',
+                                    display: 'flex',
+                                    justifyContent: 'center',
+                                    alignItems: 'center',
+                                    position: 'absolute',
+                                    height: '20px',
+                                    width: '20px',
+                                    color: 'white',
+                                    fontWeight: 'bold',
+                                    backgroundColor: 'blue',
+                                    paddingBottom:'2px',
+                                }}>
+                                    H
+                                </div>) : null
+                            }
                         </Card>
                     ))
                 }
